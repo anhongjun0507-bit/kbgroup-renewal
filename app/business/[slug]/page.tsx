@@ -46,8 +46,8 @@ export default async function BusinessDetailPage({
     <>
       <PageHero
         kicker={area.englishName}
-        title={area.name}
-        italicWord={area.name}
+        title={`${area.name} 서비스`}
+        italicWord="서비스"
         subtitle={area.tagline}
         breadcrumb={[
           { label: "HOME", href: "/" },

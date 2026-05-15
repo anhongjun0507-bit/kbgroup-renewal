@@ -18,8 +18,13 @@ export type BreadcrumbItem = {
 
 interface Props {
   kicker: string;
+  /** 한글 제목 (필수). 빈 문자열이면 page 자체 fallback이 들어가야 함 */
   title: string;
-  /** 마지막 등장 위치의 1단어만 primary 강조 (NAI 영문 라벨 패턴 흡수) */
+  /**
+   * 마지막 등장 위치의 1단어만 KB primary(남색) 강조.
+   * title 전체와 일치하는 경우 강조 무시 (전체 컬러화 방지).
+   * 비우면 강조 없음.
+   */
   italicWord?: string;
   subtitle: string;
   breadcrumb: BreadcrumbItem[];
@@ -27,12 +32,14 @@ interface Props {
 
 function renderTitle(title: string, italicWord?: string) {
   if (!italicWord) return title;
+  // 전체와 일치하면 강조 안 함 (facility 케이스 방지)
+  if (italicWord.trim() === title.trim()) return title;
   const idx = title.lastIndexOf(italicWord);
   if (idx === -1) return title;
   return (
     <>
       {title.slice(0, idx)}
-      <span className="text-accent">{italicWord}</span>
+      <span className="text-primary">{italicWord}</span>
       {title.slice(idx + italicWord.length)}
     </>
   );
@@ -66,43 +73,32 @@ export function PageHero({
     },
   };
 
+  // h1 fallback (title이 비어있는 경우 — CEO 페이지 버그 픽스)
+  const safeTitle = title?.trim() ? title : breadcrumb[breadcrumb.length - 1]?.label ?? "";
+
   return (
     <section
       aria-labelledby="page-hero-title"
-      className="relative overflow-hidden bg-bg-soft pb-16 pt-20 md:pb-24 md:pt-28 lg:pb-28 lg:pt-32"
+      className="relative overflow-hidden bg-bg-soft pt-16 pb-14 md:pt-20 md:pb-16 lg:pt-24 lg:pb-20"
     >
-      {/* 우측 그래픽 — 빨강 가는 세로선 + 90도 회전 영문 (빈 공간 채움) */}
-      <div
-        aria-hidden="true"
-        className="absolute right-8 top-1/2 hidden -translate-y-1/2 lg:flex lg:flex-col lg:items-center lg:gap-6"
-      >
-        <span className="h-32 w-[2px] bg-accent" />
-        <span
-          className="font-display text-[14px] italic tracking-[0.3em] text-accent/70"
-          style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-        >
-          {kicker}
-        </span>
-      </div>
-
       <Container className="relative">
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="mb-10 md:mb-14">
+        <nav aria-label="Breadcrumb" className="mb-8 md:mb-10">
           <ol className="flex flex-wrap items-center gap-2 text-[11px] font-medium tracking-[0.1em] text-ink-muted">
-            {breadcrumb.map((item, idx) => {
+            {breadcrumb.map((bi, idx) => {
               const isLast = idx === breadcrumb.length - 1;
               return (
-                <Fragment key={`${item.label}-${idx}`}>
+                <Fragment key={`${bi.label}-${idx}`}>
                   <li>
-                    {item.href && !isLast ? (
+                    {bi.href && !isLast ? (
                       <Link
-                        href={item.href}
-                        className="uppercase transition-colors duration-200 hover:text-accent"
+                        href={bi.href}
+                        className="uppercase transition-colors duration-200 hover:text-primary"
                       >
-                        {item.label}
+                        {bi.label}
                       </Link>
                     ) : (
-                      <span className="uppercase text-ink">{item.label}</span>
+                      <span className="uppercase text-ink">{bi.label}</span>
                     )}
                   </li>
                   {!isLast && (
@@ -122,10 +118,10 @@ export function PageHero({
           variants={stagger}
           className="max-w-3xl"
         >
-          {/* Playfair italic eyebrow — KB 빨강 */}
+          {/* eyebrow — Pretendard uppercase 회색 (italic 제거) */}
           <motion.p
             variants={item}
-            className="font-display text-[20px] italic leading-none text-accent md:text-[22px]"
+            className="text-[12px] font-semibold uppercase tracking-[0.2em] text-ink-muted"
           >
             {kicker}
           </motion.p>
@@ -133,22 +129,21 @@ export function PageHero({
           <motion.h1
             id="page-hero-title"
             variants={item}
-            className="mt-5 font-bold leading-[1.12] tracking-[-0.022em] text-ink-strong"
-            style={{ fontSize: "clamp(2rem, 4.5vw, 3.75rem)" }}
+            className="mt-5 font-extrabold leading-[1.18] tracking-[-0.025em] text-ink-strong"
+            style={{ fontSize: "clamp(1.875rem, 4vw, 3rem)" }}
           >
-            {renderTitle(title, italicWord)}
+            {renderTitle(safeTitle, italicWord)}
           </motion.h1>
 
-          {/* 빨강 가는 라인 */}
           <motion.div
             variants={item}
             aria-hidden="true"
-            className="mt-8 h-[2px] w-10 bg-accent"
+            className="mt-7 h-[2px] w-10 bg-primary"
           />
 
           <motion.p
             variants={item}
-            className="mt-7 max-w-2xl text-base leading-[1.85] text-ink md:text-lg"
+            className="mt-6 max-w-2xl text-[15px] leading-[1.85] text-ink md:text-base"
           >
             {subtitle}
           </motion.p>

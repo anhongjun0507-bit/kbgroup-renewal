@@ -21,12 +21,11 @@ export function CTA() {
 
   return (
     <section
-      className="relative isolate overflow-hidden bg-gradient-to-br from-[#0e1530] via-primary to-[#0a0f24] py-24 text-white md:py-32 lg:py-40"
+      className="relative isolate overflow-hidden bg-gradient-to-br from-[#0e1530] via-primary to-[#0a0f24] py-24 md:py-32"
     >
-      {/* 미세 grid 패턴 */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 opacity-[0.06]"
+        className="absolute inset-0 opacity-[0.05]"
         style={{
           backgroundImage:
             "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
@@ -47,26 +46,20 @@ export function CTA() {
         >
           <motion.p
             variants={item}
-            className="font-display text-[18px] italic text-accent md:text-[22px]"
+            className="text-[12px] font-semibold uppercase tracking-[0.2em] text-white/55"
           >
-            Get in Touch
+            CONTACT
           </motion.p>
           <motion.h2
             variants={item}
-            className="mt-5 font-display italic leading-[1.05] tracking-[-0.02em] text-white"
-            style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}
+            className="mt-5 font-extrabold leading-[1.15] tracking-[-0.025em] !text-white"
+            style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
           >
-            Leave a message
+            상담 문의를 <span className="text-accent">남겨주세요</span>
           </motion.h2>
           <motion.p
             variants={item}
-            className="mt-8 text-lg leading-relaxed text-white/75 md:text-xl"
-          >
-            단지 운영, 케이비개발과 시작하세요.
-          </motion.p>
-          <motion.p
-            variants={item}
-            className="mt-3 text-sm leading-relaxed text-white/55 md:text-base"
+            className="mt-8 text-base leading-[1.85] text-white/80 md:text-lg"
           >
             상담은 무료입니다. 단지 규모·요구사항을 알려주시면 맞춤 제안을
             드립니다.
@@ -74,7 +67,7 @@ export function CTA() {
 
           <motion.div
             variants={item}
-            className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6"
+            className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5"
           >
             <Button
               as="link"
@@ -87,7 +80,7 @@ export function CTA() {
             </Button>
             <Link
               href={`mailto:${contact.email}`}
-              className="text-[14px] font-medium text-white/80 underline-offset-4 transition-colors hover:text-white hover:underline"
+              className="inline-flex h-14 items-center justify-center border border-white/30 px-9 text-[15px] font-semibold text-white transition-all duration-300 hover:border-white hover:bg-white/[0.06]"
             >
               이메일 문의 →
             </Link>

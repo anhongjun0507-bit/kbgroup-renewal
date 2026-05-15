@@ -3,69 +3,85 @@
 
 @theme {
   /* ─────────────────────────────────────────────
-     Brand — KB 로고 (삼양 #26247b 자리에 KB 남색)
+     Brand — KB 로고 3색 (역할 명확화)
+       primary 남색  → 헤딩 강조어·CTA 보조·링크
+       secondary 그린 → 위생청소·success 한정
+       accent 빨강   → 로고·메인 CTA 1곳만
      ───────────────────────────────────────────── */
   --color-primary: #1e2a5e;
   --color-primary-hover: #161e44;
   --color-primary-soft: #f5f6fb;
-  --color-secondary: #05a44f;        /* KB 그린 — 보조 액센트 */
-  --color-accent: #ec294a;           /* KB 빨강 — dot 액센트 */
+  --color-secondary: #05a44f;
+  --color-accent: #ec294a;
+  --color-accent-hover: #d12342;
 
-  /* ─────────────────────────────────────────────
-     Surface — 삼양 베이스
-     ───────────────────────────────────────────── */
+  /* Surface */
   --color-bg: #ffffff;
   --color-bg-soft: #f7f7f7;
-  --color-bg-tinted: #f7f7f7;
+  --color-bg-tinted: #fafafa;
 
-  /* ─────────────────────────────────────────────
-     Text — 삼양 컬러 그대로
-     ───────────────────────────────────────────── */
-  --color-ink-strong: #222222;
-  --color-ink: #444444;
-  --color-ink-muted: #666666;
-  --color-ink-faint: #aaaaaa;
+  /* Text — 토스 ink */
+  --color-ink-strong: #1a1e26;          /* 헤딩 */
+  --color-ink: #4e5968;                 /* 본문 강조 */
+  --color-ink-muted: #6b7684;           /* 본문·라벨 */
+  --color-ink-faint: #b0b8c1;           /* 메타·플레이스홀더 */
 
-  /* Legacy aliases */
-  --color-ink-soft: #444444;
-  --color-cream: #ffffff;
-  --color-beige: #f7f7f7;
-  --color-gold: #ec294a;
-  --color-primary-light: #444444;
-  --color-primary-dark: #161e44;
-  --color-secondary-hover: #048541;
-  --color-secondary-soft: #f5f6fb;
-  --color-accent-hover: #d12342;
-  --color-accent-soft: #f5f6fb;
+  /* Line */
+  --color-line: #e5e8eb;
+  --color-line-soft: #f2f4f6;
 
-  /* ─────────────────────────────────────────────
-     Line
-     ───────────────────────────────────────────── */
-  --color-line: #dddddd;
-  --color-line-soft: #eeeeee;
-
-  /* ─────────────────────────────────────────────
-     Status
-     ───────────────────────────────────────────── */
+  /* Status */
   --color-success: #00b488;
   --color-danger: #ef2b2a;
   --color-warning: #ffb400;
 
+  /* Legacy aliases — 점진 제거 예정 */
+  --color-ink-soft: #4e5968;
+  --color-cream: #ffffff;
+  --color-beige: #f7f7f7;
+  --color-gold: #ec294a;
+  --color-primary-light: #4e5968;
+  --color-primary-dark: #161e44;
+  --color-secondary-hover: #048541;
+  --color-secondary-soft: #e8f7ef;
+  --color-accent-soft: #fdeef1;
+
   /* ─────────────────────────────────────────────
-     Typography — Pretendard (한글·UI) + Playfair Display (영문 eyebrow·헤딩)
+     Typography — Pretendard 단일 (Playfair 제거)
+     숫자는 Pretendard tabular-nums 활용 (별도 폰트 불필요)
      ───────────────────────────────────────────── */
   --font-sans:
     Pretendard, "Malgun Gothic", -apple-system, BlinkMacSystemFont,
     "Apple SD Gothic Neo", system-ui, Roboto, "Helvetica Neue",
     Helvetica, Arial, sans-serif;
-  --font-display:
-    var(--font-display), "Playfair Display", "Cormorant Garamond",
-    Georgia, "Times New Roman", serif;
-  --font-serif: var(--font-display);
+  --font-display: var(--font-sans);
+  --font-serif: var(--font-sans);
+  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular,
+    Menlo, Monaco, Consolas, monospace;
 
   /* ─────────────────────────────────────────────
-     Radius — 삼양 패턴: 거의 직각
+     Type Scale — 9단 고정 (modular 1.25, KB 한글 최적화)
      ───────────────────────────────────────────── */
+  --text-xs: 0.75rem;       /* 12px */
+  --text-sm: 0.875rem;      /* 14px */
+  --text-base: 1rem;        /* 16px */
+  --text-lg: 1.125rem;      /* 18px */
+  --text-xl: 1.375rem;      /* 22px */
+  --text-2xl: 1.75rem;      /* 28px */
+  --text-3xl: 2.25rem;      /* 36px */
+  --text-4xl: 3rem;         /* 48px */
+  --text-5xl: 4rem;         /* 64px */
+
+  /* ─────────────────────────────────────────────
+     Tracking — 한글 친화 (본문 0, 헤딩만 음수)
+     ───────────────────────────────────────────── */
+  --tracking-tighter: -0.03em;
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.08em;
+  --tracking-widest: 0.2em;
+
+  /* Radius — 직각 */
   --radius-xs: 0;
   --radius-sm: 0;
   --radius-md: 0;
@@ -74,14 +90,12 @@
   --radius-2xl: 0;
   --radius-3xl: 0;
 
-  /* ─────────────────────────────────────────────
-     Shadow — 삼양: 거의 없음
-     ───────────────────────────────────────────── */
+  /* Shadow — 절제 */
   --shadow-xs: none;
-  --shadow-sm: 0 1px 2px rgba(34, 34, 34, 0.04);
-  --shadow-md: 0 2px 8px rgba(34, 34, 34, 0.06);
-  --shadow-lg: 0 8px 24px rgba(34, 34, 34, 0.08);
-  --shadow-xl: 0 16px 40px rgba(34, 34, 34, 0.10);
+  --shadow-sm: 0 1px 2px rgba(26, 30, 38, 0.04);
+  --shadow-md: 0 2px 8px rgba(26, 30, 38, 0.06);
+  --shadow-lg: 0 8px 24px rgba(26, 30, 38, 0.08);
+  --shadow-xl: 0 16px 40px rgba(26, 30, 38, 0.10);
 }
 
 :root {
@@ -89,24 +103,45 @@
   --foreground: var(--color-ink-strong);
 }
 
+/* ─────────────────────────────────────────────
+   Body — 한글 가독성 글로벌 픽스
+     · word-break: keep-all (한글 단어 단위 줄바꿈)
+     · letter-spacing: 0 (본문 ls 0, 헤딩만 음수)
+     · line-height: 1.75 (한글 본문에 적정)
+     · 숫자는 tabular-nums (정렬 정확)
+   ───────────────────────────────────────────── */
 body {
   background: var(--background);
   color: var(--color-ink-muted);
   font-family: var(--font-sans);
   font-weight: 400;
-  letter-spacing: -0.018em;
-  line-height: 1.75;                          /* NAI 톤 — 1.6 → 1.75 */
+  font-size: var(--text-base);
+  line-height: 1.75;
+  letter-spacing: 0;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  word-break: keep-all;
 }
 
-/* 헤딩 — 너무 압축된 ls 완화 */
-h1, h2, h3, h4 {
+/* 숫자 통계 표시용 — tabular-nums 정렬 */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* 헤딩 — 컴포넌트 명시(text-white 등)가 항상 이기도록 :where (specificity 0) */
+:where(h1, h2, h3, h4) {
   color: var(--color-ink-strong);
-  letter-spacing: -0.022em;                   /* −0.03em → −0.022em (완화) */
-  line-height: 1.2;
+  letter-spacing: var(--tracking-tight);
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+:where(h1) {
+  line-height: 1.15;
+  letter-spacing: var(--tracking-tighter);
 }
 
 /* Legacy alias */

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
 import { businessAreas } from "@/data/site-content";
@@ -39,10 +40,17 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 export function Header({ isAuthed = false }: HeaderProps) {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileExpand, setMobileExpand] = useState<string | null>(null);
+
+  /** href와 현재 pathname이 일치(또는 sub) 하면 활성 메뉴 */
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -110,7 +118,13 @@ export function Header({ isAuthed = false }: HeaderProps) {
                     href={item.href}
                     aria-haspopup={hasChildren || undefined}
                     aria-expanded={hasChildren ? isOpen : undefined}
-                    className="inline-flex items-center py-3 text-[14px] font-medium text-ink-strong transition-colors duration-200 hover:text-accent"
+                    aria-current={isActive(item.href) ? "page" : undefined}
+                    className={cn(
+                      "relative inline-flex items-center py-3 text-[14px] transition-colors duration-200",
+                      isActive(item.href)
+                        ? "font-bold text-ink-strong after:absolute after:inset-x-0 after:-bottom-px after:h-[2px] after:bg-primary"
+                        : "font-medium text-ink hover:text-ink-strong",
+                    )}
                   >
                     {item.label}
                   </Link>

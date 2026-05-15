@@ -39,13 +39,14 @@ export function Partners() {
         >
           <motion.p
             variants={item}
-            className="font-display text-[18px] italic leading-none text-accent md:text-[20px]"
+            className="text-[12px] font-semibold uppercase tracking-[0.2em] text-ink-muted"
           >
-            Our Clients
+            PARTNERS
           </motion.p>
           <motion.h2
             variants={item}
-            className="mt-4 text-[32px] font-bold tracking-[-0.022em] text-ink-strong md:text-[44px]"
+            className="mt-4 font-extrabold tracking-[-0.025em] text-ink-strong"
+            style={{ fontSize: "clamp(2rem, 3.6vw, 2.75rem)" }}
           >
             함께 신뢰를 쌓아온 파트너
           </motion.h2>
@@ -67,7 +68,7 @@ export function Partners() {
               variants={item}
               className="group flex h-32 flex-col justify-between bg-white p-6 transition-colors duration-300 hover:bg-bg-soft"
             >
-              <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-ink-muted transition-colors group-hover:text-accent">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-ink-muted transition-colors group-hover:text-primary">
                 {CATEGORY_LABEL[p.category]}
               </p>
               <p className="text-[15px] font-bold tracking-[-0.02em] text-ink-strong">

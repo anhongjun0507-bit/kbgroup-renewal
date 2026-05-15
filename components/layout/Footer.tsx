@@ -12,7 +12,7 @@ const SITEMAP = [
 ];
 
 const COL_LABEL =
-  "text-[12px] font-medium uppercase tracking-[0.18em] text-white/60 mb-5";
+  "text-[11px] font-semibold uppercase tracking-[0.2em] text-white/55 mb-5";
 const LINK_BASE =
   "text-[14px] leading-relaxed text-white/75 transition-colors duration-200 hover:text-white";
 
@@ -23,17 +23,17 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-3 lg:gap-16">
           {/* KB GROUP intro */}
           <div>
-            <h3 className="text-2xl font-bold tracking-[-0.03em] text-white">
-              (주)케이비개발
-            </h3>
-            <p className="mt-2 text-[12px] font-medium uppercase tracking-[0.18em] text-white/55">
+            <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/50">
               KB DEVELOPMENT CO.,LTD.
             </p>
+            <h3 className="mt-2 text-[20px] font-bold tracking-[-0.02em] text-white">
+              (주)케이비개발
+            </h3>
             <p className="mt-6 max-w-sm text-[14px] leading-relaxed text-white/75">
               {company.tagline}로서 주택관리·위생청소·경비보안·시행건설을
               아우르는 종합 시설관리 서비스를 제공합니다.
             </p>
-            <p className="mt-5 text-[13px] leading-relaxed text-white/60">
+            <p className="mt-5 text-[13px] leading-relaxed text-white/55">
               {contact.address}
             </p>
           </div>
@@ -68,7 +68,7 @@ export function Footer() {
                 <span className="w-12 shrink-0 text-[11px] uppercase tracking-[0.15em] text-white/50">
                   FAX
                 </span>
-                <span className="text-white/65">{contact.fax}</span>
+                <span className="text-white/60">{contact.fax}</span>
               </li>
               <li className="flex items-baseline gap-3">
                 <span className="w-12 shrink-0 text-[11px] uppercase tracking-[0.15em] text-white/50">
@@ -78,13 +78,13 @@ export function Footer() {
                   {contact.email}
                 </a>
               </li>
-              <li className="pt-3">
-                <Link
-                  href="/login"
-                  className="inline-flex items-center gap-1.5 border border-white/30 px-4 py-2 text-[12px] font-medium text-white/85 transition-all duration-200 hover:border-white hover:bg-white/[0.06] hover:text-white"
+              <li className="pt-4">
+                <a
+                  href={`mailto:${contact.email}?subject=${encodeURIComponent("[케이비개발] 사업 상담 문의")}`}
+                  className="inline-flex items-center gap-1.5 bg-accent px-5 py-2.5 text-[12px] font-bold uppercase tracking-[0.1em] text-white transition-all duration-200 hover:bg-accent-hover"
                 >
-                  LOGIN <span aria-hidden="true">→</span>
-                </Link>
+                  상담 신청 <span aria-hidden="true">→</span>
+                </a>
               </li>
             </ul>
           </div>

@@ -1,7 +1,8 @@
 "use client";
 
 import CountUp from "react-countup";
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, useReducedMotion, useInView, type Variants } from "framer-motion";
+import { useRef } from "react";
 import { Container } from "@/components/ui";
 import { counters } from "@/data/site-content";
 
@@ -9,6 +10,8 @@ const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
 export function DataCounter() {
   const shouldReduce = useReducedMotion() ?? false;
+  const gridRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(gridRef, { once: true, amount: 0.6 });
 
   const item: Variants = {
     hidden: { opacity: 0, y: shouldReduce ? 0 : 16 },
@@ -34,25 +37,27 @@ export function DataCounter() {
         >
           <motion.p
             variants={item}
-            className="font-display text-[18px] italic leading-none text-accent md:text-[20px]"
+            className="text-[12px] font-semibold uppercase tracking-[0.2em] text-ink-muted"
           >
-            By the Numbers
+            BY THE NUMBERS
           </motion.p>
           <motion.h2
             variants={item}
-            className="mt-4 text-[32px] font-bold tracking-[-0.022em] text-ink-strong md:text-[44px]"
+            className="mt-4 font-extrabold tracking-[-0.025em] text-ink-strong"
+            style={{ fontSize: "clamp(2rem, 3.6vw, 2.75rem)" }}
           >
             숫자로 보는 케이비개발
           </motion.h2>
           <motion.p
             variants={item}
-            className="mt-5 max-w-xl text-base leading-relaxed text-ink"
+            className="mt-5 max-w-xl text-base leading-relaxed text-ink-muted"
           >
             2014년 설립 이래 축적해온 운영 성과입니다.
           </motion.p>
         </motion.div>
 
         <motion.div
+          ref={gridRef}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
@@ -64,35 +69,36 @@ export function DataCounter() {
         >
           {counters.map((c) => (
             <motion.div key={c.key} variants={item} className="pl-5">
-              {/* 빨강 가는 라인 — NAI 통계 박스 패턴 */}
               <div
                 aria-hidden="true"
-                className="-ml-5 mb-5 h-[2px] w-10 bg-accent"
+                className="-ml-5 mb-5 h-[2px] w-10 bg-primary"
               />
-              <p className="font-display text-[11px] italic tracking-widest text-accent">
-                {c.caption}
-              </p>
-              <div className="mt-3 flex items-baseline gap-1">
-                {shouldReduce ? (
-                  <span className="text-[56px] font-bold leading-none tracking-[-0.03em] text-accent md:text-[64px]">
-                    {c.value.toLocaleString()}
+              <div className="tabular flex items-baseline gap-1">
+                {shouldReduce || !inView ? (
+                  <span
+                    className="font-extrabold leading-none tracking-[-0.03em] text-primary"
+                    style={{ fontSize: "clamp(2.75rem, 5vw, 4rem)" }}
+                  >
+                    {shouldReduce ? c.value.toLocaleString() : "0"}
                   </span>
                 ) : (
                   <CountUp
                     end={c.value}
-                    duration={1.8}
+                    duration={2}
                     separator=","
                     easingFn={(t, b, c, d) => {
                       const tn = t / d - 1;
                       return c * (tn * tn * tn + 1) + b;
                     }}
-                    enableScrollSpy
-                    scrollSpyOnce
-                    className="text-[56px] font-bold leading-none tracking-[-0.03em] text-accent md:text-[64px]"
+                    className="font-extrabold leading-none tracking-[-0.03em] text-primary"
+                    style={{ fontSize: "clamp(2.75rem, 5vw, 4rem)" }}
                   />
                 )}
                 {c.suffix && (
-                  <span className="text-3xl font-bold text-accent/60 md:text-4xl">
+                  <span
+                    className="font-bold text-ink-faint"
+                    style={{ fontSize: "clamp(1.5rem, 2vw, 1.75rem)" }}
+                  >
                     {c.suffix}
                   </span>
                 )}

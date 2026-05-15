@@ -19,6 +19,9 @@ function getDisplayName(c: Complex): string {
   return tokens[tokens.length - 1] ?? name;
 }
 
+/** 단지별 미세 hue 변화 (placeholder 식별성) */
+const HUES = [0, 12, -8, 18, -14, 6, 22, -20];
+
 export function Cases() {
   const shouldReduce = useReducedMotion() ?? false;
 
@@ -49,23 +52,24 @@ export function Cases() {
           <div>
             <motion.p
               variants={item}
-              className="font-display text-[18px] italic leading-none text-accent md:text-[20px]"
+              className="text-[12px] font-semibold uppercase tracking-[0.2em] text-ink-muted"
             >
-              Our Cases
+              CASES
             </motion.p>
             <motion.h2
               variants={item}
-              className="mt-4 text-[32px] font-bold tracking-[-0.022em] text-ink-strong md:text-[44px]"
+              className="mt-4 font-extrabold tracking-[-0.025em] text-ink-strong"
+              style={{ fontSize: "clamp(2rem, 3.6vw, 2.75rem)" }}
             >
-              전국 단지의 발자취
+              전국 단지의 <span className="text-primary">발자취</span>
             </motion.h2>
           </div>
           <motion.div variants={item} className="hidden md:block">
             <Link
               href="/cases"
-              className="group inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.12em] text-ink-strong transition-colors duration-300 hover:text-accent"
+              className="group inline-flex items-center gap-2 border-b border-ink-strong pb-1 text-[14px] font-semibold text-ink-strong transition-colors duration-300 hover:border-primary hover:text-primary"
             >
-              View All Cases
+              관리현황 전체
               <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
             </Link>
           </motion.div>
@@ -83,6 +87,7 @@ export function Cases() {
         >
           {featured.map((c, idx) => {
             const displayName = getDisplayName(c);
+            const hue = HUES[idx % HUES.length];
             return (
               <motion.article
                 key={`${c.name}-${idx}`}
@@ -90,29 +95,30 @@ export function Cases() {
                 className="group bg-white"
               >
                 <Link href="/cases" className="block">
-                  {/* 다크 시네마틱 placeholder */}
-                  <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-[#1a2347] via-primary to-[#0a0f24]">
+                  <div
+                    className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-[#1a2347] via-primary to-[#0a0f24]"
+                    style={{ filter: `hue-rotate(${hue}deg)` }}
+                  >
                     {c.type === "LH" && (
                       <span className="absolute right-3 top-3 z-10 inline-flex items-center bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
                         LH
                       </span>
                     )}
                     <div className="absolute inset-0 flex items-end p-6">
-                      <p className="text-[clamp(1.5rem,3.5vw,2.25rem)] font-bold leading-[0.95] tracking-[-0.02em] text-white/30 transition-colors duration-500 group-hover:text-white/50">
+                      <p className="text-[clamp(1.5rem,3.5vw,2.25rem)] font-bold leading-[0.95] tracking-[-0.02em] text-white/30 transition-colors duration-500 group-hover:text-white/55">
                         {displayName}
                       </p>
                     </div>
-                    {/* hover 빨강 좌측 라인 */}
                     <span
                       aria-hidden="true"
                       className="absolute inset-y-0 left-0 w-[3px] origin-top scale-y-0 bg-accent transition-transform duration-500 group-hover:scale-y-100"
                     />
                   </div>
                   <div className="p-5">
-                    <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-ink-muted">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-ink-muted">
                       {c.region}
                     </p>
-                    <h3 className="mt-2 line-clamp-2 min-h-[3.25rem] text-[15px] font-bold leading-snug tracking-[-0.022em] text-ink-strong transition-colors duration-300 group-hover:text-accent">
+                    <h3 className="mt-2 line-clamp-2 min-h-[3.25rem] text-[15px] font-bold leading-snug tracking-[-0.02em] text-ink-strong transition-colors duration-300 group-hover:text-primary">
                       {c.name}
                     </h3>
                     {c.client && (
@@ -130,9 +136,9 @@ export function Cases() {
         <div className="mt-12 text-center md:hidden">
           <Link
             href="/cases"
-            className="inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.12em] text-ink-strong"
+            className="inline-flex items-center gap-2 text-[13px] font-semibold text-ink-strong"
           >
-            View All Cases <span aria-hidden="true">→</span>
+            관리현황 전체 <span aria-hidden="true">→</span>
           </Link>
         </div>
       </Container>
