@@ -14,14 +14,14 @@ export default function CeoPage() {
   return (
     <>
       <PageHero
-        kicker="CEO MESSAGE · 대표 메시지"
-        title="대표 인사말"
+        kicker="CEO MESSAGE"
+        title="대표이사 인사말"
         italicWord="인사말"
         subtitle="공간을 책임진다는 약속, 그 시작과 의지를 전합니다."
         breadcrumb={[
           { label: "HOME", href: "/" },
           { label: "ABOUT", href: "/about" },
-          { label: "대표 메시지" },
+          { label: "CEO MESSAGE" },
         ]}
       />
       <AboutNav current="ceo" />

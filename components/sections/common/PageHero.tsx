@@ -18,9 +18,7 @@ export type BreadcrumbItem = {
 
 interface Props {
   kicker: string;
-  /** 한글 큰 제목 (필수). 비어 있으면 breadcrumb 마지막 라벨 fallback. */
   title: string;
-  /** title의 마지막 등장 1단어만 KB primary 강조. title 전체와 일치 시 무시. */
   italicWord?: string;
   subtitle: string;
   breadcrumb: BreadcrumbItem[];
@@ -34,7 +32,7 @@ function renderTitle(title: string, italicWord?: string) {
   return (
     <>
       {title.slice(0, idx)}
-      <span className="text-primary">{italicWord}</span>
+      <span style={{ color: "var(--color-primary)" }}>{italicWord}</span>
       {title.slice(idx + italicWord.length)}
     </>
   );
@@ -68,16 +66,16 @@ export function PageHero({
     },
   };
 
-  /** title이 빈 문자열일 때 breadcrumb 마지막 라벨로 fallback (CEO 페이지 h1 누락 픽스 C-1) */
+  // safeTitle fallback (title 비어있을 때 breadcrumb 마지막 라벨 사용)
   const safeTitle =
     title && title.trim().length > 0
       ? title
-      : breadcrumb[breadcrumb.length - 1]?.label ?? "";
+      : breadcrumb[breadcrumb.length - 1]?.label ?? "페이지";
 
   return (
     <section
       aria-labelledby="page-hero-title"
-      className="relative overflow-hidden bg-bg-soft pt-16 pb-14 md:pt-20 md:pb-16 lg:pt-24 lg:pb-20"
+      className="relative overflow-hidden border-b border-line bg-bg-soft pt-16 pb-14 md:pt-20 md:pb-16 lg:pt-24 lg:pb-20"
     >
       <Container className="relative">
         {/* Breadcrumb */}
@@ -121,18 +119,17 @@ export function PageHero({
             {kicker}
           </motion.p>
 
-          {/* h1 — Pretendard 800 + 색상 강제 (P-1 픽스: 옅게 렌더 방지) */}
+          {/* h1 — SUIT 900 + inline color 강제 (R4-2·R4-3 픽스) */}
           <motion.h1
             id="page-hero-title"
             variants={item}
-            className="mt-5"
+            className="mt-5 font-display"
             style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(2rem, 5vw, 3.75rem)",
-              fontWeight: 800,
-              letterSpacing: "-0.03em",
-              lineHeight: 1.12,
-              color: "var(--color-ink-strong)",
+              fontSize: "clamp(2rem, 5vw, 3.5rem)",
+              fontWeight: 900,
+              letterSpacing: "-0.045em",
+              lineHeight: 1.1,
+              color: "#0e1530",  /* inline 강제 — 외부 CSS에 옅게 덮이지 않도록 */
             }}
           >
             {renderTitle(safeTitle, italicWord)}
