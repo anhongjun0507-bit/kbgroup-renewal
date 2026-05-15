@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand colors */
+  --color-primary: #2d4435;
+  --color-primary-light: #4a6552;
+  --color-primary-dark: #1a2e22;
+  --color-gold: #c9b48a;
+
+  /* Surfaces */
+  --color-cream: #faf8f4;
+  --color-beige: #f5f1ea;
+  --color-line: #d8d4cb;
+
+  /* Text */
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #4a4a4a;
+  --color-ink-muted: #888888;
+
+  /* Typography */
+  --font-sans: var(--font-noto-sans-kr), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: var(--font-noto-serif-kr), ui-serif, Georgia, "Noto Serif",
+    "Times New Roman", serif;
+}
+
+:root {
+  --background: var(--color-cream);
+  --foreground: var(--color-ink);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Serif emphasis helper — 제목 italic 강조용 */
+.serif-em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--color-primary);
+}
