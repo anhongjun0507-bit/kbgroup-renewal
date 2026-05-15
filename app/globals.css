@@ -1,13 +1,44 @@
 @import "tailwindcss";
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css");
 
 @theme {
-  /* ─────────────────────────────────────────────
-     Brand — KB 로고 3색 (역할 명확화)
-       primary 남색  → 헤딩 강조어·CTA 보조·링크
-       secondary 그린 → 위생청소·success 한정
-       accent 빨강   → 로고·메인 CTA 1곳만
-     ───────────────────────────────────────────── */
+  /* =============================================
+     Font Family — Pretendard(본문·UI) + Pretendard 920(헤딩) + JetBrains Mono(숫자/영문)
+     ============================================= */
+  --font-sans:
+    "Pretendard Variable", Pretendard, "Malgun Gothic", -apple-system,
+    BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", sans-serif;
+  --font-display: var(--font-sans);
+  --font-mono:
+    var(--font-jetbrains-mono), "SF Mono", Monaco, "Cascadia Code",
+    "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
+  --font-serif: var(--font-sans);
+
+  /* =============================================
+     Type Scale — 9단 고정 (modular 1.25 · 한글 최적)
+     ============================================= */
+  --text-xs: 0.75rem;       /* 12 */
+  --text-sm: 0.875rem;      /* 14 */
+  --text-base: 1rem;        /* 16 */
+  --text-lg: 1.125rem;      /* 18 */
+  --text-xl: 1.375rem;      /* 22 — h3 */
+  --text-2xl: 2rem;         /* 32 */
+  --text-3xl: 2.75rem;      /* 44 — h2 */
+  --text-4xl: 4rem;         /* 64 */
+  --text-5xl: 5.5rem;       /* 88 — h1 (모바일 clamp) */
+
+  /* =============================================
+     Tracking — 5단 고정 (한글 음수 ls 절제)
+     ============================================= */
+  --tracking-tighter: -0.04em;   /* 64+ 대형 헤딩 */
+  --tracking-tight: -0.02em;     /* 22-44 일반 헤딩 */
+  --tracking-normal: 0;          /* 본문 한글 */
+  --tracking-wide: 0.05em;       /* 소형 라벨 */
+  --tracking-widest: 0.2em;      /* uppercase 영문 라벨 */
+
+  /* =============================================
+     Color — KB 브랜드 (역할 명확)
+     ============================================= */
   --color-primary: #1e2a5e;
   --color-primary-hover: #161e44;
   --color-primary-soft: #f5f6fb;
@@ -20,11 +51,12 @@
   --color-bg-soft: #f7f7f7;
   --color-bg-tinted: #fafafa;
 
-  /* Text — 토스 ink */
-  --color-ink-strong: #1a1e26;          /* 헤딩 */
-  --color-ink: #4e5968;                 /* 본문 강조 */
-  --color-ink-muted: #6b7684;           /* 본문·라벨 */
-  --color-ink-faint: #b0b8c1;           /* 메타·플레이스홀더 */
+  /* Text — 5단 (라운드3 검수: letter-spacing 21개 → 5단 토큰) */
+  --color-ink-900: #0e1530;     /* 다크 헤딩 (Hero strip 등) */
+  --color-ink-strong: #1a1e26;  /* 일반 헤딩 */
+  --color-ink: #4e5968;         /* 본문 강조 */
+  --color-ink-muted: #6b7684;   /* 본문·라벨 */
+  --color-ink-faint: #b0b8c1;   /* 메타 */
 
   /* Line */
   --color-line: #e5e8eb;
@@ -35,7 +67,7 @@
   --color-danger: #ef2b2a;
   --color-warning: #ffb400;
 
-  /* Legacy aliases — 점진 제거 예정 */
+  /* Legacy aliases */
   --color-ink-soft: #4e5968;
   --color-cream: #ffffff;
   --color-beige: #f7f7f7;
@@ -46,41 +78,6 @@
   --color-secondary-soft: #e8f7ef;
   --color-accent-soft: #fdeef1;
 
-  /* ─────────────────────────────────────────────
-     Typography — Pretendard 단일 (Playfair 제거)
-     숫자는 Pretendard tabular-nums 활용 (별도 폰트 불필요)
-     ───────────────────────────────────────────── */
-  --font-sans:
-    Pretendard, "Malgun Gothic", -apple-system, BlinkMacSystemFont,
-    "Apple SD Gothic Neo", system-ui, Roboto, "Helvetica Neue",
-    Helvetica, Arial, sans-serif;
-  --font-display: var(--font-sans);
-  --font-serif: var(--font-sans);
-  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular,
-    Menlo, Monaco, Consolas, monospace;
-
-  /* ─────────────────────────────────────────────
-     Type Scale — 9단 고정 (modular 1.25, KB 한글 최적화)
-     ───────────────────────────────────────────── */
-  --text-xs: 0.75rem;       /* 12px */
-  --text-sm: 0.875rem;      /* 14px */
-  --text-base: 1rem;        /* 16px */
-  --text-lg: 1.125rem;      /* 18px */
-  --text-xl: 1.375rem;      /* 22px */
-  --text-2xl: 1.75rem;      /* 28px */
-  --text-3xl: 2.25rem;      /* 36px */
-  --text-4xl: 3rem;         /* 48px */
-  --text-5xl: 4rem;         /* 64px */
-
-  /* ─────────────────────────────────────────────
-     Tracking — 한글 친화 (본문 0, 헤딩만 음수)
-     ───────────────────────────────────────────── */
-  --tracking-tighter: -0.03em;
-  --tracking-tight: -0.02em;
-  --tracking-normal: 0;
-  --tracking-wide: 0.08em;
-  --tracking-widest: 0.2em;
-
   /* Radius — 직각 */
   --radius-xs: 0;
   --radius-sm: 0;
@@ -90,7 +87,7 @@
   --radius-2xl: 0;
   --radius-3xl: 0;
 
-  /* Shadow — 절제 */
+  /* Shadow */
   --shadow-xs: none;
   --shadow-sm: 0 1px 2px rgba(26, 30, 38, 0.04);
   --shadow-md: 0 2px 8px rgba(26, 30, 38, 0.06);
@@ -103,13 +100,9 @@
   --foreground: var(--color-ink-strong);
 }
 
-/* ─────────────────────────────────────────────
-   Body — 한글 가독성 글로벌 픽스
-     · word-break: keep-all (한글 단어 단위 줄바꿈)
-     · letter-spacing: 0 (본문 ls 0, 헤딩만 음수)
-     · line-height: 1.75 (한글 본문에 적정)
-     · 숫자는 tabular-nums (정렬 정확)
-   ───────────────────────────────────────────── */
+/* =============================================
+   Body — 한글 가독성
+   ============================================= */
 body {
   background: var(--background);
   color: var(--color-ink-muted);
@@ -119,32 +112,57 @@ body {
   line-height: 1.75;
   letter-spacing: 0;
   word-break: keep-all;
+  line-break: strict;
   overflow-wrap: anywhere;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-/* 숫자 통계 표시용 — tabular-nums 정렬 */
-.tabular {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";
-}
-
-/* 헤딩 — 컴포넌트 명시(text-white 등)가 항상 이기도록 :where (specificity 0) */
+/* 헤딩 — :where()로 specificity 0, 컴포넌트 utility class가 항상 이김 */
 :where(h1, h2, h3, h4) {
   color: var(--color-ink-strong);
   letter-spacing: var(--tracking-tight);
   line-height: 1.25;
   font-weight: 700;
+  word-break: keep-all;
+  line-break: strict;
 }
 
 :where(h1) {
   line-height: 1.15;
   letter-spacing: var(--tracking-tighter);
+  font-weight: 800;
 }
 
-/* Legacy alias */
+:where(p) {
+  line-height: 1.7;
+}
+
+/* =============================================
+   Utility — eyebrow, mono, tabular
+   ============================================= */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.font-mono-num {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum", "lnum";
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Legacy */
 .serif-em {
   color: var(--color-primary);
   font-weight: 700;

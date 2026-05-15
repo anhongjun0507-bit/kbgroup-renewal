@@ -18,13 +18,9 @@ export type BreadcrumbItem = {
 
 interface Props {
   kicker: string;
-  /** 한글 제목 (필수). 빈 문자열이면 page 자체 fallback이 들어가야 함 */
+  /** 한글 큰 제목 (필수). 비어 있으면 breadcrumb 마지막 라벨 fallback. */
   title: string;
-  /**
-   * 마지막 등장 위치의 1단어만 KB primary(남색) 강조.
-   * title 전체와 일치하는 경우 강조 무시 (전체 컬러화 방지).
-   * 비우면 강조 없음.
-   */
+  /** title의 마지막 등장 1단어만 KB primary 강조. title 전체와 일치 시 무시. */
   italicWord?: string;
   subtitle: string;
   breadcrumb: BreadcrumbItem[];
@@ -32,7 +28,6 @@ interface Props {
 
 function renderTitle(title: string, italicWord?: string) {
   if (!italicWord) return title;
-  // 전체와 일치하면 강조 안 함 (facility 케이스 방지)
   if (italicWord.trim() === title.trim()) return title;
   const idx = title.lastIndexOf(italicWord);
   if (idx === -1) return title;
@@ -73,8 +68,11 @@ export function PageHero({
     },
   };
 
-  // h1 fallback (title이 비어있는 경우 — CEO 페이지 버그 픽스)
-  const safeTitle = title?.trim() ? title : breadcrumb[breadcrumb.length - 1]?.label ?? "";
+  /** title이 빈 문자열일 때 breadcrumb 마지막 라벨로 fallback (CEO 페이지 h1 누락 픽스 C-1) */
+  const safeTitle =
+    title && title.trim().length > 0
+      ? title
+      : breadcrumb[breadcrumb.length - 1]?.label ?? "";
 
   return (
     <section
@@ -84,7 +82,7 @@ export function PageHero({
       <Container className="relative">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="mb-8 md:mb-10">
-          <ol className="flex flex-wrap items-center gap-2 text-[11px] font-medium tracking-[0.1em] text-ink-muted">
+          <ol className="flex flex-wrap items-center gap-2 text-[11px] tracking-[0.15em] text-ink-muted">
             {breadcrumb.map((bi, idx) => {
               const isLast = idx === breadcrumb.length - 1;
               return (
@@ -93,12 +91,12 @@ export function PageHero({
                     {bi.href && !isLast ? (
                       <Link
                         href={bi.href}
-                        className="uppercase transition-colors duration-200 hover:text-primary"
+                        className="uppercase font-medium transition-colors duration-200 hover:text-primary"
                       >
                         {bi.label}
                       </Link>
                     ) : (
-                      <span className="uppercase text-ink">{bi.label}</span>
+                      <span className="uppercase font-medium text-ink">{bi.label}</span>
                     )}
                   </li>
                   {!isLast && (
@@ -118,19 +116,24 @@ export function PageHero({
           variants={stagger}
           className="max-w-3xl"
         >
-          {/* eyebrow — Pretendard uppercase 회색 (italic 제거) */}
-          <motion.p
-            variants={item}
-            className="text-[12px] font-semibold uppercase tracking-[0.2em] text-ink-muted"
-          >
+          {/* eyebrow */}
+          <motion.p variants={item} className="eyebrow">
             {kicker}
           </motion.p>
 
+          {/* h1 — Pretendard 800 + 색상 강제 (P-1 픽스: 옅게 렌더 방지) */}
           <motion.h1
             id="page-hero-title"
             variants={item}
-            className="mt-5 font-extrabold leading-[1.18] tracking-[-0.025em] text-ink-strong"
-            style={{ fontSize: "clamp(1.875rem, 4vw, 3rem)" }}
+            className="mt-5"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(2rem, 5vw, 3.75rem)",
+              fontWeight: 800,
+              letterSpacing: "-0.03em",
+              lineHeight: 1.12,
+              color: "var(--color-ink-strong)",
+            }}
           >
             {renderTitle(safeTitle, italicWord)}
           </motion.h1>
