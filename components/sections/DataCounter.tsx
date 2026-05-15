@@ -11,7 +11,7 @@ export function DataCounter() {
   const shouldReduce = useReducedMotion() ?? false;
 
   const item: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 16 },
+    hidden: { opacity: 0, y: shouldReduce ? 0 : 12 },
     visible: {
       opacity: 1,
       y: 0,
@@ -20,7 +20,7 @@ export function DataCounter() {
   };
 
   return (
-    <section className="bg-white py-20 md:py-24 lg:py-28">
+    <section className="border-y border-line bg-white py-20 md:py-24">
       <Container>
         <motion.div
           initial="hidden"
@@ -28,32 +28,22 @@ export function DataCounter() {
           viewport={{ once: true, margin: "-80px" }}
           variants={{
             hidden: {},
-            visible: {
-              transition: {
-                staggerChildren: shouldReduce ? 0 : 0.08,
-              },
-            },
+            visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.06 } },
           }}
-          className="mx-auto mb-12 max-w-2xl text-center md:mb-16"
+          className="mb-14 max-w-2xl md:mb-16"
         >
-          <motion.div
+          <motion.p
             variants={item}
-            className="inline-flex items-center rounded-full bg-secondary-soft px-3.5 py-1.5 text-xs font-semibold text-secondary"
+            className="text-[13px] font-semibold tracking-wide text-ink-muted"
           >
             BY THE NUMBERS
-          </motion.div>
+          </motion.p>
           <motion.h2
             variants={item}
-            className="mt-4 text-3xl font-bold tracking-tight text-ink-strong md:text-[40px]"
+            className="mt-3 text-[32px] font-bold tracking-tight text-ink-strong md:text-[44px]"
           >
             숫자로 보는 케이비개발
           </motion.h2>
-          <motion.p
-            variants={item}
-            className="mt-4 text-base text-ink md:text-lg"
-          >
-            2014년 설립 이래 쌓아온 신뢰의 기록입니다.
-          </motion.p>
         </motion.div>
 
         <motion.div
@@ -62,24 +52,19 @@ export function DataCounter() {
           viewport={{ once: true, margin: "-80px" }}
           variants={{
             hidden: {},
-            visible: {
-              transition: { staggerChildren: shouldReduce ? 0 : 0.1 },
-            },
+            visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.08 } },
           }}
-          className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4"
+          className="grid grid-cols-2 gap-10 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-line"
         >
           {counters.map((c) => (
             <motion.div
               key={c.key}
               variants={item}
-              className="group rounded-2xl bg-bg-soft p-6 transition-colors duration-300 hover:bg-primary-soft md:p-8"
+              className="lg:px-10 first:lg:pl-0 last:lg:pr-0"
             >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-primary">
-                {c.caption}
-              </p>
-              <div className="mt-5 flex items-baseline gap-1">
+              <div className="flex items-baseline gap-1">
                 {shouldReduce ? (
-                  <span className="text-[40px] font-bold tracking-tight text-ink-strong md:text-5xl">
+                  <span className="text-[44px] font-bold tracking-tight text-ink-strong md:text-[56px]">
                     {c.value.toLocaleString()}
                   </span>
                 ) : (
@@ -89,7 +74,7 @@ export function DataCounter() {
                     separator=","
                     enableScrollSpy
                     scrollSpyOnce
-                    className="text-[40px] font-bold tracking-tight text-ink-strong md:text-5xl"
+                    className="text-[44px] font-bold tracking-tight text-ink-strong md:text-[56px]"
                   />
                 )}
                 {c.suffix && (
@@ -98,13 +83,11 @@ export function DataCounter() {
                   </span>
                 )}
               </div>
-              <p className="mt-4 text-sm font-semibold text-ink-strong md:text-base">
+              <p className="mt-4 text-sm font-semibold text-ink md:text-base">
                 {c.label}
               </p>
               {c.isPlaceholder && (
-                <p className="mt-1 text-[10px] font-medium text-ink-faint">
-                  * 추후 실측치 반영 예정
-                </p>
+                <p className="mt-1 text-[11px] text-ink-faint">* 추후 갱신</p>
               )}
             </motion.div>
           ))}

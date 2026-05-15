@@ -15,7 +15,7 @@ type NavChild = { label: string; href: string };
 type NavItem = { label: string; href: string; children?: NavChild[] };
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "왜 케이비개발", href: "/about" },
+  { label: "회사소개", href: "/about" },
   {
     label: "사업영역",
     href: "/business",
@@ -24,7 +24,7 @@ const NAV_ITEMS: NavItem[] = [
       href: `/business/${b.slug}`,
     })),
   },
-  { label: "실적", href: "/cases" },
+  { label: "관리현황", href: "/cases" },
   { label: "인허가", href: "/licenses" },
   { label: "채용", href: "/careers" },
   {
@@ -74,7 +74,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
       )}
     >
       <div className="mx-auto w-full max-w-[1200px] px-5 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between md:h-18">
+        <div className="flex h-20 items-center justify-between md:h-24">
           {/* Logo */}
           <Link
             href="/"
@@ -88,7 +88,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
               width={2117}
               height={743}
               priority
-              className="h-8 w-auto md:h-9"
+              className="h-11 w-auto md:h-14"
             />
           </Link>
 
@@ -205,7 +205,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
       {mobileOpen && (
         <div
           id="mobile-menu"
-          className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-white lg:hidden"
+          className="fixed inset-x-0 bottom-0 top-20 z-40 overflow-y-auto bg-white lg:hidden"
         >
           <nav
             className="mx-auto w-full max-w-7xl px-6 py-8"

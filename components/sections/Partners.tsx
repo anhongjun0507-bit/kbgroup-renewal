@@ -16,7 +16,7 @@ export function Partners() {
   const shouldReduce = useReducedMotion() ?? false;
 
   const item: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 12 },
+    hidden: { opacity: 0, y: shouldReduce ? 0 : 10 },
     visible: {
       opacity: 1,
       y: 0,
@@ -25,7 +25,7 @@ export function Partners() {
   };
 
   return (
-    <section className="bg-bg-soft py-20 md:py-24 lg:py-28">
+    <section className="bg-bg-soft py-24 md:py-28">
       <Container>
         <motion.div
           initial="hidden"
@@ -33,21 +33,19 @@ export function Partners() {
           viewport={{ once: true, margin: "-80px" }}
           variants={{
             hidden: {},
-            visible: {
-              transition: { staggerChildren: shouldReduce ? 0 : 0.08 },
-            },
+            visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.06 } },
           }}
-          className="mx-auto mb-12 max-w-2xl text-center md:mb-16"
+          className="mb-14 max-w-2xl md:mb-16"
         >
-          <motion.div
+          <motion.p
             variants={item}
-            className="inline-flex items-center rounded-full bg-secondary-soft px-3.5 py-1.5 text-xs font-semibold text-secondary"
+            className="text-[13px] font-semibold tracking-wide text-ink-muted"
           >
-            PARTNERS · 파트너사
-          </motion.div>
+            PARTNERS
+          </motion.p>
           <motion.h2
             variants={item}
-            className="mt-4 text-3xl font-bold tracking-tight text-ink-strong md:text-[40px]"
+            className="mt-3 text-[32px] font-bold tracking-tight text-ink-strong md:text-[44px]"
           >
             함께 신뢰를 쌓아온 파트너
           </motion.h2>
@@ -59,9 +57,7 @@ export function Partners() {
           viewport={{ once: true, margin: "-80px" }}
           variants={{
             hidden: {},
-            visible: {
-              transition: { staggerChildren: shouldReduce ? 0 : 0.05 },
-            },
+            visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.04 } },
           }}
           className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
         >
@@ -69,7 +65,7 @@ export function Partners() {
             <motion.div
               key={p.name}
               variants={item}
-              className="flex h-full flex-col justify-between rounded-xl border border-line/60 bg-white p-5"
+              className="flex h-full flex-col justify-between rounded-xl border border-line bg-white px-5 py-6 transition-colors hover:border-ink-strong/20"
             >
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">

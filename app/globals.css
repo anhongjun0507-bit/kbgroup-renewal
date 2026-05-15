@@ -3,29 +3,25 @@
 
 @theme {
   /* ─────────────────────────────────────────────
-     Brand — KB 로고 3색
+     Brand — KB 로고 3색 (액센트 dot 용도만)
      ───────────────────────────────────────────── */
-  --color-primary: #242366;          /* 남색 — 메인 (로고 오른쪽 지붕) */
-  --color-primary-hover: #1a1a4d;
-  --color-primary-soft: #f2f3fa;
-  --color-secondary: #05a44f;        /* 그린 — 서브 (로고 왼쪽 지붕) */
-  --color-secondary-hover: #048541;
-  --color-secondary-soft: #e8f7ef;
-  --color-accent: #ec294a;           /* 빨강 — 강조 (로고 가운데 지붕) */
-  --color-accent-hover: #d12342;
-  --color-accent-soft: #fdeef1;
+  --color-primary: #1e2a5e;          /* 남색 — 메인. 약간 더 차분 */
+  --color-primary-hover: #161e44;
+  --color-primary-soft: #f5f6fb;     /* 매우 옅은 톤 */
+  --color-secondary: #05a44f;        /* 그린 — dot 액센트 */
+  --color-accent: #ec294a;           /* 빨강 — dot 액센트 */
 
   /* ─────────────────────────────────────────────
-     Surface — 토스 톤
+     Surface — 모노톤 베이스
      ───────────────────────────────────────────── */
   --color-bg: #ffffff;
-  --color-bg-soft: #f7f8fa;          /* 섹션 분리 */
-  --color-bg-tinted: #f2f3fa;        /* primary-soft alias */
+  --color-bg-soft: #fafbfc;          /* 섹션 분리 (매우 옅음) */
+  --color-bg-tinted: #f5f6f7;
 
   /* ─────────────────────────────────────────────
-     Text — 토스 ink 시스템
+     Text — 토스/애플 ink 시스템
      ───────────────────────────────────────────── */
-  --color-ink-strong: #191f28;
+  --color-ink-strong: #0a0d12;       /* 더 진하게 — 다크 */
   --color-ink: #4e5968;
   --color-ink-muted: #8b95a1;
   --color-ink-faint: #b0b8c1;
@@ -33,7 +29,7 @@
   /* ─────────────────────────────────────────────
      Line
      ───────────────────────────────────────────── */
-  --color-line: #e5e8eb;
+  --color-line: #eaecef;
   --color-line-soft: #f2f4f6;
 
   /* ─────────────────────────────────────────────
@@ -43,45 +39,44 @@
   --color-danger: #f44336;
   --color-warning: #ffb400;
 
-  /* ─────────────────────────────────────────────
-     Legacy aliases — STEP 2-6 진행하며 점진 제거
-     기존 페이지 빌드 깨지지 않게 임시 유지
-     ───────────────────────────────────────────── */
+  /* Legacy aliases */
   --color-cream: #ffffff;
-  --color-beige: #f7f8fa;
+  --color-beige: #fafbfc;
   --color-gold: #ec294a;
   --color-ink-soft: #4e5968;
   --color-primary-light: #4e5968;
-  --color-primary-dark: #1a1a4d;
+  --color-primary-dark: #161e44;
+  --color-secondary-hover: #048541;
+  --color-secondary-soft: #f5f6fb;
+  --color-accent-hover: #d12342;
+  --color-accent-soft: #f5f6fb;
 
   /* ─────────────────────────────────────────────
-     Typography — Pretendard (Noto 전면 교체)
+     Typography — Apple SD Gothic Neo 우선 (Toss·Apple 톤)
+                  + Pretendard fallback for non-Apple
      ───────────────────────────────────────────── */
-  --font-sans: "Pretendard Variable", Pretendard, -apple-system,
-    BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI",
-    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
-  /* font-serif는 더 이상 사용하지 않지만 호환 위해 sans와 동일하게 유지 */
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+    "Pretendard Variable", Pretendard,
+    system-ui, Roboto, "Helvetica Neue", "Segoe UI",
+    "Noto Sans KR", "Malgun Gothic", sans-serif;
   --font-serif: var(--font-sans);
 
-  /* ─────────────────────────────────────────────
-     Radius — 모던 (현재는 모서리 0)
-     ───────────────────────────────────────────── */
-  --radius-xs: 0.25rem;   /* 4 */
-  --radius-sm: 0.5rem;    /* 8 */
-  --radius-md: 0.75rem;   /* 12 */
-  --radius-lg: 1rem;      /* 16 */
-  --radius-xl: 1.5rem;    /* 24 */
-  --radius-2xl: 2rem;     /* 32 */
-  --radius-3xl: 2.5rem;   /* 40 */
+  /* Radius */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
 
-  /* ─────────────────────────────────────────────
-     Shadow — 토스 절제 (xs/sm/md/lg)
-     ───────────────────────────────────────────── */
-  --shadow-xs: 0 1px 2px rgba(17, 24, 39, 0.04);
-  --shadow-sm: 0 2px 8px rgba(17, 24, 39, 0.06);
-  --shadow-md: 0 8px 24px rgba(17, 24, 39, 0.08);
-  --shadow-lg: 0 16px 40px rgba(17, 24, 39, 0.10);
-  --shadow-xl: 0 24px 56px rgba(17, 24, 39, 0.12);
+  /* Shadow — 더 절제 */
+  --shadow-xs: 0 1px 2px rgba(10, 13, 18, 0.04);
+  --shadow-sm: 0 1px 3px rgba(10, 13, 18, 0.04), 0 1px 2px rgba(10, 13, 18, 0.03);
+  --shadow-md: 0 4px 12px rgba(10, 13, 18, 0.06), 0 2px 4px rgba(10, 13, 18, 0.04);
+  --shadow-lg: 0 12px 32px rgba(10, 13, 18, 0.08);
+  --shadow-xl: 0 20px 48px rgba(10, 13, 18, 0.10);
 }
 
 :root {
@@ -93,16 +88,16 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  font-feature-settings: "ss10", "cv11", "cv01";
-  letter-spacing: -0.022em;
+  letter-spacing: -0.018em;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  word-break: keep-all;              /* 한국어 단어 단위 줄바꿈 */
+  word-break: keep-all;
 }
 
-/* Legacy: serif-em — 옛 호출부 호환용. STEP 2에서 사용처 제거 */
+/* Legacy alias */
 .serif-em {
   color: var(--color-primary);
-  font-weight: 800;
+  font-weight: 700;
   font-style: normal;
 }
