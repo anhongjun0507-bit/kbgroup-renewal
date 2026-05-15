@@ -1,186 +1,152 @@
 "use client";
 
-import Link from "next/link";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
-import { Container } from "@/components/ui";
-import { company } from "@/data/site-content";
+import { Container, Button } from "@/components/ui";
+import { company, yearsOfOperation } from "@/data/site-content";
 
-// 추후 props로 분리 예정 — 현재는 컴포넌트 내부 상수.
 const SLOGAN_LINE_1 = "신뢰가";
 const SLOGAN_LINE_2 = "자산이 됩니다";
 const SUBTITLE_LINE_1 = "대한민국 시설관리의 새로운 표준을 만들어갑니다.";
 const SUBTITLE_LINE_2 = "오랜 신뢰가 지금의 케이비개발을 만들었습니다.";
-const QUOTE = "공간을 책임진다는 것";
-const QUOTE_LABEL = "— 케이비개발의 약속";
+const QUOTE_LINE_1 = "공간을 책임진다는 약속,";
+const QUOTE_LINE_2 = "지금까지 그리고 앞으로도.";
 
-const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
 export function Hero() {
   const shouldReduce = useReducedMotion() ?? false;
 
-  const kicker = company.foundedYear
-    ? `TRUSTED FACILITY PARTNER · SINCE ${company.foundedYear}`
-    : "TRUSTED FACILITY PARTNER";
-
-  const containerVariants: Variants = {
+  const stagger: Variants = {
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: shouldReduce ? 0 : 0.15,
-        delayChildren: shouldReduce ? 0 : 0.1,
+        staggerChildren: shouldReduce ? 0 : 0.08,
+        delayChildren: shouldReduce ? 0 : 0.05,
       },
     },
   };
 
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 24 },
+  const item: Variants = {
+    hidden: { opacity: 0, y: shouldReduce ? 0 : 16 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        duration: shouldReduce ? 0 : 0.8,
-        ease: EASE_OUT_EXPO,
-      },
-    },
-  };
-
-  const imageVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: shouldReduce ? 0 : 1.4,
-        delay: shouldReduce ? 0 : 0.4,
-        ease: EASE_OUT_EXPO,
-      },
+      transition: { duration: shouldReduce ? 0 : 0.6, ease: EASE_OUT },
     },
   };
 
   return (
     <section
       aria-label="히어로"
-      className="relative flex items-center overflow-hidden bg-cream"
-      style={{ minHeight: "max(calc(100svh - 5rem), 720px)" }}
+      className="relative overflow-hidden bg-gradient-to-br from-bg-soft via-white to-primary-soft/40 pb-20 pt-24 md:pb-28 md:pt-32 lg:pb-36 lg:pt-36"
     >
-      <Container className="relative w-full py-20 md:py-24 lg:py-32">
-        <div className="grid grid-cols-1 gap-16 md:grid-cols-[3fr_2fr] md:gap-12 lg:grid-cols-2 lg:gap-20">
-          {/* LEFT — copy */}
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={containerVariants}
-          >
-            {/* Kicker */}
-            <motion.div variants={itemVariants} className="mb-8">
-              <div className="mb-6 h-px w-12 bg-primary" />
-              <div className="text-xs font-medium uppercase tracking-[0.35em] text-primary">
-                {kicker}
-              </div>
+      {/* 배경 도형 — KB 3색 라인 (장식) */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-32 -top-32 h-[500px] w-[500px] rounded-full bg-primary/[0.04] blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-32 -left-32 h-[400px] w-[400px] rounded-full bg-secondary/[0.04] blur-3xl"
+      />
+
+      <Container className="relative">
+        <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-20">
+          {/* LEFT — 카피 + CTA */}
+          <motion.div initial="hidden" animate="visible" variants={stagger}>
+            <motion.div
+              variants={item}
+              className="inline-flex items-center gap-2 rounded-full bg-primary-soft px-3.5 py-1.5 text-xs font-semibold text-primary"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+              SINCE {company.foundedYear} · 종합 시설관리 파트너
             </motion.div>
 
-            {/* Slogan */}
             <motion.h1
-              variants={itemVariants}
-              className="font-serif text-6xl font-bold leading-[0.95] tracking-[-0.03em] text-ink md:text-7xl lg:text-8xl xl:text-[120px]"
+              variants={item}
+              className="mt-6 text-[44px] font-bold leading-[1.05] tracking-[-0.03em] text-ink-strong md:text-[60px] lg:text-[76px]"
             >
               <span className="block">{SLOGAN_LINE_1}</span>
-              <span className="serif-em block">{SLOGAN_LINE_2}</span>
+              <span className="block text-primary">{SLOGAN_LINE_2}</span>
             </motion.h1>
 
-            {/* Gold divider */}
-            <motion.div
-              variants={itemVariants}
-              className="mb-8 mt-10 h-px w-16 bg-gold"
-              aria-hidden="true"
-            />
-
-            {/* Subtitle */}
             <motion.p
-              variants={itemVariants}
-              className="mb-12 max-w-md text-base leading-[1.85] text-ink-soft md:text-lg"
+              variants={item}
+              className="mt-6 max-w-md text-base leading-relaxed text-ink md:text-lg"
             >
               {SUBTITLE_LINE_1}
               <br />
               {SUBTITLE_LINE_2}
             </motion.p>
 
-            {/* CTAs */}
             <motion.div
-              variants={itemVariants}
-              className="flex items-center gap-8"
+              variants={item}
+              className="mt-10 flex flex-wrap items-center gap-3"
             >
-              <Link
-                href="/contact"
-                className="group inline-flex items-center gap-2 border-b border-ink pb-2 text-sm font-medium uppercase tracking-[0.2em] text-ink transition-colors duration-300 ease-out hover:border-primary hover:text-primary"
-              >
-                서비스 문의
-                <span
-                  aria-hidden="true"
-                  className="transition-transform duration-300 ease-out group-hover:translate-x-1"
-                >
-                  →
-                </span>
-              </Link>
-              <Link
-                href="/about/why"
-                className="text-sm tracking-wide text-ink-soft transition-colors duration-300 ease-out hover:text-ink"
-              >
+              <Button as="link" href="/about" variant="primary" size="lg">
                 회사 소개
-              </Link>
+                <span aria-hidden="true">→</span>
+              </Button>
+              <Button as="link" href="/business" variant="outline" size="lg">
+                사업영역 보기
+              </Button>
             </motion.div>
           </motion.div>
 
-          {/* RIGHT — image placeholder + floating quote */}
+          {/* RIGHT — 인용구 + KB 3색 + 핵심 지표 카드 */}
           <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={imageVariants}
+            initial={{ opacity: 0, y: shouldReduce ? 0 : 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: shouldReduce ? 0 : 0.8,
+              delay: shouldReduce ? 0 : 0.3,
+              ease: EASE_OUT,
+            }}
             className="relative"
           >
-            <div className="group/quote relative aspect-[3/4] overflow-hidden bg-beige">
-              <span className="absolute inset-0 flex items-center justify-center text-xs uppercase tracking-[0.3em] text-ink-muted">
-                Image · 추후 교체
-              </span>
-              <div className="absolute bottom-6 right-6 max-w-[85%] text-right opacity-90 transition-opacity duration-500 ease-out group-hover/quote:opacity-100">
-                <p className="font-serif text-2xl italic leading-tight text-ink md:text-3xl">
-                  &ldquo;{QUOTE}&rdquo;
-                </p>
-                <p className="mt-3 text-[11px] uppercase tracking-[0.3em] text-ink-soft">
-                  {QUOTE_LABEL}
-                </p>
+            <div className="rounded-3xl border border-line/60 bg-white p-8 shadow-md lg:p-10">
+              {/* 인용 */}
+              <p className="text-[22px] font-bold leading-[1.4] tracking-[-0.02em] text-ink-strong md:text-[26px]">
+                {QUOTE_LINE_1}
+                <br />
+                {QUOTE_LINE_2}
+              </p>
+              <p className="mt-4 text-sm font-medium text-ink-muted">
+                — 케이비개발의 약속
+              </p>
+
+              {/* KB 3색 라인 액센트 */}
+              <div className="mt-10 flex items-center gap-3" aria-hidden="true">
+                <span className="h-1.5 w-12 rounded-full bg-secondary" />
+                <span className="h-1.5 w-12 rounded-full bg-accent" />
+                <span className="h-1.5 w-12 rounded-full bg-primary" />
+              </div>
+
+              {/* 핵심 지표 */}
+              <div className="mt-10 grid grid-cols-2 gap-6 border-t border-line/70 pt-8">
+                <div>
+                  <p className="text-3xl font-bold tracking-tight text-ink-strong md:text-4xl">
+                    {yearsOfOperation}
+                    <span className="ml-1 text-xl text-ink">년</span>
+                  </p>
+                  <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">
+                    Years of Experience
+                  </p>
+                </div>
+                <div>
+                  <p className="text-3xl font-bold tracking-tight text-ink-strong md:text-4xl">
+                    11
+                    <span className="ml-1 text-xl text-ink">+</span>
+                  </p>
+                  <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">
+                    Licenses & Certs
+                  </p>
+                </div>
               </div>
             </div>
           </motion.div>
         </div>
       </Container>
-
-      {/* Scroll indicator (desktop only) */}
-      <motion.div
-        className="absolute bottom-12 left-6 hidden flex-col items-start gap-3 sm:left-8 lg:left-12 lg:flex"
-        initial={{ opacity: 0 }}
-        animate={
-          shouldReduce ? { opacity: 1 } : { opacity: 1, y: [0, 8, 0] }
-        }
-        transition={
-          shouldReduce
-            ? { opacity: { delay: 1.2, duration: 1 } }
-            : {
-                opacity: { delay: 1.2, duration: 1 },
-                y: {
-                  delay: 1.2,
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                },
-              }
-        }
-        aria-hidden="true"
-      >
-        <span className="block h-12 w-px bg-ink-soft/40" />
-        <span className="text-xs font-medium uppercase tracking-[0.3em] text-ink-soft">
-          Scroll
-        </span>
-      </motion.div>
     </section>
   );
 }

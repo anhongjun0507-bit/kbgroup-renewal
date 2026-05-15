@@ -1,6 +1,11 @@
 import { cn } from "@/lib/cn";
 
-type BadgeVariant = "primary" | "gold" | "neutral";
+type BadgeVariant =
+  | "primary"
+  | "secondary"
+  | "accent"
+  | "neutral"
+  | "gold";  // gold는 호환 alias (= accent)
 
 type BadgeProps = {
   children: React.ReactNode;
@@ -9,9 +14,11 @@ type BadgeProps = {
 };
 
 const VARIANT: Record<BadgeVariant, string> = {
-  primary: "bg-primary text-gold",
-  gold: "bg-gold text-primary",
-  neutral: "bg-beige text-ink-soft",
+  primary: "bg-primary-soft text-primary",
+  secondary: "bg-secondary-soft text-secondary",
+  accent: "bg-accent-soft text-accent",
+  gold: "bg-accent-soft text-accent",     // alias
+  neutral: "bg-bg-soft text-ink",
 };
 
 export function Badge({
@@ -22,7 +29,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-sm px-3 py-1 text-xs font-medium uppercase tracking-[0.2em]",
+        "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold",
         VARIANT[variant],
         className,
       )}

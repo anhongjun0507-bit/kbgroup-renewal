@@ -1,45 +1,108 @@
 @import "tailwindcss";
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css");
 
 @theme {
-  /* Brand colors */
-  --color-primary: #2d4435;
-  --color-primary-light: #4a6552;
-  --color-primary-dark: #1a2e22;
-  --color-gold: #c9b48a;
+  /* ─────────────────────────────────────────────
+     Brand — KB 로고 3색
+     ───────────────────────────────────────────── */
+  --color-primary: #242366;          /* 남색 — 메인 (로고 오른쪽 지붕) */
+  --color-primary-hover: #1a1a4d;
+  --color-primary-soft: #f2f3fa;
+  --color-secondary: #05a44f;        /* 그린 — 서브 (로고 왼쪽 지붕) */
+  --color-secondary-hover: #048541;
+  --color-secondary-soft: #e8f7ef;
+  --color-accent: #ec294a;           /* 빨강 — 강조 (로고 가운데 지붕) */
+  --color-accent-hover: #d12342;
+  --color-accent-soft: #fdeef1;
 
-  /* Surfaces */
-  --color-cream: #faf8f4;
-  --color-beige: #f5f1ea;
-  --color-line: #d8d4cb;
+  /* ─────────────────────────────────────────────
+     Surface — 토스 톤
+     ───────────────────────────────────────────── */
+  --color-bg: #ffffff;
+  --color-bg-soft: #f7f8fa;          /* 섹션 분리 */
+  --color-bg-tinted: #f2f3fa;        /* primary-soft alias */
 
-  /* Text */
-  --color-ink: #1a1a1a;
-  --color-ink-soft: #4a4a4a;
-  --color-ink-muted: #888888;
+  /* ─────────────────────────────────────────────
+     Text — 토스 ink 시스템
+     ───────────────────────────────────────────── */
+  --color-ink-strong: #191f28;
+  --color-ink: #4e5968;
+  --color-ink-muted: #8b95a1;
+  --color-ink-faint: #b0b8c1;
 
-  /* Typography */
-  --font-sans: var(--font-noto-sans-kr), ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-serif: var(--font-noto-serif-kr), ui-serif, Georgia, "Noto Serif",
-    "Times New Roman", serif;
+  /* ─────────────────────────────────────────────
+     Line
+     ───────────────────────────────────────────── */
+  --color-line: #e5e8eb;
+  --color-line-soft: #f2f4f6;
+
+  /* ─────────────────────────────────────────────
+     Status
+     ───────────────────────────────────────────── */
+  --color-success: #00b488;
+  --color-danger: #f44336;
+  --color-warning: #ffb400;
+
+  /* ─────────────────────────────────────────────
+     Legacy aliases — STEP 2-6 진행하며 점진 제거
+     기존 페이지 빌드 깨지지 않게 임시 유지
+     ───────────────────────────────────────────── */
+  --color-cream: #ffffff;
+  --color-beige: #f7f8fa;
+  --color-gold: #ec294a;
+  --color-ink-soft: #4e5968;
+  --color-primary-light: #4e5968;
+  --color-primary-dark: #1a1a4d;
+
+  /* ─────────────────────────────────────────────
+     Typography — Pretendard (Noto 전면 교체)
+     ───────────────────────────────────────────── */
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI",
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  /* font-serif는 더 이상 사용하지 않지만 호환 위해 sans와 동일하게 유지 */
+  --font-serif: var(--font-sans);
+
+  /* ─────────────────────────────────────────────
+     Radius — 모던 (현재는 모서리 0)
+     ───────────────────────────────────────────── */
+  --radius-xs: 0.25rem;   /* 4 */
+  --radius-sm: 0.5rem;    /* 8 */
+  --radius-md: 0.75rem;   /* 12 */
+  --radius-lg: 1rem;      /* 16 */
+  --radius-xl: 1.5rem;    /* 24 */
+  --radius-2xl: 2rem;     /* 32 */
+  --radius-3xl: 2.5rem;   /* 40 */
+
+  /* ─────────────────────────────────────────────
+     Shadow — 토스 절제 (xs/sm/md/lg)
+     ───────────────────────────────────────────── */
+  --shadow-xs: 0 1px 2px rgba(17, 24, 39, 0.04);
+  --shadow-sm: 0 2px 8px rgba(17, 24, 39, 0.06);
+  --shadow-md: 0 8px 24px rgba(17, 24, 39, 0.08);
+  --shadow-lg: 0 16px 40px rgba(17, 24, 39, 0.10);
+  --shadow-xl: 0 24px 56px rgba(17, 24, 39, 0.12);
 }
 
 :root {
-  --background: var(--color-cream);
-  --foreground: var(--color-ink);
+  --background: var(--color-bg);
+  --foreground: var(--color-ink-strong);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  font-feature-settings: "ss10", "cv11", "cv01";
+  letter-spacing: -0.022em;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  word-break: keep-all;              /* 한국어 단어 단위 줄바꿈 */
 }
 
-/* Serif emphasis helper — 제목 italic 강조용 */
+/* Legacy: serif-em — 옛 호출부 호환용. STEP 2에서 사용처 제거 */
 .serif-em {
-  font-family: var(--font-serif);
-  font-style: italic;
   color: var(--color-primary);
+  font-weight: 800;
+  font-style: normal;
 }

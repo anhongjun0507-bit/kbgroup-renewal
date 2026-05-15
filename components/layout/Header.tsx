@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -68,27 +69,32 @@ export function Header({ isAuthed = false }: HeaderProps) {
       className={cn(
         "sticky top-0 z-50 transition-all duration-300 ease-out",
         scrolled
-          ? "bg-cream/95 backdrop-blur-md border-b border-line/40"
-          : "bg-transparent border-b border-transparent",
+          ? "bg-white/95 backdrop-blur-md border-b border-line/60"
+          : "bg-white/80 backdrop-blur-sm border-b border-transparent",
       )}
     >
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-12">
-        <div className="flex h-20 items-center justify-between">
+      <div className="mx-auto w-full max-w-[1200px] px-5 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between md:h-18">
           {/* Logo */}
           <Link
             href="/"
-            aria-label="KB GROUP 메인으로"
+            aria-label="(주)케이비개발 KB GROUP 메인으로"
             className="flex-shrink-0"
             onClick={closeMobile}
           >
-            <span className="inline-block bg-primary px-3 py-2 font-serif text-sm font-bold uppercase tracking-[0.15em] text-white">
-              KB GROUP
-            </span>
+            <Image
+              src="/logo.png"
+              alt="(주)케이비개발 KB DEVELOPMENT"
+              width={2117}
+              height={743}
+              priority
+              className="h-8 w-auto md:h-9"
+            />
           </Link>
 
           {/* Desktop nav */}
           <nav
-            className="hidden items-center gap-10 lg:flex"
+            className="hidden items-center gap-8 lg:flex"
             aria-label="주 메뉴"
           >
             {NAV_ITEMS.map((item) => {
@@ -107,19 +113,18 @@ export function Header({ isAuthed = false }: HeaderProps) {
                     href={item.href}
                     aria-haspopup={hasChildren || undefined}
                     aria-expanded={hasChildren ? isOpen : undefined}
-                    className="group relative inline-flex items-center py-2 text-sm font-medium tracking-wide text-ink transition-colors duration-200 hover:text-primary"
+                    className="inline-flex items-center py-2 text-[15px] font-semibold text-ink-strong transition-colors duration-200 hover:text-primary"
                   >
                     {item.label}
-                    <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-primary transition-all duration-300 group-hover:w-full" />
                   </Link>
                   {hasChildren && isOpen && (
-                    <div className="absolute left-1/2 top-full -translate-x-1/2 pt-4">
-                      <div className="min-w-[200px] border border-line/60 bg-white py-2 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)]">
+                    <div className="absolute left-1/2 top-full -translate-x-1/2 pt-3">
+                      <div className="min-w-[200px] rounded-xl border border-line/60 bg-white py-2 shadow-md">
                         {item.children!.map((child) => (
                           <Link
                             key={child.href}
                             href={child.href}
-                            className="block px-5 py-2.5 text-sm text-ink-soft transition-colors duration-200 hover:bg-cream hover:text-primary"
+                            className="block px-4 py-2.5 text-sm font-medium text-ink transition-colors duration-200 hover:bg-bg-soft hover:text-primary"
                           >
                             {child.label}
                           </Link>
@@ -139,14 +144,14 @@ export function Header({ isAuthed = false }: HeaderProps) {
                 <>
                   <Link
                     href="/mypage"
-                    className="text-sm font-medium text-ink transition-colors duration-200 hover:text-primary"
+                    className="text-[15px] font-semibold text-ink-strong transition-colors duration-200 hover:text-primary"
                   >
                     마이페이지
                   </Link>
                   <form action="/auth/logout" method="POST">
                     <button
                       type="submit"
-                      className="border border-line px-5 py-2.5 text-sm font-medium text-ink-soft transition-colors duration-300 hover:border-ink hover:text-ink"
+                      className="rounded-md border border-line bg-white px-4 py-2 text-sm font-semibold text-ink transition-all duration-200 hover:border-primary hover:text-primary"
                     >
                       로그아웃
                     </button>
@@ -200,7 +205,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
       {mobileOpen && (
         <div
           id="mobile-menu"
-          className="fixed inset-x-0 bottom-0 top-20 z-40 overflow-y-auto bg-cream lg:hidden"
+          className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-white lg:hidden"
         >
           <nav
             className="mx-auto w-full max-w-7xl px-6 py-8"
@@ -210,7 +215,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
               const hasChildren = !!item.children?.length;
               const expanded = mobileExpand === item.href;
               return (
-                <div key={item.href} className="border-b border-line/40">
+                <div key={item.href} className="border-b border-line/60">
                   {hasChildren ? (
                     <>
                       <button
@@ -219,7 +224,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
                         onClick={() =>
                           setMobileExpand(expanded ? null : item.href)
                         }
-                        className="flex w-full items-center justify-between py-5 text-left text-lg font-medium text-ink"
+                        className="flex w-full items-center justify-between py-5 text-left text-lg font-semibold text-ink-strong"
                       >
                         {item.label}
                         <span
@@ -246,13 +251,13 @@ export function Header({ isAuthed = false }: HeaderProps) {
                         </span>
                       </button>
                       {expanded && (
-                        <div className="space-y-4 pb-5 pl-4">
+                        <div className="space-y-3 pb-5 pl-3">
                           {item.children!.map((child) => (
                             <Link
                               key={child.href}
                               href={child.href}
                               onClick={closeMobile}
-                              className="block text-base text-ink-soft transition-colors hover:text-primary"
+                              className="block text-base font-medium text-ink transition-colors hover:text-primary"
                             >
                               {child.label}
                             </Link>
@@ -264,7 +269,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
                     <Link
                       href={item.href}
                       onClick={closeMobile}
-                      className="block py-5 text-lg font-medium text-ink transition-colors hover:text-primary"
+                      className="block py-5 text-lg font-semibold text-ink-strong transition-colors hover:text-primary"
                     >
                       {item.label}
                     </Link>

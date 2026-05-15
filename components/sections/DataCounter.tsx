@@ -1,151 +1,115 @@
 "use client";
 
-import { useRef } from "react";
-import {
-  motion,
-  useInView,
-  useReducedMotion,
-  type Variants,
-} from "framer-motion";
 import CountUp from "react-countup";
-import { Container, Heading } from "@/components/ui";
-import { counters, type Counter } from "@/data/site-content";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { Container } from "@/components/ui";
+import { counters } from "@/data/site-content";
 
-const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
-
-const SECTION_TITLE = "축적된 신뢰의 기록";
-const SECTION_ITALIC = "기록";
-const SECTION_SUBTITLE = "2014년 설립 이래 케이비개발이 축적해온 성과입니다.";
-const FOOTNOTE = "* 표시 수치는 2026년 5월 기준입니다.";
+const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
 export function DataCounter() {
   const shouldReduce = useReducedMotion() ?? false;
-  const gridRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(gridRef, { once: true, amount: 0.3 });
 
-  const headerVariants: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 24 },
+  const item: Variants = {
+    hidden: { opacity: 0, y: shouldReduce ? 0 : 16 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        duration: shouldReduce ? 0 : 0.8,
-        ease: EASE_OUT_EXPO,
-      },
+      transition: { duration: shouldReduce ? 0 : 0.5, ease: EASE_OUT },
     },
   };
 
   return (
-    <section
-      aria-labelledby="counter-heading"
-      className="bg-cream py-32 md:py-40"
-    >
+    <section className="bg-white py-20 md:py-24 lg:py-28">
       <Container>
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.4 }}
-          variants={headerVariants}
+          viewport={{ once: true, margin: "-80px" }}
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: shouldReduce ? 0 : 0.08,
+              },
+            },
+          }}
+          className="mx-auto mb-12 max-w-2xl text-center md:mb-16"
         >
-          <Heading
-            kicker="BY THE NUMBERS"
-            title={SECTION_TITLE}
-            italicWord={SECTION_ITALIC}
-            subtitle={SECTION_SUBTITLE}
-            align="center"
-            size="md"
-            as="h2"
-            className="mb-24"
-          />
+          <motion.div
+            variants={item}
+            className="inline-flex items-center rounded-full bg-secondary-soft px-3.5 py-1.5 text-xs font-semibold text-secondary"
+          >
+            BY THE NUMBERS
+          </motion.div>
+          <motion.h2
+            variants={item}
+            className="mt-4 text-3xl font-bold tracking-tight text-ink-strong md:text-[40px]"
+          >
+            숫자로 보는 케이비개발
+          </motion.h2>
+          <motion.p
+            variants={item}
+            className="mt-4 text-base text-ink md:text-lg"
+          >
+            2014년 설립 이래 쌓아온 신뢰의 기록입니다.
+          </motion.p>
         </motion.div>
 
-        <div
-          ref={gridRef}
-          className="mx-auto grid max-w-6xl grid-cols-2 gap-12 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-line/30"
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={{
+            hidden: {},
+            visible: {
+              transition: { staggerChildren: shouldReduce ? 0 : 0.1 },
+            },
+          }}
+          className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4"
         >
-          {counters.map((counter, index) => (
-            <CounterColumn
-              key={counter.key}
-              counter={counter}
-              index={index}
-              inView={inView}
-              shouldReduce={shouldReduce}
-            />
+          {counters.map((c) => (
+            <motion.div
+              key={c.key}
+              variants={item}
+              className="group rounded-2xl bg-bg-soft p-6 transition-colors duration-300 hover:bg-primary-soft md:p-8"
+            >
+              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-primary">
+                {c.caption}
+              </p>
+              <div className="mt-5 flex items-baseline gap-1">
+                {shouldReduce ? (
+                  <span className="text-[40px] font-bold tracking-tight text-ink-strong md:text-5xl">
+                    {c.value.toLocaleString()}
+                  </span>
+                ) : (
+                  <CountUp
+                    end={c.value}
+                    duration={2}
+                    separator=","
+                    enableScrollSpy
+                    scrollSpyOnce
+                    className="text-[40px] font-bold tracking-tight text-ink-strong md:text-5xl"
+                  />
+                )}
+                {c.suffix && (
+                  <span className="text-2xl font-bold text-ink-strong md:text-3xl">
+                    {c.suffix}
+                  </span>
+                )}
+              </div>
+              <p className="mt-4 text-sm font-semibold text-ink-strong md:text-base">
+                {c.label}
+              </p>
+              {c.isPlaceholder && (
+                <p className="mt-1 text-[10px] font-medium text-ink-faint">
+                  * 추후 실측치 반영 예정
+                </p>
+              )}
+            </motion.div>
           ))}
-        </div>
-
-        <div className="mt-24 text-center">
-          <div className="mx-auto mb-8 h-px w-12 bg-gold" aria-hidden="true" />
-          <p className="text-xs text-ink-muted">{FOOTNOTE}</p>
-        </div>
+        </motion.div>
       </Container>
-
-      {/* aria-labelledby 타겟용 — Heading 컴포넌트가 자체적으로 id를 잡지 않으므로 */}
-      <span id="counter-heading" className="sr-only">
-        {SECTION_TITLE}
-      </span>
     </section>
-  );
-}
-
-function CounterColumn({
-  counter,
-  index,
-  inView,
-  shouldReduce,
-}: {
-  counter: Counter;
-  index: number;
-  inView: boolean;
-  shouldReduce: boolean;
-}) {
-  const { value, suffix, label, caption } = counter;
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: shouldReduce ? 0 : 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : undefined}
-      transition={{
-        duration: shouldReduce ? 0 : 0.7,
-        delay: shouldReduce ? 0 : index * 0.15,
-        ease: EASE_OUT_EXPO,
-      }}
-      whileHover={
-        shouldReduce
-          ? undefined
-          : { y: -4, transition: { duration: 0.5, ease: "easeOut" } }
-      }
-      className="px-8 text-center"
-    >
-      <div className="flex items-start justify-center font-serif font-bold leading-none tracking-[-0.03em] text-ink">
-        <span className="text-6xl md:text-7xl lg:text-[88px]">
-          {shouldReduce ? (
-            value.toLocaleString("en-US")
-          ) : inView ? (
-            <CountUp
-              end={value}
-              duration={2.5}
-              delay={index * 0.15}
-              separator=","
-            />
-          ) : (
-            "0"
-          )}
-        </span>
-        {suffix && (
-          <span
-            aria-hidden="true"
-            className="-translate-y-2 ml-1 inline-block text-4xl text-primary"
-          >
-            {suffix}
-          </span>
-        )}
-      </div>
-      <div className="mt-6 text-base font-medium leading-relaxed text-ink">
-        {label}
-      </div>
-      <div className="mt-2 text-[10px] font-medium uppercase tracking-[0.25em] text-ink-muted">
-        {caption}
-      </div>
-    </motion.div>
   );
 }

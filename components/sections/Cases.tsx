@@ -1,179 +1,125 @@
 "use client";
 
 import Link from "next/link";
-import {
-  motion,
-  useReducedMotion,
-  type Variants,
-} from "framer-motion";
-import { Container, Heading } from "@/components/ui";
-import { complexes, type Complex } from "@/data/site-content";
-import { cn } from "@/lib/cn";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { Container, Button } from "@/components/ui";
+import { complexes } from "@/data/site-content";
 
-const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
-
-const SECTION_TITLE = "관리하는 공간들";
-const SECTION_ITALIC = "공간들";
-const SECTION_SUBTITLE =
-  "케이비개발이 함께하는 단지들 — 신뢰의 일상이 흐르는 곳입니다.";
-const CATEGORY_LABEL = "FACILITY MANAGEMENT · 시설관리";
-
-const FEATURED = complexes.slice(0, 3);
+const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
 export function Cases() {
   const shouldReduce = useReducedMotion() ?? false;
 
-  const headerVariants: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 24 },
+  const item: Variants = {
+    hidden: { opacity: 0, y: shouldReduce ? 0 : 16 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: shouldReduce ? 0 : 0.8, ease: EASE_OUT_EXPO },
+      transition: { duration: shouldReduce ? 0 : 0.5, ease: EASE_OUT },
     },
   };
 
+  const featured = complexes.slice(0, 8);
+
   return (
-    <section
-      aria-labelledby="cases-heading"
-      className="bg-cream py-32 md:py-40"
-    >
+    <section className="bg-white py-20 md:py-24 lg:py-32">
       <Container>
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.4 }}
-          variants={headerVariants}
-          className="mb-20 flex flex-col gap-8 md:flex-row md:items-end md:justify-between"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={{
+            hidden: {},
+            visible: {
+              transition: { staggerChildren: shouldReduce ? 0 : 0.08 },
+            },
+          }}
+          className="mb-12 flex flex-col items-start gap-6 md:mb-16 md:flex-row md:items-end md:justify-between"
         >
-          <Heading
-            kicker="OUR PORTFOLIO"
-            title={SECTION_TITLE}
-            italicWord={SECTION_ITALIC}
-            subtitle={SECTION_SUBTITLE}
-            align="left"
-            size="md"
-            as="h2"
-          />
-          <Link
-            href="/cases"
-            className="group hidden items-center gap-2 self-end text-sm font-medium uppercase tracking-[0.2em] text-ink-soft transition-colors duration-300 ease-out hover:text-ink md:inline-flex"
-          >
-            View All Cases
-            <span
-              aria-hidden="true"
-              className="inline-block transition-transform duration-300 ease-out group-hover:translate-x-1"
+          <div>
+            <motion.div
+              variants={item}
+              className="inline-flex items-center rounded-full bg-accent-soft px-3.5 py-1.5 text-xs font-semibold text-accent"
             >
-              →
-            </span>
-          </Link>
+              CASES · 관리 단지
+            </motion.div>
+            <motion.h2
+              variants={item}
+              className="mt-4 text-3xl font-bold tracking-tight text-ink-strong md:text-[40px]"
+            >
+              전국 단지에서<br className="hidden md:block" />
+              <span className="text-primary"> 함께해온 발자취</span>
+            </motion.h2>
+          </div>
+          <motion.div variants={item} className="hidden md:block">
+            <Button as="link" href="/cases" variant="ghost" size="md">
+              실적 전체 보기 <span aria-hidden="true">→</span>
+            </Button>
+          </motion.div>
         </motion.div>
 
-        {/* Asymmetric gallery */}
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-6">
-          <CaseCard
-            complex={FEATURED[0]}
-            index={0}
-            variant="big"
-            shouldReduce={shouldReduce}
-            className="lg:col-span-7"
-          />
-          <div className="grid grid-cols-1 gap-12 lg:col-span-5 lg:gap-6">
-            <CaseCard
-              complex={FEATURED[1]}
-              index={1}
-              variant="small"
-              shouldReduce={shouldReduce}
-            />
-            <CaseCard
-              complex={FEATURED[2]}
-              index={2}
-              variant="small"
-              shouldReduce={shouldReduce}
-            />
-          </div>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={{
+            hidden: {},
+            visible: {
+              transition: { staggerChildren: shouldReduce ? 0 : 0.05 },
+            },
+          }}
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          {featured.map((c, idx) => (
+            <motion.article
+              key={`${c.name}-${idx}`}
+              variants={item}
+              className="group overflow-hidden rounded-2xl border border-line/70 bg-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+            >
+              {/* 이미지 placeholder — 추후 단지 사진 교체 */}
+              <div
+                className={`relative aspect-[4/3] overflow-hidden ${
+                  c.type === "LH"
+                    ? "bg-gradient-to-br from-primary/10 via-primary-soft to-secondary/5"
+                    : "bg-gradient-to-br from-bg-soft via-secondary-soft to-bg-tinted"
+                }`}
+              >
+                {c.type === "LH" && (
+                  <span className="absolute right-3 top-3 inline-flex items-center rounded-md bg-primary px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                    LH
+                  </span>
+                )}
+                <span className="absolute inset-0 flex items-center justify-center text-xs text-ink-faint">
+                  Image · 추후 교체
+                </span>
+              </div>
+
+              <div className="p-5">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-muted">
+                  {c.region}
+                </p>
+                <h3 className="mt-2 line-clamp-2 min-h-[3rem] text-base font-bold leading-snug tracking-tight text-ink-strong">
+                  {c.name}
+                </h3>
+                {c.client && (
+                  <p className="mt-2 truncate text-xs font-medium text-ink">
+                    {c.client}
+                  </p>
+                )}
+              </div>
+            </motion.article>
+          ))}
+        </motion.div>
+
+        <div className="mt-10 text-center md:hidden">
+          <Link
+            href="/cases"
+            className="inline-flex items-center gap-1 text-sm font-semibold text-primary"
+          >
+            실적 전체 보기 <span aria-hidden="true">→</span>
+          </Link>
         </div>
       </Container>
-
-      <span id="cases-heading" className="sr-only">
-        {SECTION_TITLE}
-      </span>
     </section>
-  );
-}
-
-function CaseCard({
-  complex,
-  index,
-  variant,
-  shouldReduce,
-  className,
-}: {
-  complex: Complex;
-  index: number;
-  variant: "big" | "small";
-  shouldReduce: boolean;
-  className?: string;
-}) {
-  const isBig = variant === "big";
-  const num = String(index + 1).padStart(2, "0");
-  const typeLabel = complex.type ? `${complex.type} 발주` : null;
-  const meta = [complex.region, typeLabel].filter(Boolean).join(" · ");
-
-  return (
-    <motion.article
-      initial={{ opacity: 0, y: shouldReduce ? 0 : 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{
-        duration: shouldReduce ? 0 : 0.8,
-        delay: shouldReduce ? 0 : index * 0.15,
-        ease: EASE_OUT_EXPO,
-      }}
-      className={cn("group", className)}
-    >
-      <Link href="/cases" className="block">
-        {/* Image area */}
-        <div
-          className={cn(
-            "relative overflow-hidden bg-gradient-to-br from-beige to-line/40",
-            isBig ? "aspect-[4/5]" : "aspect-[4/3]",
-          )}
-        >
-          {/* Scaling inner — placeholder text scales together */}
-          <div
-            className={cn(
-              "absolute inset-0 ease-out",
-              shouldReduce
-                ? ""
-                : "transition-transform duration-700 group-hover:scale-[1.03]",
-            )}
-          >
-            <span className="absolute inset-0 flex items-center justify-center px-10 text-center font-serif italic text-ink-muted text-lg md:text-xl">
-              {complex.name}
-            </span>
-          </div>
-          {/* Index badge — does NOT scale */}
-          <span
-            aria-hidden="true"
-            className="absolute right-6 top-6 font-serif text-2xl italic text-primary md:text-3xl"
-          >
-            {num}
-          </span>
-        </div>
-
-        {/* Text below image */}
-        <div className="mt-6">
-          <p className="text-xs font-medium uppercase tracking-[0.25em] text-ink-muted">
-            {CATEGORY_LABEL}
-          </p>
-          <h3 className="mt-3 font-serif text-xl font-bold leading-tight tracking-[-0.02em] text-ink transition-colors duration-300 group-hover:text-primary md:text-2xl">
-            {complex.name}
-          </h3>
-          {meta && (
-            <p className="mt-2 text-sm text-ink-soft">{meta}</p>
-          )}
-        </div>
-      </Link>
-    </motion.article>
   );
 }

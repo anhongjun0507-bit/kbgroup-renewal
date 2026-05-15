@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 
-type ButtonVariant = "primary" | "outline" | "ghost";
+type ButtonVariant = "primary" | "secondary" | "outline" | "ghost";
 type ButtonSize = "sm" | "md" | "lg";
 
 type CommonProps = {
@@ -30,20 +30,23 @@ export type ButtonProps = ButtonAsButton | ButtonAsLink;
 
 const VARIANT: Record<ButtonVariant, string> = {
   primary:
-    "bg-primary text-white hover:bg-primary-dark hover:-translate-y-0.5",
+    "bg-primary text-white hover:bg-primary-hover shadow-sm hover:shadow-md",
+  secondary:
+    "bg-primary-soft text-primary hover:bg-primary/10",
   outline:
-    "border border-primary text-primary hover:bg-primary hover:text-white hover:-translate-y-0.5",
-  ghost: "text-primary hover:bg-primary/5",
+    "bg-white border border-line text-ink-strong hover:border-primary hover:text-primary",
+  ghost:
+    "bg-transparent text-ink hover:bg-bg-soft",
 };
 
 const SIZE: Record<ButtonSize, string> = {
-  sm: "px-5 py-2.5 text-sm",
-  md: "px-7 py-3.5 text-base",
-  lg: "px-9 py-4 text-lg",
+  sm: "h-9 px-4 text-sm rounded-md",
+  md: "h-12 px-6 text-[15px] rounded-lg",
+  lg: "h-14 px-8 text-base rounded-xl",
 };
 
 const BASE =
-  "group inline-flex items-center justify-center gap-2 font-medium tracking-[0.02em] transition-all duration-300 ease-out disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200 ease-out disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap";
 
 export function Button(props: ButtonProps) {
   const { variant = "primary", size = "md", className, children } = props;

@@ -7,6 +7,7 @@ type HeadingTag = "h1" | "h2" | "h3";
 type HeadingProps = {
   kicker?: string;
   title: React.ReactNode;
+  /** title이 string이고 이 단어를 포함하면 primary 컬러로 강조 (serif 사용 X) */
   italicWord?: string;
   subtitle?: string;
   align?: HeadingAlign;
@@ -16,16 +17,20 @@ type HeadingProps = {
 };
 
 const TITLE_SIZE: Record<HeadingSize, string> = {
-  sm: "text-3xl md:text-4xl",
-  md: "text-4xl md:text-5xl lg:text-6xl",
-  lg: "text-5xl md:text-6xl lg:text-7xl",
-  xl: "text-6xl md:text-7xl lg:text-8xl",
+  sm: "text-[22px] md:text-[26px]",
+  md: "text-[28px] md:text-[36px] lg:text-[42px]",
+  lg: "text-[34px] md:text-[44px] lg:text-[54px]",
+  xl: "text-[42px] md:text-[56px] lg:text-[68px]",
 };
 
-/**
- * title이 문자열이고 italicWord가 그 안에 있으면 첫 일치 부분만
- * serif italic + primary 컬러로 강조. title이 ReactNode면 그대로 렌더.
- */
+const SUBTITLE_SIZE: Record<HeadingSize, string> = {
+  sm: "text-sm md:text-base",
+  md: "text-base md:text-lg",
+  lg: "text-base md:text-lg lg:text-xl",
+  xl: "text-lg md:text-xl",
+};
+
+/** italicWord를 만나면 primary 컬러로 색 강조 (이탤릭 X — 모던 톤) */
 function renderTitle(title: React.ReactNode, italicWord?: string) {
   if (typeof title !== "string" || !italicWord) return title;
   const idx = title.indexOf(italicWord);
@@ -33,7 +38,7 @@ function renderTitle(title: React.ReactNode, italicWord?: string) {
   return (
     <>
       {title.slice(0, idx)}
-      <em className="serif-em">{italicWord}</em>
+      <span className="text-primary">{italicWord}</span>
       {title.slice(idx + italicWord.length)}
     </>
   );
@@ -53,21 +58,19 @@ export function Heading({
   return (
     <div className={cn(isCenter ? "text-center" : "text-left", className)}>
       {kicker && (
-        <div>
-          <div
-            aria-hidden="true"
-            className={cn("h-px w-12 bg-primary", isCenter && "mx-auto")}
-          />
-          <div className="mt-4 text-xs sm:text-sm font-medium uppercase tracking-[0.3em] text-primary">
-            {kicker}
-          </div>
+        <div
+          className={cn(
+            "inline-flex items-center gap-2 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary",
+          )}
+        >
+          {kicker}
         </div>
       )}
       <Tag
         className={cn(
-          "font-serif font-bold leading-[1.1] tracking-[-0.02em] text-ink",
+          "font-bold leading-[1.2] tracking-[-0.025em] text-ink-strong",
           TITLE_SIZE[size],
-          kicker && "mt-6",
+          kicker && "mt-4",
         )}
       >
         {renderTitle(title, italicWord)}
@@ -75,7 +78,8 @@ export function Heading({
       {subtitle && (
         <p
           className={cn(
-            "mt-6 max-w-xl text-base leading-relaxed text-ink-soft",
+            "mt-4 max-w-2xl leading-relaxed text-ink",
+            SUBTITLE_SIZE[size],
             isCenter && "mx-auto",
           )}
         >

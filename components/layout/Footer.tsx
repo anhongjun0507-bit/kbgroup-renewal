@@ -3,32 +3,38 @@ import { Container } from "@/components/ui";
 import { company, contact } from "@/data/site-content";
 
 const SITEMAP = [
-  { label: "왜 케이비개발", href: "/about/why" },
+  { label: "회사소개", href: "/about" },
   { label: "사업영역", href: "/business" },
-  { label: "실적", href: "/cases" },
-  { label: "인허가", href: "/licenses" },
+  { label: "관리현황", href: "/cases" },
+  { label: "인허가·인증", href: "/licenses" },
   { label: "채용", href: "/careers" },
-  { label: "소식", href: "/notices" },
 ];
 
 const COL_LABEL =
-  "text-xs font-medium uppercase tracking-[0.3em] text-gold mb-6";
+  "text-[11px] font-semibold uppercase tracking-[0.2em] text-white/60 mb-5";
 const LINK_BASE =
-  "text-sm leading-relaxed text-white/60 transition-colors duration-200 hover:text-white";
+  "text-sm leading-relaxed text-white/70 transition-colors duration-200 hover:text-white";
 
 export function Footer() {
   return (
-    <footer className="bg-ink text-white">
-      <Container as="div" className="pt-24 pb-12">
+    <footer className="bg-ink-strong text-white">
+      <Container as="div" className="pt-20 pb-10 md:pt-24">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-3 lg:gap-16">
           {/* KB GROUP intro */}
           <div>
-            <h3 className={COL_LABEL}>KB GROUP</h3>
-            <p className="max-w-sm text-sm leading-relaxed text-white/60">
-              {company.tagline}로서 주택관리·위생청소·경비보안·시행건설을 아우르는
-              종합 시설관리 서비스를 제공합니다.
+            <div className="flex items-center gap-2">
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-secondary" />
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-accent" />
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-white" />
+            </div>
+            <h3 className="mt-4 text-xl font-bold tracking-tight text-white">
+              (주)케이비개발
+            </h3>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/70">
+              {company.tagline}로서 주택관리·위생청소·경비보안·시행건설을
+              아우르는 종합 시설관리 서비스를 제공합니다.
             </p>
-            <p className="mt-6 text-sm leading-relaxed text-white/60">
+            <p className="mt-5 text-sm leading-relaxed text-white/60">
               {contact.address}
             </p>
           </div>
@@ -73,21 +79,12 @@ export function Footer() {
                   {contact.email}
                 </a>
               </li>
-              <li className="flex items-baseline gap-3">
-                <span className="w-12 shrink-0 text-xs uppercase tracking-[0.2em] text-white/40">
-                  KAKAO
-                </span>
-                <span className="text-white/40">준비 중</span>
-              </li>
               <li className="pt-3">
                 <Link
                   href="/login"
-                  className="group inline-flex items-center gap-2 border-b border-white/20 pb-0.5 text-sm text-white/80 transition-colors duration-200 hover:border-white hover:text-white"
+                  className="inline-flex items-center gap-1 rounded-md border border-white/20 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-white/80 transition-all duration-200 hover:border-white hover:bg-white/10 hover:text-white"
                 >
-                  LOGIN
-                  <span className="transition-transform duration-300 ease-out group-hover:translate-x-1">
-                    →
-                  </span>
+                  LOGIN <span aria-hidden="true">→</span>
                 </Link>
               </li>
             </ul>
@@ -95,8 +92,8 @@ export function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="mt-20 border-t border-white/10 pt-8">
-          <div className="flex flex-col gap-4 text-xs text-white/40 md:flex-row md:items-center md:justify-between">
+        <div className="mt-16 border-t border-white/10 pt-8">
+          <div className="flex flex-col gap-3 text-xs text-white/50 md:flex-row md:items-center md:justify-between">
             <div className="space-y-1">
               <p>
                 {company.legalName} · 대표 {company.ceo} · 사업자등록번호{" "}
@@ -107,7 +104,7 @@ export function Footer() {
                 {contact.privacyOfficer.phone})
               </p>
             </div>
-            <p>
+            <p className="font-medium">
               © {new Date().getFullYear()} {company.brandName}. All rights
               reserved.
             </p>

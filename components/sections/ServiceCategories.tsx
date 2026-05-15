@@ -1,152 +1,135 @@
 "use client";
 
 import Link from "next/link";
-import {
-  motion,
-  useReducedMotion,
-  type Variants,
-} from "framer-motion";
-import { Container, Heading } from "@/components/ui";
-import { businessAreas, type BusinessArea } from "@/data/site-content";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { Container } from "@/components/ui";
+import { businessAreas, type BusinessCategory } from "@/data/site-content";
 
-const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
-const SECTION_TITLE = "다섯 가지 사업 영역";
-const SECTION_ITALIC = "영역";
-const SIDE_TEXT = "5 Specialized Fields";
+/** 각 사업영역의 액센트 컬러 — KB 3색 순환 */
+const CATEGORY_ACCENT: Record<BusinessCategory, string> = {
+  facility: "bg-primary",
+  sanitation: "bg-secondary",
+  security: "bg-accent",
+  development: "bg-primary",
+  other: "bg-secondary",
+};
 
 export function ServiceCategories() {
   const shouldReduce = useReducedMotion() ?? false;
 
-  const headerVariants: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 24 },
+  const item: Variants = {
+    hidden: { opacity: 0, y: shouldReduce ? 0 : 16 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        duration: shouldReduce ? 0 : 0.8,
-        ease: EASE_OUT_EXPO,
-      },
+      transition: { duration: shouldReduce ? 0 : 0.5, ease: EASE_OUT },
     },
   };
 
   return (
-    <section
-      aria-labelledby="services-heading"
-      className="bg-beige py-32 md:py-40"
-    >
+    <section className="bg-bg-soft py-20 md:py-24 lg:py-32">
       <Container>
-        {/* Header row */}
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.4 }}
-          variants={headerVariants}
-          className="mb-24 flex flex-col gap-8 md:flex-row md:items-end md:justify-between"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={{
+            hidden: {},
+            visible: {
+              transition: { staggerChildren: shouldReduce ? 0 : 0.08 },
+            },
+          }}
+          className="mb-12 flex flex-col items-start gap-6 md:mb-16 md:flex-row md:items-end md:justify-between"
         >
-          <Heading
-            kicker="OUR SERVICES"
-            title={SECTION_TITLE}
-            italicWord={SECTION_ITALIC}
-            align="left"
-            size="md"
-            as="h2"
-          />
-          <p className="hidden font-serif text-xl italic text-ink-muted md:block">
-            {SIDE_TEXT}
-          </p>
+          <div>
+            <motion.div
+              variants={item}
+              className="inline-flex items-center rounded-full bg-primary-soft px-3.5 py-1.5 text-xs font-semibold text-primary"
+            >
+              SERVICES · 사업영역
+            </motion.div>
+            <motion.h2
+              variants={item}
+              className="mt-4 text-3xl font-bold tracking-tight text-ink-strong md:text-[40px]"
+            >
+              한 회사가 책임지는<br className="hidden md:block" />
+              <span className="text-primary"> 종합 시설관리</span>
+            </motion.h2>
+          </div>
+          <motion.p
+            variants={item}
+            className="max-w-md text-base text-ink md:text-lg"
+          >
+            시설관리부터 위생청소·경비보안·시행건설까지, 단지 운영에 필요한
+            모든 서비스를 한 곳에서 제공합니다.
+          </motion.p>
         </motion.div>
 
-        {/* Category list */}
-        <ul className="border-b border-line">
-          {businessAreas.map((area, index) => (
-            <CategoryItem
-              key={area.id}
-              area={area}
-              index={index}
-              shouldReduce={shouldReduce}
-            />
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={{
+            hidden: {},
+            visible: {
+              transition: { staggerChildren: shouldReduce ? 0 : 0.08 },
+            },
+          }}
+          className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
+        >
+          {businessAreas.map((area) => (
+            <motion.article key={area.id} variants={item}>
+              <Link
+                href={`/business/${area.slug}`}
+                className="group flex h-full flex-col rounded-2xl border border-line/70 bg-white p-7 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md md:p-8"
+              >
+                <div className="flex items-center gap-2">
+                  <span
+                    aria-hidden="true"
+                    className={`h-2 w-2 rounded-full ${CATEGORY_ACCENT[area.id]}`}
+                  />
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-ink-muted">
+                    {area.englishName}
+                  </span>
+                </div>
+
+                <h3 className="mt-4 text-2xl font-bold tracking-tight text-ink-strong">
+                  {area.name}
+                </h3>
+                <p className="mt-2 text-[15px] font-medium leading-snug text-ink">
+                  {area.tagline}
+                </p>
+                <p className="mt-4 text-sm leading-relaxed text-ink">
+                  {area.summary}
+                </p>
+
+                <div className="mt-6 flex flex-wrap gap-1.5">
+                  {area.subBusinesses.slice(0, 3).map((sub) => (
+                    <span
+                      key={sub}
+                      className="rounded-md bg-bg-soft px-2.5 py-1 text-xs font-medium text-ink"
+                    >
+                      {sub}
+                    </span>
+                  ))}
+                  {area.subBusinesses.length > 3 && (
+                    <span className="rounded-md bg-bg-soft px-2.5 py-1 text-xs font-medium text-ink-muted">
+                      +{area.subBusinesses.length - 3}
+                    </span>
+                  )}
+                </div>
+
+                <div className="mt-auto inline-flex items-center gap-1 pt-6 text-sm font-semibold text-primary transition-transform duration-300 group-hover:translate-x-0.5">
+                  자세히 보기
+                  <span aria-hidden="true">→</span>
+                </div>
+              </Link>
+            </motion.article>
           ))}
-        </ul>
+        </motion.div>
       </Container>
-
-      <span id="services-heading" className="sr-only">
-        {SECTION_TITLE}
-      </span>
     </section>
-  );
-}
-
-function CategoryItem({
-  area,
-  index,
-  shouldReduce,
-}: {
-  area: BusinessArea;
-  index: number;
-  shouldReduce: boolean;
-}) {
-  const num = String(index + 1).padStart(2, "0");
-  return (
-    <motion.li
-      initial={{ opacity: 0, y: shouldReduce ? 0 : 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{
-        duration: shouldReduce ? 0 : 0.7,
-        delay: shouldReduce ? 0 : index * 0.1,
-        ease: EASE_OUT_EXPO,
-      }}
-      className="group border-t border-line transition-colors duration-500 ease-out hover:bg-cream"
-    >
-      <Link
-        href={`/business/${area.slug}`}
-        className="grid grid-cols-12 items-start gap-6 py-12 lg:gap-12 lg:py-16"
-      >
-        {/* Number */}
-        <div className="col-span-2 lg:col-span-1">
-          <span
-            aria-hidden="true"
-            className="block font-serif text-3xl font-medium italic leading-none text-primary transition-transform duration-500 ease-out group-hover:translate-x-1 lg:text-4xl"
-          >
-            {num}
-          </span>
-        </div>
-
-        {/* Content */}
-        <div className="col-span-7 lg:col-span-6">
-          <h3 className="font-serif text-2xl font-bold leading-tight tracking-[-0.02em] text-ink transition-colors duration-300 group-hover:text-primary md:text-3xl lg:text-4xl">
-            {area.name}
-          </h3>
-          <p className="mt-2 text-xs font-medium uppercase tracking-[0.25em] text-ink-muted">
-            {area.englishName}
-          </p>
-          <p className="mt-4 max-w-xl text-sm leading-[1.75] text-ink-soft md:text-base">
-            {area.summary}
-          </p>
-        </div>
-
-        {/* Action */}
-        <div className="col-span-3 flex items-center justify-end lg:col-span-5">
-          {/* Desktop: VIEW DETAIL + arrow */}
-          <span className="hidden items-center gap-3 text-xs font-medium uppercase tracking-[0.25em] text-ink-muted transition-colors duration-300 group-hover:text-primary lg:inline-flex">
-            View Detail
-            <span
-              aria-hidden="true"
-              className="inline-block transition-transform duration-300 ease-out group-hover:translate-x-2"
-            >
-              →
-            </span>
-          </span>
-          {/* Mobile: arrow only */}
-          <span
-            aria-hidden="true"
-            className="inline-block text-2xl text-ink-muted transition-all duration-300 ease-out group-hover:translate-x-2 group-hover:text-primary lg:hidden"
-          >
-            →
-          </span>
-        </div>
-      </Link>
-    </motion.li>
   );
 }
