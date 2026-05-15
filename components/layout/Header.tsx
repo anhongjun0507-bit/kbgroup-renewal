@@ -70,8 +70,8 @@ export function Header({ isAuthed = false }: HeaderProps) {
         scrolled ? "border-b border-line shadow-sm" : "border-b border-line/0",
       )}
     >
-      <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-12">
-        <div className="flex h-[72px] items-center justify-between md:h-[90px]">
+      <div className="mx-auto w-full max-w-[1320px] px-6 sm:px-8 lg:px-10">
+        <div className="flex h-[72px] items-center justify-between md:h-[76px]">
           {/* Logo */}
           <Link
             href="/"
@@ -85,13 +85,13 @@ export function Header({ isAuthed = false }: HeaderProps) {
               width={2117}
               height={743}
               priority
-              className="h-10 w-auto md:h-12"
+              className="h-9 w-auto md:h-10"
             />
           </Link>
 
           {/* Desktop nav */}
           <nav
-            className="hidden items-center gap-10 lg:flex"
+            className="hidden items-center gap-9 lg:flex"
             aria-label="주 메뉴"
           >
             {NAV_ITEMS.map((item) => {
@@ -110,7 +110,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
                     href={item.href}
                     aria-haspopup={hasChildren || undefined}
                     aria-expanded={hasChildren ? isOpen : undefined}
-                    className="inline-flex items-center py-3 text-[15px] font-medium text-ink-strong transition-colors duration-200 hover:text-primary"
+                    className="inline-flex items-center py-3 text-[14px] font-medium text-ink-strong transition-colors duration-200 hover:text-accent"
                   >
                     {item.label}
                   </Link>
@@ -189,7 +189,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
       {mobileOpen && (
         <div
           id="mobile-menu"
-          className="fixed inset-x-0 bottom-0 top-[72px] z-40 overflow-y-auto bg-white lg:hidden"
+          className="fixed inset-x-0 bottom-0 top-[72px] z-40 overflow-y-auto bg-white md:top-[76px] lg:hidden"
         >
           <nav
             className="mx-auto w-full max-w-[1400px] px-5 py-8"

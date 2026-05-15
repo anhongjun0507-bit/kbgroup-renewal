@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost";
+type ButtonVariant = "primary" | "secondary" | "accent" | "outline" | "ghost";
 type ButtonSize = "sm" | "md" | "lg";
 
 type CommonProps = {
@@ -28,16 +28,18 @@ type ButtonAsLink = CommonProps & {
 
 export type ButtonProps = ButtonAsButton | ButtonAsLink;
 
-/* 삼양 톤: 직각 모서리, hover에 색 전환만 */
+/* NAI 톤 — 직각 + 빨강 단색 CTA + 검정 outline */
 const VARIANT: Record<ButtonVariant, string> = {
   primary:
-    "bg-ink-strong text-white hover:bg-primary",
+    "bg-ink-strong text-white hover:bg-[#000]",
   secondary:
     "bg-secondary text-white hover:bg-[#048541]",
+  accent:
+    "bg-accent text-white hover:bg-[#d12342]",
   outline:
     "bg-white border border-ink-strong text-ink-strong hover:bg-ink-strong hover:text-white",
   ghost:
-    "bg-transparent text-ink-strong hover:text-primary",
+    "bg-transparent text-ink-strong hover:text-accent",
 };
 
 const SIZE: Record<ButtonSize, string> = {
@@ -47,7 +49,7 @@ const SIZE: Record<ButtonSize, string> = {
 };
 
 const BASE =
-  "inline-flex items-center justify-center gap-2 font-medium tracking-tight transition-all duration-300 ease-out disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap";
+  "inline-flex items-center justify-center gap-2 font-bold tracking-tight transition-all duration-300 ease-out disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap";
 
 export function Button(props: ButtonProps) {
   const { variant = "primary", size = "md", className, children } = props;

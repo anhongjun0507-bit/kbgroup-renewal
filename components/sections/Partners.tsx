@@ -39,13 +39,13 @@ export function Partners() {
         >
           <motion.p
             variants={item}
-            className="text-[13px] font-medium tracking-wide text-ink"
+            className="font-display text-[18px] italic leading-none text-accent md:text-[20px]"
           >
-            PARTNERS
+            Our Clients
           </motion.p>
           <motion.h2
             variants={item}
-            className="mt-4 text-[32px] font-bold tracking-[-0.03em] text-ink-strong md:text-[48px]"
+            className="mt-4 text-[32px] font-bold tracking-[-0.022em] text-ink-strong md:text-[44px]"
           >
             함께 신뢰를 쌓아온 파트너
           </motion.h2>
@@ -59,19 +59,15 @@ export function Partners() {
             hidden: {},
             visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.04 } },
           }}
-          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
+          className="grid grid-cols-2 gap-px bg-line sm:grid-cols-3 lg:grid-cols-4"
         >
-          {partners.map((p, idx) => (
+          {partners.map((p) => (
             <motion.div
               key={p.name}
               variants={item}
-              className="flex h-32 flex-col justify-between border border-line bg-white p-6 transition-colors duration-300 hover:border-ink-strong"
-              style={{
-                marginLeft: idx > 0 && idx % 2 !== 0 ? "-1px" : 0,
-                marginTop: idx >= 2 ? "-1px" : 0,
-              }}
+              className="group flex h-32 flex-col justify-between bg-white p-6 transition-colors duration-300 hover:bg-bg-soft"
             >
-              <p className="text-[10px] font-medium uppercase tracking-wide text-ink-muted">
+              <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-ink-muted transition-colors group-hover:text-accent">
                 {CATEGORY_LABEL[p.category]}
               </p>
               <p className="text-[15px] font-bold tracking-[-0.02em] text-ink-strong">

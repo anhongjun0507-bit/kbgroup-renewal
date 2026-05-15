@@ -20,7 +20,7 @@ export function DataCounter() {
   };
 
   return (
-    <section className="border-y border-line bg-white py-24 md:py-32">
+    <section className="bg-white py-24 md:py-32">
       <Container>
         <motion.div
           initial="hidden"
@@ -34,16 +34,22 @@ export function DataCounter() {
         >
           <motion.p
             variants={item}
-            className="text-[13px] font-medium tracking-wide text-ink"
+            className="font-display text-[18px] italic leading-none text-accent md:text-[20px]"
           >
-            BY THE NUMBERS
+            By the Numbers
           </motion.p>
           <motion.h2
             variants={item}
-            className="mt-4 text-[32px] font-bold tracking-[-0.03em] text-ink-strong md:text-[48px]"
+            className="mt-4 text-[32px] font-bold tracking-[-0.022em] text-ink-strong md:text-[44px]"
           >
             숫자로 보는 케이비개발
           </motion.h2>
+          <motion.p
+            variants={item}
+            className="mt-5 max-w-xl text-base leading-relaxed text-ink"
+          >
+            2014년 설립 이래 축적해온 운영 성과입니다.
+          </motion.p>
         </motion.div>
 
         <motion.div
@@ -54,17 +60,21 @@ export function DataCounter() {
             hidden: {},
             visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.1 } },
           }}
-          className="grid grid-cols-2 gap-12 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-line"
+          className="grid grid-cols-2 gap-x-6 gap-y-14 md:grid-cols-4 md:gap-x-10"
         >
           {counters.map((c) => (
-            <motion.div
-              key={c.key}
-              variants={item}
-              className="lg:px-12 first:lg:pl-0 last:lg:pr-0"
-            >
-              <div className="flex items-baseline gap-1">
+            <motion.div key={c.key} variants={item} className="pl-5">
+              {/* 빨강 가는 라인 — NAI 통계 박스 패턴 */}
+              <div
+                aria-hidden="true"
+                className="-ml-5 mb-5 h-[2px] w-10 bg-accent"
+              />
+              <p className="font-display text-[11px] italic tracking-widest text-accent">
+                {c.caption}
+              </p>
+              <div className="mt-3 flex items-baseline gap-1">
                 {shouldReduce ? (
-                  <span className="text-[52px] font-bold tracking-[-0.04em] text-ink-strong md:text-[64px]">
+                  <span className="text-[56px] font-bold leading-none tracking-[-0.03em] text-accent md:text-[64px]">
                     {c.value.toLocaleString()}
                   </span>
                 ) : (
@@ -73,26 +83,22 @@ export function DataCounter() {
                     duration={1.8}
                     separator=","
                     easingFn={(t, b, c, d) => {
-                      // easeOutCubic
                       const tn = t / d - 1;
                       return c * (tn * tn * tn + 1) + b;
                     }}
                     enableScrollSpy
                     scrollSpyOnce
-                    className="text-[52px] font-bold tracking-[-0.04em] text-ink-strong md:text-[64px]"
+                    className="text-[56px] font-bold leading-none tracking-[-0.03em] text-accent md:text-[64px]"
                   />
                 )}
                 {c.suffix && (
-                  <span className="text-3xl font-bold text-ink-faint md:text-4xl">
+                  <span className="text-3xl font-bold text-accent/60 md:text-4xl">
                     {c.suffix}
                   </span>
                 )}
               </div>
-              <p className="mt-5 text-base font-medium text-ink-strong">
+              <p className="mt-5 text-[15px] font-semibold text-ink-strong">
                 {c.label}
-              </p>
-              <p className="mt-1 text-xs text-ink">
-                {c.caption}
               </p>
             </motion.div>
           ))}

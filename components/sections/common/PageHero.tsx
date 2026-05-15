@@ -13,23 +13,18 @@ const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
 export type BreadcrumbItem = {
   label: string;
-  /** 비우면 현재 페이지 텍스트 only */
   href?: string;
 };
 
 interface Props {
   kicker: string;
   title: string;
-  /**
-   * 강조 규칙: title 내부의 마지막 1단어만 primary 컬러로 강조.
-   * 단어 단위(공백 split)로 정확히 일치해야 함. 없으면 강조 없음.
-   */
+  /** 마지막 등장 위치의 1단어만 primary 강조 (NAI 영문 라벨 패턴 흡수) */
   italicWord?: string;
   subtitle: string;
   breadcrumb: BreadcrumbItem[];
 }
 
-/** italicWord가 title의 마지막 등장 위치에 있을 때 primary 컬러로 강조 */
 function renderTitle(title: string, italicWord?: string) {
   if (!italicWord) return title;
   const idx = title.lastIndexOf(italicWord);
@@ -37,7 +32,7 @@ function renderTitle(title: string, italicWord?: string) {
   return (
     <>
       {title.slice(0, idx)}
-      <span className="text-primary">{italicWord}</span>
+      <span className="text-accent">{italicWord}</span>
       {title.slice(idx + italicWord.length)}
     </>
   );
@@ -74,12 +69,26 @@ export function PageHero({
   return (
     <section
       aria-labelledby="page-hero-title"
-      className="bg-bg-soft pb-16 pt-20 md:pb-20 md:pt-28 lg:pb-24 lg:pt-32"
+      className="relative overflow-hidden bg-bg-soft pb-16 pt-20 md:pb-24 md:pt-28 lg:pb-28 lg:pt-32"
     >
-      <Container>
+      {/* 우측 그래픽 — 빨강 가는 세로선 + 90도 회전 영문 (빈 공간 채움) */}
+      <div
+        aria-hidden="true"
+        className="absolute right-8 top-1/2 hidden -translate-y-1/2 lg:flex lg:flex-col lg:items-center lg:gap-6"
+      >
+        <span className="h-32 w-[2px] bg-accent" />
+        <span
+          className="font-display text-[14px] italic tracking-[0.3em] text-accent/70"
+          style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+        >
+          {kicker}
+        </span>
+      </div>
+
+      <Container className="relative">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="mb-10 md:mb-14">
-          <ol className="flex flex-wrap items-center gap-2 text-[11px] font-medium tracking-[0.12em] text-ink-muted">
+          <ol className="flex flex-wrap items-center gap-2 text-[11px] font-medium tracking-[0.1em] text-ink-muted">
             {breadcrumb.map((item, idx) => {
               const isLast = idx === breadcrumb.length - 1;
               return (
@@ -88,7 +97,7 @@ export function PageHero({
                     {item.href && !isLast ? (
                       <Link
                         href={item.href}
-                        className="uppercase transition-colors duration-200 hover:text-primary"
+                        className="uppercase transition-colors duration-200 hover:text-accent"
                       >
                         {item.label}
                       </Link>
@@ -111,11 +120,12 @@ export function PageHero({
           initial="hidden"
           animate="visible"
           variants={stagger}
-          className="max-w-4xl"
+          className="max-w-3xl"
         >
+          {/* Playfair italic eyebrow — KB 빨강 */}
           <motion.p
             variants={item}
-            className="text-[13px] font-medium tracking-wide text-ink-muted"
+            className="font-display text-[20px] italic leading-none text-accent md:text-[22px]"
           >
             {kicker}
           </motion.p>
@@ -123,14 +133,22 @@ export function PageHero({
           <motion.h1
             id="page-hero-title"
             variants={item}
-            className="mt-5 text-[36px] font-bold leading-[1.12] tracking-[-0.035em] text-ink-strong md:text-[56px] lg:text-[68px]"
+            className="mt-5 font-bold leading-[1.12] tracking-[-0.022em] text-ink-strong"
+            style={{ fontSize: "clamp(2rem, 4.5vw, 3.75rem)" }}
           >
             {renderTitle(title, italicWord)}
           </motion.h1>
 
+          {/* 빨강 가는 라인 */}
+          <motion.div
+            variants={item}
+            aria-hidden="true"
+            className="mt-8 h-[2px] w-10 bg-accent"
+          />
+
           <motion.p
             variants={item}
-            className="mt-8 max-w-2xl text-base leading-[1.7] text-ink md:text-lg"
+            className="mt-7 max-w-2xl text-base leading-[1.85] text-ink md:text-lg"
           >
             {subtitle}
           </motion.p>
