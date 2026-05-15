@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { LicensesHero } from "@/components/sections/licenses/LicensesHero";
+import { PageHero } from "@/components/sections/common/PageHero";
 import { WorkforceStats } from "@/components/sections/licenses/WorkforceStats";
 import { LicensesOverview } from "@/components/sections/licenses/LicensesOverview";
 import { LicensesGrid } from "@/components/sections/licenses/LicensesGrid";
@@ -15,7 +15,16 @@ export const metadata: Metadata = {
 export default function LicensesPage() {
   return (
     <>
-      <LicensesHero />
+      <PageHero
+        kicker="LICENSES & CERTIFICATIONS"
+        title="검증된 자격, 보장된 신뢰"
+        italicWord="신뢰"
+        subtitle="11종의 보유 인허가와 1,575명의 자격증 보유 전문 인력이 케이비개발의 기술 자산입니다."
+        breadcrumb={[
+          { label: "HOME", href: "/" },
+          { label: "LICENSES" },
+        ]}
+      />
       <WorkforceStats />
       <LicensesOverview />
       <LicensesGrid />

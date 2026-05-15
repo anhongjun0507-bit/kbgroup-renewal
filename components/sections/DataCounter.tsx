@@ -34,7 +34,7 @@ export function DataCounter() {
         >
           <motion.p
             variants={item}
-            className="text-[13px] font-medium tracking-wide text-ink-muted"
+            className="text-[13px] font-medium tracking-wide text-ink"
           >
             BY THE NUMBERS
           </motion.p>
@@ -70,15 +70,20 @@ export function DataCounter() {
                 ) : (
                   <CountUp
                     end={c.value}
-                    duration={2.5}
+                    duration={1.8}
                     separator=","
+                    easingFn={(t, b, c, d) => {
+                      // easeOutCubic
+                      const tn = t / d - 1;
+                      return c * (tn * tn * tn + 1) + b;
+                    }}
                     enableScrollSpy
                     scrollSpyOnce
                     className="text-[52px] font-bold tracking-[-0.04em] text-ink-strong md:text-[64px]"
                   />
                 )}
                 {c.suffix && (
-                  <span className="text-3xl font-bold text-ink-strong md:text-4xl">
+                  <span className="text-3xl font-bold text-ink-faint md:text-4xl">
                     {c.suffix}
                   </span>
                 )}
@@ -86,7 +91,7 @@ export function DataCounter() {
               <p className="mt-5 text-base font-medium text-ink-strong">
                 {c.label}
               </p>
-              <p className="mt-1 text-xs text-ink-muted">
+              <p className="mt-1 text-xs text-ink">
                 {c.caption}
               </p>
             </motion.div>

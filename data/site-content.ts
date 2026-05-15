@@ -215,7 +215,7 @@ export const counters: Counter[] = [
 export const businessAreas: BusinessArea[] = [
   {
     id: "facility",
-    slug: "facility-management",
+    slug: "facility",
     name: "시설관리",
     englishName: "FACILITY MANAGEMENT",
     tagline: "회계·시설·인사·민원, 단지 운영의 모든 것",

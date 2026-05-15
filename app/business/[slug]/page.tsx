@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { businessAreas, complexes } from "@/data/site-content";
-import { BusinessHero } from "@/components/sections/business/BusinessHero";
+import { PageHero } from "@/components/sections/common/PageHero";
 import { BusinessOverview } from "@/components/sections/business/BusinessOverview";
 import { BusinessSubServices } from "@/components/sections/business/BusinessSubServices";
 import { BusinessProcess } from "@/components/sections/business/BusinessProcess";
@@ -40,12 +40,21 @@ export default async function BusinessDetailPage({
   if (areaIndex === -1) notFound();
   const area = businessAreas[areaIndex];
 
-  // TODO: 단지마다 category 매핑 들어오면 area 기준 필터링으로 교체.
   const relatedComplexes = complexes.slice(0, 3);
 
   return (
     <>
-      <BusinessHero area={area} index={areaIndex} />
+      <PageHero
+        kicker={area.englishName}
+        title={area.name}
+        italicWord={area.name}
+        subtitle={area.tagline}
+        breadcrumb={[
+          { label: "HOME", href: "/" },
+          { label: "BUSINESS", href: "/business" },
+          { label: area.englishName },
+        ]}
+      />
       <BusinessOverview area={area} />
       <BusinessSubServices area={area} />
       <BusinessProcess />

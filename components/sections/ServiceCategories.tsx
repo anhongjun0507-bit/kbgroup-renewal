@@ -34,7 +34,7 @@ export function ServiceCategories() {
         >
           <motion.p
             variants={item}
-            className="text-[13px] font-medium tracking-wide text-ink-muted"
+            className="text-[13px] font-medium tracking-wide text-ink"
           >
             BUSINESS
           </motion.p>
@@ -61,7 +61,7 @@ export function ServiceCategories() {
             hidden: {},
             visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.06 } },
           }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5"
         >
           {businessAreas.map((area, idx) => (
             <motion.article
@@ -69,29 +69,30 @@ export function ServiceCategories() {
               variants={item}
               className="border border-line bg-white"
               style={{
-                marginLeft: idx > 0 ? "-1px" : 0,
-                marginTop: idx >= 3 ? "-1px" : 0,
+                marginLeft:
+                  idx > 0 && idx % 5 !== 0 ? "-1px" : 0,
+                marginTop: 0,
               }}
             >
               <Link
                 href={`/business/${area.slug}`}
-                className="group flex h-full flex-col p-8 transition-colors duration-300 hover:bg-bg-soft lg:p-10"
+                className="group flex h-full flex-col p-7 transition-colors duration-300 hover:bg-bg-soft lg:p-8"
               >
                 <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-ink-muted">
-                  0{idx + 1} · {area.englishName}
+                  0{idx + 1}
                 </p>
-                <h3 className="mt-5 text-2xl font-bold tracking-[-0.03em] text-ink-strong md:text-[26px]">
+                <h3 className="mt-4 text-xl font-bold tracking-[-0.03em] text-ink-strong lg:text-[22px]">
                   {area.name}
                 </h3>
-                <p className="mt-2 text-[15px] leading-snug text-ink">
-                  {area.tagline}
+                <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-ink-muted">
+                  {area.englishName}
                 </p>
-                <p className="mt-5 text-sm leading-relaxed text-ink-muted">
-                  {area.summary}
+                <p className="mt-5 text-[13px] leading-relaxed text-ink lg:text-sm">
+                  {area.tagline}
                 </p>
 
                 <div className="mt-auto pt-8">
-                  <span className="inline-flex items-center gap-2 text-[13px] font-medium text-ink-strong transition-all duration-300 group-hover:text-primary">
+                  <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-ink-strong transition-all duration-300 group-hover:text-primary">
                     자세히 보기
                     <span
                       aria-hidden="true"
