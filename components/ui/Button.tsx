@@ -28,25 +28,26 @@ type ButtonAsLink = CommonProps & {
 
 export type ButtonProps = ButtonAsButton | ButtonAsLink;
 
+/* 삼양 톤: 직각 모서리, hover에 색 전환만 */
 const VARIANT: Record<ButtonVariant, string> = {
   primary:
-    "bg-primary text-white hover:bg-primary-hover shadow-sm hover:shadow-md",
+    "bg-ink-strong text-white hover:bg-primary",
   secondary:
-    "bg-primary-soft text-primary hover:bg-primary/10",
+    "bg-secondary text-white hover:bg-[#048541]",
   outline:
-    "bg-white border border-line text-ink-strong hover:border-primary hover:text-primary",
+    "bg-white border border-ink-strong text-ink-strong hover:bg-ink-strong hover:text-white",
   ghost:
-    "bg-transparent text-ink hover:bg-bg-soft",
+    "bg-transparent text-ink-strong hover:text-primary",
 };
 
 const SIZE: Record<ButtonSize, string> = {
-  sm: "h-9 px-4 text-sm rounded-md",
-  md: "h-12 px-6 text-[15px] rounded-lg",
-  lg: "h-14 px-8 text-base rounded-xl",
+  sm: "h-10 px-5 text-sm",
+  md: "h-12 px-7 text-[15px]",
+  lg: "h-14 px-9 text-base",
 };
 
 const BASE =
-  "inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200 ease-out disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap";
+  "inline-flex items-center justify-center gap-2 font-medium tracking-tight transition-all duration-300 ease-out disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap";
 
 export function Button(props: ButtonProps) {
   const { variant = "primary", size = "md", className, children } = props;
@@ -54,18 +55,9 @@ export function Button(props: ButtonProps) {
 
   if (props.as === "link") {
     const {
-      variant: _v,
-      size: _s,
-      className: _c,
-      as: _a,
-      children: _ch,
-      ...rest
+      variant: _v, size: _s, className: _c, as: _a, children: _ch, ...rest
     } = props;
-    void _v;
-    void _s;
-    void _c;
-    void _a;
-    void _ch;
+    void _v; void _s; void _c; void _a; void _ch;
     return (
       <Link className={classes} {...rest}>
         {children}
@@ -74,18 +66,9 @@ export function Button(props: ButtonProps) {
   }
 
   const {
-    variant: _v,
-    size: _s,
-    className: _c,
-    as: _a,
-    children: _ch,
-    ...rest
+    variant: _v, size: _s, className: _c, as: _a, children: _ch, ...rest
   } = props;
-  void _v;
-  void _s;
-  void _c;
-  void _a;
-  void _ch;
+  void _v; void _s; void _c; void _a; void _ch;
   return (
     <button className={classes} {...rest}>
       {children}

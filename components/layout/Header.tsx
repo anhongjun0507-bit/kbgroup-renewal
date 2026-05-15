@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { businessAreas } from "@/data/site-content";
 
@@ -67,14 +66,12 @@ export function Header({ isAuthed = false }: HeaderProps) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 transition-all duration-300 ease-out",
-        scrolled
-          ? "bg-white/95 backdrop-blur-md border-b border-line/60"
-          : "bg-white/80 backdrop-blur-sm border-b border-transparent",
+        "sticky top-0 z-50 bg-white transition-shadow duration-300 ease-out",
+        scrolled ? "border-b border-line shadow-sm" : "border-b border-line/0",
       )}
     >
-      <div className="mx-auto w-full max-w-[1200px] px-5 sm:px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between md:h-24">
+      <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-12">
+        <div className="flex h-[72px] items-center justify-between md:h-[90px]">
           {/* Logo */}
           <Link
             href="/"
@@ -88,13 +85,13 @@ export function Header({ isAuthed = false }: HeaderProps) {
               width={2117}
               height={743}
               priority
-              className="h-11 w-auto md:h-14"
+              className="h-10 w-auto md:h-12"
             />
           </Link>
 
           {/* Desktop nav */}
           <nav
-            className="hidden items-center gap-8 lg:flex"
+            className="hidden items-center gap-10 lg:flex"
             aria-label="주 메뉴"
           >
             {NAV_ITEMS.map((item) => {
@@ -113,18 +110,18 @@ export function Header({ isAuthed = false }: HeaderProps) {
                     href={item.href}
                     aria-haspopup={hasChildren || undefined}
                     aria-expanded={hasChildren ? isOpen : undefined}
-                    className="inline-flex items-center py-2 text-[15px] font-semibold text-ink-strong transition-colors duration-200 hover:text-primary"
+                    className="inline-flex items-center py-3 text-[15px] font-medium text-ink-strong transition-colors duration-200 hover:text-primary"
                   >
                     {item.label}
                   </Link>
                   {hasChildren && isOpen && (
-                    <div className="absolute left-1/2 top-full -translate-x-1/2 pt-3">
-                      <div className="min-w-[200px] rounded-xl border border-line/60 bg-white py-2 shadow-md">
+                    <div className="absolute left-1/2 top-full -translate-x-1/2 pt-1">
+                      <div className="min-w-[200px] border border-line bg-white py-2">
                         {item.children!.map((child) => (
                           <Link
                             key={child.href}
                             href={child.href}
-                            className="block px-4 py-2.5 text-sm font-medium text-ink transition-colors duration-200 hover:bg-bg-soft hover:text-primary"
+                            className="block px-5 py-2.5 text-sm font-medium text-ink-muted transition-colors duration-200 hover:bg-bg-soft hover:text-primary"
                           >
                             {child.label}
                           </Link>
@@ -139,28 +136,31 @@ export function Header({ isAuthed = false }: HeaderProps) {
 
           {/* Right cluster */}
           <div className="flex items-center gap-3">
-            <div className="hidden items-center gap-3 lg:flex">
+            <div className="hidden items-center gap-5 lg:flex">
               {isAuthed ? (
                 <>
                   <Link
                     href="/mypage"
-                    className="text-[15px] font-semibold text-ink-strong transition-colors duration-200 hover:text-primary"
+                    className="text-[14px] font-medium text-ink-muted transition-colors duration-200 hover:text-primary"
                   >
                     마이페이지
                   </Link>
                   <form action="/auth/logout" method="POST">
                     <button
                       type="submit"
-                      className="rounded-md border border-line bg-white px-4 py-2 text-sm font-semibold text-ink transition-all duration-200 hover:border-primary hover:text-primary"
+                      className="text-[14px] font-medium text-ink-muted transition-colors duration-200 hover:text-primary"
                     >
                       로그아웃
                     </button>
                   </form>
                 </>
               ) : (
-                <Button as="link" href="/login" variant="outline" size="sm">
+                <Link
+                  href="/login"
+                  className="text-[14px] font-medium text-ink-muted transition-colors duration-200 hover:text-primary"
+                >
                   LOGIN
-                </Button>
+                </Link>
               )}
             </div>
             <button
@@ -169,30 +169,14 @@ export function Header({ isAuthed = false }: HeaderProps) {
               aria-expanded={mobileOpen}
               aria-controls="mobile-menu"
               onClick={() => setMobileOpen((v) => !v)}
-              className="inline-flex h-10 w-10 items-center justify-center text-ink transition-colors hover:text-primary lg:hidden"
+              className="inline-flex h-10 w-10 items-center justify-center text-ink-strong transition-colors hover:text-primary lg:hidden"
             >
               {mobileOpen ? (
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  aria-hidden="true"
-                >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                   <path d="M6 6L18 18M6 18L18 6" strokeLinecap="round" />
                 </svg>
               ) : (
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  aria-hidden="true"
-                >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                   <path d="M4 8H20M4 16H20" strokeLinecap="round" />
                 </svg>
               )}
@@ -205,17 +189,17 @@ export function Header({ isAuthed = false }: HeaderProps) {
       {mobileOpen && (
         <div
           id="mobile-menu"
-          className="fixed inset-x-0 bottom-0 top-20 z-40 overflow-y-auto bg-white lg:hidden"
+          className="fixed inset-x-0 bottom-0 top-[72px] z-40 overflow-y-auto bg-white lg:hidden"
         >
           <nav
-            className="mx-auto w-full max-w-7xl px-6 py-8"
+            className="mx-auto w-full max-w-[1400px] px-5 py-8"
             aria-label="모바일 메뉴"
           >
             {NAV_ITEMS.map((item) => {
               const hasChildren = !!item.children?.length;
               const expanded = mobileExpand === item.href;
               return (
-                <div key={item.href} className="border-b border-line/60">
+                <div key={item.href} className="border-b border-line">
                   {hasChildren ? (
                     <>
                       <button
@@ -224,7 +208,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
                         onClick={() =>
                           setMobileExpand(expanded ? null : item.href)
                         }
-                        className="flex w-full items-center justify-between py-5 text-left text-lg font-semibold text-ink-strong"
+                        className="flex w-full items-center justify-between py-5 text-left text-lg font-medium text-ink-strong"
                       >
                         {item.label}
                         <span
@@ -234,19 +218,8 @@ export function Header({ isAuthed = false }: HeaderProps) {
                           )}
                           aria-hidden="true"
                         >
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <path
-                              d="M6 9L12 15L18 9"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M6 9L12 15L18 9" strokeLinecap="round" strokeLinejoin="round" />
                           </svg>
                         </span>
                       </button>
@@ -257,7 +230,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
                               key={child.href}
                               href={child.href}
                               onClick={closeMobile}
-                              className="block text-base font-medium text-ink transition-colors hover:text-primary"
+                              className="block text-base text-ink-muted transition-colors hover:text-primary"
                             >
                               {child.label}
                             </Link>
@@ -269,7 +242,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
                     <Link
                       href={item.href}
                       onClick={closeMobile}
-                      className="block py-5 text-lg font-semibold text-ink-strong transition-colors hover:text-primary"
+                      className="block py-5 text-lg font-medium text-ink-strong transition-colors hover:text-primary"
                     >
                       {item.label}
                     </Link>
@@ -277,13 +250,13 @@ export function Header({ isAuthed = false }: HeaderProps) {
                 </div>
               );
             })}
-            <div className="space-y-3 pt-10">
+            <div className="space-y-3 pt-8">
               {isAuthed ? (
                 <>
                   <Link
                     href="/mypage"
                     onClick={closeMobile}
-                    className="block border border-primary px-6 py-3 text-center text-base font-medium text-primary transition-colors duration-300 hover:bg-primary hover:text-white"
+                    className="block border border-ink-strong px-6 py-3 text-center text-base font-medium text-ink-strong transition-colors duration-300 hover:bg-ink-strong hover:text-white"
                   >
                     마이페이지
                   </Link>
@@ -291,23 +264,20 @@ export function Header({ isAuthed = false }: HeaderProps) {
                     <button
                       type="submit"
                       onClick={closeMobile}
-                      className="w-full border border-line px-6 py-3 text-center text-base font-medium text-ink-soft transition-colors duration-300 hover:border-ink hover:text-ink"
+                      className="w-full border border-line px-6 py-3 text-center text-base font-medium text-ink-muted transition-colors duration-300 hover:border-ink-strong hover:text-ink-strong"
                     >
                       로그아웃
                     </button>
                   </form>
                 </>
               ) : (
-                <Button
-                  as="link"
+                <Link
                   href="/login"
-                  variant="outline"
-                  size="md"
-                  className="w-full"
                   onClick={closeMobile}
+                  className="block w-full border border-ink-strong px-6 py-3 text-center text-base font-medium text-ink-strong transition-colors hover:bg-ink-strong hover:text-white"
                 >
                   LOGIN
-                </Button>
+                </Link>
               )}
             </div>
           </nav>

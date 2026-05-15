@@ -5,22 +5,22 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
 import { counters } from "@/data/site-content";
 
-const EASE_OUT = [0.16, 1, 0.3, 1] as const;
+const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
 export function DataCounter() {
   const shouldReduce = useReducedMotion() ?? false;
 
   const item: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 12 },
+    hidden: { opacity: 0, y: shouldReduce ? 0 : 16 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: shouldReduce ? 0 : 0.5, ease: EASE_OUT },
+      transition: { duration: shouldReduce ? 0 : 0.7, ease: EASE_OUT },
     },
   };
 
   return (
-    <section className="border-y border-line bg-white py-20 md:py-24">
+    <section className="border-y border-line bg-white py-24 md:py-32">
       <Container>
         <motion.div
           initial="hidden"
@@ -28,19 +28,19 @@ export function DataCounter() {
           viewport={{ once: true, margin: "-80px" }}
           variants={{
             hidden: {},
-            visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.06 } },
+            visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.08 } },
           }}
-          className="mb-14 max-w-2xl md:mb-16"
+          className="mb-16 max-w-3xl md:mb-20"
         >
           <motion.p
             variants={item}
-            className="text-[13px] font-semibold tracking-wide text-ink-muted"
+            className="text-[13px] font-medium tracking-wide text-ink-muted"
           >
             BY THE NUMBERS
           </motion.p>
           <motion.h2
             variants={item}
-            className="mt-3 text-[32px] font-bold tracking-tight text-ink-strong md:text-[44px]"
+            className="mt-4 text-[32px] font-bold tracking-[-0.03em] text-ink-strong md:text-[48px]"
           >
             숫자로 보는 케이비개발
           </motion.h2>
@@ -52,43 +52,43 @@ export function DataCounter() {
           viewport={{ once: true, margin: "-80px" }}
           variants={{
             hidden: {},
-            visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.08 } },
+            visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.1 } },
           }}
-          className="grid grid-cols-2 gap-10 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-line"
+          className="grid grid-cols-2 gap-12 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-line"
         >
           {counters.map((c) => (
             <motion.div
               key={c.key}
               variants={item}
-              className="lg:px-10 first:lg:pl-0 last:lg:pr-0"
+              className="lg:px-12 first:lg:pl-0 last:lg:pr-0"
             >
               <div className="flex items-baseline gap-1">
                 {shouldReduce ? (
-                  <span className="text-[44px] font-bold tracking-tight text-ink-strong md:text-[56px]">
+                  <span className="text-[52px] font-bold tracking-[-0.04em] text-ink-strong md:text-[64px]">
                     {c.value.toLocaleString()}
                   </span>
                 ) : (
                   <CountUp
                     end={c.value}
-                    duration={2}
+                    duration={2.5}
                     separator=","
                     enableScrollSpy
                     scrollSpyOnce
-                    className="text-[44px] font-bold tracking-tight text-ink-strong md:text-[56px]"
+                    className="text-[52px] font-bold tracking-[-0.04em] text-ink-strong md:text-[64px]"
                   />
                 )}
                 {c.suffix && (
-                  <span className="text-2xl font-bold text-ink-strong md:text-3xl">
+                  <span className="text-3xl font-bold text-ink-strong md:text-4xl">
                     {c.suffix}
                   </span>
                 )}
               </div>
-              <p className="mt-4 text-sm font-semibold text-ink md:text-base">
+              <p className="mt-5 text-base font-medium text-ink-strong">
                 {c.label}
               </p>
-              {c.isPlaceholder && (
-                <p className="mt-1 text-[11px] text-ink-faint">* 추후 갱신</p>
-              )}
+              <p className="mt-1 text-xs text-ink-muted">
+                {c.caption}
+              </p>
             </motion.div>
           ))}
         </motion.div>

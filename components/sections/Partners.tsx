@@ -4,7 +4,7 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
 import { partners, type Partner } from "@/data/site-content";
 
-const EASE_OUT = [0.16, 1, 0.3, 1] as const;
+const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
 const CATEGORY_LABEL: Record<Partner["category"], string> = {
   client: "발주처",
@@ -16,16 +16,16 @@ export function Partners() {
   const shouldReduce = useReducedMotion() ?? false;
 
   const item: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 10 },
+    hidden: { opacity: 0, y: shouldReduce ? 0 : 12 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: shouldReduce ? 0 : 0.4, ease: EASE_OUT },
+      transition: { duration: shouldReduce ? 0 : 0.6, ease: EASE_OUT },
     },
   };
 
   return (
-    <section className="bg-bg-soft py-24 md:py-28">
+    <section className="bg-bg-soft py-24 md:py-32">
       <Container>
         <motion.div
           initial="hidden"
@@ -33,19 +33,19 @@ export function Partners() {
           viewport={{ once: true, margin: "-80px" }}
           variants={{
             hidden: {},
-            visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.06 } },
+            visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.08 } },
           }}
-          className="mb-14 max-w-2xl md:mb-16"
+          className="mb-14 max-w-3xl md:mb-16"
         >
           <motion.p
             variants={item}
-            className="text-[13px] font-semibold tracking-wide text-ink-muted"
+            className="text-[13px] font-medium tracking-wide text-ink-muted"
           >
             PARTNERS
           </motion.p>
           <motion.h2
             variants={item}
-            className="mt-3 text-[32px] font-bold tracking-tight text-ink-strong md:text-[44px]"
+            className="mt-4 text-[32px] font-bold tracking-[-0.03em] text-ink-strong md:text-[48px]"
           >
             함께 신뢰를 쌓아온 파트너
           </motion.h2>
@@ -59,27 +59,29 @@ export function Partners() {
             hidden: {},
             visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.04 } },
           }}
-          className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
         >
-          {partners.map((p) => (
+          {partners.map((p, idx) => (
             <motion.div
               key={p.name}
               variants={item}
-              className="flex h-full flex-col justify-between rounded-xl border border-line bg-white px-5 py-6 transition-colors hover:border-ink-strong/20"
+              className="flex h-32 flex-col justify-between border border-line bg-white p-6 transition-colors hover:border-ink-strong"
+              style={{
+                marginLeft: idx > 0 && idx % 2 !== 0 ? "-1px" : 0,
+                marginTop: idx >= 2 ? "-1px" : 0,
+              }}
             >
+              <p className="text-[10px] font-medium uppercase tracking-wide text-ink-muted">
+                {CATEGORY_LABEL[p.category]}
+              </p>
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
-                  {CATEGORY_LABEL[p.category]}
-                </p>
-                <p className="mt-2 text-[15px] font-bold tracking-tight text-ink-strong">
+                <p className="text-[15px] font-bold tracking-[-0.02em] text-ink-strong">
                   {p.name}
                 </p>
+                {p.placeholder && (
+                  <p className="mt-1 text-[10px] text-ink-faint">* 표기 예정</p>
+                )}
               </div>
-              {p.placeholder && (
-                <p className="mt-3 text-[10px] font-medium text-ink-faint">
-                  * 표기 예정
-                </p>
-              )}
             </motion.div>
           ))}
         </motion.div>

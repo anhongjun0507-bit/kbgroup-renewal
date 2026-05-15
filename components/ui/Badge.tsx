@@ -5,7 +5,7 @@ type BadgeVariant =
   | "secondary"
   | "accent"
   | "neutral"
-  | "gold";  // gold는 호환 alias (= accent)
+  | "gold";
 
 type BadgeProps = {
   children: React.ReactNode;
@@ -14,11 +14,11 @@ type BadgeProps = {
 };
 
 const VARIANT: Record<BadgeVariant, string> = {
-  primary: "bg-primary-soft text-primary",
-  secondary: "bg-secondary-soft text-secondary",
-  accent: "bg-accent-soft text-accent",
-  gold: "bg-accent-soft text-accent",     // alias
-  neutral: "bg-bg-soft text-ink",
+  primary: "border border-primary text-primary",
+  secondary: "border border-secondary text-secondary",
+  accent: "border border-accent text-accent",
+  gold: "border border-accent text-accent",
+  neutral: "border border-line text-ink-muted",
 };
 
 export function Badge({
@@ -29,7 +29,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold",
+        "inline-flex items-center bg-white px-2.5 py-1 text-[11px] font-medium tracking-wide",
         VARIANT[variant],
         className,
       )}
