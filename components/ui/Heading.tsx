@@ -40,15 +40,15 @@ export function Heading({
   return (
     <div className={cn(isCenter ? "text-center" : "text-left", className)}>
       {kicker && (
-        <p className="text-[13px] font-medium tracking-wide text-ink-muted">
+        <p className="eyebrow">
           {kicker}
         </p>
       )}
       <Tag
         className={cn(
-          "font-bold tracking-tight text-ink-strong",
+          "font-display font-extrabold tracking-tight text-ink-strong",
           TITLE_SIZE[size],
-          kicker && "mt-3",
+          kicker && "mt-4",
         )}
       >
         {renderTitle(title)}

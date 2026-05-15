@@ -224,3 +224,35 @@ body {
   font-weight: 700;
   font-style: normal;
 }
+
+/* =============================================
+   Legacy Sub-section Tone Override (v10)
+   sub 섹션 22개 옛 톤(font-serif + italic + 옛 데코) 글로벌 무력화
+   ============================================= */
+
+/* .font-serif → SUIT/Pretendard 디스플레이 폰트로 변환 + italic 제거 */
+.font-serif {
+  font-family: var(--font-display);
+  font-style: normal;
+}
+
+/* Tailwind .italic 클래스 무력화 (한국어 italic 부적합) */
+.italic {
+  font-style: normal !important;
+}
+
+/* 가는 라인 h-px를 h-[2px]로 강화 (가시성)
+   다만 sr-only·divider 외 모든 h-px에 적용되면 부작용 — 명시적 색 토큰과 함께 쓰일 때만 */
+.h-px.bg-primary,
+.h-px.bg-accent,
+.h-px.bg-gold,
+.h-px.bg-secondary {
+  height: 2px;
+}
+
+/* font-serif italic 큰 숫자 패턴 — Pretendard 800 워터마크 톤으로 */
+.font-serif.italic,
+.font-serif[class*="italic"] {
+  font-style: normal;
+  font-weight: 800;
+}
