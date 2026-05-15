@@ -1,10 +1,7 @@
 @import "tailwindcss";
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css");
 
-/* =============================================
-   SUIT Variable — KCDF 후원, Pretendard 디자이너 작품
-   헤딩 디스플레이 전용 (Paperlogy 대체)
-   ============================================= */
+/* SUIT Variable — KCDF 후원, Pretendard 디자이너 작품 (헤딩 전용) */
 @font-face {
   font-family: "SUIT Variable";
   font-weight: 100 900;
@@ -15,7 +12,7 @@
 }
 
 @theme {
-  /* === Font Family === */
+  /* === Font === */
   --font-sans:
     "Pretendard Variable", Pretendard, "Malgun Gothic", -apple-system,
     BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", sans-serif;
@@ -37,14 +34,14 @@
   --text-4xl: 4rem;
   --text-5xl: 5.5rem;
 
-  /* === Tracking (5단) — 극단화 (R4-7 폰트 임팩트 보강) === */
-  --tracking-tighter: -0.05em;
-  --tracking-tight: -0.03em;
+  /* === Tracking (5단) — P1-10: 한글 자모 충돌 방지 -0.05 → -0.03 === */
+  --tracking-tighter: -0.03em;
+  --tracking-tight: -0.02em;
   --tracking-normal: 0;
   --tracking-wide: 0.05em;
   --tracking-widest: 0.2em;
 
-  /* === Color === */
+  /* === Brand === */
   --color-primary: #1e2a5e;
   --color-primary-hover: #161e44;
   --color-primary-soft: #f5f6fb;
@@ -52,24 +49,31 @@
   --color-accent: #ec294a;
   --color-accent-hover: #d12342;
 
+  /* === Surface === */
   --color-bg: #ffffff;
   --color-bg-soft: #f7f7f7;
   --color-bg-tinted: #fafafa;
 
+  /* === Ink (AA 충족 토큰) — P0-06 #6B7684 → #5A6472 (5.04:1) === */
   --color-ink-900: #0e1530;
   --color-ink-strong: #1a1e26;
-  --color-ink: #4e5968;
-  --color-ink-muted: #6b7684;
-  --color-ink-faint: #b0b8c1;
+  --color-ink: #4e5968;          /* 본문 강조 7.5:1 */
+  --color-ink-muted: #5a6472;    /* 본문 보조 5.04:1 (AA 통과) */
+  --color-ink-faint: #b0b8c1;    /* 메타·플레이스홀더 전용 (텍스트 X) */
 
+  /* === Line === */
   --color-line: #e5e8eb;
   --color-line-soft: #f2f4f6;
 
+  /* === Status === */
   --color-success: #00b488;
   --color-danger: #ef2b2a;
   --color-warning: #ffb400;
 
-  /* Legacy aliases */
+  /* === Focus === */
+  --color-focus: #ec294a;
+
+  /* === Legacy === */
   --color-ink-soft: #4e5968;
   --color-cream: #ffffff;
   --color-beige: #f7f7f7;
@@ -80,7 +84,7 @@
   --color-secondary-soft: #e8f7ef;
   --color-accent-soft: #fdeef1;
 
-  /* Radius — 직각 */
+  /* === Radius (직각) === */
   --radius-xs: 0;
   --radius-sm: 0;
   --radius-md: 0;
@@ -89,12 +93,12 @@
   --radius-2xl: 0;
   --radius-3xl: 0;
 
-  /* Shadow */
+  /* === Shadow === */
   --shadow-xs: none;
-  --shadow-sm: 0 1px 2px rgba(26, 30, 38, 0.04);
-  --shadow-md: 0 2px 8px rgba(26, 30, 38, 0.06);
-  --shadow-lg: 0 8px 24px rgba(26, 30, 38, 0.08);
-  --shadow-xl: 0 16px 40px rgba(26, 30, 38, 0.10);
+  --shadow-sm: 0 1px 2px rgba(14, 21, 48, 0.04);
+  --shadow-md: 0 4px 12px rgba(14, 21, 48, 0.06);
+  --shadow-lg: 0 12px 28px rgba(14, 21, 48, 0.10);
+  --shadow-xl: 0 24px 56px rgba(14, 21, 48, 0.12);
 }
 
 :root {
@@ -102,16 +106,13 @@
   --foreground: var(--color-ink-strong);
 }
 
-/* =============================================
-   Body — 한글 가독성
-   ============================================= */
 body {
   background: var(--background);
   color: var(--color-ink-muted);
   font-family: var(--font-sans);
   font-weight: 400;
   font-size: var(--text-base);
-  line-height: 1.75;
+  line-height: 1.7;                    /* 1.75 → 1.7 (한글 본문 권장) */
   letter-spacing: 0;
   word-break: keep-all;
   line-break: strict;
@@ -121,16 +122,12 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* =============================================
-   Heading Tokens — :where()로 specificity 0
-   컴포넌트 utility/inline style이 항상 이김
-   사이즈·tracking·weight 일괄 강제 (TASK 4)
-   ============================================= */
+/* === Headings — :where()로 specificity 0, 컴포넌트가 항상 이김 === */
 :where(h1) {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 4rem);
-  letter-spacing: var(--tracking-tighter);  /* -0.05em 극단화 (TASK 6 차선책) */
-  line-height: 1.08;
+  font-size: clamp(2.25rem, 5.5vw, 4rem);    /* 56-64px max, 한글 자모 충돌 방지 */
+  letter-spacing: var(--tracking-tight);     /* -0.02em */
+  line-height: 1.1;
   font-weight: 900;
   color: var(--color-ink-strong);
   word-break: keep-all;
@@ -141,7 +138,7 @@ body {
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 3.2vw, 2.75rem);
   letter-spacing: var(--tracking-tight);
-  line-height: 1.18;
+  line-height: 1.2;
   font-weight: 800;
   color: var(--color-ink-strong);
   word-break: keep-all;
@@ -169,16 +166,41 @@ body {
   line-height: 1.7;
 }
 
-/* =============================================
-   Utility — eyebrow, mono, tabular
-   ============================================= */
+/* === P0-07 — focus-visible 글로벌 (WCAG 2.4.7) === */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+/* 다크 배경 위 컴포넌트는 흰색 ring 분기 */
+.dark-surface :focus-visible,
+[data-surface="dark"] :focus-visible {
+  outline-color: #ffffff;
+}
+
+/* === P0-04 — prefers-reduced-motion 글로벌 === */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* === P2-01 — eyebrow 유틸 (모든 섹션 머리띠 일관화) === */
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-weight: 600;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-ink-muted);
+  color: var(--color-ink);              /* #4E5968 (7.5:1 AA+) */
+  line-height: 1.4;
 }
 
 .font-mono-num {

@@ -1,17 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Button } from "@/components/ui";
-import { company, yearsOfOperation } from "@/data/site-content";
+import { company, contact, yearsOfOperation } from "@/data/site-content";
 
 const SLOGAN_LINE_1 = "신뢰가";
 const SLOGAN_LINE_2 = "자산이 됩니다";
 const SLOGAN_HIGHLIGHT = "됩니다";
 const SUBTITLE_LINE_1 = "대한민국 시설관리의 새로운 표준을 만들어갑니다.";
 const SUBTITLE_LINE_2 = "오랜 신뢰가 지금의 케이비개발을 만들었습니다.";
-
-const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
 const INLINE_STATS = [
   { value: `${yearsOfOperation}`, suffix: "년", label: "운영 경험" },
@@ -20,32 +17,12 @@ const INLINE_STATS = [
 ];
 
 export function Hero() {
-  const shouldReduce = useReducedMotion() ?? false;
-
-  const stagger: Variants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: shouldReduce ? 0 : 0.08,
-        delayChildren: shouldReduce ? 0 : 0.1,
-      },
-    },
-  };
-
-  const item: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: shouldReduce ? 0 : 0.7, ease: EASE_OUT },
-    },
-  };
-
   const slogan2Idx = SLOGAN_LINE_2.lastIndexOf(SLOGAN_HIGHLIGHT);
 
   return (
     <section
       aria-label="히어로"
+      data-surface="dark"
       className="relative isolate flex items-center overflow-hidden bg-[#0e1530]"
       style={{ minHeight: "min(720px, 84svh)" }}
     >
@@ -54,7 +31,7 @@ export function Hero() {
         aria-hidden="true"
         className="absolute inset-0 bg-gradient-to-br from-[#0e1530] via-[#1a2456] to-[#0e1530]"
       />
-      {/* h1 영역 뒤 라디얼 vignette — white 글자 띄움 (R5-1) */}
+      {/* h1 영역 뒤 라디얼 vignette */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute"
@@ -64,13 +41,13 @@ export function Hero() {
           width: "75%",
           height: "70%",
           background:
-            "radial-gradient(ellipse at 30% 50%, rgba(0,0,0,0.5) 0%, transparent 65%)",
+            "radial-gradient(ellipse at 30% 50%, rgba(0,0,0,0.45) 0%, transparent 65%)",
         }}
       />
-      {/* 미세 grid */}
+      {/* P1-11: grid opacity 0.05 → 0.03 약화, Hero에만 사용 */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 opacity-[0.05]"
+        className="absolute inset-0 opacity-[0.03]"
         style={{
           backgroundImage:
             "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
@@ -78,32 +55,25 @@ export function Hero() {
         }}
       />
 
-      {/* 콘텐츠 wrapper — z-10으로 절대 배경 위에 (R5-1) */}
+      {/* P0-04: above-the-fold는 motion 제거, 첫 paint에 즉시 가시 */}
       <div className="relative z-10 w-full">
         <Container>
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={stagger}
-            className="max-w-4xl pt-20 pb-12 md:pt-24"
-          >
-            <motion.p
-              variants={item}
+          <div className="max-w-4xl pt-20 pb-12 md:pt-24">
+            <p
               className="eyebrow"
-              style={{ color: "rgba(255,255,255,0.6)" }}
+              style={{ color: "rgba(255,255,255,0.7)" }}
             >
               (주)케이비개발 · SINCE {company.foundedYear}
-            </motion.p>
+            </p>
 
-            {/* h1 — motion 제거하고 plain h1 (SSR-safe, 항상 가시).
-                다중 textShadow로 다크 배경에서 글자 윤곽 분명. */}
+            {/* h1 — ls -0.02em (P1-10 한글 자모 충돌 방지) */}
             <h1
               className="mt-6 font-display"
               style={{
-                fontSize: "clamp(2.75rem, 7vw, 5.5rem)",
+                fontSize: "clamp(2.75rem, 6.5vw, 5rem)",
                 fontWeight: 900,
-                letterSpacing: "var(--tracking-tighter)",
-                lineHeight: 0.98,
+                letterSpacing: "var(--tracking-tight)",
+                lineHeight: 1.05,
                 color: "#ffffff",
                 textShadow: [
                   "0 1px 0 rgba(0,0,0,0.5)",
@@ -127,46 +97,41 @@ export function Hero() {
               </span>
             </h1>
 
-            <motion.div
-              variants={item}
-              aria-hidden="true"
-              className="mt-7 h-[2px] w-12 bg-accent"
-            />
+            <div aria-hidden="true" className="mt-7 h-[2px] w-12 bg-accent" />
 
-            <motion.p
-              variants={item}
+            <p
               className="mt-5 max-w-xl text-[15px] leading-[1.85] md:text-base"
-              style={{ color: "rgba(255,255,255,0.85)" }}
+              style={{ color: "rgba(255,255,255,0.88)" }}
             >
               {SUBTITLE_LINE_1}
               <br />
               {SUBTITLE_LINE_2}
-            </motion.p>
+            </p>
 
-            <motion.div
-              variants={item}
-              className="mt-7 flex flex-wrap items-center gap-5"
-            >
-              <Button as="link" href="/about" variant="accent" size="lg">
-                상담 문의
+            {/* P0-03 + P1-05: CTA "상담 문의" → "무료 상담 신청" + tel: 라우팅 */}
+            <div className="mt-7 flex flex-wrap items-center gap-5">
+              <Button
+                as="link"
+                href={`tel:${contact.phone}`}
+                variant="accent"
+                size="lg"
+              >
+                무료 상담 신청
                 <span aria-hidden="true">→</span>
               </Button>
               <Link
-                href="/business"
+                href="#contact"
                 className="border-b pb-1 text-[14px] font-medium transition-colors duration-200"
                 style={{
                   color: "#ffffff",
                   borderColor: "rgba(255,255,255,0.55)",
                 }}
               >
-                사업영역 보기 <span aria-hidden="true">→</span>
+                온라인 문의 <span aria-hidden="true">↓</span>
               </Link>
-            </motion.div>
+            </div>
 
-            <motion.div
-              variants={item}
-              className="mt-9 flex flex-wrap gap-x-10 gap-y-5 md:gap-x-12"
-            >
+            <div className="mt-9 flex flex-wrap gap-x-10 gap-y-5 md:gap-x-12">
               {INLINE_STATS.map((s) => (
                 <div key={s.label}>
                   <div
@@ -176,21 +141,21 @@ export function Hero() {
                     {s.value}
                     <span
                       className="ml-1 text-base font-medium"
-                      style={{ color: "rgba(255,255,255,0.65)" }}
+                      style={{ color: "rgba(255,255,255,0.7)" }}
                     >
                       {s.suffix}
                     </span>
                   </div>
                   <div
                     className="mt-2 text-[12px]"
-                    style={{ color: "rgba(255,255,255,0.55)" }}
+                    style={{ color: "rgba(255,255,255,0.65)" }}
                   >
                     {s.label}
                   </div>
                 </div>
               ))}
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </Container>
       </div>
     </section>

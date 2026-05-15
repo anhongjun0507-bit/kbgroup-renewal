@@ -3,20 +3,21 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "./database.types";
 
 /**
- * Next.js 미들웨어에서 호출하는 세션 갱신 헬퍼.
+ * Next.js 미들웨어에서 호출하는 세션 갱신 + 보호 경로 가드.
  *
- * - 매 요청마다 Supabase auth 토큰을 갱신해 만료된 세션 자동 refresh.
- * - 환경변수 미설정 시 통과 (PHASE 1에서는 OK, PHASE 5에서 /admin 경로 보호 추가 예정).
- *
- * `/middleware.ts`에서 import해서 사용.
+ * - 매 요청마다 Supabase auth 토큰 갱신.
+ * - PROTECTED 경로 (`/mypage`)는 미인증 시 `/login?next=...`로 리다이렉트
+ *   (페이지 레벨 가드와 이중 안전장치).
+ * - 환경변수 미설정 시 통과 (로컬·미설정 환경에서도 사이트 정상 동작).
  */
+const PROTECTED_PREFIXES = ["/mypage"];
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  // 환경변수 없으면 미들웨어 통과만 (Supabase 미설정 상태에서도 사이트 정상 동작)
   if (!url || !anonKey) {
     return supabaseResponse;
   }
@@ -38,8 +39,22 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
-  // 토큰 만료 시 자동 갱신 (Supabase 권장 패턴)
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // PROTECTED 경로 가드 — 미인증 시 /login?next=원래경로로 리다이렉트
+  const { pathname, search } = request.nextUrl;
+  const isProtected = PROTECTED_PREFIXES.some((prefix) =>
+    pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+
+  if (isProtected && !user) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/login";
+    redirectUrl.search = `?next=${encodeURIComponent(pathname + search)}`;
+    return NextResponse.redirect(redirectUrl);
+  }
 
   return supabaseResponse;
 }

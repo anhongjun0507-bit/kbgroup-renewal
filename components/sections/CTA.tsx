@@ -21,6 +21,8 @@ export function CTA() {
 
   return (
     <section
+      id="contact"
+      data-surface="dark"
       className="relative isolate overflow-hidden bg-gradient-to-br from-[#0e1530] via-primary to-[#0a0f24] py-24 md:py-32"
     >
       <div
@@ -74,8 +76,21 @@ export function CTA() {
               href={`tel:${contact.phone}`}
               variant="accent"
               size="lg"
+              aria-label={`전화 ${contact.phone}로 무료 상담 신청`}
             >
-              <span aria-hidden="true">📞</span>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
               {contact.phone}
             </Button>
             <Link

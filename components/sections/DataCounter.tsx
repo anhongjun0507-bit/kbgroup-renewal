@@ -13,7 +13,6 @@ export function DataCounter() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
 
-  /** 단일 IntersectionObserver — 4셀이 동시에 카운트업 시작 (H-3 깜빡임 픽스) */
   useEffect(() => {
     if (!sectionRef.current) return;
     const obs = new IntersectionObserver(
@@ -57,20 +56,13 @@ export function DataCounter() {
           <motion.h2
             variants={item}
             className="mt-4"
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(2rem, 4vw, 2.75rem)",
-              fontWeight: 800,
-              letterSpacing: "var(--tracking-tight)",
-              lineHeight: 1.18,
-              color: "var(--color-ink-strong)",
-            }}
+            style={{ letterSpacing: "var(--tracking-tight)" }}
           >
             숫자로 보는 <span className="text-primary">케이비개발</span>
           </motion.h2>
           <motion.p
             variants={item}
-            className="mt-5 max-w-xl text-base leading-[1.85] text-ink-muted"
+            className="mt-5 max-w-xl text-base leading-[1.7] text-ink"
           >
             2014년 설립 이래 축적해온 운영 성과입니다.
           </motion.p>
@@ -130,9 +122,10 @@ export function DataCounter() {
                   </span>
                 )}
                 {c.suffix && (
+                  /* P0-02: + 기호 #B0B8C1 (2:1) → text-ink (#4E5968, 7.5:1) + 32px */
                   <span
-                    className="font-mono-num font-bold text-ink-faint"
-                    style={{ fontSize: "clamp(1.5rem, 2vw, 1.75rem)" }}
+                    className="font-mono-num font-bold text-ink"
+                    style={{ fontSize: "clamp(1.75rem, 2.2vw, 2rem)" }}
                   >
                     {c.suffix}
                   </span>

@@ -12,13 +12,18 @@ const SITEMAP = [
 ];
 
 const COL_LABEL =
-  "text-[11px] font-semibold uppercase tracking-[0.2em] text-white/55 mb-5";
+  "text-[11px] font-semibold uppercase tracking-[0.2em] mb-5";
+const COL_LABEL_STYLE = { color: "rgba(255,255,255,0.7)" };
 const LINK_BASE =
   "text-[14px] leading-relaxed text-white/75 transition-colors duration-200 hover:text-white";
 
 export function Footer() {
   return (
-    <footer className="bg-ink-strong text-white">
+    <footer
+      data-surface="dark"
+      className="bg-ink-strong text-white"
+      style={{ color: "#ffffff" }}
+    >
       <Container as="div" className="pt-14 pb-10 md:pt-16">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-3 lg:gap-16">
           {/* KB GROUP intro */}
@@ -26,7 +31,10 @@ export function Footer() {
             <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/50">
               KB DEVELOPMENT CO.,LTD.
             </p>
-            <h3 className="mt-2 text-[20px] font-bold tracking-tight text-white">
+            <h3
+              className="mt-2 text-[20px] font-bold tracking-tight"
+              style={{ color: "#ffffff" }}
+            >
               (주)케이비개발
             </h3>
             <p className="mt-6 max-w-sm text-[14px] leading-relaxed text-white/75">
@@ -40,7 +48,7 @@ export function Footer() {
 
           {/* Sitemap */}
           <nav aria-label="사이트맵">
-            <h3 className={COL_LABEL}>SITEMAP</h3>
+            <h3 className={COL_LABEL} style={COL_LABEL_STYLE}>SITEMAP</h3>
             <ul className="space-y-3">
               {SITEMAP.map((item) => (
                 <li key={item.href}>
@@ -54,7 +62,7 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className={COL_LABEL}>CONTACT</h3>
+            <h3 className={COL_LABEL} style={COL_LABEL_STYLE}>CONTACT</h3>
             <ul className="space-y-3 text-[14px]">
               <li className="flex items-baseline gap-3">
                 <span className="w-12 shrink-0 text-[11px] uppercase tracking-[0.15em] text-white/50">
