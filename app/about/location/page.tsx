@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AboutHero } from "@/components/sections/about/AboutHero";
+import { PageHero } from "@/components/sections/common/PageHero";
 import { AboutNav } from "@/components/sections/about/AboutNav";
 import { LocationMap } from "@/components/sections/about/LocationMap";
 import { LocationInfo } from "@/components/sections/about/LocationInfo";
@@ -13,12 +13,16 @@ export const metadata: Metadata = {
 export default function LocationPage() {
   return (
     <>
-      <AboutHero
+      <PageHero
         kicker="LOCATION · 오시는 길"
         title="오시는 길"
         italicWord="오시는"
         subtitle="언제든 편하게 방문해주세요."
-        breadcrumbCurrent="오시는 길"
+        breadcrumb={[
+          { label: "HOME", href: "/" },
+          { label: "ABOUT", href: "/about" },
+          { label: "오시는 길" },
+        ]}
       />
       <AboutNav current="location" />
       <LocationMap />

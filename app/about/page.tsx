@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AboutHero } from "@/components/sections/about/AboutHero";
+import { PageHero } from "@/components/sections/common/PageHero";
 import { AboutNav } from "@/components/sections/about/AboutNav";
 import { WhyValues } from "@/components/sections/about/WhyValues";
 import { WhyDifferentiators } from "@/components/sections/about/WhyDifferentiators";
@@ -15,12 +15,16 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
-      <AboutHero
+      <PageHero
         kicker="ABOUT US · 회사소개"
         title="왜 케이비개발인가"
         italicWord="케이비개발"
         subtitle="단순한 시설관리를 넘어, 공간을 책임지는 파트너로."
-        breadcrumbCurrent="왜 케이비개발"
+        breadcrumb={[
+          { label: "HOME", href: "/" },
+          { label: "ABOUT", href: "/about" },
+          { label: "왜 케이비개발" },
+        ]}
       />
       <AboutNav current="why" />
       <WhyValues />

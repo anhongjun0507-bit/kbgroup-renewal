@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AboutHero } from "@/components/sections/about/AboutHero";
+import { PageHero } from "@/components/sections/common/PageHero";
 import { AboutNav } from "@/components/sections/about/AboutNav";
 import { HistoryTimeline } from "@/components/sections/about/HistoryTimeline";
 import { CTA } from "@/components/sections/CTA";
@@ -12,12 +12,16 @@ export const metadata: Metadata = {
 export default function HistoryPage() {
   return (
     <>
-      <AboutHero
+      <PageHero
         kicker="HISTORY · 연혁"
         title="우리의 발자취"
         italicWord="발자취"
         subtitle="2014년 설립 이래 쌓아온 신뢰의 기록입니다."
-        breadcrumbCurrent="연혁"
+        breadcrumb={[
+          { label: "HOME", href: "/" },
+          { label: "ABOUT", href: "/about" },
+          { label: "연혁" },
+        ]}
       />
       <AboutNav current="history" />
       <HistoryTimeline />

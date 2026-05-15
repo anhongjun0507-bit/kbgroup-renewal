@@ -6,6 +6,10 @@ import { Button } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { businessAreas } from "@/data/site-content";
 
+interface HeaderProps {
+  isAuthed?: boolean;
+}
+
 type NavChild = { label: string; href: string };
 type NavItem = { label: string; href: string; children?: NavChild[] };
 
@@ -34,7 +38,7 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
-export function Header() {
+export function Header({ isAuthed = false }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -130,10 +134,29 @@ export function Header() {
 
           {/* Right cluster */}
           <div className="flex items-center gap-3">
-            <div className="hidden lg:block">
-              <Button as="link" href="/login" variant="outline" size="sm">
-                LOGIN
-              </Button>
+            <div className="hidden items-center gap-3 lg:flex">
+              {isAuthed ? (
+                <>
+                  <Link
+                    href="/mypage"
+                    className="text-sm font-medium text-ink transition-colors duration-200 hover:text-primary"
+                  >
+                    마이페이지
+                  </Link>
+                  <form action="/auth/logout" method="POST">
+                    <button
+                      type="submit"
+                      className="border border-line px-5 py-2.5 text-sm font-medium text-ink-soft transition-colors duration-300 hover:border-ink hover:text-ink"
+                    >
+                      로그아웃
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <Button as="link" href="/login" variant="outline" size="sm">
+                  LOGIN
+                </Button>
+              )}
             </div>
             <button
               type="button"
@@ -249,17 +272,38 @@ export function Header() {
                 </div>
               );
             })}
-            <div className="pt-10">
-              <Button
-                as="link"
-                href="/login"
-                variant="outline"
-                size="md"
-                className="w-full"
-                onClick={closeMobile}
-              >
-                LOGIN
-              </Button>
+            <div className="space-y-3 pt-10">
+              {isAuthed ? (
+                <>
+                  <Link
+                    href="/mypage"
+                    onClick={closeMobile}
+                    className="block border border-primary px-6 py-3 text-center text-base font-medium text-primary transition-colors duration-300 hover:bg-primary hover:text-white"
+                  >
+                    마이페이지
+                  </Link>
+                  <form action="/auth/logout" method="POST">
+                    <button
+                      type="submit"
+                      onClick={closeMobile}
+                      className="w-full border border-line px-6 py-3 text-center text-base font-medium text-ink-soft transition-colors duration-300 hover:border-ink hover:text-ink"
+                    >
+                      로그아웃
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <Button
+                  as="link"
+                  href="/login"
+                  variant="outline"
+                  size="md"
+                  className="w-full"
+                  onClick={closeMobile}
+                >
+                  LOGIN
+                </Button>
+              )}
             </div>
           </nav>
         </div>

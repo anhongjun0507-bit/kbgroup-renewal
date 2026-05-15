@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Fragment } from "react";
 import {
   motion,
   useReducedMotion,
@@ -10,15 +11,23 @@ import { Container } from "@/components/ui";
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
+export type BreadcrumbItem = {
+  label: string;
+  /** 비우면 현재 페이지(텍스트 only)로 표시 */
+  href?: string;
+};
+
 interface Props {
   kicker: string;
   title: string;
-  italicWord: string;
+  /** 제목에서 serif italic 강조할 단어 — 없으면 강조 없이 출력 */
+  italicWord?: string;
   subtitle: string;
-  breadcrumbCurrent: string;
+  breadcrumb: BreadcrumbItem[];
 }
 
-function renderTitle(title: string, italicWord: string) {
+function renderTitle(title: string, italicWord?: string) {
+  if (!italicWord) return title;
   const idx = title.indexOf(italicWord);
   if (idx === -1) return title;
   return (
@@ -30,12 +39,12 @@ function renderTitle(title: string, italicWord: string) {
   );
 }
 
-export function AboutHero({
+export function PageHero({
   kicker,
   title,
   italicWord,
   subtitle,
-  breadcrumbCurrent,
+  breadcrumb,
 }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
 
@@ -60,35 +69,36 @@ export function AboutHero({
 
   return (
     <section
-      aria-labelledby="about-hero-title"
+      aria-labelledby="page-hero-title"
       className="bg-cream pb-12 pt-32 md:pb-16 md:pt-40"
     >
       <Container>
         <nav aria-label="Breadcrumb" className="mb-12">
           <ol className="flex items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-ink-muted">
-            <li>
-              <Link
-                href="/"
-                className="transition-colors duration-200 hover:text-primary"
-              >
-                HOME
-              </Link>
-            </li>
-            <li aria-hidden="true" className="text-ink-muted/60">
-              /
-            </li>
-            <li>
-              <Link
-                href="/about"
-                className="transition-colors duration-200 hover:text-primary"
-              >
-                ABOUT
-              </Link>
-            </li>
-            <li aria-hidden="true" className="text-ink-muted/60">
-              /
-            </li>
-            <li className="text-ink-soft">{breadcrumbCurrent}</li>
+            {breadcrumb.map((item, idx) => {
+              const isLast = idx === breadcrumb.length - 1;
+              return (
+                <Fragment key={`${item.label}-${idx}`}>
+                  <li>
+                    {item.href && !isLast ? (
+                      <Link
+                        href={item.href}
+                        className="transition-colors duration-200 hover:text-primary"
+                      >
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <span className="text-ink-soft">{item.label}</span>
+                    )}
+                  </li>
+                  {!isLast && (
+                    <li aria-hidden="true" className="text-ink-muted/60">
+                      /
+                    </li>
+                  )}
+                </Fragment>
+              );
+            })}
           </ol>
         </nav>
 
@@ -109,7 +119,7 @@ export function AboutHero({
           </motion.div>
 
           <motion.h1
-            id="about-hero-title"
+            id="page-hero-title"
             variants={itemVariants}
             className="mt-6 font-serif text-5xl font-bold leading-[0.95] tracking-[-0.03em] text-ink md:text-6xl lg:text-7xl xl:text-8xl"
           >
