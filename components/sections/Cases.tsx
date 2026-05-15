@@ -58,7 +58,7 @@ export function Cases() {
             </motion.p>
             <motion.h2
               variants={item}
-              className="mt-4 font-extrabold tracking-[-0.025em] text-ink-strong"
+              className="mt-4 font-extrabold tracking-tight text-ink-strong"
               style={{ fontSize: "clamp(2rem, 3.6vw, 2.75rem)" }}
             >
               전국 단지의 <span className="text-primary">발자취</span>
@@ -105,7 +105,7 @@ export function Cases() {
                       </span>
                     )}
                     <div className="absolute inset-0 flex items-end p-6">
-                      <p className="text-[clamp(1.5rem,3.5vw,2.25rem)] font-bold leading-[0.95] tracking-[-0.02em] text-white/30 transition-colors duration-500 group-hover:text-white/55">
+                      <p className="text-[clamp(1.5rem,3.5vw,2.25rem)] font-bold leading-[0.95] tracking-tight text-white/30 transition-colors duration-500 group-hover:text-white/55">
                         {displayName}
                       </p>
                     </div>
@@ -118,7 +118,7 @@ export function Cases() {
                     <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-ink-muted">
                       {c.region}
                     </p>
-                    <h3 className="mt-2 line-clamp-2 min-h-[3.25rem] text-[15px] font-bold leading-snug tracking-[-0.02em] text-ink-strong transition-colors duration-300 group-hover:text-primary">
+                    <h3 className="mt-2 line-clamp-2 min-h-[3.25rem] text-[15px] font-bold leading-snug tracking-tight text-ink-strong transition-colors duration-300 group-hover:text-primary">
                       {c.name}
                     </h3>
                     {c.client && (

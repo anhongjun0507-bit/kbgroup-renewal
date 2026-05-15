@@ -79,8 +79,8 @@ export function Header({ isAuthed = false }: HeaderProps) {
       )}
     >
       <div className="mx-auto w-full max-w-[1320px] px-6 sm:px-8 lg:px-10">
-        <div className="flex h-[72px] items-center justify-between md:h-[76px]">
-          {/* Logo */}
+        <div className="flex h-[80px] items-center justify-between md:h-[88px]">
+          {/* Logo — 헤더 80/88px의 62% (한국 B2B 표준) */}
           <Link
             href="/"
             aria-label="(주)케이비개발 KB GROUP 메인으로"
@@ -93,7 +93,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
               width={2117}
               height={743}
               priority
-              className="h-9 w-auto md:h-10"
+              className="h-9 w-auto md:h-12"
             />
           </Link>
 
@@ -203,7 +203,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
       {mobileOpen && (
         <div
           id="mobile-menu"
-          className="fixed inset-x-0 bottom-0 top-[72px] z-40 overflow-y-auto bg-white md:top-[76px] lg:hidden"
+          className="fixed inset-x-0 bottom-0 top-[80px] z-40 overflow-y-auto bg-white md:top-[88px] lg:hidden"
         >
           <nav
             className="mx-auto w-full max-w-[1400px] px-5 py-8"

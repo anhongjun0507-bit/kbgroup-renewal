@@ -44,7 +44,7 @@ export function ServiceCategories() {
           </motion.p>
           <motion.h2
             variants={item}
-            className="mt-4 font-extrabold tracking-[-0.025em] text-ink-strong"
+            className="mt-4 font-extrabold tracking-tight text-ink-strong"
             style={{ fontSize: "clamp(2rem, 3.6vw, 2.75rem)" }}
           >
             한 회사가 책임지는 <span className="text-primary">종합 시설관리</span>
@@ -78,7 +78,7 @@ export function ServiceCategories() {
                 <span
                   aria-hidden="true"
                   className="tabular absolute right-6 top-6 text-[88px] font-extrabold leading-none text-primary/[0.06] transition-opacity duration-300 group-hover:text-primary/[0.12]"
-                  style={{ letterSpacing: "-0.05em" }}
+                  style={{ letterSpacing: "var(--tracking-tighter)" }}
                 >
                   {String(idx + 1).padStart(2, "0")}
                 </span>
@@ -86,7 +86,7 @@ export function ServiceCategories() {
                 <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-ink-muted">
                   {area.englishName}
                 </p>
-                <h3 className="mt-5 text-[22px] font-bold tracking-[-0.02em] text-ink-strong">
+                <h3 className="mt-5 text-[22px] font-bold tracking-tight text-ink-strong">
                   {area.name}
                 </h3>
                 <p className="mt-3 text-[15px] leading-relaxed text-ink">
@@ -144,7 +144,7 @@ export function ServiceCategories() {
                 <span
                   aria-hidden="true"
                   className="tabular text-[44px] font-extrabold leading-none text-primary/30"
-                  style={{ letterSpacing: "-0.05em" }}
+                  style={{ letterSpacing: "var(--tracking-tighter)" }}
                 >
                   05
                 </span>
@@ -152,7 +152,7 @@ export function ServiceCategories() {
                   <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-ink-muted">
                     {extraArea.englishName}
                   </p>
-                  <h3 className="mt-2 text-[22px] font-bold tracking-[-0.02em] text-ink-strong">
+                  <h3 className="mt-2 text-[22px] font-bold tracking-tight text-ink-strong">
                     {extraArea.name}
                   </h3>
                   <p className="mt-1 text-[14px] text-ink">

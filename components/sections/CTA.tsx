@@ -52,7 +52,7 @@ export function CTA() {
           </motion.p>
           <motion.h2
             variants={item}
-            className="mt-5 font-extrabold leading-[1.15] tracking-[-0.025em] !text-white"
+            className="mt-5 font-extrabold leading-[1.15] tracking-tight !text-white"
             style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
           >
             상담 문의를 <span className="text-accent">남겨주세요</span>

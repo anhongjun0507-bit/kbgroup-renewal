@@ -56,7 +56,7 @@ export function CeoMessage() {
               fontFamily: "var(--font-display)",
               fontSize: "clamp(1.5rem, 3vw, 2rem)",
               fontWeight: 800,
-              letterSpacing: "-0.025em",
+              letterSpacing: "var(--tracking-tight)",
               lineHeight: 1.25,
               color: "var(--color-ink-strong)",
             }}
@@ -89,7 +89,7 @@ export function CeoMessage() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">
               {ceoMessage.authorTitle}
             </p>
-            <p className="mt-1 text-2xl font-bold tracking-[-0.02em] text-ink-strong">
+            <p className="mt-1 text-2xl font-bold tracking-tight text-ink-strong">
               {ceoMessage.authorName}
             </p>
           </motion.div>

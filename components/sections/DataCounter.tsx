@@ -61,7 +61,7 @@ export function DataCounter() {
               fontFamily: "var(--font-display)",
               fontSize: "clamp(2rem, 4vw, 2.75rem)",
               fontWeight: 800,
-              letterSpacing: "-0.025em",
+              letterSpacing: "var(--tracking-tight)",
               lineHeight: 1.18,
               color: "var(--color-ink-strong)",
             }}
@@ -98,7 +98,7 @@ export function DataCounter() {
                     className="font-mono-num font-bold leading-none text-primary"
                     style={{
                       fontSize: "clamp(2.75rem, 5vw, 4rem)",
-                      letterSpacing: "-0.03em",
+                      letterSpacing: "var(--tracking-tight)",
                     }}
                   >
                     {c.value.toLocaleString()}
@@ -115,7 +115,7 @@ export function DataCounter() {
                     className="font-mono-num font-bold leading-none text-primary"
                     style={{
                       fontSize: "clamp(2.75rem, 5vw, 4rem)",
-                      letterSpacing: "-0.03em",
+                      letterSpacing: "var(--tracking-tight)",
                     }}
                   />
                 ) : (
@@ -123,7 +123,7 @@ export function DataCounter() {
                     className="font-mono-num font-bold leading-none text-primary"
                     style={{
                       fontSize: "clamp(2.75rem, 5vw, 4rem)",
-                      letterSpacing: "-0.03em",
+                      letterSpacing: "var(--tracking-tight)",
                     }}
                   >
                     0

@@ -82,7 +82,7 @@ export function CeoPortrait() {
                 fontFamily: "var(--font-display)",
                 fontSize: "clamp(1.5rem, 3.5vw, 2.5rem)",
                 fontWeight: 800,
-                letterSpacing: "-0.025em",
+                letterSpacing: "var(--tracking-tight)",
                 lineHeight: 1.25,
                 color: "var(--color-ink-strong)",
               }}
@@ -99,7 +99,7 @@ export function CeoPortrait() {
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">
                   {ceoMessage.authorTitle}
                 </p>
-                <p className="mt-1 text-xl font-bold tracking-[-0.02em] text-ink-strong md:text-2xl">
+                <p className="mt-1 text-xl font-bold tracking-tight text-ink-strong md:text-2xl">
                   {ceoMessage.authorName}
                 </p>
               </div>

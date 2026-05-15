@@ -26,7 +26,7 @@ export function Footer() {
             <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/50">
               KB DEVELOPMENT CO.,LTD.
             </p>
-            <h3 className="mt-2 text-[20px] font-bold tracking-[-0.02em] text-white">
+            <h3 className="mt-2 text-[20px] font-bold tracking-tight text-white">
               (주)케이비개발
             </h3>
             <p className="mt-6 max-w-sm text-[14px] leading-relaxed text-white/75">

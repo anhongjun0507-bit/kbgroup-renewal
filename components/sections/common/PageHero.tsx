@@ -51,22 +51,22 @@ export function PageHero({
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: shouldReduce ? 0 : 0.1,
+        staggerChildren: shouldReduce ? 0 : 0.08,
         delayChildren: shouldReduce ? 0 : 0.05,
       },
     },
   };
 
   const item: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 20 },
+    hidden: { opacity: 0, y: shouldReduce ? 0 : 16 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: shouldReduce ? 0 : 0.8, ease: EASE_OUT },
+      transition: { duration: shouldReduce ? 0 : 0.7, ease: EASE_OUT },
     },
   };
 
-  // safeTitle fallback (title 비어있을 때 breadcrumb 마지막 라벨 사용)
+  /** title이 비어있어도 breadcrumb 마지막 라벨로 fallback (R5-2·R5-3) */
   const safeTitle =
     title && title.trim().length > 0
       ? title
@@ -114,26 +114,26 @@ export function PageHero({
           variants={stagger}
           className="max-w-3xl"
         >
-          {/* eyebrow */}
           <motion.p variants={item} className="eyebrow">
             {kicker}
           </motion.p>
 
-          {/* h1 — SUIT 900 + inline color 강제 (R4-2·R4-3 픽스) */}
-          <motion.h1
+          {/* h1 — motion 제거하고 plain h1로 SSR-safe (R5-2·R5-3 가시성).
+              inline style로 color/weight/letterSpacing 강제. */}
+          <h1
             id="page-hero-title"
-            variants={item}
             className="mt-5 font-display"
             style={{
               fontSize: "clamp(2rem, 5vw, 3.5rem)",
               fontWeight: 900,
-              letterSpacing: "-0.045em",
+              letterSpacing: "var(--tracking-tighter)",
               lineHeight: 1.1,
-              color: "#0e1530",  /* inline 강제 — 외부 CSS에 옅게 덮이지 않도록 */
+              color: "#0e1530",
+              minHeight: "1.05em",
             }}
           >
             {renderTitle(safeTitle, italicWord)}
-          </motion.h1>
+          </h1>
 
           <motion.div
             variants={item}

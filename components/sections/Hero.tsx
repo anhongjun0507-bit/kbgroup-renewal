@@ -26,8 +26,8 @@ export function Hero() {
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: shouldReduce ? 0 : 0.1,
-        delayChildren: shouldReduce ? 0 : 0.05,
+        staggerChildren: shouldReduce ? 0 : 0.08,
+        delayChildren: shouldReduce ? 0 : 0.1,
       },
     },
   };
@@ -37,7 +37,7 @@ export function Hero() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: shouldReduce ? 0 : 0.8, ease: EASE_OUT },
+      transition: { duration: shouldReduce ? 0 : 0.7, ease: EASE_OUT },
     },
   };
 
@@ -49,18 +49,22 @@ export function Hero() {
       className="relative isolate flex items-center overflow-hidden bg-[#0e1530]"
       style={{ minHeight: "min(720px, 84svh)" }}
     >
-      {/* 베이스 그라데이션 (R4-1: 더 어둡게) */}
+      {/* 베이스 그라데이션 */}
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-gradient-to-br from-[#0e1530] via-[#1a2456] to-[#0e1530]"
       />
-      {/* 좌측 라디얼 — h1 영역 뒤 살짝 어둡게 (R4-1: 흰 글자 또렷하게) */}
+      {/* h1 영역 뒤 라디얼 vignette — white 글자 띄움 (R5-1) */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-0 top-1/4 h-[60%] w-[70%]"
+        className="pointer-events-none absolute"
         style={{
+          left: "0",
+          top: "15%",
+          width: "75%",
+          height: "70%",
           background:
-            "radial-gradient(ellipse at left center, rgba(14,21,48,0.7), transparent 70%)",
+            "radial-gradient(ellipse at 30% 50%, rgba(0,0,0,0.5) 0%, transparent 65%)",
         }}
       />
       {/* 미세 grid */}
@@ -74,7 +78,8 @@ export function Hero() {
         }}
       />
 
-      <div className="relative w-full">
+      {/* 콘텐츠 wrapper — z-10으로 절대 배경 위에 (R5-1) */}
+      <div className="relative z-10 w-full">
         <Container>
           <motion.div
             initial="hidden"
@@ -85,22 +90,26 @@ export function Hero() {
             <motion.p
               variants={item}
               className="eyebrow"
-              style={{ color: "rgba(255,255,255,0.55)" }}
+              style={{ color: "rgba(255,255,255,0.6)" }}
             >
               (주)케이비개발 · SINCE {company.foundedYear}
             </motion.p>
 
-            {/* h1 — SUIT 900 + 가벼운 1px shadow (R4-1: blur 24 제거) */}
-            <motion.h1
-              variants={item}
+            {/* h1 — motion 제거하고 plain h1 (SSR-safe, 항상 가시).
+                다중 textShadow로 다크 배경에서 글자 윤곽 분명. */}
+            <h1
               className="mt-6 font-display"
               style={{
                 fontSize: "clamp(2.75rem, 7vw, 5.5rem)",
                 fontWeight: 900,
-                letterSpacing: "-0.05em",
+                letterSpacing: "var(--tracking-tighter)",
                 lineHeight: 0.98,
                 color: "#ffffff",
-                textShadow: "0 1px 0 rgba(0,0,0,0.35)",
+                textShadow: [
+                  "0 1px 0 rgba(0,0,0,0.5)",
+                  "0 2px 8px rgba(0,0,0,0.4)",
+                  "0 8px 32px rgba(30,42,94,0.6)",
+                ].join(", "),
               }}
             >
               <span className="block">{SLOGAN_LINE_1}</span>
@@ -116,7 +125,7 @@ export function Hero() {
                   SLOGAN_LINE_2
                 )}
               </span>
-            </motion.h1>
+            </h1>
 
             <motion.div
               variants={item}
@@ -134,7 +143,6 @@ export function Hero() {
               {SUBTITLE_LINE_2}
             </motion.p>
 
-            {/* CTA — fold 위로 (R4-4: mt-12 → mt-7) */}
             <motion.div
               variants={item}
               className="mt-7 flex flex-wrap items-center gap-5"
@@ -155,7 +163,6 @@ export function Hero() {
               </Link>
             </motion.div>
 
-            {/* Inline stats — fold 안 (R4-4) */}
             <motion.div
               variants={item}
               className="mt-9 flex flex-wrap gap-x-10 gap-y-5 md:gap-x-12"
