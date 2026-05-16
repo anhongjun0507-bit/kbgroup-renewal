@@ -4,7 +4,9 @@ import { AboutNav } from "@/components/sections/about/AboutNav";
 import { WhyValues } from "@/components/sections/about/WhyValues";
 import { WhyDifferentiators } from "@/components/sections/about/WhyDifferentiators";
 import { WhyNumbers } from "@/components/sections/about/WhyNumbers";
+import { CompanyOffice } from "@/components/sections/about/CompanyOffice";
 import { CompanyStrengths } from "@/components/sections/about/CompanyStrengths";
+import { EquipmentShowcase } from "@/components/sections/about/EquipmentShowcase";
 import { RelatedCompaniesGrid } from "@/components/sections/about/RelatedCompaniesGrid";
 import { CollaboratorsTable } from "@/components/sections/about/CollaboratorsTable";
 import { ContactForm } from "@/components/sections/common/ContactForm";
@@ -30,10 +32,12 @@ export default function AboutPage() {
         ]}
       />
       <AboutNav current="why" />
+      <CompanyOffice />
       <WhyValues />
       <WhyDifferentiators />
       <CompanyStrengths />
       <WhyNumbers />
+      <EquipmentShowcase />
       <RelatedCompaniesGrid />
       <CollaboratorsTable />
       <ContactForm context="회사소개 — 사업 상담 문의" />

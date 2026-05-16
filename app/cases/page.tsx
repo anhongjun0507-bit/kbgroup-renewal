@@ -3,6 +3,7 @@ import { PageHero } from "@/components/sections/common/PageHero";
 import { CasesStats } from "@/components/sections/cases/CasesStats";
 import { CasesMap } from "@/components/sections/cases/CasesMap";
 import { CasesGallery } from "@/components/sections/cases/CasesGallery";
+import { CasesPhotoGallery } from "@/components/sections/cases/CasesPhotoGallery";
 import { ContactForm } from "@/components/sections/common/ContactForm";
 
 export const metadata: Metadata = {
@@ -25,6 +26,7 @@ export default function CasesPage() {
         ]}
       />
       <CasesStats />
+      <CasesPhotoGallery />
       <CasesMap />
       <CasesGallery />
       <ContactForm context="관리현황 문의" />
