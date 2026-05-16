@@ -1,22 +1,37 @@
 "use client";
 
-import { useRef } from "react";
-import {
-  motion,
-  useInView,
-  useReducedMotion,
-  type Variants,
-} from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import CountUp from "react-countup";
 import { Container } from "@/components/ui";
 import { counters, type Counter } from "@/data/site-content";
+
+/* Phase 13 — WhyNumbers 전면 갱신
+   기존 v9 톤(font-serif + leading-none + ink 배경)이 P0-C/P0-G 처방 누락.
+   숫자 80px 글자가 ascender/descender 클리핑 + 0 노출 + items-start 어색 정렬.
+   DataCounter/WorkforceStats/CasesStats 톤으로 통일 */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 export function WhyNumbers() {
   const shouldReduce = useReducedMotion() ?? false;
-  const gridRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(gridRef, { once: true, amount: 0.3 });
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.1, rootMargin: "-10% 0px" },
+    );
+    io.observe(sectionRef.current);
+    return () => io.disconnect();
+  }, []);
 
   const headerVariants: Variants = {
     hidden: { opacity: 0, y: shouldReduce ? 0 : 24 },
@@ -29,38 +44,50 @@ export function WhyNumbers() {
 
   return (
     <section
+      ref={sectionRef}
+      data-surface="dark"
       aria-labelledby="why-numbers-heading"
-      className="bg-ink py-24 text-white md:py-32"
+      className="section relative isolate overflow-hidden bg-navy-900 text-white"
     >
-      <Container>
+      {/* mesh radial */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          background: [
+            "radial-gradient(45% 50% at 25% 30%, rgba(201,162,75,0.12) 0%, transparent 60%)",
+            "radial-gradient(40% 45% at 80% 70%, rgba(30,44,86,0.7) 0%, transparent 60%)",
+          ].join(", "),
+        }}
+      />
+
+      <Container className="relative">
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.4 }}
+          viewport={{ once: true, amount: 0.3 }}
           variants={headerVariants}
           className="mb-16 text-center"
         >
-          <div aria-hidden="true" className="mx-auto mb-6 h-px w-12 bg-gold" />
-          <p className="text-xs font-medium uppercase tracking-[0.35em] text-gold">
+          <div aria-hidden="true" className="mx-auto mb-6 h-[3px] w-12 bg-accent-500" />
+          <p className="eyebrow" style={{ color: "rgba(255,255,255,0.7)" }}>
             BY THE NUMBERS
           </p>
           <h2
             id="why-numbers-heading"
-            className="mt-6 font-serif text-3xl font-bold leading-[1.15] tracking-[-0.02em] text-white md:text-4xl"
+            className="mt-6 font-display font-extrabold leading-[1.15] tracking-tight"
+            style={{ color: "#ffffff", fontSize: "clamp(2rem, 4vw, 3rem)" }}
           >
-            <span className="italic text-gold">숫자</span>가 증명합니다
+            <span className="text-accent-500">숫자</span>가 증명합니다
           </h2>
         </motion.div>
 
-        <div
-          ref={gridRef}
-          className="mx-auto grid max-w-6xl grid-cols-2 gap-12 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-white/10"
-        >
-          {counters.map((counter, index) => (
-            <NumberColumn
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
+          {counters.map((counter, idx) => (
+            <NumberCard
               key={counter.key}
               counter={counter}
-              index={index}
+              index={idx}
               inView={inView}
               shouldReduce={shouldReduce}
             />
@@ -71,7 +98,7 @@ export function WhyNumbers() {
   );
 }
 
-function NumberColumn({
+function NumberCard({
   counter,
   index,
   inView,
@@ -85,43 +112,44 @@ function NumberColumn({
   const { value, suffix, label, caption } = counter;
   return (
     <motion.div
-      initial={{ opacity: 0, y: shouldReduce ? 0 : 30 }}
+      initial={{ opacity: 0, y: shouldReduce ? 0 : 24 }}
       animate={inView ? { opacity: 1, y: 0 } : undefined}
       transition={{
         duration: shouldReduce ? 0 : 0.7,
-        delay: shouldReduce ? 0 : index * 0.15,
+        delay: shouldReduce ? 0 : index * 0.1,
         ease: EASE_OUT_EXPO,
       }}
-      className="px-6 text-center"
+      className="rounded-md border border-white/10 bg-white/[0.04] p-7 backdrop-blur-sm transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:border-white/30 hover:bg-white/[0.06]"
     >
-      <div className="flex items-start justify-center font-serif font-bold leading-none tracking-[-0.03em] text-white">
-        <span className="text-5xl md:text-6xl lg:text-[80px]">
+      <p className="stat-cell flex items-baseline gap-1">
+        <span
+          className="stat-number font-mono-num font-display text-[44px] font-extrabold text-white md:text-[56px] lg:text-[64px]"
+          style={{ letterSpacing: "var(--tracking-tight)" }}
+        >
           {shouldReduce ? (
             value.toLocaleString("en-US")
           ) : inView ? (
             <CountUp
+              start={Math.round(value * 0.7)}
               end={value}
-              duration={2.5}
-              delay={index * 0.15}
+              duration={Math.max(0.6, 0.6 + Math.log10(Math.max(1, value)) * 0.25)}
+              delay={index * 0.1}
               separator=","
             />
           ) : (
-            "0"
+            value.toLocaleString("en-US")
           )}
         </span>
         {suffix && (
-          <span
-            aria-hidden="true"
-            className="-translate-y-2 ml-1 inline-block text-3xl text-gold md:text-4xl"
-          >
+          <span className="stat-suffix font-mono-num text-[20px] font-bold text-accent-500 md:text-[22px]">
             {suffix}
           </span>
         )}
-      </div>
-      <div className="mt-6 text-base font-medium text-white">{label}</div>
-      <div className="mt-2 text-[10px] font-medium uppercase tracking-[0.25em] text-white/40">
+      </p>
+      <p className="mt-6 text-[15px] font-semibold text-white">{label}</p>
+      <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.12em] text-accent-300">
         {caption}
-      </div>
+      </p>
     </motion.div>
   );
 }
