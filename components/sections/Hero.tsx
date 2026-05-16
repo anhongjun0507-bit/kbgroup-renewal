@@ -29,12 +29,20 @@ export function Hero() {
   const slogan2Idx = SLOGAN_LINE_2.indexOf(SLOGAN_HIGHLIGHT);
 
   return (
+    /* Phase 12 P0 — overflow-hidden을 section에서 제거.
+       배경 레이어 4종(그라데이션·mesh·빌딩·격자)만 wrapper로 묶어 클리핑.
+       카드는 자유롭게 hero 하단 밖으로 튀어나옴 (translate-y-1/2 정상 작동) */
     <section
       aria-label="히어로"
       data-surface="dark"
-      className="relative isolate overflow-hidden bg-navy-900 text-white"
+      className="relative isolate bg-navy-900 text-white"
       style={{ minHeight: "min(820px, 92svh)" }}
     >
+      {/* 배경 클리핑 영역 — 배경 4종만 overflow-hidden */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 overflow-hidden"
+      >
       {/* 베이스 그라데이션 — 135deg navy-900 → #1B2A5E → navy-900 */}
       <div
         aria-hidden="true"
@@ -176,6 +184,8 @@ export function Hero() {
           backgroundSize: "80px 80px",
         }}
       />
+      </div>
+      {/* /배경 클리핑 영역 끝 */}
 
       <div className="relative z-10 flex min-h-[inherit] flex-col">
         <Container>
@@ -309,11 +319,12 @@ export function Hero() {
                       style={{ letterSpacing: "var(--tracking-tight)" }}
                     >
                       {s.value}
-                      <span className="ml-0.5 text-base font-semibold text-accent-500 md:text-xl">
+                      <span className="ml-0.5 text-base font-semibold text-accent-300 md:text-xl">
                         {s.suffix}
                       </span>
                     </div>
-                    <div className="mt-3 text-[11px] uppercase tracking-[0.18em] text-white/65 md:text-[12px]">
+                    {/* Phase 12 P0 — 라벨 색 white/65 → /85 강화 + accent-300 골드 톤 */}
+                    <div className="mt-2.5 text-[11px] font-medium uppercase tracking-[0.12em] text-accent-300 md:text-[12px]">
                       {s.label}
                     </div>
                   </div>
