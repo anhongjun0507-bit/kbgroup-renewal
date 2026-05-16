@@ -95,20 +95,32 @@ export function CompanyOffice() {
             </p>
           </motion.div>
 
+          {/* Phase 11 P1-B — 본사 정보 카드 콘트라스트 강화
+              빌딩 사진 배경 위 반투명 흰 → 다크 navy 80% + 진한 blur 12 + 흰 보더 15%
+              label opacity 0.55 → 0.7 (accent-300 골드), value 흰색 굵게 */}
           <motion.dl
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
             variants={itemVariants}
-            className="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-md border border-white/12 bg-white/5 backdrop-blur-md sm:grid-cols-3"
-            style={{ backgroundColor: "rgba(255,255,255,0.06)" }}
+            className="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-md border sm:grid-cols-3"
+            style={{
+              backgroundColor: "rgba(11, 26, 51, 0.78)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              borderColor: "rgba(255,255,255,0.15)",
+            }}
           >
             {FACTS.map((f) => (
-              <div key={f.label} className="p-6 sm:p-8">
-                <dt className="text-[11px] font-medium uppercase tracking-[0.18em] text-white/55">
+              <div
+                key={f.label}
+                className="p-6 sm:p-8"
+                style={{ backgroundColor: "rgba(11, 26, 51, 0.4)" }}
+              >
+                <dt className="text-[11px] font-medium uppercase tracking-[0.18em] text-accent-300">
                   {f.label}
                 </dt>
-                <dd className="mt-3 font-display text-[20px] font-bold tracking-tight text-white md:text-[24px]">
+                <dd className="mt-3 font-display text-[22px] font-extrabold tracking-tight text-white md:text-[26px]">
                   {f.value}
                 </dd>
               </div>

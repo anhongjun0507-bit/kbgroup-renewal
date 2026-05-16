@@ -12,12 +12,14 @@ import { businessAreas, type BusinessCategory } from "@/data/site-content";
 
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
-/* Phase 6 B-3 — 사업별 컬러 키 (배경 그라데이션 + 좌상단 4px 색띠) */
+/* Phase 11 P1-E — development 카드 brown/copper 그라데이션 톤 충돌 해소.
+   #B88B3A 골드 종착점이 brown으로 보이던 문제. 다른 4 카드와 동일 navy 톤으로 통일.
+   사업별 차별화는 좌상단 accent bar + 워터마크 hover 컬러로만 진행 */
 const VISUAL_BG: Record<BusinessCategory, string> = {
   facility: "linear-gradient(135deg, #0E1F3A 0%, #16315C 100%)",
   sanitation: "linear-gradient(135deg, #16315C 0%, #2C4276 100%)",
   security: "linear-gradient(135deg, #0B1A33 0%, #16315C 100%)",
-  development: "linear-gradient(135deg, #0E1F3A 0%, #B88B3A 180%)",
+  development: "linear-gradient(135deg, #0E1F3A 0%, #1B2230 100%)",
   other: "linear-gradient(135deg, #16315C 0%, #0E1F3A 100%)",
 };
 

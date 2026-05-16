@@ -23,38 +23,27 @@ const CATEGORY_GROUPS: {
 export function Partners() {
   const shouldReduce = useReducedMotion() ?? false;
 
+  /* Phase 11 P1-A — 헤딩 fade 흐릿 해소
+     duration 0.4 → 0.25, 시작 opacity 0 → 0.6, y 10 → 6 */
   const item: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 10 },
+    hidden: { opacity: 0.6, y: shouldReduce ? 0 : 6 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: shouldReduce ? 0 : 0.4, ease: EASE_OUT },
+      transition: { duration: shouldReduce ? 0 : 0.25, ease: EASE_OUT },
     },
   };
 
   return (
     <section className="section bg-gray-50">
       <Container>
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={{
-            hidden: {},
-            visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.04 } },
-          }}
-          className="mb-12 max-w-3xl md:mb-16"
-        >
-          <motion.p variants={item} className="eyebrow">
-            PARTNERS
-          </motion.p>
-          <motion.h2
-            variants={item}
-            className="mt-4 font-extrabold tracking-tight text-ink-strong"
-          >
+        <div className="mb-12 max-w-3xl md:mb-16">
+          {/* 헤딩은 fade 없이 즉시 노출 — flash 방지 */}
+          <p className="eyebrow">PARTNERS</p>
+          <h2 className="mt-4 font-extrabold tracking-tight text-ink-strong">
             함께 신뢰를 쌓아온 파트너
-          </motion.h2>
-        </motion.div>
+          </h2>
+        </div>
 
         {/* 카테고리별 행 분리 — 발주처 / 공공기관 / 시공사 */}
         <div className="space-y-12">

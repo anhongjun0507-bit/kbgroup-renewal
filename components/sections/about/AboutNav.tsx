@@ -24,10 +24,13 @@ const TABS: {
    - 모바일: 가로 스크롤 + 스크롤바 숨김 + 좌우 fade mask + scroll-snap
    - 데스크탑: gap 8, active = bg-navy-800 + 흰 텍스트 */
 export function AboutNav({ current }: Props) {
+  /* Phase 11 P1-G — sticky pill bar 본문 첫 줄 가림 보강
+     배경 white/95 → white(불투명) + 미세 shadow + sticky 영역 명확화
+     scroll-margin-top은 globals.css에서 144px 글로벌 적용됨 */
   return (
     <nav
       aria-label="회사소개 페이지 네비게이션"
-      className="sticky top-[72px] z-30 border-b border-line bg-white/95 backdrop-blur-sm md:top-20"
+      className="sticky top-[72px] z-30 border-b border-line bg-white shadow-[0_2px_8px_rgba(11,26,51,0.06)] md:top-20"
     >
       <Container>
         <div className="relative">

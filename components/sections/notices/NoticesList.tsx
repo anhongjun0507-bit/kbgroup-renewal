@@ -43,6 +43,41 @@ const CATEGORY_COLOR: Record<NoticeItem["category"], string> = {
   career: "bg-gray-700 text-white",
 };
 
+/* Phase 11 P1-F — 카테고리별 라인 아이콘 (빈 다크 박스 → 시각 식별)
+   complex=Building / notice=Bell / press=Newspaper / career=Users */
+const CATEGORY_ICON: Record<NoticeItem["category"], React.ReactNode> = {
+  complex: (
+    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 42V14L24 6L40 14V42" />
+      <path d="M8 42H40" />
+      <path d="M18 42V28H30V42" />
+      <path d="M18 20H20M28 20H30M18 26H20M28 26H30" />
+    </svg>
+  ),
+  notice: (
+    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 20C12 13.4 17.4 8 24 8C30.6 8 36 13.4 36 20V28L40 34H8L12 28V20Z" />
+      <path d="M20 34V36C20 38.2 21.8 40 24 40C26.2 40 28 38.2 28 36V34" />
+    </svg>
+  ),
+  press: (
+    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="6" y="10" width="30" height="30" rx="2" />
+      <path d="M36 16H42V36C42 38.2 40.2 40 38 40H36" />
+      <path d="M12 16H30M12 22H30M12 28H22M12 34H22" />
+      <rect x="26" y="28" width="6" height="6" />
+    </svg>
+  ),
+  career: (
+    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="18" cy="16" r="6" />
+      <circle cx="34" cy="18" r="5" />
+      <path d="M6 40c0-7 5-12 12-12s12 5 12 12" />
+      <path d="M28 40c0-5 3-9 6-9s6 4 6 9" />
+    </svg>
+  ),
+};
+
 interface Props {
   /** 페이지 진입 시 기본 카테고리 (서브 라우트에서 prefilter 시 사용) */
   defaultCategory?: NoticeCategory;
@@ -180,15 +215,21 @@ export function NoticesList({
                     href={`/notices/${item.id}`}
                     className="group grid grid-cols-12 items-center gap-4 py-5 transition-colors duration-200 hover:bg-gray-50 md:gap-6"
                   >
-                    {/* 썸네일 160×100 */}
+                    {/* Phase 11 P1-F — 썸네일 빈 박스 → 카테고리별 라인 아이콘 */}
                     <div
-                      className="col-span-3 aspect-[8/5] overflow-hidden rounded-sm md:col-span-2"
+                      className="relative col-span-3 aspect-[8/5] overflow-hidden rounded-sm md:col-span-2"
                       style={{
                         background:
                           item.thumbColor ??
                           "linear-gradient(135deg, #0E1F3A 0%, #16315C 100%)",
                       }}
-                    />
+                    >
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="h-10 w-10 text-accent-300/40 transition-colors duration-300 group-hover:text-accent-300/80 md:h-11 md:w-11">
+                          {CATEGORY_ICON[item.category]}
+                        </div>
+                      </div>
+                    </div>
 
                     {/* 가운데 */}
                     <div className="col-span-7 md:col-span-8">
