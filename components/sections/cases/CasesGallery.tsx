@@ -27,7 +27,7 @@ function getInitial(name: string) {
 }
 
 function badgeStyle(type?: Complex["type"]) {
-  if (type === "LH") return "bg-accent-500 text-white";
+  if (type === "LH") return "bg-accent-500 text-navy-900";
   if (type === "민간") return "bg-navy-800 text-white";
   if (type === "공공") return "bg-navy-700 text-white";
   return "bg-white/85 text-ink-strong";
@@ -149,7 +149,7 @@ function CaseCard({ complex, hue }: { complex: Complex; hue: number }) {
       <Link href={`/cases/${slug}`} className="block" aria-label={`${complex.name} 상세보기`}>
         <div
           className="relative aspect-[4/5] overflow-hidden bg-navy-900"
-          style={{ filter: `hue-rotate(${hue}deg)` }}
+          
         >
           <div
             aria-hidden="true"

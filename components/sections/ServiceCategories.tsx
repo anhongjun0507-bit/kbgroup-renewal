@@ -21,13 +21,14 @@ const VISUAL_BG: Record<BusinessCategory, string> = {
   other: "linear-gradient(135deg, #16315C 0%, #0E1F3A 100%)",
 };
 
-/* 좌상단 4px 액센트 색띠 (지시서 B-3 색) */
+/* Phase 9 P1-05 — 4색 hue → 단일 골드 opacity 4단계
+   "한 회사가 책임지는" 카피에 맞춰 톤 통일. 위계는 opacity로만 */
 const ACCENT_BAR: Record<BusinessCategory, string> = {
-  facility: "#3B82F6",
-  sanitation: "#10B981",
-  security: "#F59E0B",
-  development: "#8B5CF6",
-  other: "#64748B",
+  facility: "rgba(201,162,75,1)",       /* 100% */
+  sanitation: "rgba(201,162,75,0.78)",  /* 78% */
+  security: "rgba(201,162,75,0.58)",    /* 58% */
+  development: "rgba(201,162,75,0.4)",  /* 40% */
+  other: "rgba(201,162,75,0.25)",       /* 25% */
 };
 
 /* 사업별 라인 일러스트 SVG */

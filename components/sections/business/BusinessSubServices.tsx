@@ -95,7 +95,7 @@ export function BusinessSubServices({ area }: Props) {
                     "linear-gradient(135deg, #0E1F3A 0%, #16315C 50%, #0B1A33 100%)",
                     "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.18) 0%, transparent 70%)",
                   ].join(", "),
-                  filter: `hue-rotate(${(idx - 1) * 12}deg)`,
+                  
                 }}
               />
               <div className="absolute inset-0 flex flex-col justify-end p-5">

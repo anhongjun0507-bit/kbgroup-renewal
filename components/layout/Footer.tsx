@@ -3,18 +3,21 @@ import { Container } from "@/components/ui";
 import { company, contact } from "@/data/site-content";
 
 const SITEMAP = [
+  /* Phase 9 P2-04 — 헤더 nav와 라벨 일치 */
   { label: "회사소개", href: "/about" },
   { label: "사업영역", href: "/business" },
   { label: "관리현황", href: "/cases" },
-  { label: "인허가·인증", href: "/licenses" },
+  { label: "인허가", href: "/licenses" },
   { label: "채용", href: "/careers" },
   { label: "소식", href: "/notices" },
 ];
 
+/* Phase 9 P0-09 — 푸터 대비 강화
+   `text-white/55→/65 (eyebrow)`, `/75→/85 (link/body)`, copyright `/55→/65` */
 const COL_LABEL =
-  "text-[13px] font-medium uppercase tracking-[0.18em] mb-5 text-white/55";
+  "text-[12px] font-semibold uppercase tracking-[0.12em] mb-5 text-accent-300";
 const LINK_BASE =
-  "text-[14px] leading-relaxed text-white/75 transition-colors duration-200 hover:text-white";
+  "text-[14px] leading-relaxed text-white/85 transition-colors duration-200 hover:text-white";
 
 export function Footer() {
   return (
@@ -27,17 +30,17 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.4fr_1px_1fr_1px_1.1fr] lg:gap-12">
           {/* KB GROUP intro */}
           <div>
-            <p className="eyebrow text-white/55">
+            <p className="eyebrow text-accent-300">
               KB DEVELOPMENT CO.,LTD.
             </p>
             <h3 className="mt-3 text-[20px] font-bold tracking-tight text-white">
               (주)케이비개발
             </h3>
-            <p className="mt-6 max-w-sm text-[14px] leading-relaxed text-white/75">
+            <p className="mt-6 max-w-sm text-[14px] leading-relaxed text-white/85">
               {company.tagline}로서 주택관리·위생청소·경비보안·시행건설을
               아우르는 종합 시설관리 서비스를 제공합니다.
             </p>
-            <p className="mt-5 text-[13px] leading-relaxed text-white/55">
+            <p className="mt-5 text-[13px] leading-relaxed text-white/70">
               {contact.address}
             </p>
           </div>
@@ -75,7 +78,7 @@ export function Footer() {
             <h3 className={COL_LABEL}>CONTACT</h3>
             <ul className="space-y-3 text-[14px]">
               <li className="flex items-baseline gap-3">
-                <span className="w-12 shrink-0 text-[12px] uppercase tracking-[0.15em] text-white/50">
+                <span className="w-12 shrink-0 text-[12px] uppercase tracking-[0.12em] text-accent-300">
                   TEL
                 </span>
                 <a href={`tel:${contact.phone}`} className={LINK_BASE}>
@@ -83,13 +86,13 @@ export function Footer() {
                 </a>
               </li>
               <li className="flex items-baseline gap-3">
-                <span className="w-12 shrink-0 text-[12px] uppercase tracking-[0.15em] text-white/50">
+                <span className="w-12 shrink-0 text-[12px] uppercase tracking-[0.12em] text-accent-300">
                   FAX
                 </span>
-                <span className="text-white/60">{contact.fax}</span>
+                <span className="text-white/75">{contact.fax}</span>
               </li>
               <li className="flex items-baseline gap-3">
-                <span className="w-12 shrink-0 text-[12px] uppercase tracking-[0.15em] text-white/50">
+                <span className="w-12 shrink-0 text-[12px] uppercase tracking-[0.12em] text-accent-300">
                   EMAIL
                 </span>
                 <a href={`mailto:${contact.email}`} className={LINK_BASE}>
@@ -100,7 +103,7 @@ export function Footer() {
                 {/* Phase 2.7 — 상담 신청 CTA 메인 동일 사이즈 (h-14 / px-8) */}
                 <a
                   href={`mailto:${contact.email}?subject=${encodeURIComponent("[케이비개발] 사업 상담 문의")}`}
-                  className="inline-flex h-14 items-center gap-2 rounded-sm bg-accent-500 px-8 text-base font-bold text-white transition-all duration-200 [transition-timing-function:var(--ease)] hover:bg-accent-600 hover:shadow-[var(--shadow-cta)]"
+                  className="inline-flex h-14 items-center gap-2 rounded-sm bg-accent-500 px-8 text-base font-bold text-navy-900 transition-all duration-200 [transition-timing-function:var(--ease)] hover:bg-accent-600 hover:shadow-[var(--shadow-cta)]"
                 >
                   상담 신청 <span aria-hidden="true">→</span>
                 </a>
@@ -111,7 +114,7 @@ export function Footer() {
 
         {/* Bottom */}
         <div className="mt-14 border-t border-white/10 pt-8">
-          <div className="flex flex-col gap-3 text-[13px] leading-relaxed text-white/55 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-3 text-[13px] leading-relaxed text-white/70 md:flex-row md:items-center md:justify-between">
             <div className="space-y-1">
               <p>
                 {company.legalName} · 대표 {company.ceo} · 사업자등록번호{" "}

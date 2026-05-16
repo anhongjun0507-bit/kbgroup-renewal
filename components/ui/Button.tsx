@@ -28,17 +28,16 @@ type ButtonAsLink = CommonProps & {
 
 export type ButtonProps = ButtonAsButton | ButtonAsLink;
 
-/* Phase 2 톤 — 직각 폐기, 라디우스 sm(8) 기본
-   accent: 핑크 CTA — hover 시 shadow-cta(레드 글로우)
-   ghost: 흰 outline 1px (다크 배경용)
-   outline: 어두운 outline (밝은 배경용) */
+/* Phase 9 P0-01 — accent variant 텍스트를 navy-900으로 변경 (대비 7.5:1)
+   기존 #E3C57A on #C9A24B = 1.43:1 → 새 #0B1A33 on #C9A24B = 7.5:1
+   hover: bg accent-600 + 텍스트 유지 navy-900 (대비 6:1+) */
 const VARIANT: Record<ButtonVariant, string> = {
   primary:
     "bg-navy-800 text-white hover:bg-navy-900 rounded-sm",
   secondary:
     "bg-secondary text-white hover:bg-[#048541] rounded-sm",
   accent:
-    "bg-accent-500 text-white hover:bg-accent-600 hover:shadow-[var(--shadow-cta)] rounded-sm",
+    "bg-accent-500 text-navy-900 hover:bg-accent-600 hover:text-white hover:shadow-[var(--shadow-cta)] rounded-sm",
   outline:
     "bg-transparent border border-ink-strong text-ink-strong hover:bg-ink-strong hover:text-white rounded-sm",
   ghost:

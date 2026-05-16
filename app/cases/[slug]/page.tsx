@@ -114,7 +114,7 @@ export default async function CaseDetailPage({
               <span
                 className={
                   "inline-flex items-center rounded-sm px-3 py-1 text-[11px] font-bold uppercase tracking-[0.1em] " +
-                  (lh ? "bg-accent-500 text-white" : "bg-navy-700 text-white")
+                  (lh ? "bg-accent-500 text-navy-900" : "bg-navy-700 text-white")
                 }
               >
                 {badge}
@@ -209,7 +209,7 @@ export default async function CaseDetailPage({
                     "linear-gradient(135deg, #0E1F3A 0%, #16315C 100%)",
                     "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.18) 0%, transparent 70%)",
                   ].join(", "),
-                  filter: `hue-rotate(${(i % 6) * 12}deg)`,
+                  
                 }}
               />
             ))}

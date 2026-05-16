@@ -37,7 +37,7 @@ const CATEGORY_LABEL: Record<NoticeItem["category"], string> = {
 };
 
 const CATEGORY_COLOR: Record<NoticeItem["category"], string> = {
-  complex: "bg-accent-500 text-white",
+  complex: "bg-accent-500 text-navy-900",
   notice: "bg-navy-800 text-white",
   press: "bg-navy-700 text-white",
   career: "bg-gray-700 text-white",
@@ -119,17 +119,22 @@ export function NoticesList({
                         setPage(1);
                       }}
                       className={cn(
-                        "inline-flex items-center gap-1.5 rounded-sm border px-4 py-2 text-[13px] font-semibold transition-colors duration-200",
+                        /* Phase 9 P0-05 — pill 형태 + 0 count 회색 처리 */
+                        "inline-flex min-h-11 items-center gap-1.5 rounded-full border px-4 py-2 text-[13px] font-semibold transition-colors duration-200",
                         isActive
-                          ? "border-navy-800 bg-navy-800 text-white"
-                          : "border-line bg-white text-ink hover:border-navy-700 hover:text-ink-strong",
+                          ? "border-navy-900 bg-navy-900 text-white"
+                          : "border-gray-200 bg-white text-ink hover:border-navy-700 hover:text-navy-700",
                       )}
                     >
                       {c.label}
                       <span
                         className={cn(
                           "font-mono-num text-[11px]",
-                          isActive ? "text-white/65" : "text-ink-faint",
+                          isActive
+                            ? "text-accent-300"
+                            : counts[c.value] === 0
+                              ? "text-ink-placeholder"
+                              : "text-ink-faint",
                         )}
                       >
                         {counts[c.value]}
@@ -276,19 +281,35 @@ export function NoticesList({
 function EmptyState() {
   return (
     <div className="rounded-md border border-line bg-gray-50 px-6 py-16 text-center md:py-20">
-      <div className="mx-auto h-10 w-10 text-ink-faint">
+      <div className="mx-auto h-10 w-10 text-accent-500">
         <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
           <rect x="6" y="8" width="28" height="24" rx="2" />
           <path d="M6 14H34" />
           <path d="M12 22H28M12 26H22" />
         </svg>
       </div>
-      <p className="mt-5 font-display text-[20px] font-bold tracking-tight text-ink-strong">
-        등록된 글이 없습니다
+      <p className="mt-5 font-display text-[22px] font-bold tracking-tight text-ink-strong md:text-[24px]">
+        (주)케이비개발의 새 소식을 준비 중입니다
       </p>
-      <p className="mt-3 text-[14px] leading-relaxed text-ink-muted">
-        새로운 공지·소식은 준비가 끝나는 대로 이곳에 게시됩니다.
+      <p className="mt-4 text-[15px] leading-[1.75] text-ink-muted">
+        선택하신 카테고리에 아직 게시된 글이 없습니다. 다른 카테고리를 확인하거나
+        <br className="hidden sm:inline" />
+        궁금하신 점은 아래 채널로 직접 문의해 주세요.
       </p>
+      <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+        <a
+          href="/business"
+          className="inline-flex min-h-11 items-center rounded-sm border border-ink-strong px-5 py-2.5 text-[13px] font-semibold text-ink-strong transition-colors duration-200 hover:bg-ink-strong hover:text-white"
+        >
+          사업영역 보기
+        </a>
+        <a
+          href="#contact-form-heading"
+          className="inline-flex min-h-11 items-center rounded-sm bg-accent-500 px-5 py-2.5 text-[13px] font-semibold text-navy-900 transition-colors duration-200 hover:bg-accent-600 hover:text-white"
+        >
+          상담 문의 →
+        </a>
+      </div>
     </div>
   );
 }

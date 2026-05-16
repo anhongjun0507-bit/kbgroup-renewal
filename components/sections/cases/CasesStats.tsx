@@ -146,7 +146,12 @@ function StatCard({
           {shouldReduce ? (
             value.toLocaleString("en-US")
           ) : inView ? (
-            <CountUp end={value} duration={2.2} delay={index * 0.1} separator="," />
+            <CountUp
+              end={value}
+              duration={Math.max(0.6, 0.6 + Math.log10(Math.max(1, value)) * 0.25)}
+              delay={index * 0.1}
+              separator=","
+            />
           ) : (
             "0"
           )}

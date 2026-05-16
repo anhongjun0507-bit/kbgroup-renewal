@@ -50,11 +50,18 @@
   --color-navy-500: #2A4E8F;
   --color-navy-100: #E7ECF5;
 
-  /* === Brand — Accent 3단 (Phase 6 K 골드 톤) === */
-  --color-accent-500: #C9A24B;          /* 골드 CTA */
-  --color-accent-600: #B88B3A;          /* hover (K엔 없음 — 한 단계 어둡게) */
-  --color-accent-300: #E3C57A;
+  /* === Brand — Accent (Gold 9단) — Phase 9 감사 처방 후 확장 ===
+     골드 위에는 navy-900 텍스트 (대비 7.5:1) 또는 어두운 골드 위 white (4.5:1+) 사용 */
+  --color-accent-50: #FBF6E6;
   --color-accent-100: #F6EBC9;
+  --color-accent-200: #F3E2B4;
+  --color-accent-300: #E3C57A;
+  --color-accent-400: #D9B461;
+  --color-accent-500: #C9A24B;          /* 골드 CTA — 위에 navy-900 텍스트 */
+  --color-accent-600: #B88B3A;          /* hover */
+  --color-accent-700: #A07D26;          /* active */
+  --color-accent-800: #7A6020;
+  --color-accent-900: #5A4818;
 
   /* === Gray Scale (Phase 6 K) === */
   --color-gray-50: #F7F8FA;
@@ -85,13 +92,16 @@
   --color-bg-soft: #F7F8FA;
   --color-bg-tinted: #EEF1F5;
 
-  /* === Ink (Phase 6 A-6: 본문 #3F4754) === */
+  /* === Ink (Phase 9 P1-09 — 보조 텍스트 대비 강화) ===
+     ink-faint를 #9AA3B2(2.54:1) → #5B6470(5.5:1, AA 통과)로 상향
+     placeholder 전용으로 더 옅은 톤은 ink-placeholder 신규 */
   --color-text-body: #3F4754;
   --color-ink-900: #0B1A33;
   --color-ink-strong: #1B2230;          /* gray-900 — 헤딩 */
   --color-ink: #2A323F;                 /* gray-700 — 본문 강조 */
-  --color-ink-muted: #3F4754;           /* gray-600 — 본문 기본 */
-  --color-ink-faint: #9AA3B2;           /* gray-400 */
+  --color-ink-muted: #3F4754;           /* gray-600 — 본문 기본 (7:1+) */
+  --color-ink-faint: #5B6470;           /* AA 통과 보조 텍스트 (5.5:1) */
+  --color-ink-placeholder: #9AA3B2;     /* placeholder 전용 — 텍스트 X */
 
   /* === Line === */
   --color-line: #E1E6ED;
@@ -252,15 +262,21 @@ body {
   }
 }
 
-/* === eyebrow — 영문 라벨 === */
+/* === eyebrow — 영문 라벨 (Phase 9 P2-01) ===
+   letter-spacing 0.18 → 0.12, weight 500 → 600, 골드 톤 강조 */
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-size: 0.75rem;        /* 12px */
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-ink);
+  color: var(--color-accent-700);   /* gold-700 — 어둡고 강한 톤 */
   line-height: 1.4;
+}
+/* 다크 배경 위에서는 밝은 골드 */
+.section-dark .eyebrow,
+[data-surface="dark"] .eyebrow {
+  color: var(--color-accent-300);
 }
 
 .font-mono-num {
@@ -372,6 +388,12 @@ body {
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
   font-family: var(--font-display);
+}
+
+/* === Phase 9 P0-07 — sticky 헤더/탭 침범 방지 ===
+   anchor 스크롤 시 본문 헤딩이 sticky 영역에 가리지 않도록 */
+:where(h1, h2, h3, h4, h5, h6) {
+  scroll-margin-top: 144px;
 }
 
 /* === Phase 6 A-2 — 통계 카운터 nowrap === */

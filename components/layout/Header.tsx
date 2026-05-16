@@ -95,36 +95,20 @@ export function Header({ isAuthed = false }: HeaderProps) {
     setMobileExpand(null);
   };
 
-  /* Phase 6 A-4 — 헤더 스타일 결정
-     - 다크 hero 위(overDark=true): 처음부터 다크 톤 (스크롤 무관)
-     - 그 외 스크롤 후: 흰색 + blur + shadow
-     - 그 외 초기: 투명 흰색 */
-  const dark = overDark;
-  const headerStyle: React.CSSProperties = dark
-    ? {
-        backgroundColor: scrolled
-          ? "rgba(11, 26, 51, 0.85)"
-          : "rgba(11, 26, 51, 0.55)",
-        backdropFilter: "saturate(140%) blur(14px)",
-        WebkitBackdropFilter: "saturate(140%) blur(14px)",
-        borderBottomColor: scrolled
-          ? "rgba(255,255,255,0.08)"
-          : "transparent",
-      }
-    : scrolled
-      ? {
-          backgroundColor: "rgba(255,255,255,0.88)",
-          backdropFilter: "saturate(140%) blur(14px)",
-          WebkitBackdropFilter: "saturate(140%) blur(14px)",
-          borderBottomColor: "rgba(15,23,42,0.06)",
-          boxShadow: "var(--shadow-card)",
-        }
-      : {
-          backgroundColor: "rgba(255,255,255,0.72)",
-          backdropFilter: "saturate(140%) blur(14px)",
-          WebkitBackdropFilter: "saturate(140%) blur(14px)",
-          borderBottomColor: "transparent",
-        };
+  /* Phase 9 P0-02 / 업그레이드 5 — 헤더 다크 일관 톤
+     모든 페이지에서 다크 네이비 (blur 12) 유지 — 로고 흰색 invert + 시각 깜빡임 제거
+     scrolled 시 opacity만 약간 증가 + shadow */
+  const dark = true; // 다크 톤 일관
+  void overDark; // 미사용 — 단순화
+  const headerStyle: React.CSSProperties = {
+    backgroundColor: scrolled
+      ? "rgba(11, 26, 51, 0.92)"
+      : "rgba(11, 26, 51, 0.72)",
+    backdropFilter: "saturate(140%) blur(12px)",
+    WebkitBackdropFilter: "saturate(140%) blur(12px)",
+    borderBottomColor: scrolled ? "rgba(255,255,255,0.08)" : "transparent",
+    boxShadow: scrolled ? "0 4px 16px rgba(11,26,51,0.18)" : "none",
+  };
 
   return (
     <header
@@ -149,10 +133,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
               width={2117}
               height={743}
               priority
-              className={cn(
-                "h-9 w-auto md:h-11 transition-[filter] duration-300",
-                dark && "brightness-0 invert",
-              )}
+              className="h-9 w-auto brightness-0 invert md:h-11"
             />
           </Link>
 
@@ -180,39 +161,23 @@ export function Header({ isAuthed = false }: HeaderProps) {
                     aria-expanded={hasChildren ? isOpen : undefined}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      /* Phase 2.2 — hover 밑줄 좌→우 0→100% 200ms */
-                      "group relative inline-flex items-center py-3 text-[14px] font-medium transition-colors duration-200",
-                      "after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:w-0 after:bg-current after:transition-[width] after:duration-200 after:[transition-timing-function:var(--ease)] hover:after:w-full",
-                      active && "after:w-full",
-                      dark
-                        ? "text-white/85 hover:text-white"
-                        : active
-                          ? "text-ink-strong"
-                          : "text-ink hover:text-ink-strong",
+                      /* Phase 9 P1-02 — 클릭 영역 ≥44px (min-h-11 + px-3) */
+                      "group relative inline-flex min-h-11 items-center px-3 py-3 text-[14px] font-medium transition-colors duration-200",
+                      "after:absolute after:left-3 after:right-3 after:bottom-2 after:h-[2px] after:w-0 after:bg-accent-500 after:transition-[width] after:duration-200 after:[transition-timing-function:var(--ease)] hover:after:w-[calc(100%-1.5rem)]",
+                      active && "after:w-[calc(100%-1.5rem)]",
+                      "text-white/85 hover:text-white",
                     )}
                   >
                     {item.label}
                   </Link>
                   {hasChildren && isOpen && (
                     <div className="absolute left-1/2 top-full -translate-x-1/2 pt-1">
-                      <div
-                        className={cn(
-                          "min-w-[200px] rounded-sm border py-2 shadow-md",
-                          dark
-                            ? "border-white/10 bg-navy-900/95 backdrop-blur-md"
-                            : "border-line bg-white",
-                        )}
-                      >
+                      <div className="min-w-[200px] rounded-sm border border-white/10 bg-navy-900/95 py-2 shadow-md backdrop-blur-md">
                         {item.children!.map((child) => (
                           <Link
                             key={child.href}
                             href={child.href}
-                            className={cn(
-                              "block px-5 py-2.5 text-sm font-medium transition-colors duration-200",
-                              dark
-                                ? "text-white/70 hover:bg-white/10 hover:text-white"
-                                : "text-ink-muted hover:bg-bg-soft hover:text-primary",
-                            )}
+                            className="block min-h-11 px-5 py-2.5 text-sm font-medium text-white/75 transition-colors duration-200 hover:bg-white/10 hover:text-white"
                           >
                             {child.label}
                           </Link>
@@ -232,39 +197,23 @@ export function Header({ isAuthed = false }: HeaderProps) {
                 <>
                   <Link
                     href="/mypage"
-                    className={cn(
-                      "rounded-sm border px-4 py-2 text-[13px] font-semibold transition-colors duration-200",
-                      dark
-                        ? "border-white/60 text-white hover:bg-white hover:text-ink-strong"
-                        : "border-ink-strong text-ink-strong hover:bg-ink-strong hover:text-white",
-                    )}
+                    className="inline-flex min-h-11 items-center rounded-sm border border-white/60 px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-200 hover:bg-white hover:text-ink-strong"
                   >
                     마이페이지
                   </Link>
                   <form action="/auth/logout" method="POST">
                     <button
                       type="submit"
-                      className={cn(
-                        "text-[13px] font-medium transition-colors duration-200",
-                        dark
-                          ? "text-white/70 hover:text-white"
-                          : "text-ink-muted hover:text-primary",
-                      )}
+                      className="min-h-11 px-2 text-[13px] font-medium text-white/75 transition-colors duration-200 hover:text-white"
                     >
                       로그아웃
                     </button>
                   </form>
                 </>
               ) : (
-                /* Phase 2.3 — LOGIN outline 버튼 시각 분리 */
                 <Link
                   href="/login"
-                  className={cn(
-                    "inline-flex items-center rounded-sm border px-5 py-2 text-[13px] font-semibold uppercase tracking-[0.08em] transition-colors duration-200",
-                    dark
-                      ? "border-white/60 text-white hover:bg-white hover:text-ink-strong"
-                      : "border-ink-strong text-ink-strong hover:bg-ink-strong hover:text-white",
-                  )}
+                  className="inline-flex min-h-11 items-center rounded-sm border border-white/60 px-5 py-2 text-[13px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-200 hover:bg-white hover:text-ink-strong"
                 >
                   LOGIN
                 </Link>
@@ -276,10 +225,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
               aria-expanded={mobileOpen}
               aria-controls="mobile-menu"
               onClick={() => setMobileOpen((v) => !v)}
-              className={cn(
-                "inline-flex h-10 w-10 items-center justify-center transition-colors lg:hidden",
-                dark ? "text-white" : "text-ink-strong hover:text-primary",
-              )}
+              className="inline-flex h-11 w-11 items-center justify-center text-white transition-colors lg:hidden"
             >
               {mobileOpen ? (
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">

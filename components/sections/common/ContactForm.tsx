@@ -16,9 +16,10 @@ const INQUIRY_TYPES = [
   { value: "other", label: "기타 / 종합 문의" },
 ];
 
-const labelClass = "eyebrow mb-2 block";
+/* Phase 9 P0-08 — label letter-spacing 정상화 (eyebrow는 자간 0.12) */
+const labelClass = "mb-2 block text-[13px] font-semibold text-ink-muted";
 const inputBase =
-  "w-full rounded-sm border border-line bg-white px-4 py-3 text-[15px] text-ink-strong placeholder:text-ink-faint transition-colors duration-200 focus:border-navy-700 focus:outline-none";
+  "w-full h-12 rounded-md border border-line bg-white px-4 text-[15px] text-ink-strong placeholder:text-[#9AA3B2] transition-all duration-200 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/30";
 
 export type ContactFormProps = {
   /** 페이지별 컨텍스트 — 메일 제목 prefix */
@@ -26,38 +27,66 @@ export type ContactFormProps = {
   className?: string;
 };
 
+type SubmitState =
+  | { status: "idle" }
+  | { status: "submitting" }
+  | { status: "success" }
+  | { status: "error"; message: string };
+
 export function ContactForm({ context, className }: ContactFormProps) {
-  const [submitted, setSubmitted] = useState(false);
+  /* Phase 9 P0-06 — mailto fallback 제거 → /api/contact POST */
+  const [state, setState] = useState<SubmitState>({ status: "idle" });
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    const company = String(fd.get("company") ?? "");
-    const name = String(fd.get("name") ?? "");
-    const phone = String(fd.get("phone") ?? "");
-    const email = String(fd.get("email") ?? "");
-    const households = String(fd.get("households") ?? "");
-    const inquiryType = String(fd.get("inquiryType") ?? "");
-    const preferredDate = String(fd.get("preferredDate") ?? "");
-    const message = String(fd.get("message") ?? "");
+    const form = e.currentTarget;
+    const fd = new FormData(form);
 
-    const subject = `[케이비개발] ${context ?? "사업 상담 문의"} — ${company}`;
-    const body = [
-      `■ 회사명: ${company}`,
-      `■ 담당자: ${name}`,
-      `■ 연락처: ${phone}`,
-      `■ 이메일: ${email}`,
-      `■ 단지 규모(세대수): ${households}`,
-      `■ 문의 유형: ${INQUIRY_TYPES.find((t) => t.value === inquiryType)?.label ?? inquiryType}`,
-      `■ 상담 희망일: ${preferredDate || "협의 가능"}`,
-      "",
-      "■ 문의 내용",
-      message,
-    ].join("\n");
+    const payload = {
+      company: String(fd.get("company") ?? ""),
+      name: String(fd.get("name") ?? ""),
+      phone: String(fd.get("phone") ?? ""),
+      email: String(fd.get("email") ?? ""),
+      households: String(fd.get("households") ?? ""),
+      inquiryType:
+        INQUIRY_TYPES.find((t) => t.value === fd.get("inquiryType"))?.label ??
+        String(fd.get("inquiryType") ?? ""),
+      preferredDate: String(fd.get("preferredDate") ?? ""),
+      message: String(fd.get("message") ?? ""),
+      context: context ?? "사업 상담 문의",
+    };
 
-    window.location.href = `mailto:${contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setSubmitted(true);
+    setState({ status: "submitting" });
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+      };
+      if (!res.ok || !data.ok) {
+        setState({
+          status: "error",
+          message: data.error ?? "전송에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+        });
+        return;
+      }
+      setState({ status: "success" });
+      form.reset();
+    } catch {
+      setState({
+        status: "error",
+        message: "네트워크 오류로 전송하지 못했습니다.",
+      });
+    }
   }
+
+  const submitting = state.status === "submitting";
+  const success = state.status === "success";
+  const error = state.status === "error" ? state.message : null;
 
   return (
     <section
@@ -261,22 +290,55 @@ export function ContactForm({ context, className }: ContactFormProps) {
 
             <div className="mt-8 flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
               <p className="text-[13px] text-ink-faint">
-                * 필수 항목. 전송 시 기본 메일 클라이언트가 열립니다.
+                * 필수 항목. 영업일 기준 평균 4시간 안에 회신드립니다.
               </p>
               <button
                 type="submit"
-                className="inline-flex h-14 items-center gap-2 rounded-sm bg-accent-500 px-8 text-base font-bold text-white transition-all duration-200 [transition-timing-function:var(--ease)] hover:bg-accent-600 hover:shadow-[var(--shadow-cta)]"
+                disabled={submitting}
+                className="inline-flex h-14 items-center gap-2 rounded-sm bg-accent-500 px-8 text-base font-bold text-navy-900 transition-all duration-200 [transition-timing-function:var(--ease)] hover:bg-accent-600 hover:text-white hover:shadow-[var(--shadow-cta)] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                상담 문의 보내기 <span aria-hidden="true">→</span>
+                {submitting ? (
+                  <>
+                    <svg
+                      className="h-4 w-4 animate-spin"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="9"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeDasharray="40 60"
+                      />
+                    </svg>
+                    전송 중…
+                  </>
+                ) : (
+                  <>
+                    상담 문의 보내기 <span aria-hidden="true">→</span>
+                  </>
+                )}
               </button>
             </div>
 
-            {submitted && (
+            {success && (
               <p
                 role="status"
                 className="mt-6 rounded-sm border border-success/30 bg-success/5 px-4 py-3 text-[14px] text-success"
               >
-                메일 클라이언트가 열렸습니다. 발송 버튼을 눌러주세요.
+                ✓ 상담 문의가 접수되었습니다. 영업일 기준 평균 4시간 안에
+                회신드립니다.
+              </p>
+            )}
+            {error && (
+              <p
+                role="alert"
+                className="mt-6 rounded-sm border border-danger/30 bg-danger/5 px-4 py-3 text-[14px] text-danger"
+              >
+                {error}
               </p>
             )}
           </form>

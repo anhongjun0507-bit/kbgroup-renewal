@@ -148,7 +148,8 @@ export function DataCounter() {
                 ) : inView ? (
                   <CountUp
                     end={c.value}
-                    duration={2}
+                    /* Phase 9 P1-04 — 자릿수 비례 duration (0.6s + log10*0.25s) */
+                    duration={Math.max(0.6, 0.6 + Math.log10(Math.max(1, c.value)) * 0.25)}
                     separator=","
                     easingFn={(t, b, c, d) => {
                       const tn = t / d - 1;

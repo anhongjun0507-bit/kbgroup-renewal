@@ -13,19 +13,25 @@ import { complexes, type Complex } from "@/data/site-content";
 
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
-/** 단지별 미세 hue 변화로 placeholder 식별성 부여 */
-const HUES = [0, 14, -10, 22, -16, 6, 28, -22];
+/* Phase 9 P0-04 — placeholder 톤 통일 (HUES 제거, 단일 navy + 골드 라디얼)
+   카드별 다른 hue로 분산되던 톤을 navy-800/navy-900 단일로 통일 */
 
 function getInitial(name: string): string {
-  const noLh = name.replace(/^LH\s+/, "").trim();
-  const tokens = noLh.split(/\s+/).filter(Boolean);
-  const target = tokens[tokens.length - 1] ?? noLh;
-  const ch = target.charAt(0);
-  return ch || "K";
+  /* P0-04 — 한글 한 글자 → 영문 이니셜 (단지명 영문 첫 글자) */
+  const map: Record<string, string> = {
+    "광주": "GJ", "운남": "UN", "성남": "SN", "파주": "PJ",
+    "계림": "GL", "평택": "PT", "오송": "OS", "의정부": "UJB",
+    "고덕": "GD", "첨단": "CD", "수원": "SW", "양주": "YJ",
+    "양림": "YR", "의왕": "UW", "문흥": "MH",
+  };
+  for (const [k, v] of Object.entries(map)) {
+    if (name.includes(k)) return v;
+  }
+  return "KB";
 }
 
 function badgeStyle(type?: Complex["type"]) {
-  if (type === "LH") return "bg-accent-500 text-white";
+  if (type === "LH") return "bg-accent-500 text-navy-900";
   if (type === "민간") return "bg-navy-800 text-white";
   if (type === "공공") return "bg-navy-700 text-white";
   return "bg-white/85 text-ink-strong";
@@ -98,7 +104,6 @@ export function Cases() {
         >
           {featured.map((c, idx) => {
             const initial = getInitial(c.name);
-            const hue = HUES[idx % HUES.length];
             const badge = c.type ?? "민간";
             return (
               <motion.article
@@ -107,11 +112,8 @@ export function Cases() {
                 className="group overflow-hidden rounded-md border border-line bg-white transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
               >
                 <Link href="/cases" className="block">
-                  {/* 4:5 placeholder */}
-                  <div
-                    className="relative aspect-[4/5] overflow-hidden bg-navy-900"
-                    style={{ filter: `hue-rotate(${hue}deg)` }}
-                  >
+                  {/* Phase 9 P0-04 — 단일 navy 톤 (hue-rotate 제거) */}
+                  <div className="relative aspect-[4/5] overflow-hidden bg-navy-900">
                     {/* 베이스 그라데이션 */}
                     <div
                       aria-hidden="true"
