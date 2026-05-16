@@ -4,6 +4,9 @@ import { AboutNav } from "@/components/sections/about/AboutNav";
 import { WhyValues } from "@/components/sections/about/WhyValues";
 import { WhyDifferentiators } from "@/components/sections/about/WhyDifferentiators";
 import { WhyNumbers } from "@/components/sections/about/WhyNumbers";
+import { CompanyStrengths } from "@/components/sections/about/CompanyStrengths";
+import { RelatedCompaniesGrid } from "@/components/sections/about/RelatedCompaniesGrid";
+import { CollaboratorsTable } from "@/components/sections/about/CollaboratorsTable";
 import { ContactForm } from "@/components/sections/common/ContactForm";
 
 export const metadata: Metadata = {
@@ -29,7 +32,10 @@ export default function AboutPage() {
       <AboutNav current="why" />
       <WhyValues />
       <WhyDifferentiators />
+      <CompanyStrengths />
       <WhyNumbers />
+      <RelatedCompaniesGrid />
+      <CollaboratorsTable />
       <ContactForm context="회사소개 — 사업 상담 문의" />
     </>
   );

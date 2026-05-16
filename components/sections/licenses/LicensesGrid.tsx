@@ -203,19 +203,30 @@ function Lightbox({
           )}
         </dl>
 
-        {/* 증명서 사진 placeholder */}
-        <div className="mt-6 flex aspect-[4/3] items-center justify-center rounded-sm border border-line bg-gray-50 text-center">
-          <div>
-            <svg width="36" height="36" viewBox="0 0 40 40" fill="none" stroke="#9099A5" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="mx-auto">
-              <rect x="6" y="8" width="28" height="24" rx="2" />
-              <circle cx="14" cy="16" r="3" />
-              <path d="M6 26L14 20L22 26L34 18" />
-            </svg>
-            <p className="mt-3 text-[12px] text-ink-faint">
-              증명서 사진은 추후 등록 예정입니다
-            </p>
+        {/* Phase 7.3 — 증명서 실사진 (PDF p9 추출) */}
+        {license.image ? (
+          <div className="mt-6 overflow-hidden rounded-sm border border-line bg-gray-50">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={license.image}
+              alt={`${license.name} 증명서`}
+              className="block w-full h-auto"
+            />
           </div>
-        </div>
+        ) : (
+          <div className="mt-6 flex aspect-[4/3] items-center justify-center rounded-sm border border-line bg-gray-50 text-center">
+            <div>
+              <svg width="36" height="36" viewBox="0 0 40 40" fill="none" stroke="#9099A5" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="mx-auto">
+                <rect x="6" y="8" width="28" height="24" rx="2" />
+                <circle cx="14" cy="16" r="3" />
+                <path d="M6 26L14 20L22 26L34 18" />
+              </svg>
+              <p className="mt-3 text-[12px] text-ink-faint">
+                증명서 사진은 추후 등록 예정입니다
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

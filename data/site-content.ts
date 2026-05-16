@@ -2,8 +2,8 @@
  * KB GROUP / (주)케이비개발 — 사이트 콘텐츠 단일 소스 (Single Source of Truth)
  *
  * 출처:
- *  - 회사정보·연혁·사업영역·인허가·자격증·연락처: kb-dvp.com 크롤링 (2026-05)
- *  - 카운터 수치·파트너 일부: 스펙상의 더미값 (실제 자료 확보 후 교체 예정)
+ *  - Phase 7 (2026-05-16): 공식 회사소개서 PDF "케이비개발 지명원" 기준 전수 교체
+ *  - 회사정보·연혁·인허가·자격증·관리실적·협력업체: PDF 페이지별 데이터 추출
  *
  * 데이터 갱신 시 이 파일만 수정하면 사이트 전반에 반영됩니다.
  */
@@ -15,11 +15,9 @@
 export type Counter = {
   key: string;
   label: string;
-  /** 영문 캡션 (kicker 스타일, 라벨 아래) */
   caption: string;
   value: number;
   suffix?: string;
-  /** 실제 클라이언트 자료 확보 전 더미 수치 여부 */
   isPlaceholder?: boolean;
 };
 
@@ -37,16 +35,13 @@ export type Reason = {
 
 export type BusinessArea = {
   id: BusinessCategory;
-  /** URL 슬러그 — `/business/{slug}` */
   slug: string;
   name: string;
-  /** 영문 부제 (카드/리스트 영문 캡션용) */
   englishName: string;
   tagline: string;
   summary: string;
   highlights: string[];
   subBusinesses: string[];
-  /** 상세 페이지 "WHY US" 섹션 3 reasons */
   reasons: Reason[];
 };
 
@@ -63,6 +58,12 @@ export type Complex = {
   client?: string;
   region: string;
   households?: number;
+  /** 관리면적 ㎡ */
+  area?: number;
+  /** 관리 분야 (위탁관리/경비/청소/전기 등) */
+  scope?: string;
+  /** 단지 분류 — 공동주택 / 집합건물 */
+  kind?: "apartment" | "mixed-use";
   type?: "LH" | "민간" | "공공";
 };
 
@@ -70,14 +71,21 @@ export type Partner = {
   name: string;
   category: "public" | "client" | "construction";
   note?: string;
-  /** 더미 데이터 여부 (실 거래처 확정 시 false로) */
   placeholder?: boolean;
+};
+
+export type Collaborator = {
+  name: string;
+  field: string;
+  scope: string;
 };
 
 export type License = {
   name: string;
   issuer: string;
   acquiredAt?: string;
+  /** 증명서 사진 (선택) */
+  image?: string;
 };
 
 export type Certification = {
@@ -94,23 +102,34 @@ export type HistoryEntry = {
 export type RelatedCompany = {
   name: string;
   note: string;
+  /** 계열사 로고 (선택) */
+  logo?: string;
+};
+
+export type CompanyStrength = {
+  number: string;
+  title: string;
+  description: string;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 1. 회사 정보
+// 1. 회사 정보 — PDF p4 회사개요 기준
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const company = {
   brandName: "KB GROUP",
   name: "(주)케이비개발",
   legalName: "주식회사 케이비개발",
-  domain: "kbgroup.kr",
+  domain: "kb-dvp.com",
   ceo: "김 현",
-  founded: "2014-12",
-  foundedYear: 2014,
+  /** PDF p5·p8: 2013.09 법인 설립 */
+  founded: "2013-09",
+  foundedYear: 2013,
+  /** PDF p4: 자본금 12억 1천만원 */
   capital: "12억 1천만원",
   businessNumber: "410-87-05616",
-  motto: "꿈은 현실로 현실은 노력으로",
+  /** PDF p6: "꿈은 현실로, 현실은 노력으로" */
+  motto: "꿈은 현실로, 현실은 노력으로",
   goals: [
     { en: "PLAN", kr: "철저한 기획" },
     { en: "DECISION", kr: "정확한 판단" },
@@ -119,17 +138,26 @@ export const company = {
   tagline: "신뢰받는 종합 시설관리 파트너",
   intro:
     "(주)케이비개발은 주택관리, 경비, 상주청소, 저수조청소, 방역소독, 수목관리 등을 아우르는 종합 시설관리 기업입니다. 경륜 있는 주택관리사와 공동주택 건설 현장소장 출신, 공직·대기업 출신 임직원이 한 팀이 되어 공정하고 투명한 단지 운영을 약속드립니다.",
+  /** PDF p4 주요사업 */
+  businessFields: [
+    "주택관리업",
+    "경비/청소용역",
+    "소독 및 방역",
+    "저수조청소업",
+    "주택임대사업",
+    "주택임대관리업",
+    "시설관리업",
+  ],
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 2. 연락처
+// 2. 연락처 — PDF p1, p48 기준
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type Contact = {
   phone: string;
   fax: string;
   email: string;
-  /** 채용 전용 이메일 — 현재 미보유. 실제 받으면 채우기. */
   careersEmail?: string;
   address: string;
   privacyOfficer: { name: string; phone: string };
@@ -141,9 +169,8 @@ export type Contact = {
 export const contact: Contact = {
   phone: "062-416-3021",
   fax: "062-974-3070",
-  // TODO: 실제 대표 이메일 확인 후 교체
-  email: "info@kbgroup.kr",
-  // careersEmail: 미보유. 사용처에서 `careersEmail ?? email` fallback.
+  /** PDF p48 — 회사 공식 메일 */
+  email: "7970kb@naver.com",
   address: "광주광역시 광산구 월계로 223-22, 2층 201·202호",
   privacyOfficer: { name: "고예근", phone: "062-416-3037" },
   parking: "지하 1층 주차장 (방문객 무료)",
@@ -152,25 +179,25 @@ export const contact: Contact = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 3. 대표 메시지
+// 3. 대표 메시지 — PDF p3 인사말 기준
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const ceoMessage = {
   authorName: "김 현",
   authorTitle: "(주)케이비개발 대표이사",
   paragraphs: [
-    "(주)케이비개발 홈페이지에 방문해주셔서 감사합니다.",
-    "당사는 주택관리, 경비, 상주청소, 저수조청소, 방역소독, 수목관리 등의 사업을 영위하는 종합주택관리회사입니다.",
-    "급변하는 주거문화와 다양한 건축물 관리에 대응하기 위해, 경륜 있는 주택관리사와 공동주택 건설 현장소장 출신, 공직·대기업 출신 임직원이 한 팀이 되어 성실하게 신뢰를 쌓으며 성장하고 있습니다.",
-    "또한 주택관리업체 중 보기 드물게 자체 주택임대사업장 1,000여 세대를 운영하며 회사 재정을 견고히 함과 동시에, 위탁 단지 입주민에게도 재산 증식의 기회를 제공해드리고 있습니다.",
-    "크고 작은 사업장 구분 없이 단지마다 소중하고 한결같은 마음으로 입주자대표회의와 입주민의 뜻을 받들어, 공정하고 투명한 관리가 되도록 최선을 다하겠습니다.",
-    "(주)케이비개발과 함께해주시기를 간절히 소망드립니다. 감사합니다.",
+    "안녕하십니까? (주)케이비개발입니다.",
+    "당사는 주택관리, 경비, 상주청소, 저수조청소, 방역소독, 수목관리 등의 사업을 하는 종합주택관리회사입니다.",
+    "현재 급변하는 주거문화와 다양한 건축물 및 주택관리를 위하여 저희 회사는 경륜 있는 주택관리사와 공동주택 현장소장 출신 및 다양한 식견과 관리지도에 탁월한 공직자, 대기업 출신 등의 임직원으로 구성되어 성실하게 신뢰를 쌓으며 급성장해 나가고 있는 기업입니다.",
+    "또한 당사는 주택관리업체 중 유일하게 주택임대관리업 및 주택사업장을 관리하여 회사 재정 확충 및 위탁단지 입주민에게도 재산 증식의 기회 또한 제공해 드리고 있습니다.",
+    "저희는 크고 작은 사업장 구분 없이 단지마다 소중하고 한결같은 마음으로 입주자대표회의와 입주민의 뜻을 받들어 공정하고 투명한 관리가 되도록 최선을 다하고 있습니다.",
+    "당사의 발전된 주택관리 운영 노하우와 경험 많고 책임감 높은 직원들을 배치하여 단지 관리에 만전을 기함은 물론 본사의 적극적인 지원으로 명품 아파트가 되도록 최선을 다하겠습니다.",
+    "저희 (주)케이비개발과 함께 하여 주시기를 간절히 소망드립니다. 감사합니다.",
   ],
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 4. 카운터 (메인 페이지 핵심 수치)
-//    실제 사이트 표기는 "1,000여 세대" — 12,000+는 스펙상의 더미값.
+// 4. 카운터 — PDF p22 회사강점 + 관리실적 합산 기준
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const counters: Counter[] = [
@@ -178,38 +205,38 @@ export const counters: Counter[] = [
     key: "households",
     label: "관리 세대수",
     caption: "MANAGED HOUSEHOLDS",
-    value: 12000,
+    /** PDF p10 공동주택 38건 세대수 합산 (대표 단지 기준) */
+    value: 32000,
     suffix: "+",
-    isPlaceholder: true,
   },
   {
     key: "complexes",
     label: "누적 운영 단지",
     caption: "COMPLEXES OPERATED",
-    value: 85,
+    /** PDF p22 "10년 만에 180여 단지 관리" */
+    value: 180,
     suffix: "+",
-    isPlaceholder: true,
   },
   {
     key: "licenses",
-    label: "인허가 보유",
-    caption: "CERTIFICATIONS",
-    value: 15,
-    suffix: "+",
-    isPlaceholder: true,
+    label: "보유 인허가",
+    caption: "REGISTERED LICENSES",
+    /** PDF p8 인허가 9건 */
+    value: 9,
+    suffix: "",
   },
   {
-    key: "lhProjects",
-    label: "LH 실적",
-    caption: "LH PROJECTS",
-    value: 42,
+    key: "workforce",
+    label: "자격증 보유 인력",
+    caption: "CERTIFIED PROFESSIONALS",
+    /** PDF p21 자격증 합계 */
+    value: 1550,
     suffix: "+",
-    isPlaceholder: true,
   },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 5. 사업영역 — 원본 9개 사업을 5개 대분류로 매핑
+// 5. 사업영역 — 5개 대분류 (기존 구조 유지, 톤 보완)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const businessAreas: BusinessArea[] = [
@@ -248,7 +275,7 @@ export const businessAreas: BusinessArea[] = [
       "수도법 기준 6개월 1회 저수조 청소·위생점검",
       "나무병원 등록(2급, 광주광역시) 기반 수목 진단·치료",
     ],
-    subBusinesses: ["위생관리업", "방역및소독", "저수조청소업", "나무병원"],
+    subBusinesses: ["건물위생관리용역업", "방역및소독", "저수조청소업", "수목치료"],
     reasons: [
       { title: "위생 표준화", description: "일일 점검 체크리스트 기반 관리" },
       { title: "친환경 약품 사용", description: "입주자 건강 우선" },
@@ -269,7 +296,7 @@ export const businessAreas: BusinessArea[] = [
       "정시·수시 순찰로 도난·화재 사전 예방",
       "주차계획 수립부터 외부차량 단속까지 일원화 관리",
     ],
-    subBusinesses: ["시설경비업"],
+    subBusinesses: ["시설경비업", "근로자파견업"],
     reasons: [
       { title: "24시간 모니터링", description: "CCTV + 상주 인력" },
       { title: "출입 통제 시스템", description: "디지털 + 휴먼 케어" },
@@ -283,14 +310,14 @@ export const businessAreas: BusinessArea[] = [
     englishName: "CONSTRUCTION",
     tagline: "시행부터 유지·도장·방수까지, 가치를 지키는 시공",
     summary:
-      "아파트·오피스텔·도시형 생활주택 시행 사업과, 관계사 기담산업개발을 통한 유지보수·도장·방수·미장 시공을 제공합니다.",
+      "아파트·오피스텔·도시형 생활주택 시행 사업과, 관계사 ㈜기담종합건설을 통한 유지보수·도장·방수·미장 시공을 제공합니다.",
     highlights: [
       "주거·교통·학군 우수 입지 중심 시행 사업",
       "시설물 유지관리 다년 노하우 (놀이터·놀이시설 등)",
       "도장공사업: 재도장·신축 도장 풍부한 실적",
       "미장·타일·방수·조적 등 습식공사 통합 시공",
     ],
-    subBusinesses: ["시행업", "종합건설(기담산업개발)"],
+    subBusinesses: ["시행업", "종합건설(㈜기담종합건설)"],
     reasons: [
       { title: "통합 솔루션", description: "기획부터 시공까지 원스톱" },
       { title: "검증된 협력사", description: "분야별 전문 시공팀" },
@@ -309,7 +336,7 @@ export const businessAreas: BusinessArea[] = [
       "자체 임대주택 1,000여 세대 운영 노하우",
       "임차인 모집·임대료 징수·유지관리 풀 서비스",
       "(유)케이오아시스: 청소용품 도소매 + 경비·청소 서비스",
-      "관계사 케이비뷰·기담산업개발과 시너지 운영",
+      "관계사 ㈜케이비뷰·㈜케이위더스·㈜기담종합건설과 시너지 운영",
     ],
     subBusinesses: ["주택임대업", "주택임대관리업", "도·소매업 및 서비스업"],
     reasons: [
@@ -321,7 +348,7 @@ export const businessAreas: BusinessArea[] = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 12. 서비스 진행 프로세스 (카테고리 무관 공통 4단계)
+// 6. 핵심 가치 / 차별점 / 프로세스
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type CoreValue = {
@@ -339,202 +366,281 @@ export type Differentiator = {
 };
 
 export const coreValues: CoreValue[] = [
-  {
-    number: "01",
-    englishName: "Trust",
-    koreanName: "신뢰",
-    tagline: "약속한 것을 지킨다",
-  },
-  {
-    number: "02",
-    englishName: "Expertise",
-    koreanName: "전문성",
-    tagline: "검증된 기술과 경험",
-  },
-  {
-    number: "03",
-    englishName: "Responsibility",
-    koreanName: "책임",
-    tagline: "공간을 끝까지 책임진다",
-  },
+  { number: "01", englishName: "Trust", koreanName: "신뢰", tagline: "약속한 것을 지킨다" },
+  { number: "02", englishName: "Expertise", koreanName: "전문성", tagline: "검증된 기술과 경험" },
+  { number: "03", englishName: "Responsibility", koreanName: "책임", tagline: "공간을 끝까지 책임진다" },
 ];
 
 export const differentiators: Differentiator[] = [
-  {
-    number: "01",
-    englishName: "INTEGRATED SERVICES",
-    koreanName: "종합 서비스 운영",
-    description: "시설·위생·경비·시행을 한 회사에서 책임집니다.",
-  },
-  {
-    number: "02",
-    englishName: "VERIFIED EXPERTISE",
-    koreanName: "검증된 전문 인력",
-    description: "자격증 보유 전문 인력만 현장에 투입합니다.",
-  },
-  {
-    number: "03",
-    englishName: "TRANSPARENT RECORDS",
-    koreanName: "투명한 기록 관리",
-    description: "모든 작업 내역을 체계적으로 기록하고 공유합니다.",
-  },
-  {
-    number: "04",
-    englishName: "RAPID RESPONSE",
-    koreanName: "신속한 응급 대응",
-    description: "비상 상황에 즉시 응급조치를 시행합니다.",
-  },
-  {
-    number: "05",
-    englishName: "LASTING RELATIONSHIPS",
-    koreanName: "지속적 신뢰 관계",
-    description: "한 번의 계약을 넘어 오래 함께합니다.",
-  },
+  { number: "01", englishName: "INTEGRATED SERVICES", koreanName: "종합 서비스 운영",
+    description: "시설·위생·경비·시행을 한 회사에서 책임집니다." },
+  { number: "02", englishName: "VERIFIED EXPERTISE", koreanName: "검증된 전문 인력",
+    description: "자격증 보유 전문 인력만 현장에 투입합니다." },
+  { number: "03", englishName: "TRANSPARENT RECORDS", koreanName: "투명한 기록 관리",
+    description: "모든 작업 내역을 체계적으로 기록하고 공유합니다." },
+  { number: "04", englishName: "RAPID RESPONSE", koreanName: "신속한 응급 대응",
+    description: "비상 상황에 즉시 응급조치를 시행합니다." },
+  { number: "05", englishName: "LASTING RELATIONSHIPS", koreanName: "지속적 신뢰 관계",
+    description: "한 번의 계약을 넘어 오래 함께합니다." },
 ];
 
 export const processSteps: ProcessStep[] = [
-  {
-    key: "consultation",
-    numberLabel: "01",
-    name: "상담 · 견적",
-    englishName: "CONSULTATION",
-    description: "고객 요구사항 분석 후 맞춤형 제안",
-  },
-  {
-    key: "contract",
-    numberLabel: "02",
-    name: "계약 · 준비",
-    englishName: "CONTRACT",
-    description: "세부 사항 협의 후 운영 체계 구축",
-  },
-  {
-    key: "operation",
-    numberLabel: "03",
-    name: "운영 · 관리",
-    englishName: "OPERATION",
-    description: "체계적인 관리와 정기 점검",
-  },
-  {
-    key: "after-care",
-    numberLabel: "04",
-    name: "사후 관리",
-    englishName: "AFTER-CARE",
-    description: "지속적인 모니터링과 개선",
-  },
+  { key: "consultation", numberLabel: "01", name: "상담 · 견적", englishName: "CONSULTATION",
+    description: "고객 요구사항 분석 후 맞춤형 제안" },
+  { key: "contract", numberLabel: "02", name: "계약 · 준비", englishName: "CONTRACT",
+    description: "세부 사항 협의 후 운영 체계 구축" },
+  { key: "operation", numberLabel: "03", name: "운영 · 관리", englishName: "OPERATION",
+    description: "체계적인 관리와 정기 점검" },
+  { key: "after-care", numberLabel: "04", name: "사후 관리", englishName: "AFTER-CARE",
+    description: "지속적인 모니터링과 개선" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 6. 관리 단지 (대표 실적 — 메인 슬라이드 상위 5개 LH + 신규 단지)
+// 7. 회사 강점 — PDF p22
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const companyStrengths: CompanyStrength[] = [
+  { number: "01", title: "튼튼한 자본력",
+    description: "광주 동종업계 중 가장 높은 자본력을 보유한 안정 경영." },
+  { number: "02", title: "다양한 재정 창출능력",
+    description: "아파트·오피스텔 1,000여 세대를 직접 임대관리 및 임대사업으로 운영하여 임대 수익 + 수수료 동시 창출." },
+  { number: "03", title: "우수 기술 인력",
+    description: "본사 자체 보유 자격증 인력 1,550명 풀을 현장에 적극 투입." },
+  { number: "04", title: "대형아파트 위탁관리 전환",
+    description: "광주 현장 위탁관리를 케이비개발로 전환하여 현재까지 우수하게 운영 중." },
+  { number: "05", title: "빠른 성장력",
+    description: "공동주택관리업을 시작한지 10년이라는 짧은 기간에 180여 단지를 관리." },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 8. 관리 단지 — PDF p10~17 기준 (공동주택 37 + 집합건물 36 = 73단지)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const complexes: Complex[] = [
-  {
-    name: "LH 파주 운정 물향기마을 1단지",
-    client: "LH 한국토지주택공사",
-    region: "경기 파주",
-    type: "LH",
-  },
-  {
-    name: "LH 시흥 장현 트리플센텀아파트",
-    client: "LH 한국토지주택공사",
-    region: "경기 시흥",
-    type: "LH",
-  },
-  {
-    name: "LH 용인 한보라마을 휴먼시아4단지",
-    client: "LH 한국토지주택공사",
-    region: "경기 용인",
-    type: "LH",
-  },
-  {
-    name: "LH 의왕 초평 루젠트힐",
-    client: "LH 한국토지주택공사",
-    region: "경기 의왕",
-    type: "LH",
-  },
-  {
-    name: "LH 성남 신흥 산성역 자이푸르지오",
-    client: "LH 한국토지주택공사",
-    region: "경기 성남",
-    type: "LH",
-  },
-  // type 필드 제거: 크롤링 출처에 명시 없음. 단지명 기반 판단은 컴포넌트 로직에서 처리.
-  { name: "계림 IPARK SK뷰", region: "광주 계림동" },
-  { name: "담양 양우내안애퍼스트힐 1,2단지", region: "전남 담양" },
-  { name: "양림1차휴먼시아", region: "광주 양림" },
+  // ─── 공동주택 (PDF p10) ────────────────────────────────
+  { name: "광주 그랜드 센트럴 아파트", region: "광주광역시", households: 2336, area: 364653,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "운남 삼성아파트", region: "광주광역시", households: 1956, area: 179899,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "성남신흥2 A-1BL 아파트", region: "경기도 성남시", households: 1856, area: 259494,
+    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
+  { name: "파주운정3 A37BL 아파트", region: "경기도 파주시", households: 1810, area: 128143,
+    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
+  { name: "계림동 아이파크 SK뷰", region: "광주광역시", households: 1715, area: 175004,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "평택 브레인시티 대광로제비앙", region: "경기도 평택시", households: 1700, area: 185633,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "오송역 대광로제비앙 그랜드센텀", region: "충청북도 청주시", households: 1615, area: 178211,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "의정부 LH고산3단지", region: "경기도 의정부시", households: 1331, area: 150638,
+    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
+  { name: "고덕국제신도시 대광로제비앙 모아엘가", region: "경기도 평택시", households: 1225, area: 219117,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "첨단1차부영아파트", region: "광주광역시", households: 1198, area: 101801,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "수원 오목천 상송마을", region: "경기도 수원시", households: 1185, area: 83381,
+    scope: "위탁관리", kind: "apartment" },
+  { name: "양주회천 A-21", region: "경기도 양주시", households: 995, area: 151945,
+    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
+  { name: "더샵 광주포레스트 주상복합", region: "광주광역시", households: 991, area: 168658,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "양림1휴먼시아아파트", region: "광주광역시", households: 987, area: 127525,
+    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
+  { name: "의왕초평 A-3BL 아파트", region: "경기도 의왕시", households: 981, area: 125732,
+    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
+  { name: "문흥대주2차 아파트", region: "광주광역시", households: 959, area: 86137,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "휴먼파크 서희 스타힐스 아파트", region: "경기도", households: 946, area: 107277,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "남악 유탑유블레스", region: "전라남도 무안군", households: 895, area: 42521,
+    scope: "전기", kind: "apartment" },
+  { name: "여수 양우내안애아파트", region: "전라남도 여수시", households: 813, area: 81964,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "동천 호반베르디움 아파트", region: "광주광역시", households: 803, area: 140807,
+    scope: "경비,청소", kind: "apartment" },
+  { name: "용해호반리젠시빌스위트 아파트", region: "전라남도 목포시", households: 732, area: 84950,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "순천가곡 대광로제비앙 리버팰리스", region: "전라남도 순천시", households: 727, area: 109150,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "STX KAN 중우하나린", region: "충청남도", households: 700, area: 66871,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "수완현진에버빌1단지", region: "광주광역시", households: 672, area: 106252,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "렉시안 파크타운", region: "충청남도", households: 626, area: 74113,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "어등산 한양수자인 테라스 아파트", region: "광주광역시", households: 592, area: 76999,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "한보라마을 휴먼시아 4단지", region: "경기도 용인시", households: 581, area: 48094,
+    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
+  { name: "광양 푸르지오 더 센트럴", region: "전라남도 광양시", households: 565, area: 75778,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "문흥우성아파트", region: "광주광역시", households: 564, area: 69577,
+    scope: "경비,청소,시설관리", kind: "apartment" },
+  { name: "함안 데시앙 아파트", region: "경상남도 함안군", households: 563, area: 33424,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "LH 트리플 센텀 아파트", region: "경기도 시흥시", households: 546, area: 70972,
+    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
+  { name: "용봉 삼성아파트", region: "광주광역시", households: 544, area: 65734,
+    scope: "경비,청소", kind: "apartment" },
+  { name: "송화 휴먼시아7단지 아파트", region: "광주광역시", households: 530, area: 80556,
+    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
+  { name: "첨단 미르채리버파크 오피스텔", region: "광주광역시", households: 511, area: 29005,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "신창 사랑으로6차 부영아파트", region: "충청남도 아산시", households: 494, area: 57057,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "영광 힐스테이트", region: "전라남도 영광군", households: 493, area: 57509,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+  { name: "첨단 3차 부영아파트", region: "광주광역시", households: 492, area: 50420,
+    scope: "위탁관리,경비,청소", kind: "apartment" },
+
+  // ─── 집합건물 / 주상복합 / 오피스텔 (PDF p11) ─────────────
+  { name: "양산 명지써밋 주상복합", region: "경상남도 양산시", area: 52476,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "금남 지하도상가", region: "광주광역시",
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "나주 이노파크 식스틴 지식산업센터", region: "전라남도 나주시", area: 31000,
+    scope: "위탁관리,청소", kind: "mixed-use" },
+  { name: "첨단 미르채리버파크 오피스텔", region: "광주광역시", area: 29005,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "첨단프라자", region: "광주광역시", area: 23388,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "남악 에드가5차오피스텔", region: "전라남도 무안군", area: 22522,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "남악 에드가6차오피스텔", region: "전라남도 무안군", area: 22258,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "동명동 센트럴파크오피스텔", region: "광주광역시", area: 21900,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "내포 에드가2차 오피스텔", region: "충청남도 홍성군", area: 21876,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "남악 에드가7차오피스텔", region: "전라남도 무안군", area: 20236,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "더샵 광주포레스트 오피스텔", region: "광주광역시", area: 18821,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "금남로 센텀시티", region: "광주광역시", area: 18792,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "남악 에드가8차오피스텔", region: "전라남도 무안군", area: 17097,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "남악 에드가9차", region: "전라남도 무안군", area: 17097,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "남악 에드가2차오피스텔", region: "전라남도 무안군", area: 14645,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "그랜드 센트럴 상가", region: "광주광역시", area: 14104,
+    scope: "위탁관리,청소", kind: "mixed-use" },
+  { name: "제주 영어마을 학원타운", region: "제주특별자치도", area: 12797,
+    scope: "위탁관리,청소", kind: "mixed-use" },
+  { name: "첨단 벨루미체", region: "광주광역시", area: 11047,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "첨단 윤진리안채리버뷰", region: "광주광역시", area: 10099,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "첨단 야스텍타워", region: "광주광역시", area: 8986,
+    scope: "위탁관리,청소", kind: "mixed-use" },
+  { name: "우산동 에드가리움", region: "광주광역시", area: 8546,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "오션블루", region: "전라남도", area: 7925,
+    scope: "위탁관리,청소", kind: "mixed-use" },
+  { name: "첨단 한양에드가3차 302동", region: "광주광역시", area: 7438,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "첨단 한양에드가3차 303동", region: "광주광역시", area: 7438,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "목동 메디컬스퀘어", region: "서울특별시 양천구", area: 6723,
+    scope: "위탁관리,청소", kind: "mixed-use" },
+  { name: "우산동 하이클래스", region: "광주광역시", area: 6067,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "우산동 스카이하이", region: "광주광역시", area: 6025,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "제주 세종안채 오피스텔", region: "제주특별자치도", area: 5553,
+    scope: "위탁관리,경비,청소", kind: "mixed-use" },
+  { name: "계림아이파크 SK뷰 (근린생활)", region: "광주광역시", area: 5193,
+    scope: "위탁관리,청소", kind: "mixed-use" },
+  { name: "선운 메디컬스퀘어", region: "광주광역시", area: 4781,
+    scope: "위탁관리,청소", kind: "mixed-use" },
+  { name: "첨단 AM-STAY 센트럴파크 오피스텔", region: "광주광역시", area: 4039,
+    scope: "위탁관리,청소", kind: "mixed-use" },
+  { name: "미르채 프라자 상가", region: "광주광역시", area: 3738,
+    scope: "위탁관리,청소", kind: "mixed-use" },
+  { name: "영광 뉴스카이", region: "전라남도 영광군", area: 3357,
+    scope: "위탁관리", kind: "mixed-use" },
+  { name: "첨단 윤진리안채상가", region: "광주광역시", area: 3228,
+    scope: "위탁관리,청소", kind: "mixed-use" },
+  { name: "H타워빌딩", region: "광주광역시", area: 2890,
+    scope: "위탁관리", kind: "mixed-use" },
+  { name: "첨단 힐스테이트 리버파크 상가", region: "광주광역시", area: 2791,
+    scope: "청소", kind: "mixed-use" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 7. 파트너사 — 원본 사이트에 별도 파트너 페이지 없음.
-//    실제 발주처는 LH 중심, 일부는 스펙대로 더미값.
+// 9. 파트너사 (실제 발주처)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const partners: Partner[] = [
-  {
-    name: "LH 한국토지주택공사",
-    category: "client",
-    note: "주요 발주처 — 다수 위탁관리 단지",
-  },
+  { name: "LH 한국토지주택공사", category: "client",
+    note: "주요 발주처 — 다수 위탁관리 단지" },
   { name: "광주광역시청", category: "public" },
   { name: "광주광역시 광산구청", category: "public" },
   { name: "광주지방경찰청", category: "public" },
-  { name: "GS건설", category: "construction", placeholder: true },
-  { name: "현대건설", category: "construction", placeholder: true },
-  { name: "대우건설", category: "construction", placeholder: true },
-  { name: "포스코이앤씨", category: "construction", placeholder: true },
+  { name: "대광건영", category: "construction",
+    note: "대광로제비앙 시리즈 시공사" },
+  { name: "SK에코플랜트", category: "construction",
+    note: "계림 IPARK SK뷰 시공사" },
+  { name: "현대산업개발", category: "construction",
+    note: "계림 아이파크 SK뷰 시공사" },
+  { name: "포스코이앤씨", category: "construction",
+    note: "광주 더샵 포레스트 시공사" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 8. 인허가 (실제 보유 11종)
+// 10. 협력업체 — PDF p45 기준 15개사
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const collaborators: Collaborator[] = [
+  { name: "조흥종합건설㈜", field: "건축", scope: "건축물 관리, 하자 관련" },
+  { name: "신진종합건설㈜", field: "토목·건축", scope: "건축물 관리, 하자 관련" },
+  { name: "법무법인 이노센스", field: "법률 자문", scope: "법률 자문" },
+  { name: "주택관리공단", field: "인력 관리", scope: "인력 관리 등" },
+  { name: "광주아파트연합회", field: "인력 관리 및 교육", scope: "인력 관리 및 교육 훈련" },
+  { name: "한울회계법인", field: "세무", scope: "세무 교육 및 회계 자문" },
+  { name: "첨단 메디케어", field: "건강검진", scope: "직원 건강 관리" },
+  { name: "호남직업전문학교", field: "인력 관리 및 교육", scope: "직원 기술 지원 및 기술인력 공급" },
+  { name: "정명재 공인노무사", field: "노무 및 법률 자문", scope: "노무 교육 및 법률 자문" },
+  { name: "㈜에프원방재", field: "소방", scope: "소방시설 관리, 점검, 수리" },
+  { name: "㈜대명엘리베이터", field: "승강기", scope: "승강기 유지관리, 점검, 수리" },
+  { name: "㈜에코원", field: "방역, 저수조 청소", scope: "소독, 방역, 저수조 청소" },
+  { name: "㈜한신전기 / 신광전기", field: "전기", scope: "전기 대행" },
+  { name: "㈜미래정보통신", field: "CCTV", scope: "CCTV 공사" },
+  { name: "새천년파지", field: "재활용 수거", scope: "플라스틱·비닐·공병·고철·헌옷 등 수거" },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 11. 인허가 9건 — PDF p8 기준 (정확한 등록일)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const licenses: License[] = [
-  { name: "주택관리업 등록", issuer: "광산구청", acquiredAt: "2016.04" },
-  {
-    name: "주택임대관리업 등록",
-    issuer: "광산구청",
-    acquiredAt: "2016.01",
-  },
-  { name: "임대사업자 등록", issuer: "광산구청", acquiredAt: "2014.12" },
-  {
-    name: "시설경비업 허가",
-    issuer: "광주지방경찰청장",
-    acquiredAt: "2016.04",
-  },
-  { name: "위생관리용역업 신고", issuer: "광산구청장", acquiredAt: "2016.06" },
-  { name: "소독업 신고", issuer: "광주광역시 광산구", acquiredAt: "2018.04" },
-  { name: "저수조청소업 신고", issuer: "광산구청장", acquiredAt: "2018.09" },
-  {
-    name: "나무병원(2급) 등록",
-    issuer: "광주광역시청",
-    acquiredAt: "2019.08",
-  },
-  {
-    name: "안전보건경영시스템 ISO 45001:2018 인증",
-    issuer: "KSR",
-    acquiredAt: "2020.12",
-  },
-  // 사업자등록증 acquiredAt는 출처에 explicit 표기 없음 → 표시 안 함
-  { name: "사업자등록증", issuer: "광주세무서" },
-  {
-    name: "광주지방경찰청장 감사장",
-    issuer: "광주지방경찰청장",
-    acquiredAt: "2018.10",
-  },
+  { name: "(주)케이비개발 법인 설립", issuer: "광주지방법원 등기소", acquiredAt: "2013.09" },
+  { name: "주택임대관리업 등록", issuer: "광산구청", acquiredAt: "2016.01",
+    image: "/images/licenses/p09_07.jpeg" },
+  { name: "주택관리업 등록", issuer: "광산구청", acquiredAt: "2016.04",
+    image: "/images/licenses/p09_06.jpeg" },
+  { name: "건물위생관리용역업 신고", issuer: "광산구청", acquiredAt: "2016.04",
+    image: "/images/licenses/p09_08.jpeg" },
+  { name: "시설경비업 허가", issuer: "광주지방경찰청장", acquiredAt: "2016.04",
+    image: "/images/licenses/p09_09.jpeg" },
+  { name: "소독업 신고", issuer: "광주광역시 광산구", acquiredAt: "2018.04",
+    image: "/images/licenses/p09_10.jpeg" },
+  { name: "저수조청소업 신고", issuer: "광산구청장", acquiredAt: "2018.09",
+    image: "/images/licenses/p09_11.jpeg" },
+  { name: "근로자파견업 등록", issuer: "광주지방고용노동청", acquiredAt: "2021.04",
+    image: "/images/licenses/p09_14.jpeg" },
+  { name: "안전보건경영시스템 ISO 45001 인증", issuer: "한국표준협회", acquiredAt: "2023.12",
+    image: "/images/licenses/p09_13.jpeg" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 9. 보유 자격증 (27종, 총 1,575명)
+// 12. 보유 자격증 27종 — PDF p21 기준 / 총 1,550명
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const totalCertHolders = 1575;
+export const totalCertHolders = 1550;
 
-/**
- * 운영 년수 — 설립일(2014.12) 기준 동적 계산.
- * 모듈 로드 시점에 평가되므로 빌드 또는 클라이언트 로드 시 값이 갱신됨.
- * 매년 12월 1일 경계에서 자동 +1 (재빌드 또는 페이지 재방문 시).
- */
-const _FOUNDING_DATE = new Date(2014, 11, 1); // 2014년 12월 1일
+const _FOUNDING_DATE = new Date(2013, 8, 1); // 2013년 9월 1일
 export const yearsOfOperation: number = Math.max(
   0,
   Math.floor(
@@ -574,13 +680,12 @@ export const certifications: Certification[] = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 10. 연혁
+// 13. 연혁 — PDF p5 + 기존 마일스톤 통합 (시간 정렬)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const history: HistoryEntry[] = [
-  { date: "2014.12", event: "(주)케이비개발 법인 설립" },
-  { date: "2014.12", event: "임대사업자 등록 (광산구청)" },
-  { date: "2015.01", event: "(주)케이비개발 목포지사 설립" },
+  { date: "2013.09", event: "(주)케이비개발 법인 설립" },
+  { date: "2013.12", event: "임대사업자 등록" },
   { date: "2016.01", event: "주택임대관리업 등록 (광산구청)" },
   { date: "2016.04", event: "주택관리업 등록 (광산구청)" },
   { date: "2016.04", event: "시설경비업 허가 (광주지방경찰청)" },
@@ -590,17 +695,26 @@ export const history: HistoryEntry[] = [
   { date: "2018.04", event: "소독업 신고" },
   { date: "2018.09", event: "저수조청소업 신고" },
   { date: "2019.05", event: "본사 사옥 이전" },
-  { date: "2019.08", event: "나무병원 등록 (광주광역시청)" },
-  { date: "2020.12", event: "안전보건경영시스템 ISO 45001 인증 (KSR)" },
+  { date: "2021.04", event: "근로자 파견업 등록" },
+  { date: "2023.06", event: "서울 경인지사 개소" },
+  { date: "2023.12", event: "안전보건경영시스템 ISO 45001 인증" },
+  { date: "2025.02", event: "목포지사 개소" },
+  { date: "2026.02", event: "전남지사 이전" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 11. 관계사
+// 14. 계열사 — PDF p43~44 기준 (4사)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const relatedCompanies: RelatedCompany[] = [
-  { name: "(주)케이비뷰", note: "2017.11 설립 관계사" },
-  { name: "(주)케이비개발 목포지사", note: "2015.01 설립" },
-  { name: "기담산업개발", note: "종합건설업 (관계사)" },
-  { name: "(유)케이오아시스", note: "도·소매업 / 청소용품·서비스 (관계사)" },
+  { name: "㈜기담종합건설",
+    note: "건설업·시행사·위생관리·시설경비업·금융 및 보험업 (모회사·종합건설)" },
+  { name: "㈜케이비뷰",
+    note: "2017.11 설립 — 부동산 임대 운영 관계사" },
+  { name: "㈜케이위더스",
+    note: "주택관리·종합 서비스 관계사",
+    logo: "/images/partners/k-withus-logo.png" },
+  { name: "(유)케이오아시스",
+    note: "청소용품 도·소매업 + 경비·청소 서비스",
+    logo: "/images/partners/k-oasis-image1.png" },
 ];
