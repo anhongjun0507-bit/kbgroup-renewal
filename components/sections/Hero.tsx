@@ -11,7 +11,10 @@ import { company, contact, yearsOfOperation } from "@/data/site-content";
 
 const SLOGAN_LINE_1 = "신뢰가";
 const SLOGAN_LINE_2 = "자산이 됩니다";
-const SLOGAN_HIGHLIGHT = "됩니다";
+/* Phase 11 P0-D — H1 강조를 어말 어미("됩니다") → 의미 키워드("자산")로 이동.
+   "신뢰"는 골드 컬러로 추가 강조해 의미 위계(신뢰=가치 / 자산=결과) 명확화 */
+const SLOGAN_LINE_1_HIGHLIGHT = "신뢰";
+const SLOGAN_HIGHLIGHT = "자산";
 const SUBTITLE_LINE_1 = "대한민국 시설관리의 새로운 표준을 만들어갑니다.";
 const SUBTITLE_LINE_2 = "오랜 신뢰가 지금의 케이비개발을 만들었습니다.";
 
@@ -22,7 +25,8 @@ const FLOATING_STATS = [
 ];
 
 export function Hero() {
-  const slogan2Idx = SLOGAN_LINE_2.lastIndexOf(SLOGAN_HIGHLIGHT);
+  const slogan1Idx = SLOGAN_LINE_1.indexOf(SLOGAN_LINE_1_HIGHLIGHT);
+  const slogan2Idx = SLOGAN_LINE_2.indexOf(SLOGAN_HIGHLIGHT);
 
   return (
     <section
@@ -139,7 +143,8 @@ export function Hero() {
                 (주)케이비개발 · SINCE {company.foundedYear}
               </p>
 
-              {/* H1 — 2줄 고정, "됩니다"에 underline-gradient SVG 데코 */}
+              {/* Phase 11 P0-D — 의미 키워드 강조
+                  line1: "신뢰" 골드 컬러 / line2: "자산" 밑줄 gradient */}
               <h1
                 className="mt-7 font-display text-white"
                 style={{
@@ -150,14 +155,28 @@ export function Hero() {
                   textShadow: "0 6px 24px rgba(0,0,0,0.35)",
                 }}
               >
-                <span className="block">{SLOGAN_LINE_1}</span>
+                <span className="block">
+                  {slogan1Idx >= 0 ? (
+                    <>
+                      {SLOGAN_LINE_1.slice(0, slogan1Idx)}
+                      <span className="text-accent-300">
+                        {SLOGAN_LINE_1_HIGHLIGHT}
+                      </span>
+                      {SLOGAN_LINE_1.slice(
+                        slogan1Idx + SLOGAN_LINE_1_HIGHLIGHT.length,
+                      )}
+                    </>
+                  ) : (
+                    SLOGAN_LINE_1
+                  )}
+                </span>
                 <span className="block whitespace-nowrap">
                   {slogan2Idx >= 0 ? (
                     <>
                       {SLOGAN_LINE_2.slice(0, slogan2Idx)}
                       <span className="relative inline-block">
                         <span className="relative z-10">{SLOGAN_HIGHLIGHT}</span>
-                        {/* underline-gradient SVG */}
+                        {/* underline-gradient SVG — 골드 → 골드 페이드 */}
                         <svg
                           aria-hidden="true"
                           viewBox="0 0 200 12"
@@ -167,7 +186,7 @@ export function Hero() {
                           <defs>
                             <linearGradient id="ul" x1="0" y1="0" x2="1" y2="0">
                               <stop offset="0%" stopColor="#C9A24B" />
-                              <stop offset="100%" stopColor="#FFFFFF" />
+                              <stop offset="100%" stopColor="#E3C57A" />
                             </linearGradient>
                           </defs>
                           <path
@@ -179,6 +198,7 @@ export function Hero() {
                           />
                         </svg>
                       </span>
+                      {SLOGAN_LINE_2.slice(slogan2Idx + SLOGAN_HIGHLIGHT.length)}
                     </>
                   ) : (
                     SLOGAN_LINE_2
