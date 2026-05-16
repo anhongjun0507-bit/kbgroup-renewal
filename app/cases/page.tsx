@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { CasesStats } from "@/components/sections/cases/CasesStats";
+import { CasesMap } from "@/components/sections/cases/CasesMap";
 import { CasesGallery } from "@/components/sections/cases/CasesGallery";
-import { CTA } from "@/components/sections/CTA";
+import { ContactForm } from "@/components/sections/common/ContactForm";
 
 export const metadata: Metadata = {
   title: "관리현황 | (주)케이비개발",
@@ -24,8 +25,9 @@ export default function CasesPage() {
         ]}
       />
       <CasesStats />
+      <CasesMap />
       <CasesGallery />
-      <CTA />
+      <ContactForm context="관리현황 문의" />
     </>
   );
 }

@@ -3,7 +3,7 @@ import { PageHero } from "@/components/sections/common/PageHero";
 import { AboutNav } from "@/components/sections/about/AboutNav";
 import { LocationMap } from "@/components/sections/about/LocationMap";
 import { LocationInfo } from "@/components/sections/about/LocationInfo";
-import { CTA } from "@/components/sections/CTA";
+import { ContactForm } from "@/components/sections/common/ContactForm";
 
 export const metadata: Metadata = {
   title: "오시는 길 | (주)케이비개발",
@@ -27,7 +27,7 @@ export default function LocationPage() {
       <AboutNav current="location" />
       <LocationMap />
       <LocationInfo />
-      <CTA />
+      <ContactForm context="오시는 길 — 방문 상담 문의" />
     </>
   );
 }

@@ -1,14 +1,41 @@
 "use client";
 
-import {
-  motion,
-  useReducedMotion,
-  type Variants,
-} from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
-import type { BusinessArea } from "@/data/site-content";
+import type { BusinessArea, BusinessCategory } from "@/data/site-content";
+
+/* Phase 4.F.2 — /business/[slug] 핵심 메트릭 3개 (사업별 더미값 — [[data-site-content]] 정책)
+   WHY US 3 reasons + 메트릭 3카드 통합 */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+
+const METRICS: Record<BusinessCategory, { label: string; value: string; suffix?: string }[]> = {
+  facility: [
+    { label: "관리 대응", value: "24", suffix: "시간" },
+    { label: "일평균 점검 건수", value: "180", suffix: "건+" },
+    { label: "평균 응답 시간", value: "15", suffix: "분 이내" },
+  ],
+  sanitation: [
+    { label: "전용 청소 인력", value: "120", suffix: "명+" },
+    { label: "주간 정밀 청소 회수", value: "3", suffix: "회" },
+    { label: "방역 주기", value: "월 2", suffix: "회" },
+  ],
+  security: [
+    { label: "통합 관제 운영", value: "24/7" },
+    { label: "근무 인력", value: "85", suffix: "명+" },
+    { label: "긴급 대응 시간", value: "5", suffix: "분 이내" },
+  ],
+  development: [
+    { label: "누적 시공 단지", value: "30", suffix: "단지+" },
+    { label: "건설업 등록", value: "토목·건축", suffix: "" },
+    { label: "하자 대응 기간", value: "2", suffix: "년" },
+  ],
+  other: [
+    { label: "위탁 가능 분야", value: "12", suffix: "종+" },
+    { label: "협력사 네트워크", value: "60", suffix: "사+" },
+    { label: "맞춤 견적 회신", value: "48", suffix: "시간 내" },
+  ],
+};
 
 interface Props {
   area: BusinessArea;
@@ -28,11 +55,7 @@ export function BusinessOverview({ area }: Props) {
 
   const listVariants: Variants = {
     hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: shouldReduce ? 0 : 0.12,
-      },
-    },
+    visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.12 } },
   };
 
   const itemVariants: Variants = {
@@ -44,14 +67,16 @@ export function BusinessOverview({ area }: Props) {
     },
   };
 
+  const metrics = METRICS[area.id];
+
   return (
     <section
       aria-labelledby={`overview-${area.id}`}
-      className="bg-beige py-32 md:py-40"
+      className="section bg-gray-50"
     >
       <Container>
-        <div className="grid grid-cols-1 gap-16 lg:grid-cols-12 lg:gap-20">
-          {/* Left — kicker + title + summary */}
+        {/* WHY US + 3 reasons */}
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -59,25 +84,19 @@ export function BusinessOverview({ area }: Props) {
             variants={blockVariants}
             className="lg:col-span-5"
           >
-            <div
-              aria-hidden="true"
-              className="mb-6 h-px w-12 bg-primary"
-            />
-            <div className="text-xs font-medium uppercase tracking-[0.35em] text-primary">
-              WHY US
-            </div>
+            <div aria-hidden="true" className="mb-6 h-[3px] w-12 bg-accent-500" />
+            <p className="eyebrow">WHY US</p>
             <h2
               id={`overview-${area.id}`}
-              className="mt-6 font-serif text-3xl font-bold leading-[1.1] tracking-[-0.02em] text-ink md:text-4xl lg:text-5xl"
+              className="mt-5 font-display text-[28px] font-bold leading-[1.15] tracking-tight text-ink-strong md:text-[36px] lg:text-[44px]"
             >
-              {area.name}의 새로운 <span className="serif-em">기준</span>
+              {area.name}의 새로운 <span className="accent-em">기준</span>
             </h2>
-            <p className="mt-8 text-base leading-[1.85] text-ink-soft md:text-lg">
+            <p className="mt-8 text-[16px] leading-[1.75] text-ink-muted md:text-[17px]">
               {area.summary}
             </p>
           </motion.div>
 
-          {/* Right — 3 reasons */}
           <motion.ul
             initial="hidden"
             whileInView="visible"
@@ -95,15 +114,15 @@ export function BusinessOverview({ area }: Props) {
                 >
                   <span
                     aria-hidden="true"
-                    className="col-span-2 font-serif text-3xl italic leading-none text-primary md:col-span-1"
+                    className="col-span-2 font-display text-[36px] font-extrabold leading-none text-accent-500 md:col-span-1"
                   >
                     {num}
                   </span>
                   <div className="col-span-10 md:col-span-11">
-                    <h3 className="font-serif text-xl font-bold leading-tight tracking-[-0.01em] text-ink md:text-2xl">
+                    <h3 className="font-display text-[20px] font-bold leading-tight tracking-tight text-ink-strong md:text-[24px]">
                       {reason.title}
                     </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-ink-soft md:text-base">
+                    <p className="mt-3 text-[15px] leading-[1.75] text-ink-muted md:text-[16px]">
                       {reason.description}
                     </p>
                   </div>
@@ -112,6 +131,46 @@ export function BusinessOverview({ area }: Props) {
             })}
           </motion.ul>
         </div>
+
+        {/* 핵심 메트릭 3개 */}
+        {metrics && (
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={listVariants}
+            className="mt-16 grid grid-cols-1 gap-4 md:mt-20 md:grid-cols-3 md:gap-6"
+          >
+            {metrics.map((m) => (
+              <motion.div
+                key={m.label}
+                variants={itemVariants}
+                className="group rounded-md border border-line bg-white p-7 transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:border-navy-700 hover:shadow-[var(--shadow-card)]"
+              >
+                <div
+                  aria-hidden="true"
+                  className="h-[3px] w-6 bg-accent-500 transition-[width] duration-300 [transition-timing-function:var(--ease)] group-hover:w-12"
+                />
+                <p className="mt-6 text-[12px] font-medium uppercase tracking-[0.18em] text-ink-faint">
+                  {m.label}
+                </p>
+                <p className="mt-3 flex items-baseline gap-1 font-mono-num">
+                  <span
+                    className="font-display text-[40px] font-extrabold leading-none text-navy-800 md:text-[48px]"
+                    style={{ letterSpacing: "var(--tracking-tight)" }}
+                  >
+                    {m.value}
+                  </span>
+                  {m.suffix && (
+                    <span className="text-[16px] font-semibold text-accent-500">
+                      {m.suffix}
+                    </span>
+                  )}
+                </p>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
       </Container>
     </section>
   );

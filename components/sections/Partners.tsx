@@ -12,6 +12,8 @@ const CATEGORY_LABEL: Record<Partner["category"], string> = {
   construction: "시공사",
 };
 
+/* Phase 2.11 — 인증/파트너 로고 strip
+   자료(실로고)가 없으므로 텍스트 placeholder를 grayscale 톤으로 표현, hover 시 컬러 살아남 */
 export function Partners() {
   const shouldReduce = useReducedMotion() ?? false;
 
@@ -25,7 +27,7 @@ export function Partners() {
   };
 
   return (
-    <section className="bg-bg-soft py-24 md:py-32">
+    <section className="section bg-gray-50">
       <Container>
         <motion.div
           initial="hidden"
@@ -35,18 +37,17 @@ export function Partners() {
             hidden: {},
             visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.08 } },
           }}
-          className="mb-14 max-w-3xl md:mb-16"
+          className="mb-12 max-w-3xl md:mb-16"
         >
           <motion.p
             variants={item}
-            className="text-[12px] font-semibold uppercase tracking-[0.2em] text-ink-muted"
+            className="eyebrow"
           >
             PARTNERS
           </motion.p>
           <motion.h2
             variants={item}
             className="mt-4 font-extrabold tracking-tight text-ink-strong"
-            style={{ fontSize: "clamp(2rem, 3.6vw, 2.75rem)" }}
           >
             함께 신뢰를 쌓아온 파트너
           </motion.h2>
@@ -60,18 +61,18 @@ export function Partners() {
             hidden: {},
             visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.04 } },
           }}
-          className="grid grid-cols-2 gap-px bg-line sm:grid-cols-3 lg:grid-cols-4"
+          className="grid grid-cols-2 gap-px overflow-hidden rounded-sm bg-line sm:grid-cols-3 lg:grid-cols-4"
         >
           {partners.map((p) => (
             <motion.div
               key={p.name}
               variants={item}
-              className="group flex h-32 flex-col justify-between bg-white p-6 transition-colors duration-300 hover:bg-bg-soft"
+              className="group flex h-32 flex-col justify-between bg-white p-6 grayscale transition-all duration-300 [transition-timing-function:var(--ease)] hover:grayscale-0 hover:bg-bg-soft"
             >
-              <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-ink-muted transition-colors group-hover:text-primary">
+              <p className="text-[12px] font-medium uppercase tracking-[0.15em] text-ink-faint transition-colors group-hover:text-accent-500">
                 {CATEGORY_LABEL[p.category]}
               </p>
-              <p className="text-[15px] font-bold tracking-tight text-ink-strong">
+              <p className="text-[15px] font-bold tracking-tight text-ink-muted transition-colors group-hover:text-ink-strong">
                 {p.name}
               </p>
             </motion.div>

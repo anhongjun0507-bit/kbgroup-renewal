@@ -1,12 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import {
-  motion,
-  useInView,
-  useReducedMotion,
-  type Variants,
-} from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import CountUp from "react-countup";
 import { Container } from "@/components/ui";
 import {
@@ -16,6 +11,10 @@ import {
   yearsOfOperation,
 } from "@/data/site-content";
 
+/* Phase 4.H.1, 4.H.2 — 인력·인증 통계 대시보드
+   - 4컬럼 → 2 row 카드 그리드 + 좌측 라인 아이콘
+   - 모바일 회색 잔존 버그 fix: useInView amount 0.3 → 0.1 + 단일 IntersectionObserver */
+
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 type Stat = {
@@ -24,20 +23,50 @@ type Stat = {
   suffix: string;
   label: string;
   caption: string;
+  icon: React.ReactNode;
+};
+
+const ICON_BASE = {
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.5,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
 };
 
 export function WorkforceStats() {
   const shouldReduce = useReducedMotion() ?? false;
-  const gridRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(gridRef, { once: true, amount: 0.3 });
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    io.observe(sectionRef.current);
+    return () => io.disconnect();
+  }, []);
 
   const stats: Stat[] = [
     {
       key: "workforce",
       value: totalCertHolders,
-      suffix: "+",
+      suffix: "명+",
       label: "자격증 보유 인력",
       caption: "CERTIFIED PROFESSIONALS",
+      icon: (
+        <svg viewBox="0 0 40 40" {...ICON_BASE}>
+          <circle cx="20" cy="14" r="6" />
+          <path d="M8 34c0-7 5-12 12-12s12 5 12 12" />
+        </svg>
+      ),
     },
     {
       key: "licenses",
@@ -45,6 +74,12 @@ export function WorkforceStats() {
       suffix: "+",
       label: "보유 인허가",
       caption: "REGISTERED LICENSES",
+      icon: (
+        <svg viewBox="0 0 40 40" {...ICON_BASE}>
+          <rect x="8" y="6" width="24" height="28" rx="2" />
+          <path d="M14 14H26M14 20H26M14 26H22" />
+        </svg>
+      ),
     },
     {
       key: "certifications",
@@ -52,13 +87,25 @@ export function WorkforceStats() {
       suffix: "+",
       label: "기술 자격증",
       caption: "CERTIFICATION TYPES",
+      icon: (
+        <svg viewBox="0 0 40 40" {...ICON_BASE}>
+          <path d="M20 4L25 9L31 9L31 15L36 20L31 25L31 31L25 31L20 36L15 31L9 31L9 25L4 20L9 15L9 9L15 9Z" />
+          <path d="M14 20L18 24L26 16" />
+        </svg>
+      ),
     },
     {
       key: "years",
       value: yearsOfOperation,
-      suffix: "+",
-      label: "년의 운영 경험",
+      suffix: "년+",
+      label: "운영 경험",
       caption: "OPERATION HISTORY",
+      icon: (
+        <svg viewBox="0 0 40 40" {...ICON_BASE}>
+          <circle cx="20" cy="20" r="14" />
+          <path d="M20 12V20L25 25" />
+        </svg>
+      ),
     },
   ];
 
@@ -73,41 +120,59 @@ export function WorkforceStats() {
 
   return (
     <section
+      ref={sectionRef}
+      data-surface="dark"
       aria-labelledby="workforce-stats-heading"
-      className="bg-ink py-24 text-white md:py-32"
+      className="section relative isolate overflow-hidden bg-navy-900 text-white"
     >
-      <Container>
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          background: [
+            "radial-gradient(45% 50% at 25% 30%, rgba(230,57,80,0.12) 0%, transparent 60%)",
+            "radial-gradient(40% 45% at 80% 70%, rgba(30,44,86,0.7) 0%, transparent 60%)",
+          ].join(", "),
+        }}
+      />
+
+      <Container className="relative">
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.4 }}
+          viewport={{ once: true, amount: 0.3 }}
           variants={headerVariants}
           className="mb-16 text-center"
         >
-          <div aria-hidden="true" className="mx-auto mb-6 h-px w-12 bg-gold" />
-          <p className="text-xs font-medium uppercase tracking-[0.35em] text-gold">
+          <div
+            aria-hidden="true"
+            className="mx-auto mb-6 h-[3px] w-12 bg-accent-500"
+          />
+          <p
+            className="eyebrow"
+            style={{ color: "rgba(255,255,255,0.7)" }}
+          >
             WORKFORCE &amp; EXPERTISE
           </p>
           <h2
             id="workforce-stats-heading"
-            className="mt-6 font-serif text-3xl font-bold leading-[1.15] tracking-[-0.02em] text-white md:text-4xl lg:text-5xl"
+            className="mt-6 font-display font-extrabold leading-[1.15] tracking-tight"
+            style={{
+              color: "#ffffff",
+              fontSize: "clamp(2rem, 4vw, 3rem)",
+            }}
           >
             {totalCertHolders.toLocaleString("en-US")}명의{" "}
-            <span className="italic text-gold">전문 인력</span>이
-            <br />
-            함께합니다
+            <span className="text-accent-500">전문 인력</span>이 함께합니다
           </h2>
         </motion.div>
 
-        <div
-          ref={gridRef}
-          className="mx-auto grid max-w-6xl grid-cols-2 gap-12 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-white/10"
-        >
-          {stats.map((stat, index) => (
-            <StatColumn
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+          {stats.map((stat, idx) => (
+            <StatCard
               key={stat.key}
               stat={stat}
-              index={index}
+              index={idx}
               inView={inView}
               shouldReduce={shouldReduce}
             />
@@ -118,7 +183,7 @@ export function WorkforceStats() {
   );
 }
 
-function StatColumn({
+function StatCard({
   stat,
   index,
   inView,
@@ -129,27 +194,35 @@ function StatColumn({
   inView: boolean;
   shouldReduce: boolean;
 }) {
-  const { value, suffix, label, caption } = stat;
+  const { value, suffix, label, caption, icon } = stat;
   return (
     <motion.div
-      initial={{ opacity: 0, y: shouldReduce ? 0 : 30 }}
+      initial={{ opacity: 0, y: shouldReduce ? 0 : 24 }}
       animate={inView ? { opacity: 1, y: 0 } : undefined}
       transition={{
         duration: shouldReduce ? 0 : 0.7,
-        delay: shouldReduce ? 0 : index * 0.15,
+        delay: shouldReduce ? 0 : index * 0.1,
         ease: EASE_OUT_EXPO,
       }}
-      className="px-6 text-center"
+      className="group rounded-md border border-white/10 bg-white/[0.04] p-7 backdrop-blur-sm transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:border-white/30 hover:bg-white/[0.06]"
     >
-      <div className="flex items-start justify-center font-serif font-bold leading-none tracking-[-0.03em] text-white">
-        <span className="text-5xl md:text-6xl lg:text-[80px]">
+      <div className="h-9 w-9 text-white/90">{icon}</div>
+      <div
+        aria-hidden="true"
+        className="mt-5 h-[3px] w-6 bg-accent-500 transition-[width] duration-300 [transition-timing-function:var(--ease)] group-hover:w-12"
+      />
+      <p className="mt-5 flex items-baseline gap-1">
+        <span
+          className="font-mono-num font-display text-[44px] font-extrabold leading-none text-white md:text-[56px]"
+          style={{ letterSpacing: "var(--tracking-tight)" }}
+        >
           {shouldReduce ? (
             value.toLocaleString("en-US")
           ) : inView ? (
             <CountUp
               end={value}
-              duration={2.5}
-              delay={index * 0.15}
+              duration={2.2}
+              delay={index * 0.1}
               separator=","
             />
           ) : (
@@ -157,18 +230,15 @@ function StatColumn({
           )}
         </span>
         {suffix && (
-          <span
-            aria-hidden="true"
-            className="-translate-y-2 ml-1 inline-block text-3xl text-gold md:text-4xl"
-          >
+          <span className="font-mono-num text-[18px] font-bold text-accent-500 md:text-[20px]">
             {suffix}
           </span>
         )}
-      </div>
-      <div className="mt-6 text-base font-medium text-white">{label}</div>
-      <div className="mt-2 text-[10px] font-medium uppercase tracking-[0.25em] text-white/40">
+      </p>
+      <p className="mt-6 text-[15px] font-semibold text-white">{label}</p>
+      <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.18em] text-white/55">
         {caption}
-      </div>
+      </p>
     </motion.div>
   );
 }

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { AboutNav } from "@/components/sections/about/AboutNav";
 import { HistoryTimeline } from "@/components/sections/about/HistoryTimeline";
-import { CTA } from "@/components/sections/CTA";
+import { ContactForm } from "@/components/sections/common/ContactForm";
 
 export const metadata: Metadata = {
   title: "연혁 | (주)케이비개발",
@@ -25,7 +25,7 @@ export default function HistoryPage() {
       />
       <AboutNav current="history" />
       <HistoryTimeline />
-      <CTA />
+      <ContactForm context="연혁 — 상담 문의" />
     </>
   );
 }

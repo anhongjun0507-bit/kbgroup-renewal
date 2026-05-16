@@ -4,7 +4,7 @@ import { AboutNav } from "@/components/sections/about/AboutNav";
 import { WhyValues } from "@/components/sections/about/WhyValues";
 import { WhyDifferentiators } from "@/components/sections/about/WhyDifferentiators";
 import { WhyNumbers } from "@/components/sections/about/WhyNumbers";
-import { CTA } from "@/components/sections/CTA";
+import { ContactForm } from "@/components/sections/common/ContactForm";
 
 export const metadata: Metadata = {
   title: "회사소개 | (주)케이비개발",
@@ -30,7 +30,7 @@ export default function AboutPage() {
       <WhyValues />
       <WhyDifferentiators />
       <WhyNumbers />
-      <CTA />
+      <ContactForm context="회사소개 — 사업 상담 문의" />
     </>
   );
 }

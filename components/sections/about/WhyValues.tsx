@@ -1,14 +1,37 @@
 "use client";
 
-import {
-  motion,
-  useReducedMotion,
-  type Variants,
-} from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
 import { coreValues } from "@/data/site-content";
 
+/* Phase 4.E.3 — 세 가지 가치
+   3컬럼 카드 + 큰 라인 아이콘 + hover 좌측 라인 24 → 64 expand */
+
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+
+/* Trust / Expertise / Responsibility — 라인 아이콘 */
+const VALUE_ICONS: Record<string, React.ReactNode> = {
+  Trust: (
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M28 8L46 14V28C46 38 38 46 28 50C18 46 10 38 10 28V14L28 8Z" />
+      <path d="M20 28L26 34L37 22" />
+    </svg>
+  ),
+  Expertise: (
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M28 6L34 22L50 22L37 32L42 48L28 38L14 48L19 32L6 22L22 22Z" />
+      <circle cx="28" cy="28" r="3" />
+    </svg>
+  ),
+  Responsibility: (
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10 46V18L28 8L46 18V46" />
+      <path d="M10 46H46" />
+      <path d="M20 46V28H36V46" />
+      <path d="M28 36V40" />
+    </svg>
+  ),
+};
 
 export function WhyValues() {
   const shouldReduce = useReducedMotion() ?? false;
@@ -39,7 +62,7 @@ export function WhyValues() {
   return (
     <section
       aria-labelledby="why-values-heading"
-      className="bg-beige py-32 md:py-40"
+      className="section bg-gray-50"
     >
       <Container>
         <motion.div
@@ -55,7 +78,7 @@ export function WhyValues() {
             align="center"
             size="md"
             as="h2"
-            className="mb-20"
+            className="mb-16"
           />
         </motion.div>
 
@@ -64,22 +87,33 @@ export function WhyValues() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={listVariants}
-          className="mx-auto grid max-w-5xl grid-cols-1 gap-16 lg:grid-cols-3 lg:gap-0 lg:divide-x lg:divide-line/30"
+          className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3"
         >
           {coreValues.map((value) => (
             <motion.div
               key={value.number}
               variants={itemVariants}
-              className="px-6 text-center lg:px-12"
+              className="group relative flex h-full flex-col rounded-md border border-line bg-white p-8 transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:border-navy-700 hover:shadow-[var(--shadow-card)] md:p-10"
             >
-              <p className="font-serif text-2xl italic text-primary">
-                <span aria-hidden="true">{value.number}</span>{" "}
-                {value.englishName}
+              {/* 좌측 accent bar — hover 시 24 → 64 expand (세로 라인) */}
+              <span
+                aria-hidden="true"
+                className="absolute left-0 top-8 h-6 w-[3px] bg-accent-500 transition-[height] duration-300 [transition-timing-function:var(--ease)] group-hover:h-16 md:top-10"
+              />
+
+              <p className="ml-3 text-[11px] font-medium uppercase tracking-[0.18em] text-ink-faint">
+                {value.number} · {value.englishName}
               </p>
-              <h3 className="mt-6 font-serif text-3xl font-bold tracking-[-0.01em] text-ink md:text-4xl">
+
+              {/* 라인 아이콘 */}
+              <div className="mt-6 h-14 w-14 text-navy-800">
+                {VALUE_ICONS[value.englishName] ?? null}
+              </div>
+
+              <h3 className="mt-6 font-display text-[28px] font-bold tracking-tight text-ink-strong">
                 {value.koreanName}
               </h3>
-              <p className="mx-auto mt-6 max-w-xs text-base leading-[1.85] text-ink-soft">
+              <p className="mt-3 text-[15px] leading-[1.75] text-ink-muted">
                 {value.tagline}
               </p>
             </motion.div>

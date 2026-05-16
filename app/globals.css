@@ -23,47 +23,69 @@
     "JetBrains Mono", ui-monospace, monospace;
   --font-serif: var(--font-display);
 
-  /* === Type Scale (9단) === */
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.375rem;
-  --text-2xl: 2rem;
-  --text-3xl: 2.75rem;
-  --text-4xl: 4rem;
-  --text-5xl: 5.5rem;
+  /* === Type Scale (9단) — Phase 1 데스크탑 기준 재정렬 ===
+     caption 13 / body 16 / body-lg 18 / h3 24 / h2 36 / h1 48 / display 64 / 5xl 88 */
+  --text-xs: 0.8125rem;     /* 13px — caption */
+  --text-sm: 0.875rem;      /* 14px */
+  --text-base: 1rem;        /* 16px — body */
+  --text-lg: 1.125rem;      /* 18px — body-lg */
+  --text-xl: 1.5rem;        /* 24px — h3 */
+  --text-2xl: 2.25rem;      /* 36px — h2 */
+  --text-3xl: 3rem;         /* 48px — h1 */
+  --text-4xl: 4rem;         /* 64px — display */
+  --text-5xl: 5.5rem;       /* 88px */
 
-  /* === Tracking (5단) — P1-10: 한글 자모 충돌 방지 -0.05 → -0.03 === */
+  /* === Tracking — 한글 자모 충돌 방지, 영문 라벨 0.18em === */
   --tracking-tighter: -0.03em;
   --tracking-tight: -0.02em;
-  --tracking-normal: 0;
+  --tracking-normal: -0.01em;        /* 본문 기본 — Phase 1 신규 */
   --tracking-wide: 0.05em;
-  --tracking-widest: 0.2em;
+  --tracking-widest: 0.18em;         /* 영문 라벨 표준 (지시서) */
 
-  /* === Brand === */
-  --color-primary: #1e2a5e;
-  --color-primary-hover: #161e44;
-  --color-primary-soft: #f5f6fb;
+  /* === Brand — Navy 3단 (신규 토큰) === */
+  --color-navy-900: #0E1733;
+  --color-navy-800: #15203F;
+  --color-navy-700: #1E2C56;
+
+  /* === Brand — Accent 2단 (신규 토큰) === */
+  --color-accent-500: #E63950;
+  --color-accent-600: #C72A3E;
+
+  /* === Gray Scale 8단 (신규 토큰) === */
+  --color-gray-50: #F7F8FA;
+  --color-gray-100: #EEF0F4;
+  --color-gray-200: #DEE2E8;
+  --color-gray-300: #C3CAD3;
+  --color-gray-400: #9099A5;
+  --color-gray-500: #6B7380;
+  --color-gray-600: #3F4754;
+  --color-gray-700: #2A313C;
+  --color-gray-800: #1A1F28;
+  --color-gray-900: #0F1218;
+
+  /* === Brand alias — 기존 컴포넌트 호환용, 새 값으로 매핑 === */
+  --color-primary: #15203F;          /* navy-800 */
+  --color-primary-hover: #0E1733;    /* navy-900 */
+  --color-primary-soft: #F7F8FA;     /* gray-50 */
   --color-secondary: #05a44f;
-  --color-accent: #ec294a;
-  --color-accent-hover: #d12342;
+  --color-accent: #E63950;           /* accent-500 */
+  --color-accent-hover: #C72A3E;     /* accent-600 */
 
   /* === Surface === */
   --color-bg: #ffffff;
-  --color-bg-soft: #f7f7f7;
-  --color-bg-tinted: #fafafa;
+  --color-bg-soft: #F7F8FA;          /* gray-50 */
+  --color-bg-tinted: #EEF0F4;        /* gray-100 */
 
-  /* === Ink (AA 충족 토큰) — P0-06 #6B7684 → #5A6472 (5.04:1) === */
-  --color-ink-900: #0e1530;
-  --color-ink-strong: #1a1e26;
-  --color-ink: #4e5968;          /* 본문 강조 7.5:1 */
-  --color-ink-muted: #5a6472;    /* 본문 보조 5.04:1 (AA 통과) */
-  --color-ink-faint: #b0b8c1;    /* 메타·플레이스홀더 전용 (텍스트 X) */
+  /* === Ink (AA 충족) — Phase 1: 본문 #3F4754 (7:1+) === */
+  --color-ink-900: #0E1733;          /* navy-900 */
+  --color-ink-strong: #0F1218;       /* gray-900 — 헤딩 */
+  --color-ink: #2A313C;              /* gray-700 — 본문 강조 */
+  --color-ink-muted: #3F4754;        /* gray-600 — 본문 기본 (지시서 P0) */
+  --color-ink-faint: #9099A5;        /* gray-400 — 메타·플레이스홀더 */
 
   /* === Line === */
-  --color-line: #e5e8eb;
-  --color-line-soft: #f2f4f6;
+  --color-line: #DEE2E8;             /* gray-200 */
+  --color-line-soft: #EEF0F4;        /* gray-100 */
 
   /* === Status === */
   --color-success: #00b488;
@@ -71,39 +93,62 @@
   --color-warning: #ffb400;
 
   /* === Focus === */
-  --color-focus: #ec294a;
+  --color-focus: #E63950;            /* accent-500 */
 
-  /* === Legacy === */
-  --color-ink-soft: #4e5968;
+  /* === Legacy alias (기존 컴포넌트 호환) === */
+  --color-ink-soft: #2A313C;
   --color-cream: #ffffff;
-  --color-beige: #f7f7f7;
-  --color-gold: #ec294a;
-  --color-primary-light: #4e5968;
-  --color-primary-dark: #161e44;
+  --color-beige: #F7F8FA;
+  --color-gold: #E63950;
+  --color-primary-light: #1E2C56;    /* navy-700 */
+  --color-primary-dark: #0E1733;     /* navy-900 */
   --color-secondary-hover: #048541;
   --color-secondary-soft: #e8f7ef;
-  --color-accent-soft: #fdeef1;
+  --color-accent-soft: #FDEEF1;
 
-  /* === Radius (직각) === */
-  --radius-xs: 0;
-  --radius-sm: 0;
-  --radius-md: 0;
-  --radius-lg: 0;
-  --radius-xl: 0;
-  --radius-2xl: 0;
-  --radius-3xl: 0;
+  /* === Radius — Phase 1: 직각 → 지시서 값 8/12/20 === */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-3xl: 40px;
 
-  /* === Shadow === */
+  /* === Shadow — Phase 1: card/cta 신설 === */
   --shadow-xs: none;
-  --shadow-sm: 0 1px 2px rgba(14, 21, 48, 0.04);
-  --shadow-md: 0 4px 12px rgba(14, 21, 48, 0.06);
-  --shadow-lg: 0 12px 28px rgba(14, 21, 48, 0.10);
-  --shadow-xl: 0 24px 56px rgba(14, 21, 48, 0.12);
+  --shadow-sm: 0 1px 2px rgba(14, 23, 51, 0.04);
+  --shadow-md: 0 4px 12px rgba(14, 23, 51, 0.06);
+  --shadow-lg: 0 12px 28px rgba(14, 23, 51, 0.10);
+  --shadow-xl: 0 24px 56px rgba(14, 23, 51, 0.12);
+  --shadow-card: 0 12px 32px rgba(14, 23, 51, 0.08);  /* 카드 hover */
+  --shadow-cta: 0 8px 24px rgba(230, 57, 80, 0.35);   /* CTA hover */
 }
 
+/* === Phase 1: 모션·여백 토큰 (Tailwind @theme 미지원 또는 var() 직접 참조용) === */
 :root {
   --background: var(--color-bg);
   --foreground: var(--color-ink-strong);
+
+  /* Motion */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 600ms;
+
+  /* Section padding — 120 / 80 / 56 (지시서 글로벌[3]) */
+  --section-py-desktop: 7.5rem;   /* 120px */
+  --section-py-tablet: 5rem;      /* 80px */
+  --section-py-mobile: 3.5rem;    /* 56px */
+
+  /* Container — max 1280 / px 32·20 */
+  --container-max: 80rem;         /* 1280px */
+  --container-px-desktop: 2rem;   /* 32px */
+  --container-px-mobile: 1.25rem; /* 20px */
+
+  /* Card gap */
+  --card-gap-desktop: 1.5rem;     /* 24px */
+  --card-gap-mobile: 1rem;        /* 16px */
 }
 
 body {
@@ -112,8 +157,8 @@ body {
   font-family: var(--font-sans);
   font-weight: 400;
   font-size: var(--text-base);
-  line-height: 1.7;                    /* 1.75 → 1.7 (한글 본문 권장) */
-  letter-spacing: 0;
+  line-height: 1.75;                  /* Phase 1: 1.7 → 1.75 (지시서 글로벌[2]) */
+  letter-spacing: -0.01em;            /* Phase 1: 자간 -0.01em */
   word-break: keep-all;
   line-break: strict;
   overflow-wrap: anywhere;
@@ -122,12 +167,13 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* === Headings — :where()로 specificity 0, 컴포넌트가 항상 이김 === */
+/* === Headings — :where()로 specificity 0, 컴포넌트가 항상 이김 ===
+   Phase 1: H1 56~64 (line-height 1.15) — 데스크탑 임팩트 강화 */
 :where(h1) {
   font-family: var(--font-display);
-  font-size: clamp(2.25rem, 5.5vw, 4rem);    /* 56-64px max, 한글 자모 충돌 방지 */
-  letter-spacing: var(--tracking-tight);     /* -0.02em */
-  line-height: 1.1;
+  font-size: clamp(2rem, 5.5vw, 4rem);   /* 모바일 32 → 데스크탑 56~64 */
+  letter-spacing: var(--tracking-tight); /* -0.02em */
+  line-height: 1.15;
   font-weight: 900;
   color: var(--color-ink-strong);
   word-break: keep-all;
@@ -136,7 +182,7 @@ body {
 
 :where(h2) {
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3.2vw, 2.75rem);
+  font-size: clamp(1.625rem, 3.2vw, 2.25rem);  /* 26 → 36 */
   letter-spacing: var(--tracking-tight);
   line-height: 1.2;
   font-weight: 800;
@@ -146,7 +192,7 @@ body {
 
 :where(h3) {
   font-family: var(--font-display);
-  font-size: 1.375rem;
+  font-size: clamp(1.25rem, 1.8vw, 1.5rem);    /* 20 → 24 */
   letter-spacing: var(--tracking-tight);
   line-height: 1.3;
   font-weight: 700;
@@ -163,16 +209,16 @@ body {
 }
 
 :where(p) {
-  line-height: 1.7;
+  line-height: 1.75;                  /* Phase 1: 본문 1.75 통일 */
 }
 
-/* === P0-07 — focus-visible 글로벌 (WCAG 2.4.7) === */
+/* === Phase 1: focus-visible (지시서 글로벌[8]) — outline 2px / offset 3px === */
 :focus {
   outline: none;
 }
 :focus-visible {
   outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 /* 다크 배경 위 컴포넌트는 흰색 ring 분기 */
 .dark-surface :focus-visible,
@@ -180,7 +226,7 @@ body {
   outline-color: #ffffff;
 }
 
-/* === P0-04 — prefers-reduced-motion 글로벌 === */
+/* === prefers-reduced-motion 글로벌 === */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -192,14 +238,14 @@ body {
   }
 }
 
-/* === P2-01 — eyebrow 유틸 (모든 섹션 머리띠 일관화) === */
+/* === Phase 1: eyebrow — 영문 라벨 통일 (12~13px, weight 500, letter-spacing 0.18em) === */
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+  font-size: 0.8125rem;               /* 13px */
+  font-weight: 500;                   /* 600 → 500 (지시서) */
+  letter-spacing: 0.18em;             /* 0.16 → 0.18 */
   text-transform: uppercase;
-  color: var(--color-ink);              /* #4E5968 (7.5:1 AA+) */
+  color: var(--color-ink);            /* gray-700, 7:1+ */
   line-height: 1.4;
 }
 
@@ -223,6 +269,52 @@ body {
   color: var(--color-primary);
   font-weight: 700;
   font-style: normal;
+}
+
+/* === Phase 1: 강조색 H2/H3 정책 헬퍼 ===
+   .accent-em — 한 화면당 1회만 사용 (지시서 글로벌[2])
+   정책은 사람이 지키고, 시각 강도는 통일된 톤으로 */
+.accent-em {
+  color: var(--color-accent-500);
+  font-weight: inherit;
+  font-style: normal;
+}
+
+/* === Phase 1: 섹션·컨테이너·카드 유틸 — Phase 2/3에서 컴포넌트로 흡수 === */
+.section {
+  padding-block: var(--section-py-mobile);
+}
+@media (min-width: 768px) {
+  .section {
+    padding-block: var(--section-py-tablet);
+  }
+}
+@media (min-width: 1024px) {
+  .section {
+    padding-block: var(--section-py-desktop);
+  }
+}
+
+.container-base {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-px-mobile);
+}
+@media (min-width: 768px) {
+  .container-base {
+    padding-inline: var(--container-px-desktop);
+  }
+}
+
+.cards-grid {
+  display: grid;
+  gap: var(--card-gap-mobile);
+}
+@media (min-width: 768px) {
+  .cards-grid {
+    gap: var(--card-gap-desktop);
+  }
 }
 
 /* =============================================

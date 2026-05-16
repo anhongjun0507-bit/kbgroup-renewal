@@ -3,7 +3,7 @@ import { DataCounter } from "@/components/sections/DataCounter";
 import { ServiceCategories } from "@/components/sections/ServiceCategories";
 import { Cases } from "@/components/sections/Cases";
 import { Partners } from "@/components/sections/Partners";
-import { CTA } from "@/components/sections/CTA";
+import { ContactForm } from "@/components/sections/common/ContactForm";
 
 export default function Home() {
   return (
@@ -13,7 +13,7 @@ export default function Home() {
       <ServiceCategories />
       <Cases />
       <Partners />
-      <CTA />
+      <ContactForm context="홈 — 사업 상담 문의" />
     </>
   );
 }

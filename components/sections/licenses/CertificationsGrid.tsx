@@ -1,12 +1,10 @@
 "use client";
 
-import {
-  motion,
-  useReducedMotion,
-  type Variants,
-} from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
 import { certifications, type Certification } from "@/data/site-content";
+
+/* Phase 4 — CertificationsGrid 톤 정비 */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
@@ -17,22 +15,19 @@ type CertCategory =
   | "전문 자격"
   | "환경·기타";
 
-/**
- * 자격증명 패턴 기반 카테고리 자동 분류.
- * 데이터에는 카테고리 필드 없음 — 컴포넌트에서 derived.
- * 매칭 우선순위: 시설관리(전기/건축 등) → 안전·소방 → 회계·세무 → 전문 자격 → 환경·기타
- */
+const CATEGORY_COLOR: Record<CertCategory, string> = {
+  "시설관리": "#E63950",
+  "안전·소방": "#15203F",
+  "회계·세무": "#6B7380",
+  "전문 자격": "#1E2C56",
+  "환경·기타": "#9099A5",
+};
+
 function categorizeCert(name: string): CertCategory {
-  if (
-    /(전기|승강기|기계설비|건축|토목|열처리|에너지|고압가스|위험물)/.test(name)
-  ) {
-    return "시설관리";
-  }
+  if (/(전기|승강기|기계설비|건축|토목|열처리|에너지|고압가스|위험물)/.test(name)) return "시설관리";
   if (/소방/.test(name)) return "안전·소방";
   if (/(전산세무|전산회계)/.test(name)) return "회계·세무";
-  if (/(주택관리사|공인중개사|경비지도사|수목치료사)/.test(name)) {
-    return "전문 자격";
-  }
+  if (/(주택관리사|공인중개사|경비지도사|수목치료사)/.test(name)) return "전문 자격";
   return "환경·기타";
 }
 
@@ -54,7 +49,7 @@ export function CertificationsGrid() {
   };
 
   const itemVariants: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 20 },
+    hidden: { opacity: 0, y: shouldReduce ? 0 : 16 },
     visible: {
       opacity: 1,
       y: 0,
@@ -65,7 +60,7 @@ export function CertificationsGrid() {
   return (
     <section
       aria-labelledby="certifications-grid-heading"
-      className="bg-cream py-32 md:py-40"
+      className="section bg-white"
     >
       <Container>
         <motion.div
@@ -82,7 +77,7 @@ export function CertificationsGrid() {
             align="left"
             size="md"
             as="h2"
-            className="mb-16"
+            className="mb-12"
           />
         </motion.div>
 
@@ -91,7 +86,7 @@ export function CertificationsGrid() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
           variants={listVariants}
-          className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+          className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6"
         >
           {certifications.map((cert) => (
             <CertCard
@@ -118,20 +113,29 @@ function CertCard({
   variants: Variants;
 }) {
   const category = categorizeCert(cert.name);
+  const color = CATEGORY_COLOR[category];
   return (
     <motion.li
       variants={variants}
-      className="group border border-line bg-white p-6 transition-all duration-500 ease-out hover:-translate-y-1 hover:border-primary lg:p-8"
+      className="group rounded-md border border-line bg-white p-7 transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:border-navy-700 hover:shadow-[var(--shadow-card)]"
     >
-      <span className="text-[11px] font-medium uppercase tracking-[0.25em] text-primary">
+      <span
+        className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.15em]"
+        style={{ color }}
+      >
+        <span
+          aria-hidden="true"
+          className="inline-block h-2 w-2 rounded-sm"
+          style={{ backgroundColor: color }}
+        />
         {category}
       </span>
-      <h3 className="mt-4 font-serif text-lg font-bold leading-tight tracking-[-0.01em] text-ink">
+      <h3 className="mt-4 font-display text-[17px] font-bold leading-tight tracking-tight text-ink-strong md:text-[18px]">
         {cert.name}
       </h3>
-      <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-line/60 pt-4">
-        <span className="text-sm text-ink-soft">{cert.issuer}</span>
-        <span className="whitespace-nowrap text-sm font-medium text-ink">
+      <div className="mt-5 flex items-baseline justify-between gap-3 border-t border-line pt-4">
+        <span className="text-[13px] text-ink-muted">{cert.issuer}</span>
+        <span className="whitespace-nowrap font-mono-num text-[14px] font-semibold text-ink-strong">
           {cert.count.toLocaleString("en-US")}명
         </span>
       </div>

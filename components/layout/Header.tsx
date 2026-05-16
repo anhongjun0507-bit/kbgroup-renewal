@@ -46,7 +46,6 @@ export function Header({ isAuthed = false }: HeaderProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileExpand, setMobileExpand] = useState<string | null>(null);
 
-  /** href와 현재 pathname이 일치(또는 sub) 하면 활성 메뉴 */
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -71,16 +70,30 @@ export function Header({ isAuthed = false }: HeaderProps) {
     setMobileExpand(null);
   };
 
+  /* Phase 2.1 — sticky 스크롤 시 translucent dark (navy-900 / 85% + blur 12) */
+  const headerStyle: React.CSSProperties = scrolled
+    ? {
+        backgroundColor: "rgba(14, 23, 51, 0.85)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        borderBottomColor: "rgba(255,255,255,0.08)",
+      }
+    : {
+        backgroundColor: "#ffffff",
+        borderBottomColor: "transparent",
+      };
+
+  const dark = scrolled; // 스크롤 시 다크 톤
+
   return (
     <header
-      className={cn(
-        "sticky top-0 z-50 bg-white transition-shadow duration-300 ease-out",
-        scrolled ? "border-b border-line shadow-sm" : "border-b border-line/0",
-      )}
+      className="sticky top-0 z-50 border-b transition-colors duration-300 [transition-timing-function:var(--ease)]"
+      style={headerStyle}
+      data-surface={dark ? "dark" : undefined}
     >
-      <div className="mx-auto w-full max-w-[1320px] px-6 sm:px-8 lg:px-10">
-        <div className="flex h-[80px] items-center justify-between md:h-[88px]">
-          {/* Logo — 헤더 80/88px의 62% (한국 B2B 표준) */}
+      <div className="mx-auto w-full max-w-[1280px] px-5 md:px-8">
+        <div className="flex h-[72px] items-center justify-between md:h-20">
+          {/* Logo */}
           <Link
             href="/"
             aria-label="(주)케이비개발 KB GROUP 메인으로"
@@ -93,18 +106,22 @@ export function Header({ isAuthed = false }: HeaderProps) {
               width={2117}
               height={743}
               priority
-              className="h-9 w-auto md:h-12"
+              className={cn(
+                "h-9 w-auto md:h-11 transition-[filter] duration-300",
+                dark && "brightness-0 invert",
+              )}
             />
           </Link>
 
           {/* Desktop nav */}
           <nav
-            className="hidden items-center gap-9 lg:flex"
+            className="hidden items-center gap-8 lg:flex"
             aria-label="주 메뉴"
           >
             {NAV_ITEMS.map((item) => {
               const hasChildren = !!item.children?.length;
               const isOpen = openDropdown === item.href;
+              const active = isActive(item.href);
               return (
                 <div
                   key={item.href}
@@ -118,24 +135,41 @@ export function Header({ isAuthed = false }: HeaderProps) {
                     href={item.href}
                     aria-haspopup={hasChildren || undefined}
                     aria-expanded={hasChildren ? isOpen : undefined}
-                    aria-current={isActive(item.href) ? "page" : undefined}
+                    aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative inline-flex items-center py-3 text-[14px] transition-colors duration-200",
-                      isActive(item.href)
-                        ? "font-bold text-ink-strong after:absolute after:inset-x-0 after:-bottom-px after:h-[2px] after:bg-primary"
-                        : "font-medium text-ink hover:text-ink-strong",
+                      /* Phase 2.2 — hover 밑줄 좌→우 0→100% 200ms */
+                      "group relative inline-flex items-center py-3 text-[14px] font-medium transition-colors duration-200",
+                      "after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:w-0 after:bg-current after:transition-[width] after:duration-200 after:[transition-timing-function:var(--ease)] hover:after:w-full",
+                      active && "after:w-full",
+                      dark
+                        ? "text-white/85 hover:text-white"
+                        : active
+                          ? "text-ink-strong"
+                          : "text-ink hover:text-ink-strong",
                     )}
                   >
                     {item.label}
                   </Link>
                   {hasChildren && isOpen && (
                     <div className="absolute left-1/2 top-full -translate-x-1/2 pt-1">
-                      <div className="min-w-[200px] border border-line bg-white py-2">
+                      <div
+                        className={cn(
+                          "min-w-[200px] rounded-sm border py-2 shadow-md",
+                          dark
+                            ? "border-white/10 bg-navy-900/95 backdrop-blur-md"
+                            : "border-line bg-white",
+                        )}
+                      >
                         {item.children!.map((child) => (
                           <Link
                             key={child.href}
                             href={child.href}
-                            className="block px-5 py-2.5 text-sm font-medium text-ink-muted transition-colors duration-200 hover:bg-bg-soft hover:text-primary"
+                            className={cn(
+                              "block px-5 py-2.5 text-sm font-medium transition-colors duration-200",
+                              dark
+                                ? "text-white/70 hover:bg-white/10 hover:text-white"
+                                : "text-ink-muted hover:bg-bg-soft hover:text-primary",
+                            )}
                           >
                             {child.label}
                           </Link>
@@ -150,28 +184,44 @@ export function Header({ isAuthed = false }: HeaderProps) {
 
           {/* Right cluster */}
           <div className="flex items-center gap-3">
-            <div className="hidden items-center gap-5 lg:flex">
+            <div className="hidden items-center gap-3 lg:flex">
               {isAuthed ? (
                 <>
                   <Link
                     href="/mypage"
-                    className="text-[14px] font-medium text-ink-muted transition-colors duration-200 hover:text-primary"
+                    className={cn(
+                      "rounded-sm border px-4 py-2 text-[13px] font-semibold transition-colors duration-200",
+                      dark
+                        ? "border-white/60 text-white hover:bg-white hover:text-ink-strong"
+                        : "border-ink-strong text-ink-strong hover:bg-ink-strong hover:text-white",
+                    )}
                   >
                     마이페이지
                   </Link>
                   <form action="/auth/logout" method="POST">
                     <button
                       type="submit"
-                      className="text-[14px] font-medium text-ink-muted transition-colors duration-200 hover:text-primary"
+                      className={cn(
+                        "text-[13px] font-medium transition-colors duration-200",
+                        dark
+                          ? "text-white/70 hover:text-white"
+                          : "text-ink-muted hover:text-primary",
+                      )}
                     >
                       로그아웃
                     </button>
                   </form>
                 </>
               ) : (
+                /* Phase 2.3 — LOGIN outline 버튼 시각 분리 */
                 <Link
                   href="/login"
-                  className="text-[14px] font-medium text-ink-muted transition-colors duration-200 hover:text-primary"
+                  className={cn(
+                    "inline-flex items-center rounded-sm border px-5 py-2 text-[13px] font-semibold uppercase tracking-[0.08em] transition-colors duration-200",
+                    dark
+                      ? "border-white/60 text-white hover:bg-white hover:text-ink-strong"
+                      : "border-ink-strong text-ink-strong hover:bg-ink-strong hover:text-white",
+                  )}
                 >
                   LOGIN
                 </Link>
@@ -183,7 +233,10 @@ export function Header({ isAuthed = false }: HeaderProps) {
               aria-expanded={mobileOpen}
               aria-controls="mobile-menu"
               onClick={() => setMobileOpen((v) => !v)}
-              className="inline-flex h-10 w-10 items-center justify-center text-ink-strong transition-colors hover:text-primary lg:hidden"
+              className={cn(
+                "inline-flex h-10 w-10 items-center justify-center transition-colors lg:hidden",
+                dark ? "text-white" : "text-ink-strong hover:text-primary",
+              )}
             >
               {mobileOpen ? (
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
@@ -199,104 +252,126 @@ export function Header({ isAuthed = false }: HeaderProps) {
         </div>
       </div>
 
-      {/* Mobile overlay */}
-      {mobileOpen && (
-        <div
-          id="mobile-menu"
-          className="fixed inset-x-0 bottom-0 top-[80px] z-40 overflow-y-auto bg-white md:top-[88px] lg:hidden"
+      {/* Phase 2.4 — 모바일 풀스크린 오버레이 + stagger 등장 */}
+      <div
+        id="mobile-menu"
+        data-surface="dark"
+        className={cn(
+          "fixed inset-0 z-40 overflow-y-auto bg-navy-900 transition-opacity duration-300 lg:hidden",
+          mobileOpen
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0",
+        )}
+        aria-hidden={!mobileOpen}
+      >
+        <div className="h-[72px] md:h-20" />
+        <nav
+          className="mx-auto w-full max-w-[1280px] px-5 pb-12 pt-4 md:px-8"
+          aria-label="모바일 메뉴"
         >
-          <nav
-            className="mx-auto w-full max-w-[1400px] px-5 py-8"
-            aria-label="모바일 메뉴"
-          >
-            {NAV_ITEMS.map((item) => {
-              const hasChildren = !!item.children?.length;
-              const expanded = mobileExpand === item.href;
-              return (
-                <div key={item.href} className="border-b border-line">
-                  {hasChildren ? (
-                    <>
-                      <button
-                        type="button"
-                        aria-expanded={expanded}
-                        onClick={() =>
-                          setMobileExpand(expanded ? null : item.href)
-                        }
-                        className="flex w-full items-center justify-between py-5 text-left text-lg font-medium text-ink-strong"
-                      >
-                        {item.label}
-                        <span
-                          className={cn(
-                            "inline-flex transition-transform duration-300",
-                            expanded && "rotate-180",
-                          )}
-                          aria-hidden="true"
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M6 9L12 15L18 9" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </span>
-                      </button>
-                      {expanded && (
-                        <div className="space-y-3 pb-5 pl-3">
-                          {item.children!.map((child) => (
-                            <Link
-                              key={child.href}
-                              href={child.href}
-                              onClick={closeMobile}
-                              className="block text-base text-ink-muted transition-colors hover:text-primary"
-                            >
-                              {child.label}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      onClick={closeMobile}
-                      className="block py-5 text-lg font-medium text-ink-strong transition-colors hover:text-primary"
+          {NAV_ITEMS.map((item, idx) => {
+            const hasChildren = !!item.children?.length;
+            const expanded = mobileExpand === item.href;
+            const delay = 80 + idx * 60;
+            return (
+              <div
+                key={item.href}
+                className="border-b border-white/10"
+                style={{
+                  opacity: mobileOpen ? 1 : 0,
+                  transform: mobileOpen ? "translateY(0)" : "translateY(12px)",
+                  transition: `opacity 400ms var(--ease) ${delay}ms, transform 400ms var(--ease) ${delay}ms`,
+                }}
+              >
+                {hasChildren ? (
+                  <>
+                    <button
+                      type="button"
+                      aria-expanded={expanded}
+                      onClick={() =>
+                        setMobileExpand(expanded ? null : item.href)
+                      }
+                      className="flex w-full items-center justify-between py-5 text-left text-lg font-semibold text-white"
                     >
                       {item.label}
-                    </Link>
-                  )}
-                </div>
-              );
-            })}
-            <div className="space-y-3 pt-8">
-              {isAuthed ? (
-                <>
-                  <Link
-                    href="/mypage"
-                    onClick={closeMobile}
-                    className="block border border-ink-strong px-6 py-3 text-center text-base font-medium text-ink-strong transition-colors duration-300 hover:bg-ink-strong hover:text-white"
-                  >
-                    마이페이지
-                  </Link>
-                  <form action="/auth/logout" method="POST">
-                    <button
-                      type="submit"
-                      onClick={closeMobile}
-                      className="w-full border border-line px-6 py-3 text-center text-base font-medium text-ink-muted transition-colors duration-300 hover:border-ink-strong hover:text-ink-strong"
-                    >
-                      로그아웃
+                      <span
+                        className={cn(
+                          "inline-flex transition-transform duration-300",
+                          expanded && "rotate-180",
+                        )}
+                        aria-hidden="true"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M6 9L12 15L18 9" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </span>
                     </button>
-                  </form>
-                </>
-              ) : (
+                    {expanded && (
+                      <div className="space-y-3 pb-5 pl-3">
+                        {item.children!.map((child) => (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            onClick={closeMobile}
+                            className="block text-base text-white/70 transition-colors hover:text-accent-500"
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <Link
+                    href={item.href}
+                    onClick={closeMobile}
+                    className="block py-5 text-lg font-semibold text-white transition-colors hover:text-accent-500"
+                  >
+                    {item.label}
+                  </Link>
+                )}
+              </div>
+            );
+          })}
+          <div
+            className="space-y-3 pt-8"
+            style={{
+              opacity: mobileOpen ? 1 : 0,
+              transform: mobileOpen ? "translateY(0)" : "translateY(12px)",
+              transition: `opacity 400ms var(--ease) ${80 + NAV_ITEMS.length * 60}ms, transform 400ms var(--ease) ${80 + NAV_ITEMS.length * 60}ms`,
+            }}
+          >
+            {isAuthed ? (
+              <>
                 <Link
-                  href="/login"
+                  href="/mypage"
                   onClick={closeMobile}
-                  className="block w-full border border-ink-strong px-6 py-3 text-center text-base font-medium text-ink-strong transition-colors hover:bg-ink-strong hover:text-white"
+                  className="block rounded-sm border border-white px-6 py-3 text-center text-base font-semibold text-white transition-colors duration-300 hover:bg-white hover:text-ink-strong"
                 >
-                  LOGIN
+                  마이페이지
                 </Link>
-              )}
-            </div>
-          </nav>
-        </div>
-      )}
+                <form action="/auth/logout" method="POST">
+                  <button
+                    type="submit"
+                    onClick={closeMobile}
+                    className="w-full rounded-sm border border-white/30 px-6 py-3 text-center text-base font-medium text-white/80 transition-colors duration-300 hover:border-white hover:text-white"
+                  >
+                    로그아웃
+                  </button>
+                </form>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                onClick={closeMobile}
+                className="block w-full rounded-sm border border-white px-6 py-3 text-center text-base font-semibold uppercase tracking-[0.08em] text-white transition-colors hover:bg-white hover:text-ink-strong"
+              >
+                LOGIN
+              </Link>
+            )}
+          </div>
+        </nav>
+      </div>
     </header>
   );
 }

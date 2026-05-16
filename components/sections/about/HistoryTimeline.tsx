@@ -1,30 +1,26 @@
 "use client";
 
-import {
-  motion,
-  useReducedMotion,
-  type Variants,
-} from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
 import { history, type HistoryEntry } from "@/data/site-content";
-import { cn } from "@/lib/cn";
+
+/* Phase 4.E.5 — 연혁
+   좌측 연도 sticky + 우측 세로 타임라인 (점·라인) + 주요 마일스톤에 아이콘
+   마일스톤 키워드: 설립/창립/취득/등록/인가/지정/허가/수주 → 아이콘 표시 */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 const MONTH_TO_ENGLISH: Record<string, string> = {
-  "01": "JAN",
-  "02": "FEB",
-  "03": "MAR",
-  "04": "APR",
-  "05": "MAY",
-  "06": "JUN",
-  "07": "JUL",
-  "08": "AUG",
-  "09": "SEP",
-  "10": "OCT",
-  "11": "NOV",
-  "12": "DEC",
+  "01": "JAN", "02": "FEB", "03": "MAR", "04": "APR",
+  "05": "MAY", "06": "JUN", "07": "JUL", "08": "AUG",
+  "09": "SEP", "10": "OCT", "11": "NOV", "12": "DEC",
 };
+
+const MILESTONE_KEYWORDS = ["설립", "창립", "취득", "등록", "인가", "지정", "허가", "수주"];
+
+function isMilestone(event: string) {
+  return MILESTONE_KEYWORDS.some((kw) => event.includes(kw));
+}
 
 type GroupedEntry = { month: string; monthEn: string; event: string };
 type HistoryGroup = { year: string; entries: GroupedEntry[] };
@@ -41,9 +37,21 @@ function groupByYear(entries: HistoryEntry[]): HistoryGroup[] {
     });
   }
   return Object.values(groups).sort(
-    (a, b) => parseInt(a.year, 10) - parseInt(b.year, 10),
+    (a, b) => parseInt(b.year, 10) - parseInt(a.year, 10),
   );
 }
+
+const MILESTONE_ICON = (
+  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <circle cx="8" cy="8" r="4" fill="#E63950" />
+    <circle cx="8" cy="8" r="6.5" stroke="#E63950" strokeOpacity="0.3" strokeWidth="1" />
+  </svg>
+);
+const NORMAL_DOT = (
+  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <circle cx="8" cy="8" r="2.5" fill="#15203F" />
+  </svg>
+);
 
 export function HistoryTimeline() {
   const shouldReduce = useReducedMotion() ?? false;
@@ -52,7 +60,7 @@ export function HistoryTimeline() {
   return (
     <section
       aria-labelledby="history-timeline-heading"
-      className="bg-cream py-32 md:py-40"
+      className="section bg-white"
     >
       <Container>
         <div className="mx-auto max-w-5xl">
@@ -85,15 +93,15 @@ function YearBlock({
 }) {
   const blockVariants: Variants = {
     hidden: {},
-    visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.1 } },
+    visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.08 } },
   };
 
   const itemVariants: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 30 },
+    hidden: { opacity: 0, y: shouldReduce ? 0 : 20 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: shouldReduce ? 0 : 0.7, ease: EASE_OUT_EXPO },
+      transition: { duration: shouldReduce ? 0 : 0.6, ease: EASE_OUT_EXPO },
     },
   };
 
@@ -103,39 +111,59 @@ function YearBlock({
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       variants={blockVariants}
-      className={cn(
-        "grid grid-cols-1 gap-6 border-t border-line pb-12 pt-12 lg:grid-cols-12 lg:gap-8",
-        isLast && "border-b",
-      )}
+      className={
+        "grid grid-cols-1 gap-8 border-t border-line py-12 lg:grid-cols-[200px_1fr] lg:gap-12" +
+        (isLast ? " border-b" : "")
+      }
     >
-      <motion.div variants={itemVariants} className="lg:col-span-3">
+      {/* 좌측 연도 sticky */}
+      <motion.div variants={itemVariants} className="lg:sticky lg:top-32 lg:self-start">
         <span
           aria-hidden="true"
-          className="block font-serif text-5xl font-bold italic leading-none tracking-[-0.02em] text-primary md:text-6xl lg:text-7xl"
+          className="font-mono-num block font-display text-[64px] font-extrabold leading-none tracking-tight text-navy-800 lg:text-[80px]"
         >
           {group.year}
         </span>
         <span className="sr-only">{group.year}년</span>
+        <p className="mt-2 text-[12px] uppercase tracking-[0.18em] text-ink-faint">
+          {group.entries.length} milestones
+        </p>
       </motion.div>
 
-      <ul className="lg:col-span-9">
-        {group.entries.map((entry, ei) => (
-          <motion.li
-            key={ei}
-            variants={itemVariants}
-            className="grid grid-cols-12 items-baseline gap-4 py-3"
-          >
-            <span
-              aria-hidden="true"
-              className="col-span-2 text-xs font-medium uppercase tracking-[0.2em] text-ink-muted"
+      {/* 우측 타임라인 */}
+      <ul className="relative ml-2 border-l border-line pl-8 lg:ml-0">
+        {group.entries.map((entry, ei) => {
+          const milestone = isMilestone(entry.event);
+          return (
+            <motion.li
+              key={ei}
+              variants={itemVariants}
+              className="relative grid grid-cols-12 items-baseline gap-4 py-4 first:pt-0"
             >
-              {entry.monthEn}
-            </span>
-            <span className="col-span-10 text-base leading-relaxed text-ink md:text-lg">
-              {entry.event}
-            </span>
-          </motion.li>
-        ))}
+              {/* 타임라인 점 */}
+              <span
+                aria-hidden="true"
+                className="absolute -left-[42px] top-5 inline-block h-4 w-4"
+              >
+                {milestone ? MILESTONE_ICON : NORMAL_DOT}
+              </span>
+
+              <span className="col-span-3 text-[12px] font-medium uppercase tracking-[0.2em] text-ink-faint md:col-span-2">
+                {entry.monthEn}
+              </span>
+              <p
+                className={
+                  "col-span-9 text-[15px] leading-[1.75] md:col-span-10 md:text-[16px] " +
+                  (milestone
+                    ? "font-semibold text-ink-strong"
+                    : "text-ink-muted")
+                }
+              >
+                {entry.event}
+              </p>
+            </motion.li>
+          );
+        })}
       </ul>
     </motion.div>
   );

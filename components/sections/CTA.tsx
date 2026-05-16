@@ -5,6 +5,8 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Button } from "@/components/ui";
 import { contact } from "@/data/site-content";
 
+/* Phase 3 — 톤 정비 (navy-900 통일). Phase 5에서 ContactForm으로 교체 예정 */
+
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
 export function CTA() {
@@ -23,14 +25,25 @@ export function CTA() {
     <section
       id="contact"
       data-surface="dark"
-      className="relative isolate overflow-hidden bg-gradient-to-br from-[#0e1530] via-primary to-[#0a0f24] py-24 md:py-32"
+      className="section relative isolate overflow-hidden bg-navy-900 text-white"
     >
+      {/* mesh 그라데이션 */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 opacity-[0.05]"
+        className="absolute inset-0"
+        style={{
+          background: [
+            "radial-gradient(50% 60% at 20% 30%, rgba(230,57,80,0.16) 0%, transparent 60%)",
+            "radial-gradient(45% 55% at 80% 70%, rgba(30,44,86,0.7) 0%, transparent 60%)",
+          ].join(", "),
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 opacity-[0.04]"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+            "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
           backgroundSize: "80px 80px",
         }}
       />
@@ -48,20 +61,22 @@ export function CTA() {
         >
           <motion.p
             variants={item}
-            className="text-[12px] font-semibold uppercase tracking-[0.2em] text-white/55"
+            className="eyebrow"
+            style={{ color: "rgba(255,255,255,0.7)" }}
           >
             CONTACT
           </motion.p>
           <motion.h2
             variants={item}
-            className="mt-5 font-extrabold leading-[1.15] tracking-tight !text-white"
-            style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            className="mt-5 font-extrabold leading-[1.15] tracking-tight"
+            style={{ color: "#ffffff", fontSize: "clamp(2rem, 4vw, 3rem)" }}
           >
-            상담 문의를 <span className="text-accent">남겨주세요</span>
+            상담 문의를 <span className="text-accent-500">남겨주세요</span>
           </motion.h2>
           <motion.p
             variants={item}
-            className="mt-8 text-base leading-[1.85] text-white/80 md:text-lg"
+            className="mt-8 text-base md:text-lg"
+            style={{ color: "rgba(255,255,255,0.8)", lineHeight: 1.75 }}
           >
             상담은 무료입니다. 단지 규모·요구사항을 알려주시면 맞춤 제안을
             드립니다.
@@ -95,7 +110,7 @@ export function CTA() {
             </Button>
             <Link
               href={`mailto:${contact.email}`}
-              className="inline-flex h-14 items-center justify-center border border-white/30 px-9 text-[15px] font-semibold text-white transition-all duration-300 hover:border-white hover:bg-white/[0.06]"
+              className="inline-flex h-14 items-center justify-center rounded-sm border border-white/40 px-8 text-[15px] font-semibold text-white transition-all duration-200 [transition-timing-function:var(--ease)] hover:bg-white hover:text-ink-strong"
             >
               이메일 문의 →
             </Link>

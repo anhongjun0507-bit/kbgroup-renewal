@@ -1,13 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import {
-  motion,
-  useReducedMotion,
-  type Variants,
-} from "framer-motion";
-import { Container } from "@/components/ui";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { Container, Button } from "@/components/ui";
 import type { BusinessArea } from "@/data/site-content";
+import { contact } from "@/data/site-content";
+
+/* Phase 4 — BusinessCTA 톤 정비 (navy-900 + accent-500 통일) */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
@@ -20,9 +18,7 @@ export function BusinessCTA({ area }: Props) {
 
   const parentVariants: Variants = {
     hidden: {},
-    visible: {
-      transition: { staggerChildren: shouldReduce ? 0 : 0.15 },
-    },
+    visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.15 } },
   };
 
   const itemVariants: Variants = {
@@ -36,10 +32,22 @@ export function BusinessCTA({ area }: Props) {
 
   return (
     <section
+      data-surface="dark"
       aria-labelledby={`cta-${area.id}`}
-      className="bg-ink py-24 text-white md:py-32"
+      className="section relative isolate overflow-hidden bg-navy-900 text-white"
     >
-      <Container>
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          background: [
+            "radial-gradient(50% 60% at 20% 30%, rgba(230,57,80,0.14) 0%, transparent 60%)",
+            "radial-gradient(45% 55% at 80% 70%, rgba(30,44,86,0.7) 0%, transparent 60%)",
+          ].join(", "),
+        }}
+      />
+
+      <Container className="relative">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -47,58 +55,52 @@ export function BusinessCTA({ area }: Props) {
           variants={parentVariants}
           className="mx-auto max-w-3xl text-center"
         >
-          {/* Kicker */}
-          <motion.div variants={itemVariants} className="mb-10">
+          <motion.div variants={itemVariants}>
             <div
               aria-hidden="true"
-              className="mx-auto mb-6 h-px w-12 bg-gold"
+              className="mx-auto mb-6 h-[3px] w-12 bg-accent-500"
             />
-            <div className="text-xs font-medium uppercase tracking-[0.35em] text-gold">
+            <p className="eyebrow" style={{ color: "rgba(255,255,255,0.7)" }}>
               GET IN TOUCH
-            </div>
+            </p>
           </motion.div>
 
-          {/* Main title */}
           <motion.h2
             id={`cta-${area.id}`}
             variants={itemVariants}
-            className="font-serif text-3xl font-bold leading-[1.15] tracking-[-0.02em] md:text-4xl lg:text-5xl"
+            className="mt-6 font-display font-extrabold leading-[1.15] tracking-tight"
+            style={{
+              color: "#ffffff",
+              fontSize: "clamp(2rem, 4vw, 3rem)",
+            }}
           >
-            {area.name} 서비스{" "}
-            <span className="italic text-gold">문의하기</span>
+            {area.name} 서비스 <span className="text-accent-500">문의하기</span>
           </motion.h2>
 
-          {/* Subtitle */}
           <motion.p
             variants={itemVariants}
-            className="mx-auto mt-8 max-w-xl text-base leading-[1.85] text-white/60"
+            className="mt-8 text-base md:text-lg"
+            style={{ color: "rgba(255,255,255,0.8)", lineHeight: 1.75 }}
           >
             전문 컨설턴트가 직접 상담해드립니다.
           </motion.p>
 
-          {/* CTAs */}
           <motion.div
             variants={itemVariants}
-            className="mt-12 flex flex-col items-center justify-center gap-8 sm:flex-row sm:gap-12"
+            className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5"
           >
-            <Link
-              href="/contact"
-              className="group inline-flex items-center gap-2 border-b border-white pb-2 text-sm font-medium uppercase tracking-[0.2em] text-white transition-colors duration-300 ease-out hover:border-gold hover:text-gold"
+            <Button
+              as="link"
+              href={`tel:${contact.phone}`}
+              variant="accent"
+              size="lg"
             >
-              서비스 문의
-              <span
-                aria-hidden="true"
-                className="inline-block transition-transform duration-300 ease-out group-hover:translate-x-1"
-              >
-                →
-              </span>
-            </Link>
-            <Link
-              href="/business"
-              className="text-sm tracking-wide text-white/60 transition-colors duration-300 ease-out hover:text-white"
-            >
+              무료 상담 신청
+              <span aria-hidden="true">→</span>
+            </Button>
+            <Button as="link" href="/business" variant="ghost" size="lg">
               다른 서비스 보기
-            </Link>
+            </Button>
           </motion.div>
         </motion.div>
       </Container>

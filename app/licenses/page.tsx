@@ -4,7 +4,7 @@ import { WorkforceStats } from "@/components/sections/licenses/WorkforceStats";
 import { LicensesOverview } from "@/components/sections/licenses/LicensesOverview";
 import { LicensesGrid } from "@/components/sections/licenses/LicensesGrid";
 import { CertificationsGrid } from "@/components/sections/licenses/CertificationsGrid";
-import { CTA } from "@/components/sections/CTA";
+import { ContactForm } from "@/components/sections/common/ContactForm";
 
 export const metadata: Metadata = {
   title: "인허가 · 기술 자격 | (주)케이비개발",
@@ -29,7 +29,7 @@ export default function LicensesPage() {
       <LicensesOverview />
       <LicensesGrid />
       <CertificationsGrid />
-      <CTA />
+      <ContactForm context="인허가·인증 — 사업 상담 문의" />
     </>
   );
 }

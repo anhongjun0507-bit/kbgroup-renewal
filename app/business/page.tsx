@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/common/PageHero";
-import { ServiceCategories } from "@/components/sections/ServiceCategories";
+import { BusinessIntroAlternating } from "@/components/sections/business/BusinessIntroAlternating";
+import { ContactForm } from "@/components/sections/common/ContactForm";
 
 export const metadata: Metadata = {
   title: "사업영역 | (주)케이비개발",
@@ -21,7 +22,8 @@ export default function BusinessIndexPage() {
           { label: "BUSINESS" },
         ]}
       />
-      <ServiceCategories />
+      <BusinessIntroAlternating />
+      <ContactForm context="사업영역 — 사업 상담 문의" />
     </>
   );
 }

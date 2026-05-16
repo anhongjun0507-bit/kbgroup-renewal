@@ -5,6 +5,7 @@ import { PageHero } from "@/components/sections/common/PageHero";
 import { BusinessOverview } from "@/components/sections/business/BusinessOverview";
 import { BusinessSubServices } from "@/components/sections/business/BusinessSubServices";
 import { BusinessProcess } from "@/components/sections/business/BusinessProcess";
+import { BusinessFAQ } from "@/components/sections/business/BusinessFAQ";
 import { BusinessRelatedCases } from "@/components/sections/business/BusinessRelatedCases";
 import { BusinessCTA } from "@/components/sections/business/BusinessCTA";
 
@@ -58,6 +59,7 @@ export default async function BusinessDetailPage({
       <BusinessOverview area={area} />
       <BusinessSubServices area={area} />
       <BusinessProcess />
+      <BusinessFAQ areaId={area.id} />
       <BusinessRelatedCases complexes={relatedComplexes} />
       <BusinessCTA area={area} />
     </>
