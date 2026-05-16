@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
@@ -141,17 +140,26 @@ export function Header({ isAuthed = false }: HeaderProps) {
           <Link
             href="/"
             aria-label="(주)케이비개발 KB GROUP 메인으로"
-            className="flex-shrink-0"
+            className="btn-reset flex-shrink-0"
             onClick={closeMobile}
           >
-            <Image
-              src="/logo.png"
-              alt="(주)케이비개발 KB DEVELOPMENT"
-              width={2117}
-              height={743}
-              priority
-              className="h-9 w-auto brightness-0 invert md:h-11"
-            />
+            {/* Phase 11 P0-B — 다크 헤더용 텍스트 로고
+                기존 컬러 png는 흰배경 자산이라 다크 헤더에서 흰 박스로 보이는 문제
+                → 좌측 골드 액센트 바 + KB GROUP(brand) + (주)케이비개발(legal) 텍스트 마크 */}
+            <span className="flex items-center gap-3">
+              <span
+                aria-hidden="true"
+                className="inline-block h-8 w-[3px] flex-shrink-0 bg-accent-500 md:h-9"
+              />
+              <span className="flex flex-col leading-none">
+                <span className="font-display text-[18px] font-extrabold tracking-tight text-white md:text-[20px]">
+                  KB GROUP
+                </span>
+                <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.18em] text-accent-300 md:text-[11px]">
+                  (주)케이비개발
+                </span>
+              </span>
+            </span>
           </Link>
 
           {/* Desktop nav */}
