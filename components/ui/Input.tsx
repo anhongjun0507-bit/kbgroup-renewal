@@ -19,7 +19,8 @@ export const Input = ({
       type={type}
       aria-invalid={error || undefined}
       className={cn(
-        "block w-full h-12 rounded-md border bg-white px-4 text-[15px] text-ink-strong transition-all duration-200",
+        /* Phase 12 업그레이드 #5 — 모바일에서 16px 이상으로 iOS 줌 방지 */
+        "block w-full h-12 rounded-md border bg-white px-4 text-[16px] text-ink-strong transition-all duration-200 md:text-[15px]",
         "placeholder:text-[#9AA3B2]",
         "focus:outline-none focus:ring-2",
         "disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-ink-faint",
@@ -48,7 +49,7 @@ export const Textarea = ({
       rows={rows}
       aria-invalid={error || undefined}
       className={cn(
-        "block w-full rounded-md border bg-white px-4 py-3 text-[15px] text-ink-strong transition-all duration-200",
+        "block w-full rounded-md border bg-white px-4 py-3 text-[16px] text-ink-strong transition-all duration-200 md:text-[15px]",
         "placeholder:text-[#9AA3B2]",
         "focus:outline-none focus:ring-2",
         "disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-ink-faint",

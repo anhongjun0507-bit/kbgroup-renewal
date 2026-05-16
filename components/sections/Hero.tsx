@@ -1,7 +1,7 @@
 "use client";
 
 import { Container, Button } from "@/components/ui";
-import { company, contact, yearsOfOperation } from "@/data/site-content";
+import { company, contact } from "@/data/site-content";
 
 /* Phase 3.A — Hero 전면 재구성
    배경: 135deg navy 그라데이션 + mesh radial 3blend + 우측 placeholder visual
@@ -18,11 +18,8 @@ const SLOGAN_HIGHLIGHT = "자산";
 const SUBTITLE_LINE_1 = "대한민국 시설관리의 새로운 표준을 만들어갑니다.";
 const SUBTITLE_LINE_2 = "오랜 신뢰가 지금의 케이비개발을 만들었습니다.";
 
-const FLOATING_STATS = [
-  { value: yearsOfOperation, suffix: "년", label: "운영 경험" },
-  { value: "12,000", suffix: "+", label: "관리 세대수" },
-  { value: "85", suffix: "+", label: "운영 단지" },
-];
+/* Phase 12 — FLOATING_STATS 제거 (Hero floating card 폐기).
+   동일 정보는 다음 DataCounter 섹션이 4-카드로 노출 */
 
 export function Hero() {
   const slogan1Idx = SLOGAN_LINE_1.indexOf(SLOGAN_LINE_1_HIGHLIGHT);
@@ -298,41 +295,7 @@ export function Hero() {
           </div>
         </Container>
 
-        {/* Floating glass card 통계 — 하단 absolute, 다음 섹션과 살짝 겹침 */}
-        <div className="absolute inset-x-0 bottom-0 z-20 translate-y-1/2">
-          <Container>
-            <div
-              className="rounded-md border border-white/12 px-6 py-6 md:px-10 md:py-7"
-              style={{
-                backgroundColor: "rgba(11, 26, 51, 0.55)",
-                backdropFilter: "blur(16px)",
-                WebkitBackdropFilter: "blur(16px)",
-                boxShadow:
-                  "0 24px 56px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08)",
-              }}
-            >
-              <div className="grid grid-cols-3 gap-4 md:gap-10">
-                {FLOATING_STATS.map((s) => (
-                  <div key={s.label} className="text-center md:text-left">
-                    <div
-                      className="font-mono-num text-[26px] font-bold leading-none text-white md:text-[34px]"
-                      style={{ letterSpacing: "var(--tracking-tight)" }}
-                    >
-                      {s.value}
-                      <span className="ml-0.5 text-base font-semibold text-accent-300 md:text-xl">
-                        {s.suffix}
-                      </span>
-                    </div>
-                    {/* Phase 12 P0 — 라벨 색 white/65 → /85 강화 + accent-300 골드 톤 */}
-                    <div className="mt-2.5 text-[11px] font-medium uppercase tracking-[0.12em] text-accent-300 md:text-[12px]">
-                      {s.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Container>
-        </div>
+        {/* Phase 12 — floating glass card 제거. DataCounter 섹션이 동일 정보 노출 */}
 
         {/* Scroll 인디케이터 — 우측 하단 */}
         <div

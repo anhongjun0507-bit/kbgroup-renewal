@@ -1,4 +1,5 @@
 import { Hero } from "@/components/sections/Hero";
+import { TrustSignals } from "@/components/sections/TrustSignals";
 import { DataCounter } from "@/components/sections/DataCounter";
 import { ServiceCategories } from "@/components/sections/ServiceCategories";
 import { Cases } from "@/components/sections/Cases";
@@ -9,6 +10,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <TrustSignals />
       <DataCounter />
       <ServiceCategories />
       <Cases />

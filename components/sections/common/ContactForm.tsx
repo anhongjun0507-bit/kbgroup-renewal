@@ -157,110 +157,170 @@ export function ContactForm({ context, className }: ContactFormProps) {
             className="rounded-sm border border-line bg-white p-6 md:p-10"
             noValidate
           >
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-              <div className="md:col-span-1">
-                <Label htmlFor="cf-company" required>
-                  회사명 / 단지명
-                </Label>
-                <Input
-                  id="cf-company"
-                  name="company"
-                  required
-                  placeholder="예) ○○아파트 입주자대표회의"
-                />
-              </div>
-              <div>
-                <Label htmlFor="cf-name" required>
-                  담당자
-                </Label>
-                <Input
-                  id="cf-name"
-                  name="name"
-                  required
-                  placeholder="예) 홍길동"
-                />
-              </div>
-              <div>
-                <Label htmlFor="cf-phone" required>
-                  연락처
-                </Label>
-                <Input
-                  id="cf-phone"
-                  name="phone"
-                  type="tel"
-                  inputMode="tel"
-                  required
-                  placeholder="010-0000-0000"
-                />
-              </div>
-              <div>
-                <Label htmlFor="cf-email" required>
-                  이메일
-                </Label>
-                <Input
-                  id="cf-email"
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="example@company.com"
-                />
-              </div>
-              <div>
-                <Label htmlFor="cf-households">단지 규모 (세대수)</Label>
-                <Input
-                  id="cf-households"
-                  name="households"
-                  type="number"
-                  min={0}
-                  placeholder="예) 1200"
-                />
-              </div>
-              <div>
-                <Label htmlFor="cf-inquiry-type" required>
-                  문의 유형
-                </Label>
-                <Select
-                  id="cf-inquiry-type"
-                  name="inquiryType"
-                  required
-                  placeholder="선택해 주세요"
-                  options={INQUIRY_TYPES}
-                />
-              </div>
-              <div>
-                <Label htmlFor="cf-preferred-date">상담 희망일</Label>
-                <Input
-                  id="cf-preferred-date"
-                  name="preferredDate"
-                  type="date"
-                />
-              </div>
-              <div className="md:col-span-2">
-                <Label htmlFor="cf-message" required>
-                  문의 내용
-                </Label>
-                <Textarea
-                  id="cf-message"
-                  name="message"
-                  required
-                  rows={5}
-                  placeholder="현재 관리 상황, 요청 범위, 일정 등을 자유롭게 적어주세요."
-                />
-              </div>
-              <div className="md:col-span-2">
-                <label className="flex items-start gap-3 text-[13px] text-ink-muted">
-                  <input
-                    type="checkbox"
-                    name="privacyAgree"
-                    required
-                    className="mt-0.5 h-4 w-4 accent-accent-500"
-                  />
-                  <span>
-                    개인정보 수집 및 이용에 동의합니다. 수집 항목은 상담 응대
-                    목적에 한해 사용되며 6개월 후 파기됩니다. *
+            {/* Phase 12 업그레이드 #8 — 3 그룹 시각 분할 (필드 인지 부담 ↓) */}
+            <div className="space-y-10">
+              {/* Step 1 — 단지 정보 */}
+              <fieldset className="space-y-5">
+                <legend className="mb-4 flex w-full items-baseline gap-3 border-b border-line pb-3">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-accent-500 font-mono-num text-[12px] font-bold text-navy-900"
+                  >
+                    1
                   </span>
-                </label>
-              </div>
+                  <span className="font-display text-[16px] font-bold tracking-tight text-ink-strong">
+                    단지 정보
+                  </span>
+                  <span className="ml-auto text-[12px] text-ink-faint">
+                    기본 식별 정보
+                  </span>
+                </legend>
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                  <div>
+                    <Label htmlFor="cf-company" required>
+                      회사명 / 단지명
+                    </Label>
+                    <Input
+                      id="cf-company"
+                      name="company"
+                      required
+                      placeholder="예) ○○아파트 입주자대표회의"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cf-households">단지 규모 (세대수)</Label>
+                    <Input
+                      id="cf-households"
+                      name="households"
+                      type="number"
+                      min={0}
+                      placeholder="예) 1200"
+                    />
+                  </div>
+                </div>
+              </fieldset>
+
+              {/* Step 2 — 문의 유형·일정 */}
+              <fieldset className="space-y-5">
+                <legend className="mb-4 flex w-full items-baseline gap-3 border-b border-line pb-3">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-accent-500 font-mono-num text-[12px] font-bold text-navy-900"
+                  >
+                    2
+                  </span>
+                  <span className="font-display text-[16px] font-bold tracking-tight text-ink-strong">
+                    문의 유형 · 희망일
+                  </span>
+                  <span className="ml-auto text-[12px] text-ink-faint">
+                    상담 범위
+                  </span>
+                </legend>
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                  <div>
+                    <Label htmlFor="cf-inquiry-type" required>
+                      문의 유형
+                    </Label>
+                    <Select
+                      id="cf-inquiry-type"
+                      name="inquiryType"
+                      required
+                      placeholder="선택해 주세요"
+                      options={INQUIRY_TYPES}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cf-preferred-date">상담 희망일</Label>
+                    <Input
+                      id="cf-preferred-date"
+                      name="preferredDate"
+                      type="date"
+                    />
+                  </div>
+                </div>
+              </fieldset>
+
+              {/* Step 3 — 연락처·내용 */}
+              <fieldset className="space-y-5">
+                <legend className="mb-4 flex w-full items-baseline gap-3 border-b border-line pb-3">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-accent-500 font-mono-num text-[12px] font-bold text-navy-900"
+                  >
+                    3
+                  </span>
+                  <span className="font-display text-[16px] font-bold tracking-tight text-ink-strong">
+                    연락처 · 문의 내용
+                  </span>
+                  <span className="ml-auto text-[12px] text-ink-faint">
+                    회신 정보
+                  </span>
+                </legend>
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                  <div>
+                    <Label htmlFor="cf-name" required>
+                      담당자
+                    </Label>
+                    <Input
+                      id="cf-name"
+                      name="name"
+                      required
+                      placeholder="예) 홍길동"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cf-phone" required>
+                      연락처
+                    </Label>
+                    <Input
+                      id="cf-phone"
+                      name="phone"
+                      type="tel"
+                      inputMode="tel"
+                      required
+                      placeholder="010-0000-0000"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label htmlFor="cf-email" required>
+                      이메일
+                    </Label>
+                    <Input
+                      id="cf-email"
+                      name="email"
+                      type="email"
+                      required
+                      placeholder="example@company.com"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label htmlFor="cf-message" required>
+                      문의 내용
+                    </Label>
+                    <Textarea
+                      id="cf-message"
+                      name="message"
+                      required
+                      rows={5}
+                      placeholder="현재 관리 상황, 요청 범위, 일정 등을 자유롭게 적어주세요."
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="flex items-start gap-3 text-[13px] text-ink-muted">
+                      <input
+                        type="checkbox"
+                        name="privacyAgree"
+                        required
+                        className="mt-0.5 h-4 w-4 accent-accent-500"
+                      />
+                      <span>
+                        개인정보 수집 및 이용에 동의합니다. 수집 항목은 상담
+                        응대 목적에 한해 사용되며 6개월 후 파기됩니다. *
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
             </div>
 
             <div className="mt-8 flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">

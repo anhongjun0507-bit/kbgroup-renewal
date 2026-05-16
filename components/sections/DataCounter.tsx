@@ -78,7 +78,7 @@ export function DataCounter() {
 
   return (
     /* Hero floating card가 위에 살짝 겹치므로 상단 pt 추가 */
-    <section className="bg-white pt-40 pb-24 md:pt-44 md:pb-32" ref={sectionRef}>
+    <section className="section bg-white" ref={sectionRef}>
       <Container>
         <motion.div
           initial="hidden"

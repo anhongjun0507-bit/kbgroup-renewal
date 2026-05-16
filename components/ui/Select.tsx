@@ -123,7 +123,8 @@ export function Select({
         onClick={() => setOpen((v) => !v)}
         onKeyDown={onKeyDown}
         className={cn(
-          "flex h-12 w-full items-center justify-between rounded-md border bg-white px-4 text-left text-[15px] transition-all duration-200",
+          /* Phase 12 업그레이드 #5 — 모바일 16px (iOS 줌 방지) */
+          "flex h-12 w-full items-center justify-between rounded-md border bg-white px-4 text-left text-[16px] transition-all duration-200 md:text-[15px]",
           "focus:outline-none focus:ring-2",
           current ? "text-ink-strong" : "text-[#9AA3B2]",
           error
