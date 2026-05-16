@@ -75,7 +75,7 @@ export function WhyValues() {
             kicker="CORE VALUES"
             title="세 가지 가치"
             italicWord="가치"
-            align="center"
+            align="left"
             size="md"
             as="h2"
             className="mb-16"

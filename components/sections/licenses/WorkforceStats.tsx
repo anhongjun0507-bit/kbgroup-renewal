@@ -239,7 +239,8 @@ function StatCard({
         )}
       </p>
       <p className="mt-6 text-[15px] font-semibold text-white">{label}</p>
-      <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.18em] text-white/55">
+      {/* Phase 11 P2-D — caption 자간/색 eyebrow 토큰과 통일 (다크 위 accent-300) */}
+      <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.12em] text-accent-300">
         {caption}
       </p>
     </motion.div>

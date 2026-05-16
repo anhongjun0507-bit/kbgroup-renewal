@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { Container, Input, Label } from "@/components/ui";
 import { loginAction, type LoginState } from "@/app/(auth)/login/actions";
+import { contact } from "@/data/site-content";
 
 /* Phase 10 P1-07 / P1-10 — 단일 Input/Label 적용 + 비밀번호 찾기·회원가입 동선 */
 
@@ -66,7 +67,7 @@ export function LoginForm({ next }: Props) {
               type="password"
               required
               autoComplete="current-password"
-              placeholder="••••••••"
+              placeholder="비밀번호 입력"
             />
           </div>
 
@@ -78,15 +79,27 @@ export function LoginForm({ next }: Props) {
             {isPending ? "로그인 중..." : "로그인"}
           </button>
 
-          <p className="pt-2 text-center text-sm text-ink-muted">
-            아직 회원이 아니신가요?{" "}
-            <Link
-              href="/signup"
-              className="font-semibold text-accent-700 underline-offset-4 hover:underline"
-            >
-              회원가입
-            </Link>
-          </p>
+          {/* Phase 11 P2-B — 회원가입 + 운영 담당자 동선 명확화 */}
+          <div className="pt-4 space-y-3 text-center">
+            <p className="text-sm text-ink-muted">
+              아직 회원이 아니신가요?{" "}
+              <Link
+                href="/signup"
+                className="font-semibold text-accent-700 underline-offset-4 hover:underline"
+              >
+                회원가입
+              </Link>
+            </p>
+            <p className="text-[13px] text-ink-faint">
+              초기 계정 발급은 운영 담당자에게 문의해 주세요 ·{" "}
+              <a
+                href={`tel:${contact.phone}`}
+                className="font-semibold text-ink-muted underline-offset-4 hover:text-accent-700 hover:underline"
+              >
+                {contact.phone}
+              </a>
+            </p>
+          </div>
         </form>
       </Container>
     </section>

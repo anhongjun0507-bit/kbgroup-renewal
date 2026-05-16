@@ -59,13 +59,27 @@ export function WhyDifferentiators() {
           <div className="hidden lg:block">
             <div className="sticky top-32">
               <p className="eyebrow text-ink-faint">OUR DIFFERENCE</p>
-              <div className="mt-8 flex items-baseline gap-2">
-                <span className="font-display text-[44px] font-bold leading-none text-ink-faint/30">01</span>
-                <span className="text-ink-faint">—</span>
-                <span className="font-display text-[44px] font-bold leading-none text-accent-500">{String(differentiators.length).padStart(2, "0")}</span>
+              {/* Phase 11 P2-F — 절제된 진행 인디케이터 (큰 "01—05" 표시 폐기) */}
+              <div className="mt-8 flex items-center gap-2">
+                {differentiators.map((_, i) => (
+                  <span
+                    key={i}
+                    aria-hidden="true"
+                    className={
+                      "h-1 rounded-full transition-all duration-200 " +
+                      (i === 0
+                        ? "w-10 bg-accent-500"
+                        : "w-6 bg-ink-placeholder")
+                    }
+                  />
+                ))}
+                <span className="ml-3 font-mono-num text-[13px] font-semibold text-ink-muted">
+                  {String(differentiators.length).padStart(2, "0")}개 항목
+                </span>
               </div>
               <p className="mt-6 max-w-xs text-[14px] leading-relaxed text-ink-muted">
-                숫자 하나하나에 케이비개발이 11년간 쌓아온 운영 철학이 담겨 있습니다.
+                숫자 하나하나에 케이비개발이 11년간 쌓아온 운영 철학이 담겨
+                있습니다.
               </p>
             </div>
           </div>

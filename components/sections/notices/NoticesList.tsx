@@ -164,12 +164,13 @@ export function NoticesList({
                       {c.label}
                       <span
                         className={cn(
-                          "font-mono-num text-[11px]",
+                          /* Phase 11 P2-C — 활성/비활성/0건 3 톤 분기. 활성=accent-500 골드 + 굵게 */
+                          "font-mono-num text-[11px] font-bold",
                           isActive
-                            ? "text-accent-300"
+                            ? "text-accent-500"
                             : counts[c.value] === 0
-                              ? "text-ink-placeholder"
-                              : "text-ink-faint",
+                              ? "text-ink-placeholder font-medium"
+                              : "text-accent-700 font-semibold",
                         )}
                       >
                         {counts[c.value]}

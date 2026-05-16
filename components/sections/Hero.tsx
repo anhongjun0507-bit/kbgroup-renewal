@@ -118,6 +118,51 @@ export function Hero() {
               );
             }),
           )}
+
+          {/* Phase 11 P1-C — 빌딩 옥상 디테일 (안테나·물탱크) — 단지 임을 명확화 */}
+          <g stroke="#E3C57A" strokeWidth="2" fill="none" opacity="0.55" strokeLinecap="round">
+            {/* 안테나 (가장 높은 빌딩 위) */}
+            <path d="M385 160 L385 130" />
+            <path d="M380 138 L390 138" />
+            <path d="M382 145 L388 145" />
+            {/* 물탱크 (실루엣) */}
+            <ellipse cx="180" cy="195" rx="14" ry="4" fill="#E3C57A" fillOpacity="0.3" />
+            <path d="M166 195 L166 205 L194 205 L194 195" />
+          </g>
+        </svg>
+
+        {/* Phase 11 P1-C — 시설관리 픽토그램 floating (메타포 명확화)
+            보안(실드) / 청소(빗자루) / 관리(공구) / 점검(체크) 4종 */}
+        <svg
+          viewBox="0 0 600 700"
+          className="pointer-events-none absolute inset-0 h-full w-full"
+          preserveAspectRatio="xMaxYMid meet"
+          aria-hidden="true"
+        >
+          <g stroke="#E3C57A" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.45">
+            {/* 보안 실드 — 좌상단 */}
+            <g transform="translate(60, 100)">
+              <path d="M0 0 L0 22 C0 32, 12 38, 16 40 C20 38, 32 32, 32 22 L32 0 L16 -6 Z" />
+              <path d="M10 18 L14 24 L24 12" />
+            </g>
+            {/* 청소 브러시 — 우상단 */}
+            <g transform="translate(490, 130)">
+              <rect x="0" y="0" width="40" height="10" />
+              <path d="M3 10 V20 M11 10 V22 M19 10 V20 M27 10 V22 M35 10 V20" />
+              <path d="M0 0 L-12 -10" />
+            </g>
+            {/* 시설 관리 공구 (스패너) — 좌하단 */}
+            <g transform="translate(40, 540)">
+              <circle cx="8" cy="8" r="6" />
+              <path d="M14 14 L38 38" />
+              <path d="M34 34 a8 8 0 1 0 10 10" />
+            </g>
+            {/* 안전 점검 (체크 in 원) — 우하단 */}
+            <g transform="translate(470, 540)">
+              <circle cx="20" cy="20" r="18" />
+              <path d="M12 20 L18 26 L30 14" />
+            </g>
+          </g>
         </svg>
       </div>
 

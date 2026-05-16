@@ -187,7 +187,8 @@ export function DataCounter() {
               <p className="mt-5 text-[15px] font-semibold text-ink-strong">
                 {c.label}
               </p>
-              <p className="mt-1 text-[11px] uppercase tracking-[0.15em] text-ink-faint">
+              {/* Phase 11 P2-D — eyebrow 토큰과 동일 자간/색으로 통일 */}
+              <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.12em] text-accent-700">
                 {c.caption}
               </p>
             </motion.div>

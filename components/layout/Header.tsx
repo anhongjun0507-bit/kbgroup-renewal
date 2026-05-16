@@ -186,10 +186,11 @@ export function Header({ isAuthed = false }: HeaderProps) {
                     aria-expanded={hasChildren ? isOpen : undefined}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      /* Phase 9 P1-02 — 클릭 영역 ≥44px (min-h-11 + px-3) */
-                      "group relative inline-flex min-h-11 items-center px-3 py-3 text-[14px] font-medium transition-colors duration-200",
-                      "after:absolute after:left-3 after:right-3 after:bottom-2 after:h-[2px] after:w-0 after:bg-accent-500 after:transition-[width] after:duration-200 after:[transition-timing-function:var(--ease)] hover:after:w-[calc(100%-1.5rem)]",
-                      active && "after:w-[calc(100%-1.5rem)]",
+                      /* Phase 11 P1-D — underline 위치 보강: bottom 2 → 1 (텍스트와 8px 여유)
+                         두께 2 → [3px] + 라운드. 좁은 padding으로 글자와 8px 간격 확보 */
+                      "group relative inline-flex min-h-11 items-center px-4 py-3 text-[14px] font-medium transition-colors duration-200",
+                      "after:absolute after:left-4 after:right-4 after:bottom-1.5 after:h-[3px] after:w-0 after:rounded-full after:bg-accent-500 after:transition-[width] after:duration-200 after:[transition-timing-function:var(--ease)] hover:after:w-[calc(100%-2rem)]",
+                      active && "after:w-[calc(100%-2rem)]",
                       "text-white/85 hover:text-white",
                     )}
                   >
