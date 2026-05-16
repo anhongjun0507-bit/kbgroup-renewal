@@ -60,8 +60,20 @@ export function BusinessProcess() {
           >
             {processSteps.map((step, idx) => {
               const isActive = idx === activeIdx;
+              const isLast = idx === processSteps.length - 1;
               return (
-                <li key={step.key} role="presentation">
+                <li key={step.key} role="presentation" className="relative">
+                  {/* Phase 6 D-3 — 카드 사이 점선 connector */}
+                  {!isLast && !isActive && (
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute right-0 top-1/2 z-10 hidden h-px w-6 -translate-y-1/2 translate-x-1/2 lg:block"
+                      style={{
+                        backgroundImage:
+                          "repeating-linear-gradient(90deg, var(--color-ink-faint) 0 4px, transparent 4px 8px)",
+                      }}
+                    />
+                  )}
                   <button
                     type="button"
                     role="tab"
@@ -106,7 +118,7 @@ export function BusinessProcess() {
             <div className="col-span-4">
               <span
                 aria-hidden="true"
-                className="font-display text-[80px] font-extrabold leading-none text-accent-500"
+                className="number-display text-[80px] font-extrabold text-accent-500"
               >
                 {active.numberLabel}
               </span>
@@ -135,7 +147,7 @@ export function BusinessProcess() {
               <div className="flex items-baseline gap-4">
                 <span
                   aria-hidden="true"
-                  className="font-display text-[36px] font-extrabold leading-none text-accent-500"
+                  className="number-display text-[36px] font-extrabold text-accent-500"
                 >
                   {step.numberLabel}
                 </span>

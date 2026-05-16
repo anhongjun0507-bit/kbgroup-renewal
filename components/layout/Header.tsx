@@ -42,6 +42,7 @@ const NAV_ITEMS: NavItem[] = [
 export function Header({ isAuthed = false }: HeaderProps) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  const [overDark, setOverDark] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileExpand, setMobileExpand] = useState<string | null>(null);
@@ -51,12 +52,36 @@ export function Header({ isAuthed = false }: HeaderProps) {
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
+  /* Phase 6 A-4: scroll threshold 20 → 8, data-scrolled 명시 토글 */
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  /* Phase 6 A-4: data-over-dark — 다크 hero(data-surface="dark")가 헤더 영역과 겹치면 true */
+  useEffect(() => {
+    setOverDark(false);
+    const targets = document.querySelectorAll('[data-surface="dark"]');
+    if (targets.length === 0) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        let anyVisible = false;
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            anyVisible = true;
+            break;
+          }
+        }
+        setOverDark(anyVisible);
+      },
+      { rootMargin: "-72px 0px -100% 0px", threshold: 0 },
+    );
+    targets.forEach((t) => io.observe(t));
+    return () => io.disconnect();
+  }, [pathname]);
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
@@ -70,25 +95,43 @@ export function Header({ isAuthed = false }: HeaderProps) {
     setMobileExpand(null);
   };
 
-  /* Phase 2.1 — sticky 스크롤 시 translucent dark (navy-900 / 85% + blur 12) */
-  const headerStyle: React.CSSProperties = scrolled
+  /* Phase 6 A-4 — 헤더 스타일 결정
+     - 다크 hero 위(overDark=true): 처음부터 다크 톤 (스크롤 무관)
+     - 그 외 스크롤 후: 흰색 + blur + shadow
+     - 그 외 초기: 투명 흰색 */
+  const dark = overDark;
+  const headerStyle: React.CSSProperties = dark
     ? {
-        backgroundColor: "rgba(14, 23, 51, 0.85)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        borderBottomColor: "rgba(255,255,255,0.08)",
+        backgroundColor: scrolled
+          ? "rgba(11, 26, 51, 0.85)"
+          : "rgba(11, 26, 51, 0.55)",
+        backdropFilter: "saturate(140%) blur(14px)",
+        WebkitBackdropFilter: "saturate(140%) blur(14px)",
+        borderBottomColor: scrolled
+          ? "rgba(255,255,255,0.08)"
+          : "transparent",
       }
-    : {
-        backgroundColor: "#ffffff",
-        borderBottomColor: "transparent",
-      };
-
-  const dark = scrolled; // 스크롤 시 다크 톤
+    : scrolled
+      ? {
+          backgroundColor: "rgba(255,255,255,0.88)",
+          backdropFilter: "saturate(140%) blur(14px)",
+          WebkitBackdropFilter: "saturate(140%) blur(14px)",
+          borderBottomColor: "rgba(15,23,42,0.06)",
+          boxShadow: "var(--shadow-card)",
+        }
+      : {
+          backgroundColor: "rgba(255,255,255,0.72)",
+          backdropFilter: "saturate(140%) blur(14px)",
+          WebkitBackdropFilter: "saturate(140%) blur(14px)",
+          borderBottomColor: "transparent",
+        };
 
   return (
     <header
-      className="sticky top-0 z-50 border-b transition-colors duration-300 [transition-timing-function:var(--ease)]"
+      className="site-header sticky top-0 z-50 border-b transition-all duration-200 [transition-timing-function:var(--ease)]"
       style={headerStyle}
+      data-scrolled={scrolled || undefined}
+      data-over-dark={dark || undefined}
       data-surface={dark ? "dark" : undefined}
     >
       <div className="mx-auto w-full max-w-[1280px] px-5 md:px-8">

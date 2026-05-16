@@ -41,7 +41,7 @@ export function BusinessCTA({ area }: Props) {
         className="absolute inset-0"
         style={{
           background: [
-            "radial-gradient(50% 60% at 20% 30%, rgba(230,57,80,0.14) 0%, transparent 60%)",
+            "radial-gradient(50% 60% at 20% 30%, rgba(201,162,75,0.14) 0%, transparent 60%)",
             "radial-gradient(45% 55% at 80% 70%, rgba(30,44,86,0.7) 0%, transparent 60%)",
           ].join(", "),
         }}

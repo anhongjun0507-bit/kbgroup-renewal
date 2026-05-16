@@ -72,7 +72,7 @@ export function CasesStats() {
         className="absolute inset-0"
         style={{
           background: [
-            "radial-gradient(45% 50% at 25% 30%, rgba(230,57,80,0.12) 0%, transparent 60%)",
+            "radial-gradient(45% 50% at 25% 30%, rgba(201,162,75,0.12) 0%, transparent 60%)",
             "radial-gradient(40% 45% at 80% 70%, rgba(30,44,86,0.7) 0%, transparent 60%)",
           ].join(", "),
         }}
@@ -138,9 +138,9 @@ function StatCard({
       }}
       className="rounded-md border border-white/10 bg-white/[0.04] p-8 text-center backdrop-blur-sm transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:border-white/30 hover:bg-white/[0.06]"
     >
-      <p className="flex items-baseline justify-center gap-1">
+      <p className="stat-cell flex items-baseline justify-center gap-1">
         <span
-          className="font-mono-num font-display text-[56px] font-extrabold leading-none text-white md:text-[72px]"
+          className="stat-number font-mono-num font-display text-[56px] font-extrabold leading-none text-white md:text-[72px]"
           style={{ letterSpacing: "var(--tracking-tight)" }}
         >
           {shouldReduce ? (
@@ -152,7 +152,7 @@ function StatCard({
           )}
         </span>
         {suffix && (
-          <span className="font-mono-num text-[22px] font-bold text-accent-500 md:text-[26px]">
+          <span className="stat-suffix font-mono-num text-[22px] font-bold text-accent-500 md:text-[26px]">
             {suffix}
           </span>
         )}

@@ -13,6 +13,8 @@ const GALLERY_LABELS = [
   "현장 점검",
   "정기 관리",
   "전문 장비 운용",
+  "안전 교육",
+  "고객 응대",
   "결과 보고",
 ];
 
@@ -77,7 +79,7 @@ export function BusinessSubServices({ area }: Props) {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={listVariants}
-          className="mb-16 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4"
+          className="mb-16 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-6"
         >
           {GALLERY_LABELS.map((label, idx) => (
             <motion.figure
@@ -90,8 +92,8 @@ export function BusinessSubServices({ area }: Props) {
                 className="absolute inset-0 transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.04]"
                 style={{
                   background: [
-                    "linear-gradient(135deg, #15203F 0%, #1E2C56 50%, #0E1733 100%)",
-                    "radial-gradient(60% 60% at 30% 30%, rgba(230,57,80,0.18) 0%, transparent 70%)",
+                    "linear-gradient(135deg, #0E1F3A 0%, #16315C 50%, #0B1A33 100%)",
+                    "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.18) 0%, transparent 70%)",
                   ].join(", "),
                   filter: `hue-rotate(${(idx - 1) * 12}deg)`,
                 }}

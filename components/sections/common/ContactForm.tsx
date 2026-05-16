@@ -35,6 +35,7 @@ export function ContactForm({ context, className }: ContactFormProps) {
     const company = String(fd.get("company") ?? "");
     const name = String(fd.get("name") ?? "");
     const phone = String(fd.get("phone") ?? "");
+    const email = String(fd.get("email") ?? "");
     const households = String(fd.get("households") ?? "");
     const inquiryType = String(fd.get("inquiryType") ?? "");
     const preferredDate = String(fd.get("preferredDate") ?? "");
@@ -45,6 +46,7 @@ export function ContactForm({ context, className }: ContactFormProps) {
       `■ 회사명: ${company}`,
       `■ 담당자: ${name}`,
       `■ 연락처: ${phone}`,
+      `■ 이메일: ${email}`,
       `■ 단지 규모(세대수): ${households}`,
       `■ 문의 유형: ${INQUIRY_TYPES.find((t) => t.value === inquiryType)?.label ?? inquiryType}`,
       `■ 상담 희망일: ${preferredDate || "협의 가능"}`,
@@ -168,6 +170,19 @@ export function ContactForm({ context, className }: ContactFormProps) {
                   inputMode="tel"
                   className={inputBase}
                   placeholder="010-0000-0000"
+                />
+              </div>
+              <div>
+                <label htmlFor="cf-email" className={labelClass}>
+                  이메일 *
+                </label>
+                <input
+                  id="cf-email"
+                  name="email"
+                  type="email"
+                  required
+                  className={inputBase}
+                  placeholder="example@company.com"
                 />
               </div>
               <div>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { WorkforceStats } from "@/components/sections/licenses/WorkforceStats";
+import { LicensesKPI } from "@/components/sections/licenses/LicensesKPI";
 import { LicensesOverview } from "@/components/sections/licenses/LicensesOverview";
 import { LicensesGrid } from "@/components/sections/licenses/LicensesGrid";
 import { CertificationsGrid } from "@/components/sections/licenses/CertificationsGrid";
@@ -26,6 +27,7 @@ export default function LicensesPage() {
         ]}
       />
       <WorkforceStats />
+      <LicensesKPI />
       <LicensesOverview />
       <LicensesGrid />
       <CertificationsGrid />

@@ -3,10 +3,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { complexes, type Complex } from "@/data/site-content";
 import { Container } from "@/components/ui";
-import { PageHero } from "@/components/sections/common/PageHero";
 
-/* Phase 5.G.5 — 단지 디테일 페이지 골격
-   실사진 자료 없음 — placeholder 갤러리 + 위치·관리내역·담당팀 구조만 */
+/* Phase 6.5 E-3 — /cases/[slug] 5섹션 스켈레톤
+   1) Hero full-bleed (16:9)
+   2) 프로젝트 메타 4-col
+   3) 본문 (좌 30% sticky 인덱스 + 우 70% prose)
+   4) 갤러리 (4 columns)
+   5) prev/next full-bleed nav 카드 */
 
 type Params = { slug: string };
 
@@ -39,6 +42,12 @@ function isLh(c: Complex) {
   return c.name.startsWith("LH") || c.type === "LH";
 }
 
+const PROSE_SECTIONS = [
+  { id: "scope", label: "관리 범위", body: "단지 시설관리·위생청소·경비보안·시행건설 영역을 통합 운영합니다. 정기 점검과 예방 정비를 중심으로 입주민의 일상이 끊김 없이 유지되도록 합니다." },
+  { id: "team", label: "담당팀", body: "전담 관리소장 + 시설반장 + 경비반장 + 청소반장 4인 코어로 구성됩니다. 광역시·도 권역별 슈퍼바이저가 분기 점검을 진행합니다." },
+  { id: "results", label: "운영 성과", body: "관리비 절감, 민원 응대 시간 단축, 입주민 만족도 향상 등의 성과는 단지 자료 업데이트 후 공개됩니다." },
+];
+
 export default async function CaseDetailPage({
   params,
 }: {
@@ -53,185 +62,252 @@ export default async function CaseDetailPage({
   const lh = isLh(complex);
   const badge = lh ? "LH" : (complex.type ?? "민간");
 
-  /* 인접 단지 — prev/next */
   const prev = idx > 0 ? complexes[idx - 1] : null;
   const next = idx < complexes.length - 1 ? complexes[idx + 1] : null;
 
   return (
     <>
-      <PageHero
-        kicker="CASE"
-        title={complex.name}
-        italicWord={complex.name.split(/\s+/).pop() ?? complex.name}
-        subtitle={`${complex.region} · ${badge} 발주`}
-        breadcrumb={[
-          { label: "HOME", href: "/" },
-          { label: "CASES", href: "/cases" },
-          { label: complex.name },
-        ]}
-      />
-
-      <section className="section bg-white">
-        <Container>
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
-            {/* 갤러리 placeholder */}
-            <div>
-              <div className="relative aspect-[4/3] overflow-hidden rounded-md bg-navy-900">
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-0"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #15203F 0%, #1E2C56 50%, #0E1733 100%)",
-                  }}
-                />
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-0"
-                  style={{
-                    background:
-                      "radial-gradient(50% 60% at 30% 30%, rgba(230,57,80,0.18) 0%, transparent 70%)",
-                  }}
-                />
-                <span
-                  className={
-                    "absolute left-4 top-4 inline-flex items-center rounded-sm px-3 py-1 text-[11px] font-bold uppercase tracking-[0.1em] " +
-                    (lh ? "bg-accent-500 text-white" : "bg-navy-800 text-white")
-                  }
-                >
-                  {badge}
-                </span>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span
-                    aria-hidden="true"
-                    className="font-display text-[clamp(8rem,18vw,14rem)] font-black leading-none text-white/15"
-                  >
-                    {initial}
-                  </span>
-                </div>
-              </div>
-              <p className="mt-4 text-[12px] text-ink-faint">
-                ※ 단지 실사진은 추후 등록 예정입니다.
-              </p>
-
-              {/* 4 sub 썸네일 */}
-              <div className="mt-6 grid grid-cols-4 gap-3">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div
-                    key={i}
-                    aria-hidden="true"
-                    className="aspect-square overflow-hidden rounded-sm bg-navy-900"
-                    style={{
-                      background: [
-                        "linear-gradient(135deg, #15203F 0%, #1E2C56 100%)",
-                        "radial-gradient(60% 60% at 30% 30%, rgba(230,57,80,0.18) 0%, transparent 70%)",
-                      ].join(", "),
-                      filter: `hue-rotate(${(i - 1) * 12}deg)`,
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* 단지 정보 */}
-            <div>
-              <p className="eyebrow">SITE OVERVIEW</p>
-              <h2 className="mt-4 font-display text-[28px] font-bold tracking-tight text-ink-strong md:text-[32px]">
-                {complex.name}
-              </h2>
-              <dl className="mt-8 divide-y divide-line border-y border-line">
-                <div className="grid grid-cols-3 gap-4 py-4">
-                  <dt className="text-[12px] uppercase tracking-[0.18em] text-ink-faint">
-                    위치
-                  </dt>
-                  <dd className="col-span-2 text-[15px] font-semibold text-ink-strong">
-                    {complex.region}
-                  </dd>
-                </div>
-                <div className="grid grid-cols-3 gap-4 py-4">
-                  <dt className="text-[12px] uppercase tracking-[0.18em] text-ink-faint">
-                    발주처
-                  </dt>
-                  <dd className="col-span-2 text-[15px] font-semibold text-ink-strong">
-                    {complex.client ?? "-"}
-                  </dd>
-                </div>
-                <div className="grid grid-cols-3 gap-4 py-4">
-                  <dt className="text-[12px] uppercase tracking-[0.18em] text-ink-faint">
-                    구분
-                  </dt>
-                  <dd className="col-span-2 text-[15px] font-semibold text-ink-strong">
-                    {badge}
-                  </dd>
-                </div>
-                {complex.households && (
-                  <div className="grid grid-cols-3 gap-4 py-4">
-                    <dt className="text-[12px] uppercase tracking-[0.18em] text-ink-faint">
-                      세대수
-                    </dt>
-                    <dd className="col-span-2 font-mono-num text-[15px] font-semibold text-ink-strong">
-                      {complex.households.toLocaleString()}세대
-                    </dd>
-                  </div>
-                )}
-              </dl>
-
-              <div className="mt-8 rounded-md border border-line bg-gray-50 p-6">
-                <p className="text-[12px] uppercase tracking-[0.18em] text-ink-faint">
-                  관리 내역
-                </p>
-                <p className="mt-3 text-[14px] leading-[1.75] text-ink-muted">
-                  상세 관리 내역과 담당팀 정보는 현재 정리 중입니다. 단지 자료
-                  업데이트 후 공개됩니다.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* prev / next */}
-          <nav
-            aria-label="단지 페이지 이동"
-            className="mt-16 grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4"
+      {/* 1) Hero — full-bleed 16:9 */}
+      <section
+        data-surface="dark"
+        aria-label={`${complex.name} 단지`}
+        className="relative isolate aspect-[16/9] max-h-[640px] w-full overflow-hidden bg-navy-900"
+      >
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(135deg, #0E1F3A 0%, #16315C 50%, #0B1A33 100%)",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(50% 60% at 30% 30%, rgba(201,162,75,0.18) 0%, transparent 70%)",
+          }}
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span
+            aria-hidden="true"
+            className="font-display text-[clamp(10rem,22vw,20rem)] font-black leading-none text-white/12"
           >
-            {prev ? (
-              <Link
-                href={`/cases/${encodeURIComponent(prev.name)}`}
-                className="group flex items-center gap-3 rounded-md border border-line bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-navy-700 hover:shadow-[var(--shadow-card)]"
+            {initial}
+          </span>
+        </div>
+
+        {/* Hero 텍스트 오버레이 */}
+        <div className="absolute inset-x-0 bottom-0">
+          <Container className="pb-10 md:pb-14">
+            <nav aria-label="Breadcrumb" className="mb-4">
+              <ol className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-white/65">
+                <li><Link href="/" className="hover:text-white">HOME</Link></li>
+                <li aria-hidden="true">/</li>
+                <li><Link href="/cases" className="hover:text-white">CASES</Link></li>
+                <li aria-hidden="true">/</li>
+                <li className="text-white/85">{complex.region.split(/\s+/)[0]}</li>
+              </ol>
+            </nav>
+            <div className="flex items-baseline gap-3">
+              <span
+                className={
+                  "inline-flex items-center rounded-sm px-3 py-1 text-[11px] font-bold uppercase tracking-[0.1em] " +
+                  (lh ? "bg-accent-500 text-white" : "bg-navy-700 text-white")
+                }
               >
-                <span aria-hidden="true" className="text-ink-faint">←</span>
-                <span>
-                  <span className="block text-[11px] uppercase tracking-[0.18em] text-ink-faint">
-                    PREV
-                  </span>
-                  <span className="mt-1 block font-display text-[15px] font-bold text-ink-strong">
-                    {prev.name}
-                  </span>
-                </span>
-              </Link>
-            ) : (
-              <span />
-            )}
-            {next ? (
-              <Link
-                href={`/cases/${encodeURIComponent(next.name)}`}
-                className="group flex items-center justify-end gap-3 rounded-md border border-line bg-white p-5 text-right transition-all duration-200 hover:-translate-y-0.5 hover:border-navy-700 hover:shadow-[var(--shadow-card)]"
-              >
-                <span>
-                  <span className="block text-[11px] uppercase tracking-[0.18em] text-ink-faint">
-                    NEXT
-                  </span>
-                  <span className="mt-1 block font-display text-[15px] font-bold text-ink-strong">
-                    {next.name}
-                  </span>
-                </span>
-                <span aria-hidden="true" className="text-ink-faint">→</span>
-              </Link>
-            ) : (
-              <span />
-            )}
-          </nav>
+                {badge}
+              </span>
+              <span className="text-[12px] uppercase tracking-[0.18em] text-white/65">
+                {complex.region}
+              </span>
+            </div>
+            <h1 className="mt-3 font-display text-[36px] font-extrabold leading-[1.1] tracking-tight text-white md:text-[52px]">
+              {complex.name}
+            </h1>
+          </Container>
+        </div>
+      </section>
+
+      {/* 2) 프로젝트 메타 4-col */}
+      <section className="border-b border-line bg-white py-10">
+        <Container>
+          <dl className="grid grid-cols-2 gap-y-6 md:grid-cols-4">
+            <Meta label="구분" value={badge} />
+            <Meta label="위치" value={complex.region} />
+            <Meta label="발주처" value={complex.client ?? "-"} />
+            <Meta
+              label="세대수"
+              value={
+                complex.households
+                  ? `${complex.households.toLocaleString()}세대`
+                  : "-"
+              }
+            />
+          </dl>
         </Container>
       </section>
+
+      {/* 3) 본문 prose + 좌측 sticky 인덱스 */}
+      <section className="section bg-white">
+        <Container>
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[280px_1fr] lg:gap-20">
+            <aside className="hidden lg:block">
+              <div className="sticky top-32">
+                <p className="eyebrow">ON THIS PAGE</p>
+                <ul className="mt-5 space-y-3 text-[14px]">
+                  {PROSE_SECTIONS.map((s) => (
+                    <li key={s.id}>
+                      <a
+                        href={`#${s.id}`}
+                        className="text-ink-muted transition-colors duration-200 hover:text-navy-700"
+                      >
+                        {s.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </aside>
+
+            <div className="space-y-12">
+              {PROSE_SECTIONS.map((s) => (
+                <article key={s.id} id={s.id}>
+                  <p className="eyebrow text-accent-500">{s.label}</p>
+                  <h2 className="mt-3 font-display text-[28px] font-bold tracking-tight text-ink-strong">
+                    {s.label}
+                  </h2>
+                  <p className="mt-5 text-[16px] leading-[1.85] text-ink-muted">
+                    {s.body}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* 4) 갤러리 — 4 columns placeholder */}
+      <section className="section bg-gray-50">
+        <Container>
+          <p className="eyebrow">GALLERY</p>
+          <h2 className="mt-3 font-display text-[28px] font-bold tracking-tight text-ink-strong md:text-[32px]">
+            현장 사진
+          </h2>
+          <p className="mt-3 max-w-2xl text-[14px] text-ink-faint">
+            ※ 단지 실사진은 추후 등록 예정입니다. 현재는 placeholder만 표시됩니다.
+          </p>
+          <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                aria-hidden="true"
+                className="aspect-[4/5] overflow-hidden rounded-md bg-navy-900"
+                style={{
+                  background: [
+                    "linear-gradient(135deg, #0E1F3A 0%, #16315C 100%)",
+                    "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.18) 0%, transparent 70%)",
+                  ].join(", "),
+                  filter: `hue-rotate(${(i % 6) * 12}deg)`,
+                }}
+              />
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* 5) prev/next full-bleed nav */}
+      <nav
+        aria-label="단지 페이지 이동"
+        className="grid grid-cols-1 md:grid-cols-2"
+      >
+        {prev ? (
+          <Link
+            href={`/cases/${encodeURIComponent(prev.name)}`}
+            data-surface="dark"
+            className="group relative isolate flex min-h-[200px] items-center overflow-hidden bg-navy-900 p-8 transition-colors md:p-12"
+          >
+            <div
+              aria-hidden="true"
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(135deg, #0E1F3A 0%, #16315C 100%)",
+              }}
+            />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 transition-opacity duration-500 group-hover:opacity-100"
+              style={{
+                background:
+                  "radial-gradient(50% 60% at 20% 50%, rgba(201,162,75,0.25) 0%, transparent 70%)",
+                opacity: 0.6,
+              }}
+            />
+            <div className="relative">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-white/65">
+                ← PREVIOUS CASE
+              </p>
+              <p className="mt-3 font-display text-[22px] font-bold text-white md:text-[28px]">
+                {prev.name}
+              </p>
+              <p className="mt-2 text-[13px] text-white/65">{prev.region}</p>
+            </div>
+          </Link>
+        ) : (
+          <span className="bg-gray-50" />
+        )}
+        {next ? (
+          <Link
+            href={`/cases/${encodeURIComponent(next.name)}`}
+            data-surface="dark"
+            className="group relative isolate flex min-h-[200px] items-center justify-end overflow-hidden bg-navy-900 p-8 text-right transition-colors md:p-12"
+          >
+            <div
+              aria-hidden="true"
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(135deg, #16315C 0%, #0E1F3A 100%)",
+              }}
+            />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 transition-opacity duration-500 group-hover:opacity-100"
+              style={{
+                background:
+                  "radial-gradient(50% 60% at 80% 50%, rgba(201,162,75,0.25) 0%, transparent 70%)",
+                opacity: 0.6,
+              }}
+            />
+            <div className="relative">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-white/65">
+                NEXT CASE →
+              </p>
+              <p className="mt-3 font-display text-[22px] font-bold text-white md:text-[28px]">
+                {next.name}
+              </p>
+              <p className="mt-2 text-[13px] text-white/65">{next.region}</p>
+            </div>
+          </Link>
+        ) : (
+          <span className="bg-gray-50" />
+        )}
+      </nav>
     </>
+  );
+}
+
+function Meta({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-[11px] font-medium uppercase tracking-[0.18em] text-ink-faint">
+        {label}
+      </dt>
+      <dd className="mt-2 font-display text-[18px] font-bold tracking-tight text-ink-strong md:text-[20px]">
+        {value}
+      </dd>
+    </div>
   );
 }

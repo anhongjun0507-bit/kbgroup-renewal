@@ -105,9 +105,17 @@ export function WhyValues() {
                 {value.number} · {value.englishName}
               </p>
 
-              {/* 라인 아이콘 */}
-              <div className="mt-6 h-14 w-14 text-navy-800">
-                {VALUE_ICONS[value.englishName] ?? null}
+              {/* Phase 6 C-2 — 원형 배지 (accent-100 배경 + accent-500 아이콘) */}
+              <div
+                className="mt-6 flex h-12 w-12 items-center justify-center rounded-full"
+                style={{ backgroundColor: "var(--color-accent-100)" }}
+              >
+                <div
+                  className="h-7 w-7 text-accent-500 transition-colors duration-200 group-hover:text-accent-600"
+                  aria-hidden="true"
+                >
+                  {VALUE_ICONS[value.englishName] ?? null}
+                </div>
               </div>
 
               <h3 className="mt-6 font-display text-[28px] font-bold tracking-tight text-ink-strong">

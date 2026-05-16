@@ -43,13 +43,13 @@ function groupByYear(entries: HistoryEntry[]): HistoryGroup[] {
 
 const MILESTONE_ICON = (
   <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-    <circle cx="8" cy="8" r="4" fill="#E63950" />
-    <circle cx="8" cy="8" r="6.5" stroke="#E63950" strokeOpacity="0.3" strokeWidth="1" />
+    <circle cx="8" cy="8" r="4" fill="#C9A24B" />
+    <circle cx="8" cy="8" r="6.5" stroke="#C9A24B" strokeOpacity="0.3" strokeWidth="1" />
   </svg>
 );
 const NORMAL_DOT = (
   <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-    <circle cx="8" cy="8" r="2.5" fill="#15203F" />
+    <circle cx="8" cy="8" r="2.5" fill="#0E1F3A" />
   </svg>
 );
 
@@ -120,7 +120,7 @@ function YearBlock({
       <motion.div variants={itemVariants} className="lg:sticky lg:top-32 lg:self-start">
         <span
           aria-hidden="true"
-          className="font-mono-num block font-display text-[64px] font-extrabold leading-none tracking-tight text-navy-800 lg:text-[80px]"
+          className="number-display block font-mono-num text-[64px] font-extrabold text-navy-800 lg:text-[80px]"
         >
           {group.year}
         </span>

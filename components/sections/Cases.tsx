@@ -118,7 +118,7 @@ export function Cases() {
                       className="absolute inset-0"
                       style={{
                         background:
-                          "linear-gradient(135deg, #15203F 0%, #1E2C56 50%, #0E1733 100%)",
+                          "linear-gradient(135deg, #0E1F3A 0%, #16315C 50%, #0B1A33 100%)",
                       }}
                     />
                     {/* radial accent — ken-burns scale 1.03 */}
@@ -127,7 +127,7 @@ export function Cases() {
                       className="absolute inset-0 origin-center transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.03]"
                       style={{
                         background:
-                          "radial-gradient(60% 60% at 30% 30%, rgba(230,57,80,0.18) 0%, transparent 70%)",
+                          "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.18) 0%, transparent 70%)",
                       }}
                     />
 

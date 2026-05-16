@@ -12,15 +12,15 @@ const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 const VISUAL_BG: Record<BusinessCategory, string> = {
   facility:
-    "linear-gradient(135deg, #15203F 0%, #1E2C56 100%)",
+    "linear-gradient(135deg, #0E1F3A 0%, #16315C 100%)",
   sanitation:
-    "linear-gradient(135deg, #1E2C56 0%, #2C4276 100%)",
+    "linear-gradient(135deg, #16315C 0%, #2C4276 100%)",
   security:
-    "linear-gradient(135deg, #0E1733 0%, #1E2C56 100%)",
+    "linear-gradient(135deg, #0B1A33 0%, #16315C 100%)",
   development:
-    "linear-gradient(135deg, #15203F 0%, #C72A3E 200%)",
+    "linear-gradient(135deg, #0E1F3A 0%, #B88B3A 200%)",
   other:
-    "linear-gradient(135deg, #1E2C56 0%, #15203F 100%)",
+    "linear-gradient(135deg, #16315C 0%, #0E1F3A 100%)",
 };
 
 export function BusinessIntroAlternating() {
@@ -75,7 +75,7 @@ export function BusinessIntroAlternating() {
                       className="absolute inset-0"
                       style={{
                         background:
-                          "radial-gradient(60% 60% at 30% 30%, rgba(230,57,80,0.22) 0%, transparent 70%)",
+                          "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.22) 0%, transparent 70%)",
                       }}
                     />
                     {/* 영문명 */}

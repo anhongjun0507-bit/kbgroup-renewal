@@ -181,7 +181,7 @@ export function NoticesList({
                       style={{
                         background:
                           item.thumbColor ??
-                          "linear-gradient(135deg, #15203F 0%, #1E2C56 100%)",
+                          "linear-gradient(135deg, #0E1F3A 0%, #16315C 100%)",
                       }}
                     />
 

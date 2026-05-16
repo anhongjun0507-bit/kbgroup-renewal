@@ -114,7 +114,7 @@ export function BusinessOverview({ area }: Props) {
                 >
                   <span
                     aria-hidden="true"
-                    className="col-span-2 font-display text-[36px] font-extrabold leading-none text-accent-500 md:col-span-1"
+                    className="number-display col-span-2 text-[36px] font-extrabold text-accent-500 md:col-span-1"
                   >
                     {num}
                   </span>

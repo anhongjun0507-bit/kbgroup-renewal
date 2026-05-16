@@ -85,7 +85,7 @@ export function WhyDifferentiators() {
                   <div className="flex-shrink-0 md:w-32">
                     <span
                       aria-hidden="true"
-                      className="font-display text-[44px] font-extrabold leading-none text-accent-500 lg:text-[56px]"
+                      className="number-display text-[44px] font-extrabold text-accent-500 lg:text-[56px]"
                     >
                       {d.number}
                     </span>

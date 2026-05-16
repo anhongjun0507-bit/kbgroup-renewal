@@ -18,7 +18,7 @@ const LINK_BASE =
 
 export function Footer() {
   return (
-    /* Phase 2.5 — 배경 navy-900 (#0E1733)로 본문 다크섹션과 통일 */
+    /* Phase 2.5 — 배경 navy-900 (#0B1A33)로 본문 다크섹션과 통일 */
     <footer
       data-surface="dark"
       className="bg-navy-900 text-white"

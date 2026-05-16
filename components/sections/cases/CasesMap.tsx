@@ -140,15 +140,15 @@ export function CasesMap() {
                       cx={pos.x}
                       cy={pos.y}
                       r={r}
-                      fill={hasLh ? "rgba(230,57,80,0.18)" : "rgba(21,32,63,0.18)"}
-                      stroke={hasLh ? "#E63950" : "#15203F"}
+                      fill={hasLh ? "rgba(201,162,75,0.18)" : "rgba(21,32,63,0.18)"}
+                      stroke={hasLh ? "#C9A24B" : "#0E1F3A"}
                       strokeWidth="1.5"
                     />
                     <circle
                       cx={pos.x}
                       cy={pos.y}
                       r={3}
-                      fill={hasLh ? "#E63950" : "#15203F"}
+                      fill={hasLh ? "#C9A24B" : "#0E1F3A"}
                     />
                     <text
                       x={pos.x}
@@ -156,7 +156,7 @@ export function CasesMap() {
                       textAnchor="middle"
                       fontSize="9"
                       fontWeight="600"
-                      fill="#15203F"
+                      fill="#0E1F3A"
                     >
                       {pos.short}
                     </text>

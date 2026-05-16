@@ -130,7 +130,7 @@ export function WorkforceStats() {
         className="absolute inset-0"
         style={{
           background: [
-            "radial-gradient(45% 50% at 25% 30%, rgba(230,57,80,0.12) 0%, transparent 60%)",
+            "radial-gradient(45% 50% at 25% 30%, rgba(201,162,75,0.12) 0%, transparent 60%)",
             "radial-gradient(40% 45% at 80% 70%, rgba(30,44,86,0.7) 0%, transparent 60%)",
           ].join(", "),
         }}
@@ -211,9 +211,9 @@ function StatCard({
         aria-hidden="true"
         className="mt-5 h-[3px] w-6 bg-accent-500 transition-[width] duration-300 [transition-timing-function:var(--ease)] group-hover:w-12"
       />
-      <p className="mt-5 flex items-baseline gap-1">
+      <p className="stat-cell mt-5 flex items-baseline gap-1">
         <span
-          className="font-mono-num font-display text-[44px] font-extrabold leading-none text-white md:text-[56px]"
+          className="stat-number font-mono-num font-display text-[44px] font-extrabold leading-none text-white md:text-[56px]"
           style={{ letterSpacing: "var(--tracking-tight)" }}
         >
           {shouldReduce ? (
@@ -230,7 +230,7 @@ function StatCard({
           )}
         </span>
         {suffix && (
-          <span className="font-mono-num text-[18px] font-bold text-accent-500 md:text-[20px]">
+          <span className="stat-suffix font-mono-num text-[18px] font-bold text-accent-500 md:text-[20px]">
             {suffix}
           </span>
         )}

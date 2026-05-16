@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css");
 
-/* SUIT Variable — KCDF 후원, Pretendard 디자이너 작품 (헤딩 전용) */
+/* SUIT Variable — 헤딩 전용 */
 @font-face {
   font-family: "SUIT Variable";
   font-weight: 100 900;
@@ -23,69 +23,79 @@
     "JetBrains Mono", ui-monospace, monospace;
   --font-serif: var(--font-display);
 
-  /* === Type Scale (9단) — Phase 1 데스크탑 기준 재정렬 ===
-     caption 13 / body 16 / body-lg 18 / h3 24 / h2 36 / h1 48 / display 64 / 5xl 88 */
+  /* === Type Scale (Phase 6 K I-2 정합)
+     display-1 64/72 / display-2 48/56 / h1 40/48 / h2 32/40 / h3 24/32
+     body-lg 18/30 / body 16/28 / caption 13/20 */
   --text-xs: 0.8125rem;     /* 13px — caption */
   --text-sm: 0.875rem;      /* 14px */
   --text-base: 1rem;        /* 16px — body */
   --text-lg: 1.125rem;      /* 18px — body-lg */
   --text-xl: 1.5rem;        /* 24px — h3 */
-  --text-2xl: 2.25rem;      /* 36px — h2 */
-  --text-3xl: 3rem;         /* 48px — h1 */
-  --text-4xl: 4rem;         /* 64px — display */
-  --text-5xl: 5.5rem;       /* 88px */
+  --text-2xl: 2rem;         /* 32px — h2 */
+  --text-3xl: 2.5rem;       /* 40px — h1 */
+  --text-4xl: 3rem;         /* 48px — display-2 */
+  --text-5xl: 4rem;         /* 64px — display-1 */
 
-  /* === Tracking — 한글 자모 충돌 방지, 영문 라벨 0.18em === */
+  /* === Tracking === */
   --tracking-tighter: -0.03em;
   --tracking-tight: -0.02em;
-  --tracking-normal: -0.01em;        /* 본문 기본 — Phase 1 신규 */
+  --tracking-normal: -0.01em;
   --tracking-wide: 0.05em;
-  --tracking-widest: 0.18em;         /* 영문 라벨 표준 (지시서) */
+  --tracking-widest: 0.18em;
 
-  /* === Brand — Navy 3단 (신규 토큰) === */
-  --color-navy-900: #0E1733;
-  --color-navy-800: #15203F;
-  --color-navy-700: #1E2C56;
+  /* === Brand — Navy 5단 (Phase 6 K) === */
+  --color-navy-900: #0B1A33;
+  --color-navy-800: #0E1F3A;
+  --color-navy-700: #16315C;
+  --color-navy-500: #2A4E8F;
+  --color-navy-100: #E7ECF5;
 
-  /* === Brand — Accent 2단 (신규 토큰) === */
-  --color-accent-500: #E63950;
-  --color-accent-600: #C72A3E;
+  /* === Brand — Accent 3단 (Phase 6 K 골드 톤) === */
+  --color-accent-500: #C9A24B;          /* 골드 CTA */
+  --color-accent-600: #B88B3A;          /* hover (K엔 없음 — 한 단계 어둡게) */
+  --color-accent-300: #E3C57A;
+  --color-accent-100: #F6EBC9;
 
-  /* === Gray Scale 8단 (신규 토큰) === */
+  /* === Gray Scale (Phase 6 K) === */
   --color-gray-50: #F7F8FA;
-  --color-gray-100: #EEF0F4;
-  --color-gray-200: #DEE2E8;
-  --color-gray-300: #C3CAD3;
-  --color-gray-400: #9099A5;
-  --color-gray-500: #6B7380;
+  --color-gray-100: #EEF1F5;
+  --color-gray-200: #E1E6ED;
+  --color-gray-300: #C9D0DA;
+  --color-gray-400: #9AA3B2;
+  --color-gray-500: #6B7383;
   --color-gray-600: #3F4754;
-  --color-gray-700: #2A313C;
-  --color-gray-800: #1A1F28;
-  --color-gray-900: #0F1218;
+  --color-gray-700: #2A323F;
+  --color-gray-900: #1B2230;
 
-  /* === Brand alias — 기존 컴포넌트 호환용, 새 값으로 매핑 === */
-  --color-primary: #15203F;          /* navy-800 */
-  --color-primary-hover: #0E1733;    /* navy-900 */
-  --color-primary-soft: #F7F8FA;     /* gray-50 */
+  /* === On-dark (Phase 6 A-3 토큰) === */
+  --color-on-dark-primary: #FFFFFF;
+  --color-on-dark-secondary: rgba(255, 255, 255, 0.78);
+  --color-on-dark-muted: rgba(255, 255, 255, 0.55);
+
+  /* === Brand alias — 기존 컴포넌트 호환용 === */
+  --color-primary: #0E1F3A;             /* navy-800 */
+  --color-primary-hover: #0B1A33;       /* navy-900 */
+  --color-primary-soft: #F7F8FA;
   --color-secondary: #05a44f;
-  --color-accent: #E63950;           /* accent-500 */
-  --color-accent-hover: #C72A3E;     /* accent-600 */
+  --color-accent: #C9A24B;              /* accent-500 */
+  --color-accent-hover: #B88B3A;        /* accent-600 */
 
   /* === Surface === */
   --color-bg: #ffffff;
-  --color-bg-soft: #F7F8FA;          /* gray-50 */
-  --color-bg-tinted: #EEF0F4;        /* gray-100 */
+  --color-bg-soft: #F7F8FA;
+  --color-bg-tinted: #EEF1F5;
 
-  /* === Ink (AA 충족) — Phase 1: 본문 #3F4754 (7:1+) === */
-  --color-ink-900: #0E1733;          /* navy-900 */
-  --color-ink-strong: #0F1218;       /* gray-900 — 헤딩 */
-  --color-ink: #2A313C;              /* gray-700 — 본문 강조 */
-  --color-ink-muted: #3F4754;        /* gray-600 — 본문 기본 (지시서 P0) */
-  --color-ink-faint: #9099A5;        /* gray-400 — 메타·플레이스홀더 */
+  /* === Ink (Phase 6 A-6: 본문 #3F4754) === */
+  --color-text-body: #3F4754;
+  --color-ink-900: #0B1A33;
+  --color-ink-strong: #1B2230;          /* gray-900 — 헤딩 */
+  --color-ink: #2A323F;                 /* gray-700 — 본문 강조 */
+  --color-ink-muted: #3F4754;           /* gray-600 — 본문 기본 */
+  --color-ink-faint: #9AA3B2;           /* gray-400 */
 
   /* === Line === */
-  --color-line: #DEE2E8;             /* gray-200 */
-  --color-line-soft: #EEF0F4;        /* gray-100 */
+  --color-line: #E1E6ED;
+  --color-line-soft: #EEF1F5;
 
   /* === Status === */
   --color-success: #00b488;
@@ -93,20 +103,20 @@
   --color-warning: #ffb400;
 
   /* === Focus === */
-  --color-focus: #E63950;            /* accent-500 */
+  --color-focus: #C9A24B;               /* accent-500 */
 
-  /* === Legacy alias (기존 컴포넌트 호환) === */
-  --color-ink-soft: #2A313C;
+  /* === Legacy alias === */
+  --color-ink-soft: #2A323F;
   --color-cream: #ffffff;
   --color-beige: #F7F8FA;
-  --color-gold: #E63950;
-  --color-primary-light: #1E2C56;    /* navy-700 */
-  --color-primary-dark: #0E1733;     /* navy-900 */
+  --color-gold: #C9A24B;
+  --color-primary-light: #16315C;
+  --color-primary-dark: #0B1A33;
   --color-secondary-hover: #048541;
   --color-secondary-soft: #e8f7ef;
-  --color-accent-soft: #FDEEF1;
+  --color-accent-soft: #F6EBC9;         /* accent-100 */
 
-  /* === Radius — Phase 1: 직각 → 지시서 값 8/12/20 === */
+  /* === Radius (Phase 6 K) === */
   --radius-xs: 4px;
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -115,50 +125,56 @@
   --radius-2xl: 32px;
   --radius-3xl: 40px;
 
-  /* === Shadow — Phase 1: card/cta 신설 === */
+  /* === Shadow (Phase 6 K) === */
   --shadow-xs: none;
-  --shadow-sm: 0 1px 2px rgba(14, 23, 51, 0.04);
-  --shadow-md: 0 4px 12px rgba(14, 23, 51, 0.06);
-  --shadow-lg: 0 12px 28px rgba(14, 23, 51, 0.10);
-  --shadow-xl: 0 24px 56px rgba(14, 23, 51, 0.12);
-  --shadow-card: 0 12px 32px rgba(14, 23, 51, 0.08);  /* 카드 hover */
-  --shadow-cta: 0 8px 24px rgba(230, 57, 80, 0.35);   /* CTA hover */
+  --shadow-sm: 0 1px 2px rgba(11, 26, 51, 0.04);
+  --shadow-md: 0 4px 12px rgba(11, 26, 51, 0.06);
+  --shadow-lg: 0 12px 28px rgba(11, 26, 51, 0.10);
+  --shadow-xl: 0 24px 56px rgba(11, 26, 51, 0.12);
+  --shadow-card: 0 4px 16px rgba(11, 26, 51, 0.06);
+  --shadow-cta: 0 8px 24px rgba(201, 162, 75, 0.28);
 }
 
-/* === Phase 1: 모션·여백 토큰 (Tailwind @theme 미지원 또는 var() 직접 참조용) === */
+/* === Motion·여백·버튼 토큰 (Phase 6 K) === */
 :root {
   --background: var(--color-bg);
   --foreground: var(--color-ink-strong);
 
   /* Motion */
-  --ease: cubic-bezier(0.4, 0, 0.2, 1);
-  --duration-fast: 150ms;
-  --duration-base: 200ms;
-  --duration-slow: 600ms;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 160ms;
+  --dur-base: 220ms;
+  --dur-slow: 420ms;
 
-  /* Section padding — 120 / 80 / 56 (지시서 글로벌[3]) */
-  --section-py-desktop: 7.5rem;   /* 120px */
-  --section-py-tablet: 5rem;      /* 80px */
-  --section-py-mobile: 3.5rem;    /* 56px */
+  /* Section padding (K) */
+  --section-py-desktop: 120px;
+  --section-py-tablet: 80px;
+  --section-py-mobile: 56px;
 
-  /* Container — max 1280 / px 32·20 */
-  --container-max: 80rem;         /* 1280px */
-  --container-px-desktop: 2rem;   /* 32px */
-  --container-px-mobile: 1.25rem; /* 20px */
+  /* Container */
+  --container-max: 1200px;
+  --container-px-desktop: 2rem;
+  --container-px-mobile: 1.25rem;
 
   /* Card gap */
-  --card-gap-desktop: 1.5rem;     /* 24px */
-  --card-gap-mobile: 1rem;        /* 16px */
+  --card-gap-desktop: 1.5rem;
+  --card-gap-mobile: 1rem;
+
+  /* Button height (K I-3) */
+  --btn-h-sm: 36px;
+  --btn-h-md: 44px;
+  --btn-h-lg: 52px;
 }
 
 body {
   background: var(--background);
-  color: var(--color-ink-muted);
+  color: var(--color-text-body);          /* Phase 6 A-6 */
   font-family: var(--font-sans);
   font-weight: 400;
   font-size: var(--text-base);
-  line-height: 1.75;                  /* Phase 1: 1.7 → 1.75 (지시서 글로벌[2]) */
-  letter-spacing: -0.01em;            /* Phase 1: 자간 -0.01em */
+  line-height: 1.75;
+  letter-spacing: -0.01em;
+  font-feature-settings: "ss10", "tnum";
   word-break: keep-all;
   line-break: strict;
   overflow-wrap: anywhere;
@@ -167,12 +183,11 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* === Headings — :where()로 specificity 0, 컴포넌트가 항상 이김 ===
-   Phase 1: H1 56~64 (line-height 1.15) — 데스크탑 임팩트 강화 */
+/* === Headings === */
 :where(h1) {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5.5vw, 4rem);   /* 모바일 32 → 데스크탑 56~64 */
-  letter-spacing: var(--tracking-tight); /* -0.02em */
+  font-size: clamp(2rem, 5.5vw, 4rem);
+  letter-spacing: var(--tracking-tight);
   line-height: 1.15;
   font-weight: 900;
   color: var(--color-ink-strong);
@@ -182,7 +197,7 @@ body {
 
 :where(h2) {
   font-family: var(--font-display);
-  font-size: clamp(1.625rem, 3.2vw, 2.25rem);  /* 26 → 36 */
+  font-size: clamp(1.625rem, 3.2vw, 2.25rem);
   letter-spacing: var(--tracking-tight);
   line-height: 1.2;
   font-weight: 800;
@@ -192,7 +207,7 @@ body {
 
 :where(h3) {
   font-family: var(--font-display);
-  font-size: clamp(1.25rem, 1.8vw, 1.5rem);    /* 20 → 24 */
+  font-size: clamp(1.25rem, 1.8vw, 1.5rem);
   letter-spacing: var(--tracking-tight);
   line-height: 1.3;
   font-weight: 700;
@@ -209,24 +224,23 @@ body {
 }
 
 :where(p) {
-  line-height: 1.75;                  /* Phase 1: 본문 1.75 통일 */
+  line-height: 1.75;
 }
 
-/* === Phase 1: focus-visible (지시서 글로벌[8]) — outline 2px / offset 3px === */
+/* === Phase 6 I-5 focus-visible (offset 2px) === */
 :focus {
   outline: none;
 }
 :focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 3px;
+  outline: 2px solid var(--color-accent-500);
+  outline-offset: 2px;
 }
-/* 다크 배경 위 컴포넌트는 흰색 ring 분기 */
 .dark-surface :focus-visible,
 [data-surface="dark"] :focus-visible {
   outline-color: #ffffff;
 }
 
-/* === prefers-reduced-motion 글로벌 === */
+/* === prefers-reduced-motion === */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -238,14 +252,14 @@ body {
   }
 }
 
-/* === Phase 1: eyebrow — 영문 라벨 통일 (12~13px, weight 500, letter-spacing 0.18em) === */
+/* === eyebrow — 영문 라벨 === */
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.8125rem;               /* 13px */
-  font-weight: 500;                   /* 600 → 500 (지시서) */
-  letter-spacing: 0.18em;             /* 0.16 → 0.18 */
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--color-ink);            /* gray-700, 7:1+ */
+  color: var(--color-ink);
   line-height: 1.4;
 }
 
@@ -264,6 +278,14 @@ body {
   font-feature-settings: "tnum";
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
+.balance {
+  text-wrap: balance;
+}
+
 /* Legacy */
 .serif-em {
   color: var(--color-primary);
@@ -271,20 +293,43 @@ body {
   font-style: normal;
 }
 
-/* === Phase 1: 강조색 H2/H3 정책 헬퍼 ===
-   .accent-em — 한 화면당 1회만 사용 (지시서 글로벌[2])
-   정책은 사람이 지키고, 시각 강도는 통일된 톤으로 */
+/* 강조색 H2/H3 정책 헬퍼 — 한 화면당 1회 */
 .accent-em {
   color: var(--color-accent-500);
   font-weight: inherit;
   font-style: normal;
 }
 
-/* === Phase 1: 섹션·컨테이너·카드 유틸 — Phase 2/3에서 컴포넌트로 흡수 === */
+/* === Phase 6 A-3, K — section-dark 유틸 === */
+.section-dark,
+[data-surface="dark"] {
+  background: var(--color-navy-900);
+  color: var(--color-on-dark-secondary);
+}
+.section-dark h1,
+.section-dark h2,
+.section-dark h3,
+.section-dark h4,
+[data-surface="dark"] h1,
+[data-surface="dark"] h2,
+[data-surface="dark"] h3,
+[data-surface="dark"] h4 {
+  color: var(--color-on-dark-primary);
+}
+.section-dark .muted,
+[data-surface="dark"] .muted {
+  color: var(--color-on-dark-muted);
+}
+.section-dark a:not(.btn-reset),
+[data-surface="dark"] a:not(.btn-reset) {
+  color: var(--color-accent-300);
+}
+
+/* === 섹션·컨테이너·카드 유틸 (Phase 6 K I-1) === */
 .section {
   padding-block: var(--section-py-mobile);
 }
-@media (min-width: 768px) {
+@media (min-width: 640px) {
   .section {
     padding-block: var(--section-py-tablet);
   }
@@ -317,24 +362,52 @@ body {
   }
 }
 
+/* === Phase 6 A-1 — 큰 숫자 워터마크 nowrap 보호 === */
+.number-display {
+  width: auto;
+  min-width: 5ch;
+  white-space: nowrap;
+  overflow: visible;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+}
+
+/* === Phase 6 A-2 — 통계 카운터 nowrap === */
+.stat-cell {
+  min-width: clamp(120px, 14vw, 200px);
+  white-space: nowrap;
+}
+.stat-number {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+.stat-suffix {
+  margin-left: 4px;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* === Phase 6 B-1 — Hero twinkle keyframe === */
+@keyframes heroTwinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
 /* =============================================
    Legacy Sub-section Tone Override (v10)
-   sub 섹션 22개 옛 톤(font-serif + italic + 옛 데코) 글로벌 무력화
    ============================================= */
-
-/* .font-serif → SUIT/Pretendard 디스플레이 폰트로 변환 + italic 제거 */
 .font-serif {
   font-family: var(--font-display);
   font-style: normal;
 }
 
-/* Tailwind .italic 클래스 무력화 (한국어 italic 부적합) */
 .italic {
   font-style: normal !important;
 }
 
-/* 가는 라인 h-px를 h-[2px]로 강화 (가시성)
-   다만 sr-only·divider 외 모든 h-px에 적용되면 부작용 — 명시적 색 토큰과 함께 쓰일 때만 */
 .h-px.bg-primary,
 .h-px.bg-accent,
 .h-px.bg-gold,
@@ -342,7 +415,6 @@ body {
   height: 2px;
 }
 
-/* font-serif italic 큰 숫자 패턴 — Pretendard 800 워터마크 톤으로 */
 .font-serif.italic,
 .font-serif[class*="italic"] {
   font-style: normal;

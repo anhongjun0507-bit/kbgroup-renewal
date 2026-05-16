@@ -37,7 +37,7 @@ export function Hero() {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(135deg, #0E1733 0%, #1B2A5E 50%, #0E1733 100%)",
+            "linear-gradient(135deg, #0B1A33 0%, #1B2A5E 50%, #0B1A33 100%)",
         }}
       />
 
@@ -47,7 +47,7 @@ export function Hero() {
         className="absolute inset-0"
         style={{
           background: [
-            "radial-gradient(50% 60% at 15% 20%, rgba(230,57,80,0.18) 0%, transparent 60%)",
+            "radial-gradient(50% 60% at 15% 20%, rgba(201,162,75,0.18) 0%, transparent 60%)",
             "radial-gradient(45% 55% at 85% 75%, rgba(110,140,255,0.18) 0%, transparent 60%)",
             "radial-gradient(60% 50% at 70% 15%, rgba(255,255,255,0.06) 0%, transparent 65%)",
           ].join(", "),
@@ -64,7 +64,7 @@ export function Hero() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(90deg, rgba(14,23,51,0.85) 0%, rgba(14,23,51,0.35) 35%, rgba(14,23,51,0.55) 100%)",
+              "linear-gradient(90deg, rgba(11,26,51,0.85) 0%, rgba(11,26,51,0.35) 35%, rgba(11,26,51,0.55) 100%)",
           }}
         />
         {/* 추상 빌딩 실루엣 SVG */}
@@ -75,8 +75,8 @@ export function Hero() {
         >
           <defs>
             <linearGradient id="bldg" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#E63950" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#1E2C56" stopOpacity="0.6" />
+              <stop offset="0%" stopColor="#C9A24B" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#16315C" stopOpacity="0.6" />
             </linearGradient>
           </defs>
           {/* 빌딩 블록 5개 */}
@@ -85,19 +85,34 @@ export function Hero() {
           <rect x="245" y="320" width="70" height="380" fill="url(#bldg)" />
           <rect x="330" y="160" width="110" height="540" fill="url(#bldg)" />
           <rect x="455" y="240" width="105" height="460" fill="url(#bldg)" />
-          {/* 창문 패턴 */}
+          {/* 창문 패턴 — Phase 6 B-1: 일부 창문에 노란 twinkle */}
           {Array.from({ length: 20 }).map((_, row) =>
-            Array.from({ length: 5 }).map((_, col) => (
-              <rect
-                key={`w-${row}-${col}`}
-                x={50 + col * 100}
-                y={250 + row * 22}
-                width={8}
-                height={10}
-                fill="#FFFFFF"
-                opacity={Math.random() > 0.5 ? 0.4 : 0.1}
-              />
-            )),
+            Array.from({ length: 5 }).map((_, col) => {
+              const idx = row * 5 + col;
+              const twinkle = idx % 17 === 0;
+              const strong = !twinkle && idx % 4 === 0;
+              const dur = 3 + (idx % 4); // 3~6s
+              const delay = (idx % 7) * 0.4;
+              return (
+                <rect
+                  key={`w-${row}-${col}`}
+                  x={50 + col * 100}
+                  y={250 + row * 22}
+                  width={8}
+                  height={10}
+                  fill={twinkle ? "#E3C57A" : "#FFFFFF"}
+                  opacity={twinkle ? 0.8 : strong ? 0.4 : 0.1}
+                  style={
+                    twinkle
+                      ? {
+                          animation: `heroTwinkle ${dur}s ${delay}s ease-in-out infinite`,
+                          transformOrigin: "center",
+                        }
+                      : undefined
+                  }
+                />
+              );
+            }),
           )}
         </svg>
       </div>
@@ -151,7 +166,7 @@ export function Hero() {
                         >
                           <defs>
                             <linearGradient id="ul" x1="0" y1="0" x2="1" y2="0">
-                              <stop offset="0%" stopColor="#E63950" />
+                              <stop offset="0%" stopColor="#C9A24B" />
                               <stop offset="100%" stopColor="#FFFFFF" />
                             </linearGradient>
                           </defs>
@@ -214,7 +229,7 @@ export function Hero() {
             <div
               className="rounded-md border border-white/12 px-6 py-6 md:px-10 md:py-7"
               style={{
-                backgroundColor: "rgba(14, 23, 51, 0.55)",
+                backgroundColor: "rgba(11, 26, 51, 0.55)",
                 backdropFilter: "blur(16px)",
                 WebkitBackdropFilter: "blur(16px)",
                 boxShadow:

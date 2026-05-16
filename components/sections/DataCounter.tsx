@@ -61,7 +61,7 @@ export function DataCounter() {
           obs.disconnect();
         }
       },
-      { threshold: 0.3 },
+      { threshold: 0.1, rootMargin: "-10% 0px" },
     );
     obs.observe(sectionRef.current);
     return () => obs.disconnect();
@@ -134,10 +134,10 @@ export function DataCounter() {
                 {ICONS[c.key] ?? null}
               </div>
 
-              <div className="flex items-baseline gap-1">
+              <div className="stat-cell flex items-baseline gap-1">
                 {shouldReduce ? (
                   <span
-                    className="font-mono-num font-bold leading-none text-navy-800"
+                    className="stat-number font-mono-num font-bold leading-none text-navy-800"
                     style={{
                       fontSize: "clamp(2.5rem, 5vw, 3.75rem)",
                       letterSpacing: "var(--tracking-tight)",
@@ -154,7 +154,7 @@ export function DataCounter() {
                       const tn = t / d - 1;
                       return c * (tn * tn * tn + 1) + b;
                     }}
-                    className="font-mono-num font-bold leading-none text-navy-800"
+                    className="stat-number font-mono-num font-bold leading-none text-navy-800"
                     style={{
                       fontSize: "clamp(2.5rem, 5vw, 3.75rem)",
                       letterSpacing: "var(--tracking-tight)",
@@ -162,7 +162,7 @@ export function DataCounter() {
                   />
                 ) : (
                   <span
-                    className="font-mono-num font-bold leading-none text-navy-800"
+                    className="stat-number font-mono-num font-bold leading-none text-navy-800"
                     style={{
                       fontSize: "clamp(2.5rem, 5vw, 3.75rem)",
                       letterSpacing: "var(--tracking-tight)",

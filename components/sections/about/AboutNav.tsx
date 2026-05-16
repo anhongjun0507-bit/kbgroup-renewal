@@ -57,10 +57,10 @@ export function AboutNav({ current }: Props) {
                     href={tab.href}
                     aria-current={isActive ? "page" : undefined}
                     className={cn(
-                      "inline-flex items-baseline gap-2 rounded-sm px-4 py-2.5 text-[14px] font-semibold transition-colors duration-200 [transition-timing-function:var(--ease)] md:px-5 md:py-3",
+                      "inline-flex items-baseline gap-2 rounded-full border px-4 py-2.5 text-[14px] font-medium transition-colors duration-200 [transition-timing-function:var(--ease)] md:px-5 md:py-3",
                       isActive
-                        ? "bg-navy-800 text-white"
-                        : "bg-transparent text-ink hover:bg-gray-100 hover:text-ink-strong",
+                        ? "border-navy-900 bg-navy-900 text-white"
+                        : "border-gray-200 bg-white text-ink hover:border-navy-700 hover:text-navy-700",
                     )}
                   >
                     <span>{tab.korean}</span>

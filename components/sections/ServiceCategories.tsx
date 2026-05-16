@@ -12,18 +12,22 @@ import { businessAreas, type BusinessCategory } from "@/data/site-content";
 
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
-/* 사업별 컬러 키 (배경 그라데이션) — duotone 톤 */
+/* Phase 6 B-3 — 사업별 컬러 키 (배경 그라데이션 + 좌상단 4px 색띠) */
 const VISUAL_BG: Record<BusinessCategory, string> = {
-  facility:
-    "linear-gradient(135deg, #15203F 0%, #1E2C56 100%)",
-  sanitation:
-    "linear-gradient(135deg, #1E2C56 0%, #2C4276 100%)",
-  security:
-    "linear-gradient(135deg, #0E1733 0%, #1E2C56 100%)",
-  development:
-    "linear-gradient(135deg, #15203F 0%, #C72A3E 180%)",
-  other:
-    "linear-gradient(135deg, #1E2C56 0%, #15203F 100%)",
+  facility: "linear-gradient(135deg, #0E1F3A 0%, #16315C 100%)",
+  sanitation: "linear-gradient(135deg, #16315C 0%, #2C4276 100%)",
+  security: "linear-gradient(135deg, #0B1A33 0%, #16315C 100%)",
+  development: "linear-gradient(135deg, #0E1F3A 0%, #B88B3A 180%)",
+  other: "linear-gradient(135deg, #16315C 0%, #0E1F3A 100%)",
+};
+
+/* 좌상단 4px 액센트 색띠 (지시서 B-3 색) */
+const ACCENT_BAR: Record<BusinessCategory, string> = {
+  facility: "#3B82F6",
+  sanitation: "#10B981",
+  security: "#F59E0B",
+  development: "#8B5CF6",
+  other: "#64748B",
 };
 
 /* 사업별 라인 일러스트 SVG */
@@ -176,20 +180,23 @@ export function ServiceCategories() {
               <Link
                 href={`/business/${area.slug}`}
                 className="group relative flex h-full flex-col overflow-hidden rounded-md border border-line bg-white transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:border-navy-700 hover:shadow-[var(--shadow-card)]"
+                style={{ "--card-accent": ACCENT_BAR[area.id] } as React.CSSProperties}
               >
                 {/* 16:9 비주얼 영역 */}
                 <div
                   className="relative aspect-[16/9] overflow-hidden"
                   style={{ background: VISUAL_BG[area.id] }}
                 >
-                  {/* 워터마크 번호 — hover 시 accent로 점등 */}
+                  {/* Phase 6 B-3 — 좌상단 4px 액센트 색띠 */}
                   <span
                     aria-hidden="true"
-                    className="tabular absolute right-4 top-3 text-[88px] font-extrabold leading-none transition-colors duration-300 group-hover:text-accent-500/40"
-                    style={{
-                      letterSpacing: "var(--tracking-tighter)",
-                      color: "rgba(255,255,255,0.12)",
-                    }}
+                    className="absolute left-0 top-0 z-10 h-1 w-full"
+                    style={{ backgroundColor: ACCENT_BAR[area.id] }}
+                  />
+                  {/* 워터마크 번호 — hover 시 사업별 액센트 컬러로 점등 */}
+                  <span
+                    aria-hidden="true"
+                    className="number-display absolute right-4 top-3 text-[88px] font-extrabold text-white/[0.12] transition-colors duration-300 group-hover:[color:var(--card-accent)] group-hover:opacity-30"
                   >
                     {String(idx + 1).padStart(2, "0")}
                   </span>
