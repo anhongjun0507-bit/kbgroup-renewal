@@ -147,8 +147,9 @@ export function DataCounter() {
                   </span>
                 ) : inView ? (
                   <CountUp
+                    /* Phase 11 P0-C — 0 노출 제거: 70% 진폭에서 시작 */
+                    start={Math.round(c.value * 0.7)}
                     end={c.value}
-                    /* Phase 9 P1-04 — 자릿수 비례 duration (0.6s + log10*0.25s) */
                     duration={Math.max(0.6, 0.6 + Math.log10(Math.max(1, c.value)) * 0.25)}
                     separator=","
                     easingFn={(t, b, c, d) => {
@@ -162,6 +163,7 @@ export function DataCounter() {
                     }}
                   />
                 ) : (
+                  /* Phase 11 P0-C — inView 직전 fallback도 최종값 표시 (0 노출 방지) */
                   <span
                     className="stat-number font-mono-num font-bold leading-none text-navy-800"
                     style={{
@@ -169,7 +171,7 @@ export function DataCounter() {
                       letterSpacing: "var(--tracking-tight)",
                     }}
                   >
-                    0
+                    {c.value.toLocaleString()}
                   </span>
                 )}
                 {c.suffix && (

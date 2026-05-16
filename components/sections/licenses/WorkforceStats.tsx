@@ -220,13 +220,16 @@ function StatCard({
             value.toLocaleString("en-US")
           ) : inView ? (
             <CountUp
+              /* Phase 11 P0-C — 70% 진폭에서 시작 (0 노출 방지) */
+              start={Math.round(value * 0.7)}
               end={value}
               duration={Math.max(0.6, 0.6 + Math.log10(Math.max(1, value)) * 0.25)}
               delay={index * 0.1}
               separator=","
             />
           ) : (
-            "0"
+            /* Phase 11 P0-C — fallback도 최종값 (0 대신) */
+            value.toLocaleString("en-US")
           )}
         </span>
         {suffix && (
