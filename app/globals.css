@@ -126,14 +126,17 @@
   --color-secondary-soft: #e8f7ef;
   --color-accent-soft: #F6EBC9;         /* accent-100 */
 
-  /* === Radius (Phase 6 K) === */
+  /* === Radius (Phase 10 P2-03 — 3단 정리) ===
+     sm 6 (input/badge) / md 12 (card) / pill 9999 (button/chip)
+     기존 xs/lg/xl/2xl/3xl alias 유지 — 점진 마이그레이션 */
   --radius-xs: 4px;
-  --radius-sm: 8px;
+  --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 20px;
   --radius-xl: 24px;
   --radius-2xl: 32px;
   --radius-3xl: 40px;
+  --radius-pill: 9999px;
 
   /* === Shadow (Phase 6 K) === */
   --shadow-xs: none;
@@ -394,6 +397,49 @@ body {
    anchor 스크롤 시 본문 헤딩이 sticky 영역에 가리지 않도록 */
 :where(h1, h2, h3, h4, h5, h6) {
   scroll-margin-top: 144px;
+}
+
+/* === Phase 10 P1-11 — 보조 CTA 위계 3종 헬퍼 ===
+   tertiary 텍스트 링크 / secondary outline pill / primary 골드 (Button accent) */
+.cta-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-ink-strong);
+  transition: color var(--dur-base) var(--ease);
+}
+.cta-text:hover {
+  color: var(--color-accent-700);
+}
+.cta-text:hover .cta-arrow {
+  transform: translateX(6px);
+}
+.cta-arrow {
+  display: inline-block;
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.cta-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.625rem 1.25rem;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--color-ink-strong);
+  background: transparent;
+  border: 1px solid var(--color-ink-strong);
+  border-radius: 9999px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all var(--dur-base) var(--ease);
+}
+.cta-outline:hover {
+  background: var(--color-ink-strong);
+  color: #fff;
 }
 
 /* === Phase 6 A-2 — 통계 카운터 nowrap === */

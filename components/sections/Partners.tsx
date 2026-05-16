@@ -4,25 +4,31 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
 import { partners, type Partner } from "@/data/site-content";
 
+/* Phase 10 P1-06 — 카테고리별 행 그룹 + stagger 압축
+   기존 4x2 fade-in이 600ms 이상 지연되던 문제 → 전체 stagger ≤ 400ms로 축소
+   카테고리 구분이 시각적으로 명확하지 않던 문제 → 행 단위 sticky 헤더 분리 */
+
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
-const CATEGORY_LABEL: Record<Partner["category"], string> = {
-  client: "발주처",
-  public: "공공기관",
-  construction: "시공사",
-};
+const CATEGORY_GROUPS: {
+  key: Partner["category"];
+  label: string;
+  caption: string;
+}[] = [
+  { key: "client", label: "발주처", caption: "OUR CLIENTS" },
+  { key: "public", label: "공공기관", caption: "PUBLIC AGENCIES" },
+  { key: "construction", label: "시공사", caption: "CONSTRUCTION PARTNERS" },
+];
 
-/* Phase 2.11 — 인증/파트너 로고 strip
-   자료(실로고)가 없으므로 텍스트 placeholder를 grayscale 톤으로 표현, hover 시 컬러 살아남 */
 export function Partners() {
   const shouldReduce = useReducedMotion() ?? false;
 
   const item: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 12 },
+    hidden: { opacity: 0, y: shouldReduce ? 0 : 10 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: shouldReduce ? 0 : 0.6, ease: EASE_OUT },
+      transition: { duration: shouldReduce ? 0 : 0.4, ease: EASE_OUT },
     },
   };
 
@@ -35,14 +41,11 @@ export function Partners() {
           viewport={{ once: true, margin: "-80px" }}
           variants={{
             hidden: {},
-            visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.08 } },
+            visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.04 } },
           }}
           className="mb-12 max-w-3xl md:mb-16"
         >
-          <motion.p
-            variants={item}
-            className="eyebrow"
-          >
+          <motion.p variants={item} className="eyebrow">
             PARTNERS
           </motion.p>
           <motion.h2
@@ -53,31 +56,69 @@ export function Partners() {
           </motion.h2>
         </motion.div>
 
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={{
-            hidden: {},
-            visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.04 } },
-          }}
-          className="grid grid-cols-2 gap-px overflow-hidden rounded-sm bg-line sm:grid-cols-3 lg:grid-cols-4"
-        >
-          {partners.map((p) => (
-            <motion.div
-              key={p.name}
-              variants={item}
-              className="group flex h-32 flex-col justify-between bg-white p-6 grayscale transition-all duration-300 [transition-timing-function:var(--ease)] hover:grayscale-0 hover:bg-bg-soft"
-            >
-              <p className="text-[12px] font-medium uppercase tracking-[0.15em] text-ink-faint transition-colors group-hover:text-accent-500">
-                {CATEGORY_LABEL[p.category]}
-              </p>
-              <p className="text-[15px] font-bold tracking-tight text-ink-muted transition-colors group-hover:text-ink-strong">
-                {p.name}
-              </p>
-            </motion.div>
-          ))}
-        </motion.div>
+        {/* 카테고리별 행 분리 — 발주처 / 공공기관 / 시공사 */}
+        <div className="space-y-12">
+          {CATEGORY_GROUPS.map((group) => {
+            const items = partners.filter((p) => p.category === group.key);
+            if (items.length === 0) return null;
+            return (
+              <motion.section
+                key={group.key}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-80px" }}
+                variants={{
+                  hidden: {},
+                  visible: {
+                    transition: {
+                      staggerChildren: shouldReduce ? 0 : 0.04,
+                    },
+                  },
+                }}
+                aria-labelledby={`partner-group-${group.key}`}
+              >
+                {/* 카테고리 헤더 */}
+                <motion.div
+                  variants={item}
+                  className="mb-4 flex items-baseline justify-between border-b border-line pb-3"
+                >
+                  <div>
+                    <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-accent-700">
+                      {group.caption}
+                    </p>
+                    <h3
+                      id={`partner-group-${group.key}`}
+                      className="mt-1 font-display text-[18px] font-bold tracking-tight text-ink-strong md:text-[20px]"
+                    >
+                      {group.label}
+                    </h3>
+                  </div>
+                  <span className="font-mono-num text-[13px] text-ink-faint">
+                    {items.length}개사
+                  </span>
+                </motion.div>
+
+                {/* 카드 그리드 */}
+                <ul className="grid grid-cols-2 gap-px overflow-hidden rounded-md bg-line sm:grid-cols-3 lg:grid-cols-4">
+                  {items.map((p) => (
+                    <motion.li
+                      key={p.name}
+                      variants={item}
+                      className="group flex h-28 flex-col justify-between bg-white p-5 grayscale transition-all duration-300 [transition-timing-function:var(--ease)] hover:bg-white hover:grayscale-0"
+                    >
+                      <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-faint transition-colors group-hover:text-accent-700">
+                        {p.note ?? group.label}
+                      </p>
+                      <p className="font-display text-[15px] font-bold tracking-tight text-ink-muted transition-colors group-hover:text-ink-strong">
+                        {p.name}
+                      </p>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.section>
+            );
+          })}
+        </div>
       </Container>
     </section>
   );

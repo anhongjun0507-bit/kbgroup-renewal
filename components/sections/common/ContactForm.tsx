@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Container } from "@/components/ui";
+import { Container, Input, Textarea, Select, Label } from "@/components/ui";
 import { contact } from "@/data/site-content";
 
 /* Phase 2.12 — CONTACT 인라인 문의 폼
@@ -16,10 +16,7 @@ const INQUIRY_TYPES = [
   { value: "other", label: "기타 / 종합 문의" },
 ];
 
-/* Phase 9 P0-08 — label letter-spacing 정상화 (eyebrow는 자간 0.12) */
-const labelClass = "mb-2 block text-[13px] font-semibold text-ink-muted";
-const inputBase =
-  "w-full h-12 rounded-md border border-line bg-white px-4 text-[15px] text-ink-strong placeholder:text-[#9AA3B2] transition-all duration-200 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/30";
+/* Phase 10 P1-07/08 — 단일 Input/Select/Label 컴포넌트 사용 */
 
 export type ContactFormProps = {
   /** 페이지별 컨텍스트 — 메일 제목 prefix */
@@ -162,113 +159,91 @@ export function ContactForm({ context, className }: ContactFormProps) {
           >
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <div className="md:col-span-1">
-                <label htmlFor="cf-company" className={labelClass}>
-                  회사명 / 단지명 *
-                </label>
-                <input
+                <Label htmlFor="cf-company" required>
+                  회사명 / 단지명
+                </Label>
+                <Input
                   id="cf-company"
                   name="company"
-                  type="text"
                   required
-                  className={inputBase}
                   placeholder="예) ○○아파트 입주자대표회의"
                 />
               </div>
               <div>
-                <label htmlFor="cf-name" className={labelClass}>
-                  담당자 *
-                </label>
-                <input
+                <Label htmlFor="cf-name" required>
+                  담당자
+                </Label>
+                <Input
                   id="cf-name"
                   name="name"
-                  type="text"
                   required
-                  className={inputBase}
                   placeholder="예) 홍길동"
                 />
               </div>
               <div>
-                <label htmlFor="cf-phone" className={labelClass}>
-                  연락처 *
-                </label>
-                <input
+                <Label htmlFor="cf-phone" required>
+                  연락처
+                </Label>
+                <Input
                   id="cf-phone"
                   name="phone"
                   type="tel"
-                  required
                   inputMode="tel"
-                  className={inputBase}
+                  required
                   placeholder="010-0000-0000"
                 />
               </div>
               <div>
-                <label htmlFor="cf-email" className={labelClass}>
-                  이메일 *
-                </label>
-                <input
+                <Label htmlFor="cf-email" required>
+                  이메일
+                </Label>
+                <Input
                   id="cf-email"
                   name="email"
                   type="email"
                   required
-                  className={inputBase}
                   placeholder="example@company.com"
                 />
               </div>
               <div>
-                <label htmlFor="cf-households" className={labelClass}>
-                  단지 규모 (세대수)
-                </label>
-                <input
+                <Label htmlFor="cf-households">단지 규모 (세대수)</Label>
+                <Input
                   id="cf-households"
                   name="households"
                   type="number"
                   min={0}
-                  className={inputBase}
                   placeholder="예) 1200"
                 />
               </div>
               <div>
-                <label htmlFor="cf-inquiry-type" className={labelClass}>
-                  문의 유형 *
-                </label>
-                <select
+                <Label htmlFor="cf-inquiry-type" required>
+                  문의 유형
+                </Label>
+                <Select
                   id="cf-inquiry-type"
                   name="inquiryType"
                   required
-                  className={inputBase}
-                  defaultValue=""
-                >
-                  <option value="" disabled>
-                    선택해 주세요
-                  </option>
-                  {INQUIRY_TYPES.map((t) => (
-                    <option key={t.value} value={t.value}>
-                      {t.label}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="선택해 주세요"
+                  options={INQUIRY_TYPES}
+                />
               </div>
               <div>
-                <label htmlFor="cf-preferred-date" className={labelClass}>
-                  상담 희망일
-                </label>
-                <input
+                <Label htmlFor="cf-preferred-date">상담 희망일</Label>
+                <Input
                   id="cf-preferred-date"
                   name="preferredDate"
                   type="date"
-                  className={inputBase}
                 />
               </div>
               <div className="md:col-span-2">
-                <label htmlFor="cf-message" className={labelClass}>
-                  문의 내용 *
-                </label>
-                <textarea
+                <Label htmlFor="cf-message" required>
+                  문의 내용
+                </Label>
+                <Textarea
                   id="cf-message"
                   name="message"
                   required
                   rows={5}
-                  className={inputBase + " resize-y"}
                   placeholder="현재 관리 상황, 요청 범위, 일정 등을 자유롭게 적어주세요."
                 />
               </div>
@@ -278,7 +253,7 @@ export function ContactForm({ context, className }: ContactFormProps) {
                     type="checkbox"
                     name="privacyAgree"
                     required
-                    className="mt-0.5 h-4 w-4 border-line accent-accent-500"
+                    className="mt-0.5 h-4 w-4 accent-accent-500"
                   />
                   <span>
                     개인정보 수집 및 이용에 동의합니다. 수집 항목은 상담 응대

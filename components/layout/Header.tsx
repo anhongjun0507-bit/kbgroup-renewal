@@ -90,6 +90,23 @@ export function Header({ isAuthed = false }: HeaderProps) {
     };
   }, [mobileOpen]);
 
+  /* Phase 10 P1-03 — ESC 키로 모바일 메뉴 닫기 + 화면 크기 lg+ 전환 시 자동 닫기 */
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    const onResize = () => {
+      if (window.innerWidth >= 1024) setMobileOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [mobileOpen]);
+
   const closeMobile = () => {
     setMobileOpen(false);
     setMobileExpand(null);

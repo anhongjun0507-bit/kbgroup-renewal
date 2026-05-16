@@ -75,17 +75,11 @@ export function Cases() {
               전국 단지의 <span className="accent-em">발자취</span>
             </motion.h2>
           </div>
-          {/* chip 형태 CTA */}
+          {/* Phase 10 P1-11 — 보조 CTA outline pill 통일 */}
           <motion.div variants={item} className="hidden md:block">
-            <Link
-              href="/cases"
-              className="group inline-flex items-center gap-2 rounded-sm border border-ink-strong px-5 py-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-strong transition-colors duration-200 hover:bg-ink-strong hover:text-white"
-            >
+            <Link href="/cases" className="group cta-outline">
               관리현황 전체
-              <span
-                aria-hidden="true"
-                className="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
-              >
+              <span aria-hidden="true" className="cta-arrow">
                 →
               </span>
             </Link>
