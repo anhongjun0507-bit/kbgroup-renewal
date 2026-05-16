@@ -51,8 +51,12 @@ const SIZE: Record<ButtonSize, string> = {
   lg: "h-14 px-8 text-base",
 };
 
+/* Phase 11 P0-A — `.btn-reset` 클래스로 globals.css의
+   `[data-surface="dark"] a:not(.btn-reset)` 셀렉터를 회피.
+   다크 hero 위 Button accent variant의 텍스트가 accent-300(옅은 골드)으로
+   덮어써져 1.43:1로 보이던 버그 해결 */
 const BASE =
-  "inline-flex items-center justify-center gap-2 font-bold tracking-tight transition-all duration-200 [transition-timing-function:var(--ease)] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap";
+  "btn-reset inline-flex items-center justify-center gap-2 font-bold tracking-tight transition-all duration-200 [transition-timing-function:var(--ease)] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap";
 
 export function Button(props: ButtonProps) {
   const { variant = "primary", size = "md", className, children } = props;

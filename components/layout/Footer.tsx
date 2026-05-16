@@ -103,7 +103,7 @@ export function Footer() {
                 {/* Phase 2.7 — 상담 신청 CTA 메인 동일 사이즈 (h-14 / px-8) */}
                 <a
                   href={`mailto:${contact.email}?subject=${encodeURIComponent("[케이비개발] 사업 상담 문의")}`}
-                  className="inline-flex h-14 items-center gap-2 rounded-sm bg-accent-500 px-8 text-base font-bold text-navy-900 transition-all duration-200 [transition-timing-function:var(--ease)] hover:bg-accent-600 hover:shadow-[var(--shadow-cta)]"
+                  className="btn-reset inline-flex h-14 items-center gap-2 rounded-sm bg-accent-500 px-8 text-base font-bold text-navy-900 transition-all duration-200 [transition-timing-function:var(--ease)] hover:bg-accent-600 hover:text-white hover:shadow-[var(--shadow-cta)]"
                 >
                   상담 신청 <span aria-hidden="true">→</span>
                 </a>

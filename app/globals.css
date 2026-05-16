@@ -339,8 +339,10 @@ body {
 [data-surface="dark"] .muted {
   color: var(--color-on-dark-muted);
 }
-.section-dark a:not(.btn-reset),
-[data-surface="dark"] a:not(.btn-reset) {
+/* Phase 11 P0-A — bg-* 클래스가 있는 a/button은 자체 색 유지(골드 배경 위 navy-900 텍스트)
+   plain text 링크만 accent-300 골드로 강조 */
+.section-dark a:not(.btn-reset):not([class*="bg-"]),
+[data-surface="dark"] a:not(.btn-reset):not([class*="bg-"]) {
   color: var(--color-accent-300);
 }
 

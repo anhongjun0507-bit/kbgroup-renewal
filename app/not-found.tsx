@@ -60,19 +60,19 @@ export default function NotFound() {
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
             <Link
               href="/"
-              className="inline-flex h-14 items-center gap-2 rounded-sm bg-accent-500 px-8 text-base font-bold text-navy-900 transition-all duration-200 [transition-timing-function:var(--ease)] hover:bg-accent-600 hover:text-white hover:shadow-[var(--shadow-cta)]"
+              className="btn-reset inline-flex h-14 items-center gap-2 rounded-sm bg-accent-500 px-8 text-base font-bold text-navy-900 transition-all duration-200 [transition-timing-function:var(--ease)] hover:bg-accent-600 hover:text-white hover:shadow-[var(--shadow-cta)]"
             >
               홈으로 <span aria-hidden="true">→</span>
             </Link>
             <Link
               href="/business"
-              className="inline-flex h-14 items-center gap-2 rounded-sm border border-white/60 px-8 text-base font-semibold text-white transition-colors duration-200 hover:bg-white hover:text-ink-strong"
+              className="btn-reset inline-flex h-14 items-center gap-2 rounded-sm border border-white/60 px-8 text-base font-semibold text-white transition-colors duration-200 hover:bg-white hover:text-ink-strong"
             >
               사업영역 보기
             </Link>
             <a
               href={`mailto:${contact.email}`}
-              className="inline-flex h-14 items-center gap-2 px-4 text-[14px] font-medium text-white/75 transition-colors duration-200 hover:text-white"
+              className="btn-reset inline-flex h-14 items-center gap-2 px-4 text-[14px] font-medium text-white/75 transition-colors duration-200 hover:text-white"
             >
               담당자에게 문의 ↗
             </a>
