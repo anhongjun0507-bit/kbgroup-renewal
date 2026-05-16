@@ -10,12 +10,13 @@ import { partners, type Partner } from "@/data/site-content";
 
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
+/* Phase 13 P2-G — 라벨 명확화 ("발주처 1개사" → "주요 위탁기관") */
 const CATEGORY_GROUPS: {
   key: Partner["category"];
   label: string;
   caption: string;
 }[] = [
-  { key: "client", label: "발주처", caption: "OUR CLIENTS" },
+  { key: "client", label: "주요 위탁기관", caption: "PRIMARY CLIENT" },
   { key: "public", label: "공공기관", caption: "PUBLIC AGENCIES" },
   { key: "construction", label: "시공사", caption: "CONSTRUCTION PARTNERS" },
 ];

@@ -269,8 +269,7 @@ export function ServiceCategories() {
               <div className="flex items-baseline gap-6">
                 <span
                   aria-hidden="true"
-                  className="tabular text-[44px] font-extrabold leading-none text-accent-500/25"
-                  style={{ letterSpacing: "var(--tracking-tighter)" }}
+                  className="number-display tabular text-[44px] font-extrabold text-accent-500/25"
                 >
                   05
                 </span>

@@ -120,7 +120,15 @@ export function CompanyOffice() {
                 <dt className="text-[11px] font-medium uppercase tracking-[0.18em] text-accent-300">
                   {f.label}
                 </dt>
-                <dd className="mt-3 font-display text-[22px] font-extrabold tracking-tight text-white md:text-[26px]">
+                {/* Phase 13 P1-K — 한글 keep-all + 영문 숫자 anywhere로 자연 줄바꿈 */}
+                <dd
+                  className="mt-3 font-display text-[20px] font-extrabold tracking-tight text-white md:text-[22px] lg:text-[24px]"
+                  style={{
+                    wordBreak: "keep-all",
+                    overflowWrap: "anywhere",
+                    lineHeight: 1.3,
+                  }}
+                >
                   {f.value}
                 </dd>
               </div>

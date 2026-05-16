@@ -126,8 +126,9 @@ export function Footer() {
               </p>
             </div>
             <p>
-              © {new Date().getFullYear()} {company.brandName}. All rights
-              reserved.
+              {/* Phase 13 P1-I — 회사 설립 연도(2013) ~ 현재 동적 표기 */}
+              © {company.foundedYear}–{new Date().getFullYear()}{" "}
+              {company.brandName}. All rights reserved.
             </p>
           </div>
         </div>

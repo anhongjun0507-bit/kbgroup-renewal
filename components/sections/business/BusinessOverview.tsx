@@ -156,8 +156,7 @@ export function BusinessOverview({ area }: Props) {
                 </p>
                 <p className="mt-3 flex items-baseline gap-1 font-mono-num">
                   <span
-                    className="font-display text-[40px] font-extrabold leading-none text-navy-800 md:text-[48px]"
-                    style={{ letterSpacing: "var(--tracking-tight)" }}
+                    className="number-display text-[40px] font-extrabold text-navy-800 md:text-[48px]"
                   >
                     {m.value}
                   </span>

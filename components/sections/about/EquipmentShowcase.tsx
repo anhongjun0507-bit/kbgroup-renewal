@@ -83,7 +83,7 @@ export function EquipmentShowcase() {
             >
               <span aria-hidden="true" className="absolute left-0 top-0 h-full w-1 bg-navy-700" />
               <p className="flex items-baseline gap-1">
-                <span className="font-mono-num font-display text-[40px] font-extrabold leading-none text-navy-800 md:text-[44px]">
+                <span className="number-display font-mono-num text-[40px] font-extrabold text-navy-800 md:text-[44px]">
                   {s.value}
                 </span>
                 <span className="text-[14px] font-semibold text-accent-500">{s.suffix}</span>

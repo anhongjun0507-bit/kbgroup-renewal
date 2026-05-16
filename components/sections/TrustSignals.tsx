@@ -67,7 +67,9 @@ export function TrustSignals() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={listVariants}
-          className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6"
+          /* Phase 13 P0-I,J — lg:grid-cols-6 → 3 (카드 폭 2배로 확장, ellipsis 0).
+             ISO 45001 안전보건·광주지방경찰청·2016 모두 한 줄에 들어감 */
+          className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
         >
           {KEY_LICENSES.map((lic) => (
             <motion.li
@@ -87,12 +89,14 @@ export function TrustSignals() {
               >
                 {lic.icon}
               </span>
-              <div className="min-w-0">
-                <p className="truncate font-display text-[13px] font-bold text-ink-strong md:text-[14px]">
+              {/* Phase 13 P0-I — truncate 제거 → 풀 텍스트 노출 (인증명 ellipsis 0) */}
+              <div className="min-w-0 flex-1">
+                <p className="font-display text-[14px] font-bold leading-snug text-ink-strong md:text-[15px]">
                   {lic.name}
                 </p>
-                <p className="mt-0.5 truncate text-[11px] text-ink-faint">
-                  {lic.issuer} · {lic.year}
+                <p className="mt-1 text-[11px] leading-snug text-ink-faint">
+                  <span>{lic.issuer}</span>
+                  <span className="ml-1 text-ink-muted">· {lic.year}</span>
                 </p>
               </div>
             </motion.li>

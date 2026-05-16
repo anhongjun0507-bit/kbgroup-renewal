@@ -383,13 +383,16 @@ body {
   }
 }
 
-/* === Phase 6 A-1 — 큰 숫자 워터마크 nowrap 보호 === */
+/* === Phase 13 P0-E~H — 큰 숫자 워터마크 nowrap 보호 + ascender/descender 클리핑 방지
+   line-height 1 → 1.15 (SUIT/Pretendard 안전값). 17px 클리핑이 0으로 흡수됨
+   영향: /business 01~05 / /about CORE VALUES·OUR DIFFERENCE 01~05 /
+        /business/facility 01~03 + 24·180·15 / /licenses 27 등 전 페이지 워터마크 */
 .number-display {
   width: auto;
   min-width: 5ch;
   white-space: nowrap;
   overflow: visible;
-  line-height: 1;
+  line-height: 1.15;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
   font-family: var(--font-display);
@@ -449,10 +452,13 @@ body {
   min-width: clamp(120px, 14vw, 200px);
   white-space: nowrap;
 }
+/* Phase 13 P0-G — stat-number도 line-height 1.15로 보강 (DataCounter·CasesStats·WorkforceStats·LicensesKPI).
+   .stat-number 클래스가 컴포넌트의 leading-none을 덮어쓰도록 !important 적용 */
 .stat-number {
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
+  line-height: 1.15 !important;
 }
 .stat-suffix {
   margin-left: 4px;
