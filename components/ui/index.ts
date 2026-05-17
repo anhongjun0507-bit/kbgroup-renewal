@@ -4,6 +4,6 @@ export { Button, type ButtonProps } from "./Button";
 export { Card } from "./Card";
 export { Badge } from "./Badge";
 export { FadeIn } from "./FadeIn";
-export { Input, Textarea } from "./Input";
+export { Input, Textarea, FieldMessage } from "./Input";
 export { Select, type SelectOption } from "./Select";
 export { Label } from "./Label";

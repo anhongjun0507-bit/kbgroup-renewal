@@ -170,7 +170,7 @@ export function NoticesList({
                             ? "text-accent-500"
                             : counts[c.value] === 0
                               ? "text-ink-placeholder font-medium"
-                              : "text-accent-700 font-semibold",
+                              : "text-accent-deep font-semibold",
                         )}
                       >
                         {counts[c.value]}
@@ -201,7 +201,8 @@ export function NoticesList({
                 setPage(1);
               }}
               placeholder="공지 검색"
-              className="w-full rounded-sm border border-line bg-white px-3 py-2.5 pl-10 text-[14px] text-ink-strong placeholder:text-ink-faint focus:border-navy-700 focus:outline-none"
+              aria-label="공지사항 검색"
+              className="block h-11 w-full rounded-sm border border-line bg-white px-3 pl-10 text-[16px] text-ink-strong placeholder:text-ink-faint focus:border-navy-700 focus:outline-none md:text-[14px]"
             />
           </div>
         </div>

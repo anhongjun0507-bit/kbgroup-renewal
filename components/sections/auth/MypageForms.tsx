@@ -40,7 +40,7 @@ function DisplayNameSection({ current }: { current: string | null }) {
           defaultValue={current ?? ""}
           maxLength={50}
           placeholder="표시할 이름"
-          className="w-full border-0 border-b border-line bg-transparent py-2 text-base text-ink outline-none transition-colors focus:border-primary"
+          className="w-full border-0 border-b border-line bg-transparent py-2 text-base text-ink transition-colors focus:border-primary"
         />
         <FormMessage state={state} />
         <button
@@ -81,7 +81,7 @@ function PasswordSection() {
             required
             minLength={8}
             autoComplete="new-password"
-            className="mt-2 w-full border-0 border-b border-line bg-transparent py-2 text-base text-ink outline-none transition-colors focus:border-primary"
+            className="mt-2 w-full border-0 border-b border-line bg-transparent py-2 text-base text-ink transition-colors focus:border-primary"
           />
         </div>
         <div>
@@ -98,7 +98,7 @@ function PasswordSection() {
             required
             minLength={8}
             autoComplete="new-password"
-            className="mt-2 w-full border-0 border-b border-line bg-transparent py-2 text-base text-ink outline-none transition-colors focus:border-primary"
+            className="mt-2 w-full border-0 border-b border-line bg-transparent py-2 text-base text-ink transition-colors focus:border-primary"
           />
         </div>
         <FormMessage state={state} />

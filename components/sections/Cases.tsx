@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
@@ -106,32 +107,46 @@ export function Cases() {
                 className="group overflow-hidden rounded-md border border-line bg-white transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
               >
                 <Link href="/cases" className="block">
-                  {/* Phase 9 P0-04 — 단일 navy 톤 (hue-rotate 제거) */}
+                  {/* Phase 14 P0-03 — c.image 지정 시 실사 사진 우선, 없으면 기존 그라데이션 + 이니셜 fallback */}
                   <div className="relative aspect-[4/5] overflow-hidden bg-navy-900">
-                    {/* 베이스 그라데이션 */}
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, #0E1F3A 0%, #16315C 50%, #0B1A33 100%)",
-                      }}
-                    />
-                    {/* radial accent — ken-burns scale 1.03 */}
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0 origin-center transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.03]"
-                      style={{
-                        background:
-                          "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.18) 0%, transparent 70%)",
-                      }}
-                    />
-
-                    {/* 어두운 오버레이 0.4 → 0.2 */}
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0 bg-navy-900/40 transition-opacity duration-500 group-hover:bg-navy-900/20"
-                    />
+                    {c.image ? (
+                      <>
+                        <Image
+                          src={c.image}
+                          alt={c.name}
+                          fill
+                          sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+                          className="object-cover transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.04]"
+                        />
+                        <div
+                          aria-hidden="true"
+                          className="absolute inset-0 bg-gradient-to-t from-navy-900/70 via-navy-900/15 to-navy-900/30"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <div
+                          aria-hidden="true"
+                          className="absolute inset-0"
+                          style={{
+                            background:
+                              "linear-gradient(135deg, #0E1F3A 0%, #16315C 50%, #0B1A33 100%)",
+                          }}
+                        />
+                        <div
+                          aria-hidden="true"
+                          className="absolute inset-0 origin-center transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.03]"
+                          style={{
+                            background:
+                              "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.18) 0%, transparent 70%)",
+                          }}
+                        />
+                        <div
+                          aria-hidden="true"
+                          className="absolute inset-0 bg-navy-900/40 transition-opacity duration-500 group-hover:bg-navy-900/20"
+                        />
+                      </>
+                    )}
 
                     {/* 좌상단 배지 */}
                     <span
@@ -156,16 +171,18 @@ export function Cases() {
                       {c.region}
                     </div>
 
-                    {/* 중앙 이니셜 워터마크 */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span
-                        aria-hidden="true"
-                        className="font-display text-[clamp(5rem,12vw,9rem)] font-black leading-none text-white/15 transition-colors duration-500 group-hover:text-white/30"
-                        style={{ letterSpacing: "var(--tracking-tighter)" }}
-                      >
-                        {initial}
-                      </span>
-                    </div>
+                    {/* 중앙 이니셜 워터마크 — 이미지 없을 때만 */}
+                    {!c.image && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span
+                          aria-hidden="true"
+                          className="font-display text-[clamp(5rem,12vw,9rem)] font-black leading-none text-white/15 transition-colors duration-500 group-hover:text-white/30"
+                          style={{ letterSpacing: "var(--tracking-tighter)" }}
+                        >
+                          {initial}
+                        </span>
+                      </div>
+                    )}
 
                     {/* 좌측 accent 라인 */}
                     <span

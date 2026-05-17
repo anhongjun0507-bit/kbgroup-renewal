@@ -57,12 +57,15 @@ export function PageHero({
     },
   };
 
+  /* Phase 14 P0-07 — 첫 페인트 시 opacity 0 영구 invisible 위험 제거.
+     opacity는 항상 1로 두고 transform y만 미세 이동 → JS-off/지연 환경에서도 즉시 가독.
+     reduced-motion 시 transform도 0으로 즉시 완료. */
   const item: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 16 },
+    hidden: { opacity: 1, y: shouldReduce ? 0 : 8 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: shouldReduce ? 0 : 0.7, ease: EASE_OUT },
+      transition: { duration: shouldReduce ? 0 : 0.5, ease: EASE_OUT },
     },
   };
 
@@ -138,7 +141,8 @@ export function PageHero({
           <motion.div
             variants={item}
             aria-hidden="true"
-            className="mt-7 h-[2px] w-10 bg-primary"
+            /* Phase 14 P2-02 — gold-rule 토큰 사용. PageHero는 sm 40px */
+            className="gold-rule gold-rule-sm mt-7 !my-0"
           />
 
           <motion.p

@@ -127,7 +127,7 @@ export default function ForgotPasswordPage() {
             <div className="mt-10 text-center">
               <Link
                 href="/login"
-                className="text-[14px] font-medium text-ink-muted transition-colors hover:text-accent-700"
+                className="text-[14px] font-medium text-ink-muted transition-colors hover:text-accent-deep"
               >
                 ← 로그인 페이지로 돌아가기
               </Link>

@@ -65,6 +65,12 @@ export type Complex = {
   /** 단지 분류 — 공동주택 / 집합건물 */
   kind?: "apartment" | "mixed-use";
   type?: "LH" | "민간" | "공공";
+  /**
+   * 단지 대표 사진 경로 (선택, public/images/cases/* 기준).
+   * Phase 14 P0-03 — 슬롯 신규. image 지정 시 모노그램 fallback 대신 next/image 노출.
+   * complexes 배열의 각 항목에 사용자가 매핑 정보 입력 시 자동 적용.
+   */
+  image?: string;
 };
 
 export type Partner = {
@@ -200,37 +206,46 @@ export const ceoMessage = {
 // 4. 카운터 — PDF p22 회사강점 + 관리실적 합산 기준
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * Phase 14 P0-05 — 단일 출처 통계 (내부 페이지 기준).
+ * 이전: 홈 180 단지 / 9 인허가 / 1,550명 vs /cases 73 / /licenses 11 / 1,575명 불일치
+ * 결정: 사용자 합의로 내부 페이지 기준(73 / 11 / 1,575)을 정본으로 통일.
+ *   complexes 73 = 실제 운영 중 단지 수 (검증 가능), 'PDF 누적 180' 표기는 제거.
+ *   licenses 11 = /licenses 페이지 보유 인허가 grid 카운트와 일치.
+ *   workforce 1,575 = /licenses WorkforceStats 정본.
+ * caption 영문도 라벨 정합화.
+ */
 export const counters: Counter[] = [
   {
     key: "households",
     label: "관리 세대수",
     caption: "MANAGED HOUSEHOLDS",
-    /** PDF p10 공동주택 38건 세대수 합산 (대표 단지 기준) */
+    /** PDF p10 공동주택 세대수 합산 (대표 단지 기준) */
     value: 32000,
     suffix: "+",
   },
   {
     key: "complexes",
-    label: "누적 운영 단지",
-    caption: "COMPLEXES OPERATED",
-    /** PDF p22 "10년 만에 180여 단지 관리" */
-    value: 180,
-    suffix: "+",
+    label: "운영 단지",
+    caption: "ACTIVE COMPLEXES",
+    /** /cases 페이지 정본 — 실제 운영 중 단지 수 */
+    value: 73,
+    suffix: "",
   },
   {
     key: "licenses",
     label: "보유 인허가",
     caption: "REGISTERED LICENSES",
-    /** PDF p8 인허가 9건 */
-    value: 9,
+    /** /licenses 페이지 보유 인허가 grid 정본 */
+    value: 11,
     suffix: "",
   },
   {
     key: "workforce",
     label: "자격증 보유 인력",
     caption: "CERTIFIED PROFESSIONALS",
-    /** PDF p21 자격증 합계 */
-    value: 1550,
+    /** /licenses WorkforceStats 정본 */
+    value: 1575,
     suffix: "+",
   },
 ];
@@ -405,11 +420,11 @@ export const companyStrengths: CompanyStrength[] = [
   { number: "02", title: "다양한 재정 창출능력",
     description: "아파트·오피스텔 1,000여 세대를 직접 임대관리 및 임대사업으로 운영하여 임대 수익 + 수수료 동시 창출." },
   { number: "03", title: "우수 기술 인력",
-    description: "본사 자체 보유 자격증 인력 1,550명 풀을 현장에 적극 투입." },
+    description: "본사 자체 보유 자격증 인력 1,575명 풀을 현장에 적극 투입." },
   { number: "04", title: "대형아파트 위탁관리 전환",
     description: "광주 현장 위탁관리를 케이비개발로 전환하여 현재까지 우수하게 운영 중." },
   { number: "05", title: "빠른 성장력",
-    description: "공동주택관리업을 시작한지 10년이라는 짧은 기간에 180여 단지를 관리." },
+    description: "공동주택관리업을 시작한지 10년이라는 기간 동안 73개 단지를 직접 운영." },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -635,10 +650,10 @@ export const licenses: License[] = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 12. 보유 자격증 27종 — PDF p21 기준 / 총 1,550명
+// 12. 보유 자격증 27종 — PDF p21 기준 / 총 1,575명 (Phase 14 P0-05 정본)
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const totalCertHolders = 1550;
+export const totalCertHolders = 1575;
 
 const _FOUNDING_DATE = new Date(2013, 8, 1); // 2013년 9월 1일
 export const yearsOfOperation: number = Math.max(

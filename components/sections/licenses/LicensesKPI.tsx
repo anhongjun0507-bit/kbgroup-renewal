@@ -105,7 +105,7 @@ export function LicensesKPI() {
                     ? kpi.value.toLocaleString()
                     : kpi.value}
                 </span>
-                <span className="text-[16px] font-semibold text-accent-500">
+                <span className="text-[16px] font-semibold text-accent-ink">
                   {kpi.unit}
                 </span>
               </p>

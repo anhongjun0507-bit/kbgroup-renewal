@@ -215,7 +215,7 @@ export function LicensesOverview() {
                   <span className="font-mono-num font-display text-[36px] font-extrabold leading-none text-navy-800">
                     {licenses.length}
                   </span>
-                  <span className="font-mono-num text-[16px] font-bold text-accent-500">+</span>
+                  <span className="font-mono-num text-[16px] font-bold text-accent-ink">+</span>
                 </p>
                 <p className="mt-2 text-[13px] text-ink-muted">
                   법적으로 등록된 사업 자격
@@ -229,7 +229,7 @@ export function LicensesOverview() {
                   <span className="font-mono-num font-display text-[36px] font-extrabold leading-none text-navy-800">
                     {certifications.length}
                   </span>
-                  <span className="font-mono-num text-[16px] font-bold text-accent-500">+</span>
+                  <span className="font-mono-num text-[16px] font-bold text-accent-ink">+</span>
                 </p>
                 <p className="mt-2 text-[13px] text-ink-muted">
                   전문 기술과 역량 자격

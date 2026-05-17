@@ -60,12 +60,13 @@ export function CasesFilter({
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="단지명·지역 검색"
-              className="w-full rounded-sm border border-line bg-white px-3 py-2.5 pl-10 text-[14px] text-ink-strong placeholder:text-ink-faint transition-colors duration-200 focus:border-navy-700 focus:outline-none"
+              aria-label="단지·지역 검색"
+              className="block h-11 w-full rounded-sm border border-line bg-white px-3 pl-10 text-[16px] text-ink-strong placeholder:text-ink-faint transition-colors duration-200 focus:border-navy-700 focus:outline-none md:text-[14px]"
             />
           </div>
 
-          {/* chip + 정렬 */}
-          <div className="flex items-center gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {/* chip + 정렬 — 모바일: flex-wrap으로 정렬 드롭다운 가시성 보장 */}
+          <div className="flex flex-wrap items-center gap-2 lg:flex-nowrap lg:overflow-x-auto lg:[-ms-overflow-style:none] lg:[scrollbar-width:none] lg:[&::-webkit-scrollbar]:hidden">
             <div role="tablist" aria-label="단지 필터" className="flex flex-shrink-0 items-center gap-2">
               {OPTIONS.map((opt) => {
                 const isActive = current === opt.value;
@@ -77,7 +78,7 @@ export function CasesFilter({
                     aria-selected={isActive}
                     onClick={() => onChange(opt.value)}
                     className={cn(
-                      "inline-flex items-center gap-1.5 rounded-sm border px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.08em] transition-colors duration-200",
+                      "inline-flex min-h-11 items-center gap-1.5 rounded-sm border px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.08em] transition-colors duration-200",
                       isActive
                         ? "border-navy-800 bg-navy-800 text-white"
                         : "border-line bg-white text-ink hover:border-navy-700 hover:text-ink-strong",
@@ -97,7 +98,7 @@ export function CasesFilter({
               })}
             </div>
 
-            <div className="ml-auto flex flex-shrink-0 items-center gap-2 pl-3">
+            <div className="ml-auto flex flex-shrink-0 items-center gap-2">
               <label htmlFor="cases-sort" className="text-[12px] text-ink-faint">
                 정렬
               </label>
@@ -105,7 +106,7 @@ export function CasesFilter({
                 id="cases-sort"
                 value={sort}
                 onChange={(e) => onSortChange(e.target.value as CasesSortValue)}
-                className="rounded-sm border border-line bg-white px-3 py-2 text-[13px] font-semibold text-ink-strong transition-colors duration-200 focus:border-navy-700 focus:outline-none"
+                className="min-h-11 rounded-sm border border-line bg-white px-3 py-2 text-[13px] font-semibold text-ink-strong transition-colors duration-200 focus:border-navy-700 focus:outline-none"
               >
                 {SORT_OPTIONS.map((s) => (
                   <option key={s.value} value={s.value}>

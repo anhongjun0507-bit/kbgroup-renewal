@@ -61,11 +61,14 @@ export function BusinessIntroAlternating() {
                     className="relative aspect-[5/3] overflow-hidden rounded-md"
                     style={{ background: VISUAL_BG[area.id] }}
                   >
-                    {/* 워터마크 번호 */}
+                    {/* 워터마크 번호 — 모바일 오버플로 방지: clamp + 우상단 inset 정렬 */}
                     <span
                       aria-hidden="true"
-                      className="tabular absolute right-6 top-4 font-display text-[140px] font-extrabold leading-none text-white/8"
-                      style={{ color: "rgba(255,255,255,0.1)" }}
+                      className="tabular pointer-events-none absolute right-4 top-2 font-display font-extrabold leading-none md:right-6 md:top-4"
+                      style={{
+                        color: "rgba(255,255,255,0.10)",
+                        fontSize: "clamp(72px, 18vw, 140px)",
+                      }}
                     >
                       {String(idx + 1).padStart(2, "0")}
                     </span>
@@ -91,7 +94,7 @@ export function BusinessIntroAlternating() {
                     <p className="eyebrow">
                       0{idx + 1} · {area.englishName}
                     </p>
-                    <h2 className="mt-5 font-display text-[36px] font-extrabold leading-[1.15] tracking-tight text-ink-strong md:text-[44px]">
+                    <h2 className="mt-5 font-display text-[28px] font-extrabold leading-[1.15] tracking-tight text-ink-strong sm:text-[32px] md:text-[44px]">
                       {area.name}
                     </h2>
                     <p className="mt-4 text-[17px] font-semibold text-ink-strong">

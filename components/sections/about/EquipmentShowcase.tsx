@@ -86,7 +86,7 @@ export function EquipmentShowcase() {
                 <span className="number-display font-mono-num text-[40px] font-extrabold text-navy-800 md:text-[44px]">
                   {s.value}
                 </span>
-                <span className="text-[14px] font-semibold text-accent-500">{s.suffix}</span>
+                <span className="text-[14px] font-semibold text-accent-ink">{s.suffix}</span>
               </p>
               <p className="mt-3 text-[14px] font-semibold text-ink-strong">{s.label}</p>
             </li>
@@ -159,7 +159,7 @@ export function EquipmentShowcase() {
           role="dialog"
           aria-modal="true"
           aria-label={TABLE_IMAGES[lightbox].label}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-navy-900/85 p-5 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-navy-900/85 p-5 backdrop-blur-sm"
           onClick={() => setLightbox(null)}
         >
           <div

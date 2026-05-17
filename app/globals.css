@@ -43,7 +43,9 @@
   --tracking-wide: 0.05em;
   --tracking-widest: 0.18em;
 
-  /* === Brand — Navy 5단 (Phase 6 K) === */
+  /* === Brand — Navy 5단 (Phase 6 K) ===
+     navy-950 신규: 푸터 배경용 한 단계 더 깊은 톤 (P2-04) */
+  --color-navy-950: #081427;
   --color-navy-900: #0B1A33;
   --color-navy-800: #0E1F3A;
   --color-navy-700: #16315C;
@@ -51,7 +53,11 @@
   --color-navy-100: #E7ECF5;
 
   /* === Brand — Accent (Gold 9단) — Phase 9 감사 처방 후 확장 ===
-     골드 위에는 navy-900 텍스트 (대비 7.5:1) 또는 어두운 골드 위 white (4.5:1+) 사용 */
+     골드 위에는 navy-900 텍스트 (대비 7.5:1) 또는 어두운 골드 위 white (4.5:1+) 사용
+     Phase 14 P0-01 — 라이트 배경 위 텍스트 전용 다크 골드 토큰 신규(accent-ink/-deep).
+       기존 accent-500(#C9A24B)은 라이트 위 대비 2.26:1, accent-700(#A07D26)도 3.62:1로
+       WCAG AA 미달 → 라이트 배경 위 텍스트는 반드시 accent-ink/-deep 사용.
+       다크 네이비 배경/면 컬러/CTA 본체에는 기존 accent-500/-600 유지. */
   --color-accent-50: #FBF6E6;
   --color-accent-100: #F6EBC9;
   --color-accent-200: #F3E2B4;
@@ -59,9 +65,12 @@
   --color-accent-400: #D9B461;
   --color-accent-500: #C9A24B;          /* 골드 CTA — 위에 navy-900 텍스트 */
   --color-accent-600: #B88B3A;          /* hover */
-  --color-accent-700: #A07D26;          /* active */
+  --color-accent-700: #A07D26;          /* active (라이트 위 텍스트 X — 3.62:1) */
   --color-accent-800: #7A6020;
   --color-accent-900: #5A4818;
+  /* 라이트 배경 위 텍스트 전용 (AA 통과) */
+  --color-accent-ink: #7A5A12;          /* 본문 강조 — 라이트 위 5.8:1 (AA) */
+  --color-accent-deep: #6E4F10;         /* 12~14px 라벨 — 라이트 위 7:1 (AAA) */
 
   /* === Gray Scale (Phase 6 K) === */
   --color-gray-50: #F7F8FA;
@@ -107,10 +116,15 @@
   --color-line: #E1E6ED;
   --color-line-soft: #EEF1F5;
 
-  /* === Status === */
-  --color-success: #00b488;
-  --color-danger: #ef2b2a;
-  --color-warning: #ffb400;
+  /* === Status (Phase 14 P1-08 — navy/gold 브랜드와 충돌 적은 톤으로 정합화) ===
+     이전 #00b488(채도 높은 민트) → #1F7A4D(딥 그린, navy와 조화)
+     이전 #ef2b2a(원색 red)         → #B91C1C(차분한 red, AA 통과)
+     이전 #ffb400(원색 yellow)      → #B7791F(amber, gold와 충돌 최소)
+     info 신규 추가                 → #1D4F91(navy 패밀리) */
+  --color-success: #1F7A4D;
+  --color-danger: #B91C1C;
+  --color-warning: #B7791F;
+  --color-info: #1D4F91;
 
   /* === Focus === */
   --color-focus: #C9A24B;               /* accent-500 */
@@ -126,17 +140,20 @@
   --color-secondary-soft: #e8f7ef;
   --color-accent-soft: #F6EBC9;         /* accent-100 */
 
-  /* === Radius (Phase 10 P2-03 — 3단 정리) ===
-     sm 6 (input/badge) / md 12 (card) / pill 9999 (button/chip)
-     기존 xs/lg/xl/2xl/3xl alias 유지 — 점진 마이그레이션 */
-  --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-xl: 24px;
+  /* === Radius (Phase 14 P1-11 — 5단 모듈러 정합화) ===
+     공식 사용: sm 4 (input/badge) / md 8 (compact) / lg 12 (card) /
+              xl 16 (hero/modal) / pill 9999 (button/chip)
+     2xl/3xl alias 유지 (히어로용) — 점진 마이그레이션.
+     ※ Tailwind v4 `rounded-full`은 calc(infinity*1px) → 33554432px 컴파일.
+        의미적으로 9999px과 동일, 매직넘버 아님. */
+  --radius-sm: 4px;            /* input, badge */
+  --radius-md: 8px;             /* compact card */
+  --radius-lg: 12px;            /* card 기본 */
+  --radius-xl: 16px;            /* hero, modal */
   --radius-2xl: 32px;
   --radius-3xl: 40px;
-  --radius-pill: 9999px;
+  --radius-pill: 9999px;        /* button, chip */
+  --radius-xs: 4px;             /* alias for legacy callsites */
 
   /* === Shadow (Phase 6 K) === */
   --shadow-xs: none;
@@ -153,11 +170,14 @@
   --background: var(--color-bg);
   --foreground: var(--color-ink-strong);
 
-  /* Motion */
-  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --dur-fast: 160ms;
-  --dur-base: 220ms;
-  --dur-slow: 420ms;
+  /* Motion (Phase 14 UP-05 — 시스템 토큰 정합) */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);        /* 기본 */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);       /* 진입 (큰 가속) */
+  --ease-in: cubic-bezier(0.55, 0, 1, 0.45);        /* 퇴장 */
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1); /* 강조 (절제 사용) */
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 400ms;
 
   /* Section padding (K) */
   --section-py-desktop: 120px;
@@ -179,6 +199,13 @@
   --btn-h-lg: 52px;
 }
 
+html {
+  /* Phase 14 P0 — 모바일 가로 스크롤 방지 안전망.
+     overflow-x: clip 은 새 스크롤 컨테이너를 만들지 않아 sticky/fixed 정상 작동.
+     워터마크·SVG·번역 위젯 등이 viewport 폭을 넘겨도 가로 스크롤 발생 X */
+  overflow-x: clip;
+}
+
 body {
   background: var(--background);
   color: var(--color-text-body);          /* Phase 6 A-6 */
@@ -191,15 +218,20 @@ body {
   word-break: keep-all;
   line-break: strict;
   overflow-wrap: anywhere;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
 /* === Headings === */
+/* Phase 14 P1-02 — 타입 스케일 위계 갭 완화.
+   이전: h1 32~64, h2 26~36, h3 20~24, h4 18 → h1↔h2 갭이 28~28px로 거칠음
+   변경: h2 max 36→40, h3 max 24→28, h4 18→22
+   기준 모듈러 1.25 — 64 / 48~50 / 40 / 28 / 22 / 18 / 16 / 14 */
 :where(h1) {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5.5vw, 4rem);
+  font-size: clamp(2rem, 5vw, 4rem);
   letter-spacing: var(--tracking-tight);
   line-height: 1.15;
   font-weight: 900;
@@ -210,7 +242,7 @@ body {
 
 :where(h2) {
   font-family: var(--font-display);
-  font-size: clamp(1.625rem, 3.2vw, 2.25rem);
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);  /* 28~40 */
   letter-spacing: var(--tracking-tight);
   line-height: 1.2;
   font-weight: 800;
@@ -220,7 +252,7 @@ body {
 
 :where(h3) {
   font-family: var(--font-display);
-  font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+  font-size: clamp(1.375rem, 2vw, 1.75rem);  /* 22~28 */
   letter-spacing: var(--tracking-tight);
   line-height: 1.3;
   font-weight: 700;
@@ -229,7 +261,7 @@ body {
 }
 
 :where(h4) {
-  font-size: 1.125rem;
+  font-size: 1.25rem;                          /* 20 */
   letter-spacing: var(--tracking-tight);
   line-height: 1.4;
   font-weight: 700;
@@ -265,15 +297,37 @@ body {
   }
 }
 
-/* === eyebrow — 영문 라벨 (Phase 9 P2-01) ===
-   letter-spacing 0.18 → 0.12, weight 500 → 600, 골드 톤 강조 */
+/* === Phase 14 UP-04 — prefers-contrast: more 고대비 모드 ===
+   현장 관리자/시력 보조 사용자가 OS 설정으로 활성 시 자동 적용.
+   - 골드 톤 한 단계 밝게 (라이트 위 텍스트 더 진하게)
+   - 본문/보조 텍스트는 ink-strong으로 통일
+   - 다크 배경 위 보조 텍스트는 흰색 100% */
+@media (prefers-contrast: more) {
+  :root {
+    --color-accent-ink: #5A4818;      /* accent-900, 라이트 위 9:1+ */
+    --color-accent-deep: #4A3A10;     /* 더 어둡게, 11:1+ */
+    --color-ink-muted: #1B2230;       /* ink-strong과 동일 */
+    --color-ink-faint: #2A323F;       /* gray-700 수준 */
+    --color-on-dark-secondary: #FFFFFF;
+    --color-on-dark-muted: rgba(255, 255, 255, 0.92);
+  }
+  [data-surface="dark"] .eyebrow,
+  .section-dark .eyebrow {
+    color: #FFD27A;                   /* accent-300보다 한 단계 밝게 */
+  }
+}
+
+/* === eyebrow — 영문 라벨 (Phase 14 P0-02 톤 정렬) ===
+   JetBrains Mono(코드 폰트) → Pretendard sans 변경.
+   B2B 시설관리 톤(전통/신뢰)과 모노스페이스의 "테크 스타트업" 인상 충돌 해소.
+   color: accent-700(3.62:1) → accent-deep(7:1, AAA) — WCAG AA 통과 */
 .eyebrow {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 0.75rem;        /* 12px */
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-accent-700);   /* gold-700 — 어둡고 강한 톤 */
+  color: var(--color-accent-deep);   /* #6E4F10 — 라이트 위 7:1 */
   line-height: 1.4;
 }
 /* 다크 배경 위에서는 밝은 골드 */
@@ -416,7 +470,7 @@ body {
   transition: color var(--dur-base) var(--ease);
 }
 .cta-text:hover {
-  color: var(--color-accent-700);
+  color: var(--color-accent-deep);
 }
 .cta-text:hover .cta-arrow {
   transform: translateX(6px);
@@ -445,6 +499,24 @@ body {
 .cta-outline:hover {
   background: var(--color-ink-strong);
   color: #fff;
+}
+
+/* === Phase 14 P2-02 — 골드 underline 디바이더 헬퍼 ===
+   사용처: PageHero 아래, 섹션 헤딩 분리선 등. 사이즈/색/마진 토큰 통일.
+   variant: .gold-rule(기본 56x2), .gold-rule-sm(40x2), .gold-rule-lg(80x2) */
+.gold-rule {
+  display: block;
+  width: 56px;
+  height: 2px;
+  background: var(--color-accent-500);
+  border: 0;
+  margin: 1.5rem 0;
+}
+.gold-rule-sm { width: 40px; }
+.gold-rule-lg { width: 80px; }
+[data-surface="dark"] .gold-rule,
+.section-dark .gold-rule {
+  background: var(--color-accent-400);
 }
 
 /* === Phase 6 A-2 — 통계 카운터 nowrap === */

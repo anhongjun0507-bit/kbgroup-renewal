@@ -9,10 +9,12 @@ import { company, contact } from "@/data/site-content";
    CTA: Primary(무료 상담) + Ghost(사업영역 보기)
    하단 floating glass card 통계 / 우측 하단 Scroll 인디케이터 */
 
-const SLOGAN_LINE_1 = "신뢰가";
-const SLOGAN_LINE_2 = "자산이 됩니다";
-/* Phase 11 P0-D — H1 강조를 어말 어미("됩니다") → 의미 키워드("자산")로 이동.
-   "신뢰"는 골드 컬러로 추가 강조해 의미 위계(신뢰=가치 / 자산=결과) 명확화 */
+/* Phase 14 P2-01 — 슬로건 줄바꿈 재구성.
+   이전: "신뢰가" / "자산이 됩니다" — 첫 줄 시각 무게 불균형
+   변경: "신뢰가 자산이" / "됩니다"  — 의미 단위(주어부 vs 술어) 자연 분할
+       양 키워드("신뢰" 골드, "자산" 밑줄)가 모두 첫 줄에 들어가 강조 정렬 개선 */
+const SLOGAN_LINE_1 = "신뢰가 자산이";
+const SLOGAN_LINE_2 = "됩니다";
 const SLOGAN_LINE_1_HIGHLIGHT = "신뢰";
 const SLOGAN_HIGHLIGHT = "자산";
 const SUBTITLE_LINE_1 = "대한민국 시설관리의 새로운 표준을 만들어갑니다.";
@@ -21,9 +23,50 @@ const SUBTITLE_LINE_2 = "오랜 신뢰가 지금의 케이비개발을 만들었
 /* Phase 12 — FLOATING_STATS 제거 (Hero floating card 폐기).
    동일 정보는 다음 DataCounter 섹션이 4-카드로 노출 */
 
+/* SLOGAN_LINE_1에서 "신뢰" 골드 + "자산" 밑줄을 함께 처리하는 헬퍼.
+   문자열을 [신뢰][가 ][자산][이] 4구간으로 분해 */
+function renderSloganLine1(line: string) {
+  const idxTrust = line.indexOf(SLOGAN_LINE_1_HIGHLIGHT);
+  const idxAsset = line.indexOf(SLOGAN_HIGHLIGHT);
+  if (idxTrust < 0 || idxAsset < 0 || idxAsset <= idxTrust) {
+    return line;
+  }
+  const trustEnd = idxTrust + SLOGAN_LINE_1_HIGHLIGHT.length;
+  const assetEnd = idxAsset + SLOGAN_HIGHLIGHT.length;
+  return (
+    <>
+      {line.slice(0, idxTrust)}
+      <span className="text-accent-300">{SLOGAN_LINE_1_HIGHLIGHT}</span>
+      {line.slice(trustEnd, idxAsset)}
+      <span className="relative inline-block">
+        <span className="relative z-10">{SLOGAN_HIGHLIGHT}</span>
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 200 12"
+          preserveAspectRatio="none"
+          className="absolute inset-x-0 -bottom-1 h-[10px] w-full"
+        >
+          <defs>
+            <linearGradient id="ul" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#C9A24B" />
+              <stop offset="100%" stopColor="#E3C57A" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M2 7 Q 100 1 198 7"
+            stroke="url(#ul)"
+            strokeWidth="4"
+            fill="none"
+            strokeLinecap="round"
+          />
+        </svg>
+      </span>
+      {line.slice(assetEnd)}
+    </>
+  );
+}
+
 export function Hero() {
-  const slogan1Idx = SLOGAN_LINE_1.indexOf(SLOGAN_LINE_1_HIGHLIGHT);
-  const slogan2Idx = SLOGAN_LINE_2.indexOf(SLOGAN_HIGHLIGHT);
 
   return (
     /* Phase 12 P0 — overflow-hidden을 section에서 제거.
@@ -186,7 +229,7 @@ export function Hero() {
 
       <div className="relative z-10 flex min-h-[inherit] flex-col">
         <Container>
-          <div className="grid grid-cols-1 items-center pt-24 pb-32 md:pt-28 lg:grid-cols-[minmax(0,720px)_1fr] lg:gap-12 lg:pt-32 lg:pb-40">
+          <div className="grid grid-cols-1 items-center pt-16 pb-20 sm:pt-20 sm:pb-28 md:pt-28 md:pb-32 lg:grid-cols-[minmax(0,720px)_1fr] lg:gap-12 lg:pt-32 lg:pb-40">
             <div className="max-w-[720px]">
               <p
                 className="eyebrow"
@@ -207,55 +250,8 @@ export function Hero() {
                   textShadow: "0 6px 24px rgba(0,0,0,0.35)",
                 }}
               >
-                <span className="block">
-                  {slogan1Idx >= 0 ? (
-                    <>
-                      {SLOGAN_LINE_1.slice(0, slogan1Idx)}
-                      <span className="text-accent-300">
-                        {SLOGAN_LINE_1_HIGHLIGHT}
-                      </span>
-                      {SLOGAN_LINE_1.slice(
-                        slogan1Idx + SLOGAN_LINE_1_HIGHLIGHT.length,
-                      )}
-                    </>
-                  ) : (
-                    SLOGAN_LINE_1
-                  )}
-                </span>
-                <span className="block whitespace-nowrap">
-                  {slogan2Idx >= 0 ? (
-                    <>
-                      {SLOGAN_LINE_2.slice(0, slogan2Idx)}
-                      <span className="relative inline-block">
-                        <span className="relative z-10">{SLOGAN_HIGHLIGHT}</span>
-                        {/* underline-gradient SVG — 골드 → 골드 페이드 */}
-                        <svg
-                          aria-hidden="true"
-                          viewBox="0 0 200 12"
-                          preserveAspectRatio="none"
-                          className="absolute inset-x-0 -bottom-1 h-[10px] w-full"
-                        >
-                          <defs>
-                            <linearGradient id="ul" x1="0" y1="0" x2="1" y2="0">
-                              <stop offset="0%" stopColor="#C9A24B" />
-                              <stop offset="100%" stopColor="#E3C57A" />
-                            </linearGradient>
-                          </defs>
-                          <path
-                            d="M2 7 Q 100 1 198 7"
-                            stroke="url(#ul)"
-                            strokeWidth="4"
-                            fill="none"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      </span>
-                      {SLOGAN_LINE_2.slice(slogan2Idx + SLOGAN_HIGHLIGHT.length)}
-                    </>
-                  ) : (
-                    SLOGAN_LINE_2
-                  )}
-                </span>
+                <span className="block">{renderSloganLine1(SLOGAN_LINE_1)}</span>
+                <span className="block">{SLOGAN_LINE_2}</span>
               </h1>
 
               <p

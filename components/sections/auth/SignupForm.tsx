@@ -109,7 +109,7 @@ function Field({ name, label, error, ...input }: FieldProps) {
         id={name}
         name={name}
         {...input}
-        className="mt-2 w-full border-0 border-b border-line bg-transparent py-2 text-base text-ink outline-none transition-colors focus:border-primary"
+        className="mt-2 w-full border-0 border-b border-line bg-transparent py-2 text-base text-ink transition-colors focus:border-primary"
       />
       {error && (
         <p className="mt-2 text-xs text-red-700">{error}</p>

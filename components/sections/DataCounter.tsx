@@ -115,7 +115,7 @@ export function DataCounter() {
             hidden: {},
             visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.1 } },
           }}
-          className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-4 md:gap-x-10"
+          className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-4 md:gap-x-10 md:gap-y-12"
         >
           {counters.map((c) => (
             <motion.div
@@ -188,7 +188,7 @@ export function DataCounter() {
                 {c.label}
               </p>
               {/* Phase 11 P2-D — eyebrow 토큰과 동일 자간/색으로 통일 */}
-              <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.12em] text-accent-700">
+              <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.12em] text-accent-deep">
                 {c.caption}
               </p>
             </motion.div>

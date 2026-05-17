@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 
-type ButtonVariant = "primary" | "secondary" | "accent" | "outline" | "ghost";
+/* Phase 14 P1-04 — Button variant/size/state 정의 명확화
+   - variant 6종: primary(navy) / secondary(green) / accent(gold) /
+                 outline / ghost / destructive(red)
+   - size 3종: sm 36h / md 44h / lg 52h — md는 WCAG 2.5.5 (44x44) 통과
+   - state 5종: base / hover / active / focus-visible / disabled / aria-busy
+   - transition: all → 특정 속성만 (perf + intent 명확) */
+
+type ButtonVariant = "primary" | "secondary" | "accent" | "outline" | "ghost" | "destructive";
 type ButtonSize = "sm" | "md" | "lg";
 
 type CommonProps = {
@@ -28,35 +35,35 @@ type ButtonAsLink = CommonProps & {
 
 export type ButtonProps = ButtonAsButton | ButtonAsLink;
 
-/* Phase 9 P0-01 — accent variant 텍스트를 navy-900으로 변경 (대비 7.5:1)
-   기존 #E3C57A on #C9A24B = 1.43:1 → 새 #0B1A33 on #C9A24B = 7.5:1
-   hover: bg accent-600 + 텍스트 유지 navy-900 (대비 6:1+) */
 const VARIANT: Record<ButtonVariant, string> = {
   primary:
-    "bg-navy-800 text-white hover:bg-navy-900 rounded-sm",
+    "bg-navy-800 text-white hover:bg-navy-900 active:bg-navy-900 rounded-sm",
   secondary:
-    "bg-secondary text-white hover:bg-[#048541] rounded-sm",
+    "bg-secondary text-white hover:bg-[#048541] active:bg-[#037038] rounded-sm",
   accent:
-    "bg-accent-500 text-navy-900 hover:bg-accent-600 hover:text-white hover:shadow-[var(--shadow-cta)] rounded-sm",
+    "bg-accent-500 text-navy-900 hover:bg-accent-600 hover:text-white active:bg-accent-700 hover:shadow-[var(--shadow-cta)] rounded-sm",
   outline:
-    "bg-transparent border border-ink-strong text-ink-strong hover:bg-ink-strong hover:text-white rounded-sm",
+    "bg-transparent border border-ink-strong text-ink-strong hover:bg-ink-strong hover:text-white active:bg-navy-900 rounded-sm",
   ghost:
-    "bg-transparent border border-white/60 text-white hover:bg-white hover:text-ink-strong rounded-sm",
+    "bg-transparent border border-white/60 text-white hover:bg-white hover:text-ink-strong active:bg-white/90 rounded-sm",
+  destructive:
+    "bg-danger text-white hover:bg-[#9B1717] active:bg-[#7E1212] rounded-sm",
 };
 
-/* lg = 56h / 32px padding (지시서 글로벌[A] Primary 무료 상담) */
+/* md 48→44 (WCAG 2.5.5 정합), lg 56→52, sm 40→36 */
 const SIZE: Record<ButtonSize, string> = {
-  sm: "h-10 px-5 text-sm",
-  md: "h-12 px-6 text-[15px]",
-  lg: "h-14 px-8 text-base",
+  sm: "h-9 px-4 text-[13px]",
+  md: "h-11 px-6 text-[15px]",
+  lg: "h-[52px] px-8 text-base",
 };
 
-/* Phase 11 P0-A — `.btn-reset` 클래스로 globals.css의
-   `[data-surface="dark"] a:not(.btn-reset)` 셀렉터를 회피.
-   다크 hero 위 Button accent variant의 텍스트가 accent-300(옅은 골드)으로
-   덮어써져 1.43:1로 보이던 버그 해결 */
+/* `.btn-reset`로 [data-surface="dark"] a 셀렉터 회피 (Phase 11 P0-A).
+   transition을 특정 속성으로 한정해 perf + 의도 명확화. */
 const BASE =
-  "btn-reset inline-flex items-center justify-center gap-2 font-bold tracking-tight transition-all duration-200 [transition-timing-function:var(--ease)] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap";
+  "btn-reset inline-flex items-center justify-center gap-2 font-bold tracking-tight whitespace-nowrap " +
+  "transition-[background-color,color,border-color,box-shadow,transform] duration-200 [transition-timing-function:var(--ease)] " +
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 " +
+  "disabled:opacity-50 disabled:pointer-events-none aria-busy:opacity-70 aria-busy:cursor-progress";
 
 export function Button(props: ButtonProps) {
   const { variant = "primary", size = "md", className, children } = props;

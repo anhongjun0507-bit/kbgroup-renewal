@@ -87,7 +87,7 @@ export function CollaboratorsTable() {
               variants={itemVariants}
               className="grid grid-cols-1 gap-y-2 border-t border-line px-6 py-4 transition-colors duration-200 hover:bg-gray-50 md:grid-cols-12 md:gap-4 md:py-5"
             >
-              <span className="font-mono-num text-[13px] font-bold text-accent-500 md:col-span-1">
+              <span className="font-mono-num text-[13px] font-bold text-accent-ink md:col-span-1">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <span className="text-[12px] font-medium uppercase tracking-[0.1em] text-ink-faint md:col-span-3 md:text-[13px]">

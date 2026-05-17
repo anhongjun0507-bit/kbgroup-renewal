@@ -133,7 +133,7 @@ export function BusinessSubServices({ area }: Props) {
                 >
                   <span
                     aria-hidden="true"
-                    className="flex-shrink-0 font-mono-num text-[22px] font-bold text-accent-500"
+                    className="flex-shrink-0 font-mono-num text-[22px] font-bold text-accent-ink"
                   >
                     {num}
                   </span>

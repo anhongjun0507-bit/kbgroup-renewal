@@ -206,7 +206,7 @@ export function CasesMap() {
                         {count}
                       </span>
                       {lh > 0 && (
-                        <span className="font-mono-num text-[11px] font-bold text-accent-500">
+                        <span className="font-mono-num text-[11px] font-bold text-accent-ink">
                           ·LH{lh}
                         </span>
                       )}

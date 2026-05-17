@@ -137,16 +137,16 @@ export function BusinessFAQ({ areaId }: Props) {
                   aria-expanded={open}
                   aria-controls={`faq-panel-${idx}`}
                   onClick={() => setOpenIdx(open ? null : idx)}
-                  className="flex w-full items-start justify-between gap-6 py-6 text-left transition-colors duration-200 hover:bg-gray-50"
+                  className="flex w-full items-start justify-between gap-3 py-5 text-left transition-colors duration-200 hover:bg-gray-50 md:gap-6 md:py-6"
                 >
-                  <span className="flex items-baseline gap-4">
+                  <span className="flex flex-1 items-baseline gap-3 md:gap-4">
                     <span
                       aria-hidden="true"
-                      className="font-mono-num text-[16px] font-bold text-accent-500"
+                      className="flex-shrink-0 font-mono-num text-[14px] font-bold text-accent-ink md:text-[16px]"
                     >
                       {String(idx + 1).padStart(2, "0")}
                     </span>
-                    <span className="font-display text-[18px] font-bold tracking-tight text-ink-strong md:text-[20px]">
+                    <span className="font-display text-[16px] font-bold leading-snug tracking-tight text-ink-strong md:text-[20px]">
                       {faq.q}
                     </span>
                   </span>
@@ -154,7 +154,7 @@ export function BusinessFAQ({ areaId }: Props) {
                     aria-hidden="true"
                     className={cn(
                       "mt-1.5 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center text-ink-strong transition-transform duration-300",
-                      open && "rotate-45 text-accent-500",
+                      open && "rotate-45 text-accent-ink",
                     )}
                   >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">

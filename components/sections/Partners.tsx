@@ -73,7 +73,7 @@ export function Partners() {
                   className="mb-4 flex items-baseline justify-between border-b border-line pb-3"
                 >
                   <div>
-                    <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-accent-700">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-accent-deep">
                       {group.caption}
                     </p>
                     <h3
@@ -96,7 +96,7 @@ export function Partners() {
                       variants={item}
                       className="group flex h-28 flex-col justify-between bg-white p-5 grayscale transition-all duration-300 [transition-timing-function:var(--ease)] hover:bg-white hover:grayscale-0"
                     >
-                      <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-faint transition-colors group-hover:text-accent-700">
+                      <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-faint transition-colors group-hover:text-accent-deep">
                         {p.note ?? group.label}
                       </p>
                       <p className="font-display text-[15px] font-bold tracking-tight text-ink-muted transition-colors group-hover:text-ink-strong">

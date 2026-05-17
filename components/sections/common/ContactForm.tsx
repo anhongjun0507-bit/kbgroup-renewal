@@ -306,16 +306,30 @@ export function ContactForm({ context, className }: ContactFormProps) {
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="flex items-start gap-3 text-[13px] text-ink-muted">
+                    {/* Phase 14 P0-06 — checkbox id+htmlFor 명시 연결로 a11y 강화 */}
+                    <label
+                      htmlFor="cf-privacy-agree"
+                      className="flex items-start gap-3 text-[13px] text-ink-muted"
+                    >
                       <input
+                        id="cf-privacy-agree"
                         type="checkbox"
                         name="privacyAgree"
                         required
+                        aria-required="true"
                         className="mt-0.5 h-4 w-4 accent-accent-500"
                       />
                       <span>
-                        개인정보 수집 및 이용에 동의합니다. 수집 항목은 상담
-                        응대 목적에 한해 사용되며 6개월 후 파기됩니다. *
+                        <a
+                          href="/privacy"
+                          target="_blank"
+                          rel="noopener"
+                          className="font-semibold text-accent-deep underline-offset-2 hover:underline"
+                        >
+                          개인정보 수집 및 이용
+                        </a>
+                        에 동의합니다. 수집 항목은 상담 응대 목적에 한해
+                        사용되며 6개월 후 파기됩니다. *
                       </span>
                     </label>
                   </div>

@@ -21,13 +21,14 @@ const LINK_BASE =
 
 export function Footer() {
   return (
-    /* Phase 2.5 — 배경 navy-900 (#0B1A33)로 본문 다크섹션과 통일 */
+    /* Phase 14 P2-04 — 본문 navy-900 다크 섹션과 시각 분리.
+       배경 navy-950(#081427) 한 단계 더 깊게 + 상단 hairline 1px */
     <footer
       data-surface="dark"
-      className="bg-navy-900 text-white"
+      className="border-t border-white/[0.06] bg-navy-950 text-white"
     >
-      <Container as="div" className="pt-16 pb-10 md:pt-20">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.4fr_1px_1fr_1px_1.1fr] lg:gap-12">
+      <Container as="div" className="pt-12 pb-10 md:pt-20">
+        <div className="grid grid-cols-1 gap-10 sm:gap-12 lg:grid-cols-[1.4fr_1px_1fr_1px_1.1fr] lg:gap-12">
           {/* KB GROUP intro */}
           <div>
             <p className="eyebrow text-accent-300">
@@ -114,6 +115,22 @@ export function Footer() {
 
         {/* Bottom */}
         <div className="mt-14 border-t border-white/10 pt-8">
+          {/* Phase 14 P1-10 — 약관·개인정보처리방침 링크 */}
+          <nav aria-label="법적 고지" className="mb-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px]">
+            <Link
+              href="/privacy"
+              className="font-semibold text-white/90 underline-offset-4 hover:text-accent-300 hover:underline"
+            >
+              개인정보처리방침
+            </Link>
+            <span aria-hidden="true" className="text-white/30">·</span>
+            <Link
+              href="/terms"
+              className="font-medium text-white/75 underline-offset-4 hover:text-accent-300 hover:underline"
+            >
+              이용약관
+            </Link>
+          </nav>
           <div className="flex flex-col gap-3 text-[13px] leading-relaxed text-white/70 md:flex-row md:items-center md:justify-between">
             <div className="space-y-1">
               <p>

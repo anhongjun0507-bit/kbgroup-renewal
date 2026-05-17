@@ -118,7 +118,7 @@ function LicenseRow({
     >
       <span
         aria-hidden="true"
-        className="font-mono-num text-[20px] font-bold text-accent-500"
+        className="font-mono-num text-[20px] font-bold text-accent-ink"
       >
         {num}
       </span>
@@ -136,7 +136,7 @@ function LicenseRow({
       <button
         type="button"
         onClick={onView}
-        className="ml-auto inline-flex flex-shrink-0 items-center gap-1 text-[12px] font-semibold text-ink-strong transition-colors duration-200 hover:text-accent-500"
+        className="ml-auto inline-flex flex-shrink-0 items-center gap-1 text-[12px] font-semibold text-ink-strong transition-colors duration-200 hover:text-accent-ink"
         aria-label={`${license.name} 증명서 보기`}
       >
         증명서

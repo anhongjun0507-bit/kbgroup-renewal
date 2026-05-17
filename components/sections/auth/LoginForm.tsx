@@ -56,7 +56,7 @@ export function LoginForm({ next }: Props) {
               </Label>
               <Link
                 href="/forgot-password"
-                className="mb-2 text-[12px] font-medium text-ink-faint transition-colors hover:text-accent-700"
+                className="mb-2 text-[12px] font-medium text-ink-faint transition-colors hover:text-accent-deep"
               >
                 비밀번호 찾기
               </Link>
@@ -85,7 +85,7 @@ export function LoginForm({ next }: Props) {
               아직 회원이 아니신가요?{" "}
               <Link
                 href="/signup"
-                className="font-semibold text-accent-700 underline-offset-4 hover:underline"
+                className="font-semibold text-accent-deep underline-offset-4 hover:underline"
               >
                 회원가입
               </Link>
@@ -94,7 +94,7 @@ export function LoginForm({ next }: Props) {
               초기 계정 발급은 운영 담당자에게 문의해 주세요 ·{" "}
               <a
                 href={`tel:${contact.phone}`}
-                className="font-semibold text-ink-muted underline-offset-4 hover:text-accent-700 hover:underline"
+                className="font-semibold text-ink-muted underline-offset-4 hover:text-accent-deep hover:underline"
               >
                 {contact.phone}
               </a>

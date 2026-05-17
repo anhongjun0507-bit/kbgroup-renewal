@@ -88,7 +88,7 @@ export function BusinessProcess() {
                       aria-hidden="true"
                       className={cn(
                         "block font-mono-num text-[28px] font-extrabold leading-none",
-                        isActive ? "text-accent-500" : "text-ink-faint",
+                        isActive ? "text-accent-ink" : "text-ink-faint",
                       )}
                     >
                       {step.numberLabel}
@@ -118,7 +118,7 @@ export function BusinessProcess() {
             <div className="col-span-4">
               <span
                 aria-hidden="true"
-                className="number-display text-[80px] font-extrabold text-accent-500"
+                className="number-display text-[80px] font-extrabold text-accent-ink"
               >
                 {active.numberLabel}
               </span>
@@ -147,7 +147,7 @@ export function BusinessProcess() {
               <div className="flex items-baseline gap-4">
                 <span
                   aria-hidden="true"
-                  className="number-display text-[36px] font-extrabold text-accent-500"
+                  className="number-display text-[36px] font-extrabold text-accent-ink"
                 >
                   {step.numberLabel}
                 </span>

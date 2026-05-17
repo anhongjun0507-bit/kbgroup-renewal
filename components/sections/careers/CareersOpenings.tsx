@@ -169,7 +169,7 @@ function TalentPoolModal({
               name="name"
               type="text"
               required
-              className="w-full rounded-sm border border-line bg-white px-4 py-3 text-[15px] text-ink-strong placeholder:text-ink-faint focus:border-navy-700 focus:outline-none"
+              className="block w-full rounded-sm border border-line bg-white px-4 py-3 text-[16px] text-ink-strong placeholder:text-ink-faint focus:border-navy-700 focus:outline-none md:text-[15px]"
               placeholder="홍길동"
             />
           </div>
@@ -182,7 +182,7 @@ function TalentPoolModal({
               name="phone"
               type="tel"
               required
-              className="w-full rounded-sm border border-line bg-white px-4 py-3 text-[15px] text-ink-strong placeholder:text-ink-faint focus:border-navy-700 focus:outline-none"
+              className="block w-full rounded-sm border border-line bg-white px-4 py-3 text-[16px] text-ink-strong placeholder:text-ink-faint focus:border-navy-700 focus:outline-none md:text-[15px]"
               placeholder="010-0000-0000"
             />
           </div>
@@ -195,7 +195,7 @@ function TalentPoolModal({
               name="role"
               type="text"
               required
-              className="w-full rounded-sm border border-line bg-white px-4 py-3 text-[15px] text-ink-strong placeholder:text-ink-faint focus:border-navy-700 focus:outline-none"
+              className="block w-full rounded-sm border border-line bg-white px-4 py-3 text-[16px] text-ink-strong placeholder:text-ink-faint focus:border-navy-700 focus:outline-none md:text-[15px]"
               placeholder="예) 시설 관리소장 / 경비반장"
             />
           </div>
@@ -208,7 +208,7 @@ function TalentPoolModal({
               name="summary"
               required
               rows={4}
-              className="w-full resize-y rounded-sm border border-line bg-white px-4 py-3 text-[15px] text-ink-strong placeholder:text-ink-faint focus:border-navy-700 focus:outline-none"
+              className="block w-full resize-y rounded-sm border border-line bg-white px-4 py-3 text-[16px] text-ink-strong placeholder:text-ink-faint focus:border-navy-700 focus:outline-none md:text-[15px]"
               placeholder="근무 경력, 보유 자격증, 강점 등을 자유롭게 적어주세요."
             />
           </div>

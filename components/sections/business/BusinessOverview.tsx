@@ -110,11 +110,11 @@ export function BusinessOverview({ area }: Props) {
                 <motion.li
                   key={reason.title}
                   variants={itemVariants}
-                  className="grid grid-cols-12 items-start gap-6 border-t border-line py-8 last:border-b"
+                  className="grid grid-cols-12 items-start gap-4 border-t border-line py-8 last:border-b md:gap-6"
                 >
                   <span
                     aria-hidden="true"
-                    className="number-display col-span-2 text-[36px] font-extrabold text-accent-500 md:col-span-1"
+                    className="number-display col-span-2 text-[32px] font-extrabold text-accent-ink md:col-span-1 md:text-[36px]"
                   >
                     {num}
                   </span>
@@ -161,7 +161,7 @@ export function BusinessOverview({ area }: Props) {
                     {m.value}
                   </span>
                   {m.suffix && (
-                    <span className="text-[16px] font-semibold text-accent-500">
+                    <span className="text-[16px] font-semibold text-accent-ink">
                       {m.suffix}
                     </span>
                   )}

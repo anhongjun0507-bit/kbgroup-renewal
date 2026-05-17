@@ -14,7 +14,8 @@ export function Container({
   return (
     <Tag
       className={cn(
-        "mx-auto w-full max-w-[1280px] px-5 md:px-8",
+        /* Phase 14 P2-05 — 모바일 20 / 태블릿 32 / 데스크탑 48 / XL 64 패딩 단계화 */
+        "mx-auto w-full max-w-[1280px] px-5 md:px-8 lg:px-12 xl:px-16",
         className,
       )}
     >

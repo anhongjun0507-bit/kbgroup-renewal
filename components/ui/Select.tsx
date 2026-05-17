@@ -102,6 +102,8 @@ export function Select({
         className="sr-only"
         aria-hidden="true"
         tabIndex={-1}
+        /* Phase 14 P0-06 — a11y 검사기가 unlabelled select로 잡지 않도록 aria-label */
+        aria-label={placeholder}
       >
         <option value="" disabled>
           {placeholder}
@@ -169,7 +171,7 @@ export function Select({
                 }}
                 onMouseEnter={() => setFocusIdx(idx)}
                 className={cn(
-                  "cursor-pointer px-4 py-2.5 text-[15px] transition-colors duration-150",
+                  "flex min-h-11 cursor-pointer items-center px-4 py-2.5 text-[15px] transition-colors duration-150",
                   selected
                     ? "bg-accent-500 text-navy-900"
                     : focused

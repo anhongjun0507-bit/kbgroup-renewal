@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Container } from "@/components/ui";
@@ -115,13 +116,40 @@ export function CasesGallery() {
               </AnimatePresence>
             </motion.ul>
           ) : (
-            <div className="rounded-md border border-line bg-white px-6 py-20 text-center">
-              <p className="font-display text-[20px] font-bold text-ink-strong">
-                검색 결과가 없습니다
+            /* Phase 14 P1-09 — empty state 일러스트 + CTA(필터 초기화) */
+            <div className="mx-auto max-w-xl rounded-md border border-line bg-white px-6 py-16 text-center md:py-20">
+              <div className="mx-auto h-12 w-12 text-accent-ink" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="22" cy="22" r="14" />
+                  <path d="M32 32L42 42" />
+                  <path d="M16 22H28" />
+                </svg>
+              </div>
+              <p className="mt-5 font-display text-[22px] font-bold tracking-tight text-ink-strong md:text-[24px]">
+                조건에 맞는 단지가 없습니다
               </p>
-              <p className="mt-3 text-[14px] text-ink-muted">
-                필터나 검색어를 조정해 보세요.
+              <p className="mt-3 text-[14px] leading-[1.75] text-ink-muted">
+                필터나 검색어를 조정하시거나 전체 단지를 확인해 보세요.
               </p>
+              <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFilter("ALL");
+                    setSearch("");
+                    setSort("name");
+                  }}
+                  className="inline-flex min-h-11 items-center rounded-sm bg-accent-500 px-5 py-2.5 text-[13px] font-semibold text-navy-900 transition-colors duration-200 hover:bg-accent-600 hover:text-white"
+                >
+                  필터 초기화
+                </button>
+                <a
+                  href="/contact"
+                  className="inline-flex min-h-11 items-center rounded-sm border border-ink-strong px-5 py-2.5 text-[13px] font-semibold text-ink-strong transition-colors duration-200 hover:bg-ink-strong hover:text-white"
+                >
+                  상담 문의 →
+                </a>
+              </div>
             </div>
           )}
         </Container>
@@ -147,27 +175,52 @@ function CaseCard({ complex, hue }: { complex: Complex; hue: number }) {
   return (
     <article className="group overflow-hidden rounded-md border border-line bg-white transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:shadow-[var(--shadow-card)]">
       <Link href={`/cases/${slug}`} className="block" aria-label={`${complex.name} 상세보기`}>
-        <div
-          className="relative aspect-[4/5] overflow-hidden bg-navy-900"
-          
-        >
-          <div
-            aria-hidden="true"
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(135deg, #0E1F3A 0%, #16315C 50%, #0B1A33 100%)",
-            }}
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 origin-center transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.03]"
-            style={{
-              background:
-                "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.18) 0%, transparent 70%)",
-            }}
-          />
-          <div className="absolute inset-0 bg-navy-900/40 transition-opacity duration-500 group-hover:bg-navy-900/20" />
+        <div className="relative aspect-[4/5] overflow-hidden bg-navy-900">
+          {/* Phase 14 P0-03 — complex.image 지정 시 실사 사진 우선 표시, 없으면 기존 모노그램 fallback */}
+          {complex.image ? (
+            <>
+              <Image
+                src={complex.image}
+                alt={complex.name}
+                fill
+                sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+                className="object-cover transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.04]"
+              />
+              {/* 가독성 보장 그라데이션 오버레이 */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-navy-900/70 via-navy-900/15 to-navy-900/30"
+              />
+            </>
+          ) : (
+            <>
+              <div
+                aria-hidden="true"
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #0E1F3A 0%, #16315C 50%, #0B1A33 100%)",
+                }}
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 origin-center transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.03]"
+                style={{
+                  background:
+                    "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.18) 0%, transparent 70%)",
+                }}
+              />
+              <div className="absolute inset-0 bg-navy-900/40 transition-opacity duration-500 group-hover:bg-navy-900/20" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span
+                  aria-hidden="true"
+                  className="font-display text-[clamp(5rem,12vw,9rem)] font-black leading-none text-white/15 transition-colors duration-500 group-hover:text-white/30"
+                >
+                  {initial}
+                </span>
+              </div>
+            </>
+          )}
 
           <span
             className={
@@ -188,15 +241,6 @@ function CaseCard({ complex, hue }: { complex: Complex; hue: number }) {
               <circle cx="8" cy="6.5" r="1.5" fill="currentColor" />
             </svg>
             {complex.region.split(/\s+/)[0]}
-          </div>
-
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span
-              aria-hidden="true"
-              className="font-display text-[clamp(5rem,12vw,9rem)] font-black leading-none text-white/15 transition-colors duration-500 group-hover:text-white/30"
-            >
-              {initial}
-            </span>
           </div>
 
           {/* 우상단 화살표 (hover 시 slide) */}

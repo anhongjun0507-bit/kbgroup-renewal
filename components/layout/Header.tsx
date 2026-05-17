@@ -186,11 +186,13 @@ export function Header({ isAuthed = false }: HeaderProps) {
                     aria-expanded={hasChildren ? isOpen : undefined}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      /* Phase 11 P1-D — underline 위치 보강: bottom 2 → 1 (텍스트와 8px 여유)
-                         두께 2 → [3px] + 라운드. 좁은 padding으로 글자와 8px 간격 확보 */
+                      /* Phase 14 P1-06 — hover vs active 시각 분리.
+                         비액티브 hover 언더라인: 70% 투명도, 액티브: 100% */
                       "group relative inline-flex min-h-11 items-center px-4 py-3 text-[14px] font-medium transition-colors duration-200",
-                      "after:absolute after:left-4 after:right-4 after:bottom-1.5 after:h-[3px] after:w-0 after:rounded-full after:bg-accent-500 after:transition-[width] after:duration-200 after:[transition-timing-function:var(--ease)] hover:after:w-[calc(100%-2rem)]",
-                      active && "after:w-[calc(100%-2rem)]",
+                      "after:absolute after:left-4 after:right-4 after:bottom-1.5 after:h-[3px] after:w-0 after:rounded-full after:bg-accent-500 after:transition-[width,opacity] after:duration-200 after:[transition-timing-function:var(--ease)]",
+                      active
+                        ? "after:w-[calc(100%-2rem)] after:opacity-100"
+                        : "after:opacity-70 hover:after:w-[calc(100%-2rem)]",
                       "text-white/85 hover:text-white",
                     )}
                   >
@@ -322,13 +324,13 @@ export function Header({ isAuthed = false }: HeaderProps) {
                       </span>
                     </button>
                     {expanded && (
-                      <div className="space-y-3 pb-5 pl-3">
+                      <div className="space-y-1 pb-5 pl-3">
                         {item.children!.map((child) => (
                           <Link
                             key={child.href}
                             href={child.href}
                             onClick={closeMobile}
-                            className="block text-base text-white/70 transition-colors hover:text-accent-500"
+                            className="flex min-h-11 items-center text-base text-white/75 transition-colors hover:text-accent-500"
                           >
                             {child.label}
                           </Link>

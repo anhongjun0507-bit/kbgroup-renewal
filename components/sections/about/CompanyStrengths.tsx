@@ -73,7 +73,7 @@ export function CompanyStrengths() {
             >
               <span
                 aria-hidden="true"
-                className="number-display block text-[32px] font-extrabold text-accent-500"
+                className="number-display block text-[32px] font-extrabold text-accent-ink"
               >
                 {s.number}
               </span>
