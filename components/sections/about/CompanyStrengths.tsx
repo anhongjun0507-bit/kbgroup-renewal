@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import { companyStrengths } from "@/data/site-content";
+import { companyStrengths, yearsOfOperation } from "@/data/site-content";
 
 /* Phase 7 — PDF p22 회사 강점 5가지 */
 
@@ -50,7 +50,7 @@ export function CompanyStrengths() {
             kicker="COMPANY STRENGTHS"
             title="케이비개발의 다섯 가지 강점"
             italicWord="강점"
-            subtitle="10년의 운영으로 검증된 다섯 가지 차별 경쟁력입니다."
+            subtitle={`${yearsOfOperation}년의 운영으로 검증된 다섯 가지 차별 경쟁력입니다.`}
             align="left"
             size="md"
             as="h2"

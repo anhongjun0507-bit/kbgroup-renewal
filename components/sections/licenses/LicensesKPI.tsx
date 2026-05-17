@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
-import { certifications, licenses } from "@/data/site-content";
+import { certifications, licenses, STATS } from "@/data/site-content";
 
 /* Phase 6 F-1 — 3 KPI 대시보드 (navy-700 left-border 4px) */
 
@@ -26,12 +26,14 @@ function uniqueIssuerCount(): number {
 export function LicensesKPI() {
   const shouldReduce = useReducedMotion() ?? false;
 
+  /* Phase 14-B A-2/A-3 — KPI 값 정본 상수(STATS) 기반 정합화.
+     licenses 배열 9건은 운영 면허 시각화용, 정본 등록 보유는 11종. */
   const kpis = [
     {
       key: "licenses",
-      label: "보유 면허",
-      value: licenses.length,
-      unit: "건",
+      label: "보유 인허가",
+      value: STATS.registeredLicenses,
+      unit: "종",
       caption: "REGISTERED LICENSES",
     },
     {
@@ -44,11 +46,13 @@ export function LicensesKPI() {
     {
       key: "cert",
       label: "기술 인증",
-      value: certifications.length,
+      value: STATS.certificationTypes,
       unit: "종",
       caption: "CERTIFICATION TYPES",
     },
   ];
+  void licenses;
+  void certifications;
 
   const listVariants: Variants = {
     hidden: {},

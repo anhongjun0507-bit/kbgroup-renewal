@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import { differentiators } from "@/data/site-content";
+import { differentiators, yearsOfOperation } from "@/data/site-content";
 
 /* Phase 4.E.4 — 다섯 가지 차이
    좌측 sticky 큰 번호(01~05) + 우측 스크롤 stacking (Linear "How it works" 스타일)
@@ -78,8 +78,8 @@ export function WhyDifferentiators() {
                 </span>
               </div>
               <p className="mt-6 max-w-xs text-[14px] leading-relaxed text-ink-muted">
-                숫자 하나하나에 케이비개발이 11년간 쌓아온 운영 철학이 담겨
-                있습니다.
+                숫자 하나하나에 케이비개발이 {yearsOfOperation}년간 쌓아온 운영
+                철학이 담겨 있습니다.
               </p>
             </div>
           </div>

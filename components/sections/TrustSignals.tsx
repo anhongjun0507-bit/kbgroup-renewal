@@ -10,7 +10,7 @@ import { licenses, partners } from "@/data/site-content";
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
-/* 핵심 인허가 6종 (PDF 9건 중 운영 시각화 임팩트 큰 것) */
+/* 핵심 인허가 6종 (총 보유 11종 중 운영 시각화 임팩트 큰 것) */
 const KEY_LICENSES = [
   { name: "주택관리업", issuer: "광산구청", year: "2016", icon: "B" },
   { name: "시설경비업", issuer: "광주지방경찰청", year: "2016", icon: "S" },
@@ -56,7 +56,7 @@ export function TrustSignals() {
             id="trust-signals-heading"
             className="font-display text-[24px] font-bold tracking-tight text-ink-strong md:text-[28px]"
           >
-            <span className="accent-em">9종</span>의 인허가와{" "}
+            <span className="accent-em">11종</span>의 인허가와{" "}
             <span className="accent-em">검증된 발주처</span>가 함께합니다
           </h2>
         </div>

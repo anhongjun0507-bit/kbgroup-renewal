@@ -7,9 +7,13 @@ import { Container } from "@/components/ui";
 import {
   certifications,
   licenses,
+  STATS,
   totalCertHolders,
   yearsOfOperation,
 } from "@/data/site-content";
+
+void certifications;
+void licenses;
 
 /* Phase 4.H.1, 4.H.2 — 인력·인증 통계 대시보드
    - 4컬럼 → 2 row 카드 그리드 + 좌측 라인 아이콘
@@ -70,8 +74,8 @@ export function WorkforceStats() {
     },
     {
       key: "licenses",
-      value: licenses.length,
-      suffix: "+",
+      value: STATS.registeredLicenses,
+      suffix: "종",
       label: "보유 인허가",
       caption: "REGISTERED LICENSES",
       icon: (
@@ -83,8 +87,8 @@ export function WorkforceStats() {
     },
     {
       key: "certifications",
-      value: certifications.length,
-      suffix: "+",
+      value: STATS.certificationTypes,
+      suffix: "종",
       label: "기술 자격증",
       caption: "CERTIFICATION TYPES",
       icon: (

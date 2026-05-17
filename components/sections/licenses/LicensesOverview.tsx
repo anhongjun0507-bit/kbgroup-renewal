@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import { certifications, licenses } from "@/data/site-content";
+import { certifications, licenses, STATS } from "@/data/site-content";
 
 /* Phase 4.H.4 — 분야별 도넛 차트
    자격증을 5개 카테고리로 자동 분류 후 SVG donut */
@@ -213,9 +213,9 @@ export function LicensesOverview() {
                 </p>
                 <p className="mt-3 flex items-baseline gap-1">
                   <span className="font-mono-num font-display text-[36px] font-extrabold leading-none text-navy-800">
-                    {licenses.length}
+                    {STATS.registeredLicenses}
                   </span>
-                  <span className="font-mono-num text-[16px] font-bold text-accent-ink">+</span>
+                  <span className="font-mono-num text-[16px] font-bold text-accent-ink">종</span>
                 </p>
                 <p className="mt-2 text-[13px] text-ink-muted">
                   법적으로 등록된 사업 자격
@@ -227,9 +227,9 @@ export function LicensesOverview() {
                 </p>
                 <p className="mt-3 flex items-baseline gap-1">
                   <span className="font-mono-num font-display text-[36px] font-extrabold leading-none text-navy-800">
-                    {certifications.length}
+                    {STATS.certificationTypes}
                   </span>
-                  <span className="font-mono-num text-[16px] font-bold text-accent-ink">+</span>
+                  <span className="font-mono-num text-[16px] font-bold text-accent-ink">종</span>
                 </p>
                 <p className="mt-2 text-[13px] text-ink-muted">
                   전문 기술과 역량 자격

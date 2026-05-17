@@ -430,7 +430,7 @@ export const companyStrengths: CompanyStrength[] = [
   { number: "04", title: "대형아파트 위탁관리 전환",
     description: "광주 현장 위탁관리를 케이비개발로 전환하여 현재까지 우수하게 운영 중." },
   { number: "05", title: "빠른 성장력",
-    description: "공동주택관리업을 시작한지 10년이라는 기간 동안 73개 단지를 직접 운영." },
+    description: "공동주택관리업을 시작한 이래 73개 단지를 직접 운영하며 빠르게 성장." },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -660,6 +660,25 @@ export const licenses: License[] = [
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const totalCertHolders = 1575;
+
+/**
+ * Phase 14-B 정본 상수 — 사이트 전역 단일 출처.
+ * licenses 배열 실제 항목 9건이나 정본 등록 보유 인허가는 11종(법인 설립·기타 등록 포함).
+ * certifications 배열 자동 카운트로 27종 정합.
+ * 사이트 어디서든 이 상수를 import 해 표기 일관성 보장.
+ */
+export const STATS = {
+  /** 누적 운영 단지 (LH + 민간) */
+  activeComplexes: 73,
+  /** 관리 세대수 */
+  managedHouseholds: 32000,
+  /** 보유 인허가 종수 (정본) — licenses 배열 9건은 운영 면허 노출용 */
+  registeredLicenses: 11,
+  /** 기술 인증 종수 */
+  certificationTypes: 27,
+  /** 자격증 보유 전문 인력 */
+  certifiedProfessionals: 1575,
+} as const;
 
 const _FOUNDING_DATE = new Date(2013, 8, 1); // 2013년 9월 1일
 export const yearsOfOperation: number = Math.max(
