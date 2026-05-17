@@ -264,16 +264,19 @@ export function ServiceCategories() {
           >
             <Link
               href={`/business/${extraArea.slug}`}
-              className="group flex flex-col gap-6 p-7 transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:shadow-[var(--shadow-card)] md:flex-row md:items-center md:justify-between md:gap-10 lg:p-9"
+              className="group flex flex-col gap-6 p-6 transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:shadow-[var(--shadow-card)] sm:p-7 md:flex-row md:items-center md:justify-between md:gap-10 lg:p-9"
             >
-              <div className="flex items-baseline gap-6">
+              {/* Phase 14-F F-1 — 내부 flex도 모바일은 col, 텍스트 div에 min-w-0 + flex-1 부여
+                  이전: items-baseline 가로 flex로 텍스트 폭이 짜부라져 글자 단위 줄바꿈
+                  (overflow-wrap: anywhere + 부족한 폭이 트리거) */}
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-baseline sm:gap-6">
                 <span
                   aria-hidden="true"
-                  className="number-display tabular text-[44px] font-extrabold text-accent-500/25"
+                  className="number-display tabular flex-shrink-0 text-[40px] font-extrabold leading-none text-accent-500/25 sm:text-[44px]"
                 >
                   05
                 </span>
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-[12px] font-medium uppercase tracking-[0.15em] text-ink-faint">
                     {extraArea.englishName}
                   </p>
@@ -283,7 +286,7 @@ export function ServiceCategories() {
                   <p className="mt-1 text-[14px] text-ink">{extraArea.tagline}</p>
                 </div>
               </div>
-              <span className="inline-flex items-center gap-2 text-[13px] font-semibold text-ink-strong">
+              <span className="inline-flex flex-shrink-0 items-center gap-2 text-[13px] font-semibold text-ink-strong">
                 기타 더보기
                 <span
                   aria-hidden="true"

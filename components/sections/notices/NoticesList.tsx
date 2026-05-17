@@ -138,10 +138,11 @@ export function NoticesList({
     >
       <Container>
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          {/* 카테고리 chip */}
+          {/* 카테고리 chip — Phase 14-F F-3: 모바일은 wrap 허용(필터 노출 보장),
+              lg+는 한 줄 + 스크롤. -mx-1 음수 마진이 모바일 일부 환경에서 좌측 밀림 유발. */}
           {!lockCategory && (
             <ul
-              className="-mx-1 flex flex-1 items-center gap-2 overflow-x-auto px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className="flex flex-1 flex-wrap items-center gap-2 lg:flex-nowrap lg:overflow-x-auto lg:[-ms-overflow-style:none] lg:[scrollbar-width:none] lg:[&::-webkit-scrollbar]:hidden"
               role="tablist"
               aria-label="공지 카테고리"
             >
@@ -237,9 +238,10 @@ export function NoticesList({
                       </div>
                     </div>
 
-                    {/* 가운데 */}
-                    <div className="col-span-7 md:col-span-8">
-                      <div className="flex items-center gap-2">
+                    {/* 가운데 — Phase 14-F F-2: 모바일은 배지 옆 날짜 inline,
+                        md+는 기존처럼 우측 컬럼 사용 */}
+                    <div className="col-span-9 md:col-span-8">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span
                           className={cn(
                             "inline-flex items-center rounded-sm px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em]",
@@ -247,6 +249,10 @@ export function NoticesList({
                           )}
                         >
                           {CATEGORY_LABEL[item.category]}
+                        </span>
+                        {/* 모바일 전용 날짜 inline */}
+                        <span className="whitespace-nowrap font-mono-num text-[11px] text-ink-faint md:hidden">
+                          {item.date}
                         </span>
                       </div>
                       <h3 className="mt-2 line-clamp-2 font-display text-[16px] font-bold tracking-tight text-ink-strong transition-colors duration-200 group-hover:text-accent-500 md:text-[18px]">
@@ -259,8 +265,8 @@ export function NoticesList({
                       )}
                     </div>
 
-                    {/* 우측 날짜 */}
-                    <p className="col-span-2 text-right font-mono-num text-[12px] text-ink-faint md:text-[13px]">
+                    {/* 우측 날짜 — md+ 전용 */}
+                    <p className="col-span-2 hidden whitespace-nowrap text-right font-mono-num text-[13px] text-ink-faint md:block">
                       {item.date}
                     </p>
                   </Link>
