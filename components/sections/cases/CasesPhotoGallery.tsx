@@ -8,19 +8,20 @@ import { Container, Heading } from "@/components/ui";
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
+/* Phase 14-K K-6 — aspect ratio 4/5·3/4 혼재 → 4/5 통일 (한 가지 비율로 그리드 정렬) */
 const PHOTOS = [
-  { src: "/images/cases/p12_12.jpeg", aspect: "aspect-[4/5]" },
-  { src: "/images/cases/p13_09.jpeg", aspect: "aspect-[4/5]" },
-  { src: "/images/cases/p15_07.jpeg", aspect: "aspect-[3/4]" },
-  { src: "/images/cases/p17_10.jpeg", aspect: "aspect-[3/4]" },
-  { src: "/images/cases/p12_02.jpeg", aspect: "aspect-[4/5]" },
-  { src: "/images/cases/p13_07.jpeg", aspect: "aspect-[4/5]" },
-  { src: "/images/cases/p15_04.jpeg", aspect: "aspect-[3/4]" },
-  { src: "/images/cases/p16_12.jpeg", aspect: "aspect-[3/4]" },
-  { src: "/images/cases/p12_06.jpeg", aspect: "aspect-[4/5]" },
-  { src: "/images/cases/p15_13.jpeg", aspect: "aspect-[4/5]" },
-  { src: "/images/cases/p17_11.jpeg", aspect: "aspect-[3/4]" },
-  { src: "/images/cases/p17_13.jpeg", aspect: "aspect-[3/4]" },
+  "/images/cases/p12_12.jpeg",
+  "/images/cases/p13_09.jpeg",
+  "/images/cases/p15_07.jpeg",
+  "/images/cases/p17_10.jpeg",
+  "/images/cases/p12_02.jpeg",
+  "/images/cases/p13_07.jpeg",
+  "/images/cases/p15_04.jpeg",
+  "/images/cases/p16_12.jpeg",
+  "/images/cases/p12_06.jpeg",
+  "/images/cases/p15_13.jpeg",
+  "/images/cases/p17_11.jpeg",
+  "/images/cases/p17_13.jpeg",
 ];
 
 export function CasesPhotoGallery() {
@@ -80,18 +81,15 @@ export function CasesPhotoGallery() {
           variants={listVariants}
           className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4"
         >
-          {PHOTOS.map((p) => (
+          {PHOTOS.map((src) => (
             <motion.li
-              key={p.src}
+              key={src}
               variants={itemVariants}
-              className={
-                "group overflow-hidden rounded-md border border-line bg-gray-50 " +
-                p.aspect
-              }
+              className="group aspect-[4/5] overflow-hidden rounded-md border border-line bg-gray-50"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={p.src}
+                src={src}
                 alt="케이비개발 운영 단지"
                 className="block h-full w-full object-cover transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.04]"
                 loading="lazy"

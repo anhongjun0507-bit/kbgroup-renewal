@@ -179,7 +179,9 @@ export const contact: Contact = {
   fax: "062-974-3070",
   /** PDF p48 — 회사 공식 메일 */
   email: "7970kb@naver.com",
-  address: "광주광역시 광산구 월계로 223-22, 2층 201·202호",
+  /* Phase 14-K K-1 — 번지수 "223-22"의 hyphen을 non-breaking hyphen(U+2011)으로 교체.
+     좁은 컨테이너에서 "223-"와 "22"가 분리 줄바꿈되던 문제 해소. 시각·검색은 동일. */
+  address: "광주광역시 광산구 월계로 223‑22, 2층 201·202호",
   privacyOfficer: { name: "고예근", phone: "062-416-3037" },
   parking: "지하 1층 주차장 (방문객 무료)",
   nearestStops: ["첨단롯데마트", "우편집중국"],
@@ -405,15 +407,45 @@ export const differentiators: Differentiator[] = [
     description: "한 번의 계약을 넘어 오래 함께합니다." },
 ];
 
+/* Phase 14-K K-4 — description 한 줄 → 2~3 문장으로 확장.
+   사용자 인식: 한 줄 카피는 "성의 부족" 인상 → 실제 운영 흐름·산출물·기간 명시 */
 export const processSteps: ProcessStep[] = [
-  { key: "consultation", numberLabel: "01", name: "상담 · 견적", englishName: "CONSULTATION",
-    description: "고객 요구사항 분석 후 맞춤형 제안" },
-  { key: "contract", numberLabel: "02", name: "계약 · 준비", englishName: "CONTRACT",
-    description: "세부 사항 협의 후 운영 체계 구축" },
-  { key: "operation", numberLabel: "03", name: "운영 · 관리", englishName: "OPERATION",
-    description: "체계적인 관리와 정기 점검" },
-  { key: "after-care", numberLabel: "04", name: "사후 관리", englishName: "AFTER-CARE",
-    description: "지속적인 모니터링과 개선" },
+  {
+    key: "consultation",
+    numberLabel: "01",
+    name: "상담 · 견적",
+    englishName: "CONSULTATION",
+    description:
+      "단지·시설 현황과 요구 범위를 직접 방문 진단하여 맞춤형 제안서를 작성합니다. " +
+      "초기 상담은 무료이며 영업일 기준 평균 4시간 안에 회신, 1주 이내 견적서 전달을 원칙으로 합니다.",
+  },
+  {
+    key: "contract",
+    numberLabel: "02",
+    name: "계약 · 준비",
+    englishName: "CONTRACT",
+    description:
+      "단지 운영 표준·인력 배치·점검 사이클·비용 구조를 협의하여 표준 계약서를 체결합니다. " +
+      "계약 직후 관리소장·시설반장·경비·청소 인력 매칭과 운영 시스템(점검 체크리스트·보고 라인) 구축을 동시 진행합니다.",
+  },
+  {
+    key: "operation",
+    numberLabel: "03",
+    name: "운영 · 관리",
+    englishName: "OPERATION",
+    description:
+      "일상 관리·정기 점검·법정 의무 점검을 통합 운영합니다. " +
+      "본사 통합 관제로 야간·휴일 대응을 보장하고, 월간 운영 리포트를 입주자대표회의·발주처에 정기 공유합니다.",
+  },
+  {
+    key: "after-care",
+    numberLabel: "04",
+    name: "사후 관리",
+    englishName: "AFTER-CARE",
+    description:
+      "운영 데이터를 분기·연간 단위로 분석하여 개선 과제를 도출하고 다음 계약 갱신 시점까지 반영합니다. " +
+      "민원·하자·안전 이슈는 24시간 핫라인으로 별도 트래킹하며 만족도 조사 결과는 운영 KPI에 직접 반영합니다.",
+  },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────

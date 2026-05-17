@@ -156,14 +156,21 @@ export function BusinessOverview({ area }: Props) {
                 <p className="mt-6 text-[12px] font-medium uppercase tracking-[0.18em] text-ink-faint">
                   {m.label}
                 </p>
-                <p className="mt-3 flex items-baseline gap-1 font-mono-num">
+                {/* Phase 14-K K-3 — .number-display의 min-width: 5ch로 짧은 숫자
+                    우측에 빈 공간 → 단위가 멀리 떨어져 보임. 직접 스타일로 교체. */}
+                <p className="mt-3 flex items-baseline gap-1.5 font-display">
                   <span
-                    className="number-display text-[40px] font-extrabold text-navy-800 md:text-[48px]"
+                    className="tabular font-extrabold leading-none text-navy-800"
+                    style={{
+                      fontSize: "clamp(2.25rem, 4vw, 3rem)",
+                      letterSpacing: "-0.02em",
+                      whiteSpace: "nowrap",
+                    }}
                   >
                     {m.value}
                   </span>
                   {m.suffix && (
-                    <span className="text-[16px] font-semibold text-accent-ink">
+                    <span className="whitespace-nowrap text-[16px] font-semibold text-accent-ink">
                       {m.suffix}
                     </span>
                   )}

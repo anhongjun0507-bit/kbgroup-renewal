@@ -17,19 +17,21 @@ const EQUIPMENT_STATS = [
   { label: "측정·점검 장비", value: "15", suffix: "종" },
 ];
 
-const HIGHLIGHT_EQUIPMENT = [
-  "디지털 조도계 LX-1330B",
-  "휴대용 연막기 D.Y.FORGGER 130형 ⚖️",
-  "열화상 카메라 FLIR / TG165",
-  "디지털 클램프테스터 (접지저항계)",
-  "고압세척기 200bar / 18l",
-  "탑승용 청소차량 CLAS-50R · 80R",
-  "압축식 분무기 TH33 ⚖️",
-  "휴대용 초미립자 살포기 ⚖️",
-  "디지털 풍속계 KESTREL-1000 ⚖️",
-  "일산화 측정기 GM8850 ⚖️",
-  "충전 드라이버드릴 DD-1202L-2",
-  "건축물 안전점검 보유세트",
+/* Phase 14-K K-2 — ⚖️ 이모지 → 구조화 데이터. 렌더에서 SVG 배지로 표시 */
+type Equipment = { name: string; legal?: boolean };
+const HIGHLIGHT_EQUIPMENT: Equipment[] = [
+  { name: "디지털 조도계 LX-1330B" },
+  { name: "휴대용 연막기 D.Y.FORGGER 130형", legal: true },
+  { name: "열화상 카메라 FLIR / TG165" },
+  { name: "디지털 클램프테스터 (접지저항계)" },
+  { name: "고압세척기 200bar / 18l" },
+  { name: "탑승용 청소차량 CLAS-50R · 80R" },
+  { name: "압축식 분무기 TH33", legal: true },
+  { name: "휴대용 초미립자 살포기", legal: true },
+  { name: "디지털 풍속계 KESTREL-1000", legal: true },
+  { name: "일산화 측정기 GM8850", legal: true },
+  { name: "충전 드라이버드릴 DD-1202L-2" },
+  { name: "건축물 안전점검 보유세트" },
 ];
 
 const TABLE_IMAGES = [
@@ -100,20 +102,36 @@ export function EquipmentShowcase() {
             <h3 className="mt-3 font-display text-[22px] font-bold tracking-tight text-ink-strong md:text-[26px]">
               주요 보유 장비
             </h3>
-            <p className="mt-3 text-[14px] text-ink-faint">
-              ⚖️ 표시 = 법정 의무 장비
+            <p className="mt-3 flex items-center gap-1.5 text-[13px] text-ink-faint">
+              <span
+                aria-hidden="true"
+                className="inline-flex h-4 items-center rounded-sm bg-accent-500/15 px-1.5 font-mono-num text-[9px] font-bold uppercase tracking-[0.1em] text-accent-deep"
+              >
+                LAW
+              </span>
+              표시 = 법정 의무 장비
             </p>
             <ul className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-2">
               {HIGHLIGHT_EQUIPMENT.map((e) => (
                 <li
-                  key={e}
+                  key={e.name}
                   className="flex items-start gap-2 text-[14px] leading-[1.6] text-ink-muted"
                 >
                   <span
                     aria-hidden="true"
                     className="mt-2 inline-block h-1.5 w-1.5 flex-shrink-0 bg-accent-500"
                   />
-                  <span>{e}</span>
+                  <span className="flex-1">
+                    {e.name}
+                    {e.legal && (
+                      <span
+                        aria-label="법정 의무 장비"
+                        className="ml-1.5 inline-flex h-4 items-center rounded-sm bg-accent-500/15 px-1.5 align-[1px] font-mono-num text-[9px] font-bold uppercase tracking-[0.1em] text-accent-deep"
+                      >
+                        LAW
+                      </span>
+                    )}
+                  </span>
                 </li>
               ))}
             </ul>
