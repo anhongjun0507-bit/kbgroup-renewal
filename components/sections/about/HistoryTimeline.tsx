@@ -96,12 +96,14 @@ function YearBlock({
     visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.08 } },
   };
 
+  /* Phase 14-D D-3 — initial opacity 0 → 1 (JS-off/지연 환경 invisible 방지).
+     16개 history 항목 중 viewport once 0.2 트리거 위 항목이 영구 안 보이던 문제 해소. */
   const itemVariants: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 20 },
+    hidden: { opacity: 1, y: shouldReduce ? 0 : 12 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: shouldReduce ? 0 : 0.6, ease: EASE_OUT_EXPO },
+      transition: { duration: shouldReduce ? 0 : 0.5, ease: EASE_OUT_EXPO },
     },
   };
 

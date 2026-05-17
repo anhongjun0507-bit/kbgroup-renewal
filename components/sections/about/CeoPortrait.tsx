@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import {
   motion,
   useReducedMotion,
@@ -46,26 +45,55 @@ export function CeoPortrait() {
           variants={stagger}
           className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16"
         >
-          {/* Portrait — 실제 사진 사용 */}
+          {/* Portrait — Phase 14-D D-4: 기존 ceo-portrait.png(107x146)는 해상도 부족으로
+              fill 컨테이너에서 흐릿한 실루엣으로 보임. 실사 사진 수급 전까지 명확한
+              navy 톤 placeholder(이름 이니셜 + CEO 라벨)로 교체 → '미설정' 인상 제거 */}
           <motion.div variants={item} className="lg:col-span-5">
-            <div className="relative aspect-[3/4] overflow-hidden bg-bg-soft">
-              <Image
-                src="/ceo-portrait.png"
-                alt={`${ceoMessage.authorName} ${ceoMessage.authorTitle}`}
-                fill
-                sizes="(max-width: 1024px) 100vw, 40vw"
-                className="object-cover object-top"
-                priority
+            <div
+              className="relative aspect-[3/4] overflow-hidden bg-navy-900"
+              style={{
+                background:
+                  "linear-gradient(135deg, #0E1F3A 0%, #16315C 60%, #0B1A33 100%)",
+              }}
+            >
+              {/* radial gold accent */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.22) 0%, transparent 70%)",
+                }}
               />
-              {/* KB 빨강 좌측 라인 */}
+              {/* 골드 좌측 라인 */}
               <span
                 aria-hidden="true"
-                className="absolute inset-y-0 left-0 w-[3px] bg-accent"
+                className="absolute inset-y-0 left-0 w-[3px] bg-accent-500"
               />
-              {/* 영문 라벨 */}
-              <span className="absolute left-5 top-5 bg-white px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-ink">
+              {/* CEO 라벨 */}
+              <span className="absolute left-5 top-5 bg-white/95 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-strong">
                 CEO
               </span>
+              {/* 이름 이니셜 모노그램 */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+                <span
+                  aria-hidden="true"
+                  className="font-display text-[clamp(6rem,16vw,12rem)] font-black leading-none text-white/12"
+                  style={{ letterSpacing: "var(--tracking-tighter)" }}
+                >
+                  {ceoMessage.authorName.charAt(0)}
+                </span>
+                <p className="mt-6 font-display text-[20px] font-bold tracking-tight text-white md:text-[22px]">
+                  {ceoMessage.authorName}
+                </p>
+                <p className="mt-2 text-[11px] font-medium uppercase tracking-[0.18em] text-accent-300">
+                  {ceoMessage.authorTitle}
+                </p>
+              </div>
+              {/* 하단 보조 라벨 */}
+              <p className="absolute inset-x-5 bottom-5 text-center text-[10px] uppercase tracking-[0.14em] text-white/45">
+                Official portrait to be updated
+              </p>
             </div>
           </motion.div>
 

@@ -100,13 +100,20 @@ export function Cases() {
           {featured.map((c, idx) => {
             const initial = getInitial(c.name);
             const badge = c.type ?? "민간";
+            /* Phase 14-D D-2 — 홈 단지 카드를 /cases/[slug] 상세로 직접 연결.
+               이전: 모두 /cases 인덱스로 이동해 카드 클릭 의미 없음 */
+            const slug = encodeURIComponent(c.name);
             return (
               <motion.article
                 key={`${c.name}-${idx}`}
                 variants={item}
                 className="group overflow-hidden rounded-md border border-line bg-white transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
               >
-                <Link href="/cases" className="block">
+                <Link
+                  href={`/cases/${slug}`}
+                  className="block"
+                  aria-label={`${c.name} 상세보기`}
+                >
                   {/* Phase 14 P0-03 — c.image 지정 시 실사 사진 우선, 없으면 기존 그라데이션 + 이니셜 fallback */}
                   <div className="relative aspect-[4/5] overflow-hidden bg-navy-900">
                     {c.image ? (

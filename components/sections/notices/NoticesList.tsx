@@ -19,6 +19,10 @@ export type NoticeItem = {
   summary?: string;
   date: string; // YYYY-MM-DD
   thumbColor?: string;
+  /** 상세 페이지 본문 — Phase 14-D D-1. 문단(string[])으로 입력 */
+  body?: string[];
+  /** 첨부·외부 링크 (선택) */
+  links?: { label: string; href: string }[];
 };
 
 const CATEGORIES: { value: NoticeCategory; label: string }[] = [
