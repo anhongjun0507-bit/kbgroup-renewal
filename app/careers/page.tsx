@@ -4,7 +4,7 @@ import { CareersValues } from "@/components/sections/careers/CareersValues";
 import { CareersWelfare } from "@/components/sections/careers/CareersWelfare";
 import { CareersOpenings } from "@/components/sections/careers/CareersOpenings";
 import { CareersApply } from "@/components/sections/careers/CareersApply";
-import { ContactForm } from "@/components/sections/common/ContactForm";
+import { ContactInvite } from "@/components/sections/common/ContactInvite";
 
 export const metadata: Metadata = {
   title: "채용 | (주)케이비개발",
@@ -29,7 +29,10 @@ export default function CareersPage() {
       <CareersWelfare />
       <CareersOpenings />
       <CareersApply />
-      <ContactForm context="채용 일반 문의" />
+      <ContactInvite
+        context="채용·사업 관련 일반 문의는 본사 회선으로 직접 연락 주세요"
+        ctaLabel="문의 페이지 이동"
+      />
     </>
   );
 }

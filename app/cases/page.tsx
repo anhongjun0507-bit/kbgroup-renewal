@@ -4,7 +4,7 @@ import { CasesStats } from "@/components/sections/cases/CasesStats";
 import { CasesMap } from "@/components/sections/cases/CasesMap";
 import { CasesGallery } from "@/components/sections/cases/CasesGallery";
 import { CasesPhotoGallery } from "@/components/sections/cases/CasesPhotoGallery";
-import { ContactForm } from "@/components/sections/common/ContactForm";
+import { ContactInvite } from "@/components/sections/common/ContactInvite";
 
 export const metadata: Metadata = {
   title: "관리현황 | (주)케이비개발",
@@ -29,7 +29,7 @@ export default function CasesPage() {
       <CasesPhotoGallery />
       <CasesMap />
       <CasesGallery />
-      <ContactForm context="관리현황 문의" />
+      <ContactInvite context="우리 단지의 운영 상담을 시작해 보세요" />
     </>
   );
 }

@@ -4,7 +4,7 @@ import { DataCounter } from "@/components/sections/DataCounter";
 import { ServiceCategories } from "@/components/sections/ServiceCategories";
 import { Cases } from "@/components/sections/Cases";
 import { Partners } from "@/components/sections/Partners";
-import { ContactForm } from "@/components/sections/common/ContactForm";
+import { ContactInvite } from "@/components/sections/common/ContactInvite";
 
 export default function Home() {
   return (
@@ -15,7 +15,7 @@ export default function Home() {
       <ServiceCategories />
       <Cases />
       <Partners />
-      <ContactForm context="홈 — 사업 상담 문의" />
+      <ContactInvite context="단지·시설 운영에 관한 모든 문의를 환영합니다" />
     </>
   );
 }

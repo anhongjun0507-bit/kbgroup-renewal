@@ -3,7 +3,7 @@ import { PageHero } from "@/components/sections/common/PageHero";
 import { AboutNav } from "@/components/sections/about/AboutNav";
 import { CeoPortrait } from "@/components/sections/about/CeoPortrait";
 import { CeoMessage } from "@/components/sections/about/CeoMessage";
-import { ContactForm } from "@/components/sections/common/ContactForm";
+import { ContactInvite } from "@/components/sections/common/ContactInvite";
 
 export const metadata: Metadata = {
   title: "대표 메시지 | (주)케이비개발",
@@ -27,7 +27,7 @@ export default function CeoPage() {
       <AboutNav current="ceo" />
       <CeoPortrait />
       <CeoMessage />
-      <ContactForm context="대표 메시지 — 상담 문의" />
+      <ContactInvite context="대표 메시지에 공감하셨다면 함께 시작해 주세요" />
     </>
   );
 }

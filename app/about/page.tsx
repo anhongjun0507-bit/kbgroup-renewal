@@ -8,7 +8,7 @@ import { CompanyOffice } from "@/components/sections/about/CompanyOffice";
 import { EquipmentShowcase } from "@/components/sections/about/EquipmentShowcase";
 import { RelatedCompaniesGrid } from "@/components/sections/about/RelatedCompaniesGrid";
 import { CollaboratorsTable } from "@/components/sections/about/CollaboratorsTable";
-import { ContactForm } from "@/components/sections/common/ContactForm";
+import { ContactInvite } from "@/components/sections/common/ContactInvite";
 
 export const metadata: Metadata = {
   title: "회사소개 | (주)케이비개발",
@@ -41,7 +41,7 @@ export default function AboutPage() {
       <EquipmentShowcase />
       <RelatedCompaniesGrid />
       <CollaboratorsTable />
-      <ContactForm context="회사소개 — 사업 상담 문의" />
+      <ContactInvite context="(주)케이비개발과 단지 운영을 함께할 준비가 되었습니다" />
     </>
   );
 }

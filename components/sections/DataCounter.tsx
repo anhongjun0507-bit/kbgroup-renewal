@@ -103,7 +103,7 @@ export function DataCounter() {
             variants={item}
             className="mt-5 max-w-xl text-[16px] text-ink"
           >
-            2014년 설립 이래 축적해온 운영 성과입니다.
+            2013년 설립 이래 축적해온 운영 성과입니다.
           </motion.p>
         </motion.div>
 
