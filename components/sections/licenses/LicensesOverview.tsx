@@ -109,14 +109,16 @@ export function LicensesOverview() {
         </motion.div>
 
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-center lg:gap-20">
-          {/* 도넛 차트 */}
-          <div className="flex justify-center">
-            <div className="relative">
+          {/* Phase 14-J J-1 — 모바일: 가로 막대 차트 + 합계 카드 (좁은 화면 가독성 강화)
+              md+: 기존 도넛 차트 유지 (시각 임팩트) */}
+          <div className="flex flex-col gap-6 md:items-center">
+            {/* 도넛 — md+ 전용 */}
+            <div className="relative hidden md:block">
               <svg
                 viewBox="0 0 240 240"
-                className="h-[240px] w-[240px] md:h-[280px] md:w-[280px]"
+                className="h-[280px] w-[280px]"
                 role="img"
-                aria-label="자격증 분야별 분포"
+                aria-label="자격증 분야별 분포 도넛 차트"
               >
                 {/* 배경 트랙 */}
                 <circle
@@ -173,11 +175,28 @@ export function LicensesOverview() {
                 </text>
               </svg>
             </div>
+
+            {/* 막대 — 모바일 전용 합계 카드 */}
+            <div className="block w-full rounded-md border border-line bg-gray-50 p-6 text-center md:hidden">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-faint">
+                TOTAL
+              </p>
+              <p className="mt-2 font-mono-num font-display text-[44px] font-extrabold leading-none text-navy-800">
+                {total.toLocaleString()}
+                <span className="ml-1 font-mono-num text-[18px] font-bold text-accent-ink">
+                  명
+                </span>
+              </p>
+              <p className="mt-2 text-[13px] text-ink-muted">
+                {entries.length}개 분야 자격증 보유 인력 합계
+              </p>
+            </div>
           </div>
 
-          {/* 범례 + 총 인허가·인증 카드 */}
+          {/* 범례·막대 + 총 인허가·인증 카드 */}
           <div>
-            <ul className="divide-y divide-line">
+            {/* 데스크탑(md+): 기존 표 형식 */}
+            <ul className="hidden divide-y divide-line md:block">
               {arcs.map((arc) => {
                 const pct = ((arc.value / total) * 100).toFixed(1);
                 return (
@@ -201,6 +220,59 @@ export function LicensesOverview() {
                     <span className="col-span-2 text-right font-mono-num text-[13px] text-ink-faint">
                       {pct}%
                     </span>
+                  </li>
+                );
+              })}
+            </ul>
+
+            {/* 모바일(md-): 가로 막대 차트 */}
+            <ul className="block space-y-5 md:hidden" role="list" aria-label="자격증 분야별 분포">
+              {arcs.map((arc, idx) => {
+                const pctNum = (arc.value / total) * 100;
+                const pct = pctNum.toFixed(1);
+                return (
+                  <li key={arc.name} className="space-y-2">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <div className="flex min-w-0 items-baseline gap-2">
+                        <span
+                          aria-hidden="true"
+                          className="inline-block h-3 w-3 flex-shrink-0 rounded-sm"
+                          style={{ backgroundColor: arc.color }}
+                        />
+                        <span className="font-display text-[15px] font-bold text-ink-strong">
+                          {arc.name}
+                        </span>
+                      </div>
+                      <span className="flex flex-shrink-0 items-baseline gap-2 whitespace-nowrap">
+                        <span className="font-mono-num text-[15px] font-bold text-ink-strong">
+                          {arc.value.toLocaleString()}
+                          <span className="ml-0.5 text-[12px] font-medium text-ink-faint">명</span>
+                        </span>
+                        <span className="font-mono-num text-[12px] font-semibold text-accent-deep">
+                          {pct}%
+                        </span>
+                      </span>
+                    </div>
+                    {/* 가로 막대 */}
+                    <div
+                      className="relative h-2 w-full overflow-hidden rounded-full bg-line"
+                      role="progressbar"
+                      aria-valuenow={pctNum}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-label={`${arc.name} ${pct}%`}
+                    >
+                      <span
+                        className="absolute inset-y-0 left-0 block rounded-full"
+                        style={{
+                          width: `${pctNum}%`,
+                          backgroundColor: arc.color,
+                          transition: shouldReduce
+                            ? undefined
+                            : `width 700ms var(--ease) ${idx * 80}ms`,
+                        }}
+                      />
+                    </div>
                   </li>
                 );
               })}
