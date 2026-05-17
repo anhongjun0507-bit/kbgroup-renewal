@@ -366,11 +366,17 @@ body {
   font-style: normal;
 }
 
-/* 강조색 H2/H3 정책 헬퍼 — 한 화면당 1회 */
+/* 강조색 H2/H3 정책 헬퍼 — 한 화면당 1회
+   Phase 14-C C-6 — 라이트 위 accent-500(#C9A24B)은 2.4:1로 가독성 실패.
+   accent-ink(#7A5A12, 5.8:1)로 변경. 다크 배경에선 accent-300 분기 */
 .accent-em {
-  color: var(--color-accent-500);
+  color: var(--color-accent-ink);
   font-weight: inherit;
   font-style: normal;
+}
+[data-surface="dark"] .accent-em,
+.section-dark .accent-em {
+  color: var(--color-accent-300);
 }
 
 /* === Phase 6 A-3, K — section-dark 유틸 === */

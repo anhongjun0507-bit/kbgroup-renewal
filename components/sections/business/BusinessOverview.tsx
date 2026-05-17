@@ -44,26 +44,28 @@ interface Props {
 export function BusinessOverview({ area }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
 
+  /* Phase 14-C C-6 — initial opacity 0 → 1 (JS-off/지연 환경 invisible 방지).
+     transform y만 미세 이동으로 진입감 유지 */
   const blockVariants: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 30 },
+    hidden: { opacity: 1, y: shouldReduce ? 0 : 16 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: shouldReduce ? 0 : 0.8, ease: EASE_OUT_EXPO },
+      transition: { duration: shouldReduce ? 0 : 0.6, ease: EASE_OUT_EXPO },
     },
   };
 
   const listVariants: Variants = {
     hidden: {},
-    visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.12 } },
+    visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.08 } },
   };
 
   const itemVariants: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 20 },
+    hidden: { opacity: 1, y: shouldReduce ? 0 : 12 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: shouldReduce ? 0 : 0.7, ease: EASE_OUT_EXPO },
+      transition: { duration: shouldReduce ? 0 : 0.5, ease: EASE_OUT_EXPO },
     },
   };
 

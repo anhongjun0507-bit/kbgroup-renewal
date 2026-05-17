@@ -199,13 +199,17 @@ export function Header({ isAuthed = false }: HeaderProps) {
                     {item.label}
                   </Link>
                   {hasChildren && isOpen && (
-                    <div className="absolute left-1/2 top-full -translate-x-1/2 pt-1">
-                      <div className="min-w-[200px] rounded-sm border border-white/10 bg-navy-900/95 py-2 shadow-md backdrop-blur-md">
+                    /* Phase 14-C C-7 — 드롭다운 안정화.
+                       pt-1 갭 제거 → mouseleave 깜빡임 차단.
+                       링크 하단과 메뉴 사이 invisible bridge로 마우스 이동 안전 */
+                    <div className="absolute left-1/2 top-full z-50 -translate-x-1/2">
+                      <span aria-hidden="true" className="block h-2 w-full" />
+                      <div className="min-w-[220px] rounded-sm border border-white/10 bg-navy-900/95 py-2 shadow-[0_12px_32px_rgba(0,0,0,0.35)] backdrop-blur-md">
                         {item.children!.map((child) => (
                           <Link
                             key={child.href}
                             href={child.href}
-                            className="block min-h-11 px-5 py-2.5 text-sm font-medium text-white/75 transition-colors duration-200 hover:bg-white/10 hover:text-white"
+                            className="block min-h-11 px-5 py-2.5 text-sm font-medium text-white/85 transition-colors duration-200 hover:bg-accent-500/10 hover:text-accent-300"
                           >
                             {child.label}
                           </Link>

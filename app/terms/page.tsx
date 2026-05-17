@@ -89,8 +89,8 @@ export default function TermsPage() {
         italicWord="이용약관"
         subtitle="(주)케이비개발 홈페이지 이용에 관한 회사와 이용자의 권리·의무·책임 사항을 안내합니다."
         breadcrumb={[
-          { label: "홈", href: "/" },
-          { label: "이용약관" },
+          { label: "HOME", href: "/" },
+          { label: "TERMS" },
         ]}
       />
 

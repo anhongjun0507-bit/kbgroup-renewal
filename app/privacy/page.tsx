@@ -86,8 +86,8 @@ export default function PrivacyPage() {
         italicWord="처리방침"
         subtitle="(주)케이비개발이 수집·이용하는 개인정보의 항목, 목적, 보유 기간 및 정보주체의 권리를 안내합니다."
         breadcrumb={[
-          { label: "홈", href: "/" },
-          { label: "개인정보처리방침" },
+          { label: "HOME", href: "/" },
+          { label: "PRIVACY" },
         ]}
       />
 

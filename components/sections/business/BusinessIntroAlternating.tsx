@@ -81,12 +81,8 @@ export function BusinessIntroAlternating() {
                           "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.22) 0%, transparent 70%)",
                       }}
                     />
-                    {/* 영문명 */}
-                    <div className="absolute inset-0 flex items-end p-8">
-                      <p className="text-[14px] uppercase tracking-[0.18em] text-white/75">
-                        {area.englishName}
-                      </p>
-                    </div>
+                    {/* Phase 14-C C-1 — 텍스트 영역 eyebrow(번호·영문명)와 중복되던 좌하단 영문 라벨 제거.
+                        비주얼 영역은 큰 워터마크 번호만 유지 → 시각 노이즈 감소 */}
                   </div>
 
                   {/* 텍스트 */}

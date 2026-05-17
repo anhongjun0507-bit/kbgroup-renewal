@@ -88,8 +88,20 @@ export function Partners() {
                   </span>
                 </motion.div>
 
-                {/* 카드 그리드 */}
-                <ul className="grid grid-cols-2 gap-px overflow-hidden rounded-md bg-line sm:grid-cols-3 lg:grid-cols-4">
+                {/* Phase 14-C C-3 — 카드 수 < 4일 때 빈 셀 노출 → 카드 수에 따라 컬럼 자동 조정.
+                    1개: 단일 컬럼, 2개: 2열, 3개: 3열, 4개 이상: 4열 (lg) / 3열 (sm) / 2열 (mobile) */}
+                <ul
+                  className={
+                    "grid gap-px overflow-hidden rounded-md bg-line " +
+                    (items.length === 1
+                      ? "grid-cols-1"
+                      : items.length === 2
+                        ? "grid-cols-1 sm:grid-cols-2"
+                        : items.length === 3
+                          ? "grid-cols-2 sm:grid-cols-3"
+                          : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4")
+                  }
+                >
                   {items.map((p) => (
                     <motion.li
                       key={p.name}

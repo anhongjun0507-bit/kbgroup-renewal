@@ -5,7 +5,6 @@ import { WhyValues } from "@/components/sections/about/WhyValues";
 import { WhyDifferentiators } from "@/components/sections/about/WhyDifferentiators";
 import { WhyNumbers } from "@/components/sections/about/WhyNumbers";
 import { CompanyOffice } from "@/components/sections/about/CompanyOffice";
-import { CompanyStrengths } from "@/components/sections/about/CompanyStrengths";
 import { EquipmentShowcase } from "@/components/sections/about/EquipmentShowcase";
 import { RelatedCompaniesGrid } from "@/components/sections/about/RelatedCompaniesGrid";
 import { CollaboratorsTable } from "@/components/sections/about/CollaboratorsTable";
@@ -35,7 +34,9 @@ export default function AboutPage() {
       <CompanyOffice />
       <WhyValues />
       <WhyDifferentiators />
-      <CompanyStrengths />
+      {/* Phase 14-C C-2 — CompanyStrengths 제거 (WhyDifferentiators와 "5개 카드" 형식·메시지 중복).
+          핵심 정보(1,575명·73 단지)는 이미 WhyNumbers에서 데이터 형태로 강조 노출 중.
+          컴포넌트는 보존 — 다른 페이지에서 재사용 가능 */}
       <WhyNumbers />
       <EquipmentShowcase />
       <RelatedCompaniesGrid />
