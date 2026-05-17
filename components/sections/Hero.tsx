@@ -272,14 +272,37 @@ export function Hero() {
                 {SUBTITLE_LINE_2}
               </p>
 
-              {/* CTA — Phase 14-B B-1: primary 폼 이동(기존 tel은 보조 텍스트 링크로 분리)
-                  Ghost는 사업영역 탐색용 그대로 유지 */}
-              <div className="mt-10 flex flex-wrap items-center gap-4">
+              {/* CTA — Phase 14-I I-1: 모바일/데스크탑 분기.
+                    모바일(sm 미만): primary = 전화 즉시 통화 (즉시 전환 UX 최적)
+                    데스크탑(sm+): primary = 상담 폼 이동 (전화 보조 텍스트로 분리) */}
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+                {/* 모바일 전용 — 전화 primary */}
+                <a
+                  href={`tel:${contact.phone}`}
+                  className="btn-reset inline-flex h-[52px] items-center justify-center gap-2 rounded-sm bg-accent-500 px-8 text-base font-bold text-navy-900 transition-all duration-200 [transition-timing-function:var(--ease)] hover:bg-accent-600 hover:text-white hover:shadow-[var(--shadow-cta)] sm:hidden"
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                  </svg>
+                  전화 상담 {contact.phone}
+                </a>
+                {/* 데스크탑 전용 — 폼 primary */}
                 <Button
                   as="link"
                   href="/contact"
                   variant="accent"
                   size="lg"
+                  className="hidden sm:inline-flex"
                 >
                   무료 상담 신청
                   <span aria-hidden="true">→</span>
@@ -294,15 +317,26 @@ export function Hero() {
                   <span aria-hidden="true">→</span>
                 </Button>
               </div>
-              {/* 보조 — 바로 전화 (모바일에서 tel: 작동) */}
+              {/* 보조 — 데스크탑에선 tel 텍스트, 모바일에선 폼 링크 */}
               <p className="mt-5 text-[13px] text-white/70">
-                바로 통화 ·{" "}
-                <a
-                  href={`tel:${contact.phone}`}
-                  className="btn-reset font-semibold text-accent-300 underline-offset-4 hover:text-white hover:underline"
-                >
-                  {contact.phone}
-                </a>
+                <span className="hidden sm:inline">
+                  바로 통화 ·{" "}
+                  <a
+                    href={`tel:${contact.phone}`}
+                    className="btn-reset font-semibold text-accent-300 underline-offset-4 hover:text-white hover:underline"
+                  >
+                    {contact.phone}
+                  </a>
+                </span>
+                <span className="sm:hidden">
+                  상세 폼으로 문의 ·{" "}
+                  <a
+                    href="/contact"
+                    className="btn-reset font-semibold text-accent-300 underline-offset-4 hover:text-white hover:underline"
+                  >
+                    /contact →
+                  </a>
+                </span>
               </p>
             </div>
           </div>

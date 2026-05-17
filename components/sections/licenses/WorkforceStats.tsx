@@ -225,10 +225,10 @@ function StatCard({
           ) : inView ? (
             <CountUp
               /* Phase 14-B B-3 — 시작 진폭 70%→90%, duration 단축 */
-              start={Math.round(value * 0.9)}
+              start={Math.round(value * 0.96)}
               end={value}
-              duration={Math.max(0.4, 0.4 + Math.log10(Math.max(1, value)) * 0.15)}
-              delay={index * 0.08}
+              duration={Math.max(0.3, 0.3 + Math.log10(Math.max(1, value)) * 0.1)}
+              delay={index * 0.05}
               separator=","
             />
           ) : (

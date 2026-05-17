@@ -230,12 +230,22 @@ export function ContactForm({ context, className }: ContactFormProps) {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="cf-preferred-date">상담 희망일</Label>
+                    <Label htmlFor="cf-preferred-date">상담 희망일 (선택)</Label>
+                    {/* Phase 14-H H-3 — iOS 일부 버전에서 type=date placeholder 미노출 →
+                        라벨에 (선택) 명시 + 보조 텍스트로 형식 안내 */}
                     <Input
                       id="cf-preferred-date"
                       name="preferredDate"
                       type="date"
+                      aria-describedby="cf-preferred-date-hint"
+                      min={new Date().toISOString().slice(0, 10)}
                     />
+                    <p
+                      id="cf-preferred-date-hint"
+                      className="mt-1.5 text-[12px] text-ink-faint"
+                    >
+                      예: 2026-06-15 (오늘 이후 날짜)
+                    </p>
                   </div>
                 </div>
               </fieldset>
