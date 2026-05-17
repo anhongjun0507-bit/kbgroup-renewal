@@ -101,7 +101,8 @@ function Field({ name, label, error, ...input }: FieldProps) {
     <div>
       <label
         htmlFor={name}
-        className="block text-xs font-medium uppercase tracking-[0.2em] text-ink-muted"
+        /* Phase 14-B B-5 — 한글 라벨에 uppercase + tracking 0.2em는 글자 분리 ("이 메 일") → 정상화 */
+        className="block text-[13px] font-semibold text-ink-muted"
       >
         {label}
       </label>

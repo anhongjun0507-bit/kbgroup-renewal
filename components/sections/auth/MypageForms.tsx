@@ -30,7 +30,7 @@ function DisplayNameSection({ current }: { current: string | null }) {
 
   return (
     <section className="space-y-4">
-      <h2 className="text-xs font-medium uppercase tracking-[0.2em] text-primary">
+      <h2 className="text-[15px] font-semibold text-ink-strong">
         표시 이름
       </h2>
       <form action={formAction} className="space-y-4">
@@ -63,14 +63,14 @@ function PasswordSection() {
 
   return (
     <section className="space-y-4">
-      <h2 className="text-xs font-medium uppercase tracking-[0.2em] text-primary">
+      <h2 className="text-[15px] font-semibold text-ink-strong">
         비밀번호 변경
       </h2>
       <form action={formAction} className="space-y-6">
         <div>
           <label
             htmlFor="new-password"
-            className="block text-xs uppercase tracking-[0.15em] text-ink-muted"
+            className="block text-[13px] font-semibold text-ink-muted"
           >
             새 비밀번호 (8자 이상)
           </label>
@@ -87,7 +87,7 @@ function PasswordSection() {
         <div>
           <label
             htmlFor="new-password-confirm"
-            className="block text-xs uppercase tracking-[0.15em] text-ink-muted"
+            className="block text-[13px] font-semibold text-ink-muted"
           >
             새 비밀번호 확인
           </label>
@@ -117,7 +117,7 @@ function PasswordSection() {
 function LogoutSection() {
   return (
     <section className="space-y-4 border-t border-line pt-12">
-      <h2 className="text-xs font-medium uppercase tracking-[0.2em] text-ink-muted">
+      <h2 className="text-[15px] font-semibold text-ink-muted">
         로그아웃
       </h2>
       <form action="/auth/logout" method="POST">

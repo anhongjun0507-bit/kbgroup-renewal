@@ -251,6 +251,10 @@ export function Hero() {
                 }}
               >
                 <span className="block">{renderSloganLine1(SLOGAN_LINE_1)}</span>
+                {/* Phase 14-B B-4 — 두 줄 span 사이 텍스트 공백.
+                    block 시각엔 영향 없으나 스크린리더가 "신뢰가 자산이됩니다"로
+                    이어 읽는 문제 해소 */}
+                {" "}
                 <span className="block">{SLOGAN_LINE_2}</span>
               </h1>
 
@@ -266,11 +270,12 @@ export function Hero() {
                 {SUBTITLE_LINE_2}
               </p>
 
-              {/* CTA — Primary + Ghost */}
+              {/* CTA — Phase 14-B B-1: primary 폼 이동(기존 tel은 보조 텍스트 링크로 분리)
+                  Ghost는 사업영역 탐색용 그대로 유지 */}
               <div className="mt-10 flex flex-wrap items-center gap-4">
                 <Button
                   as="link"
-                  href={`tel:${contact.phone}`}
+                  href="/contact"
                   variant="accent"
                   size="lg"
                 >
@@ -287,6 +292,16 @@ export function Hero() {
                   <span aria-hidden="true">→</span>
                 </Button>
               </div>
+              {/* 보조 — 바로 전화 (모바일에서 tel: 작동) */}
+              <p className="mt-5 text-[13px] text-white/70">
+                바로 통화 ·{" "}
+                <a
+                  href={`tel:${contact.phone}`}
+                  className="btn-reset font-semibold text-accent-300 underline-offset-4 hover:text-white hover:underline"
+                >
+                  {contact.phone}
+                </a>
+              </p>
             </div>
           </div>
         </Container>

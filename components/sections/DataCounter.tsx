@@ -147,10 +147,10 @@ export function DataCounter() {
                   </span>
                 ) : inView ? (
                   <CountUp
-                    /* Phase 11 P0-C — 0 노출 제거: 70% 진폭에서 시작 */
-                    start={Math.round(c.value * 0.7)}
+                    /* Phase 14-B B-3 — 시작 진폭 70%→90%, duration 단축 */
+                    start={Math.round(c.value * 0.9)}
                     end={c.value}
-                    duration={Math.max(0.6, 0.6 + Math.log10(Math.max(1, c.value)) * 0.25)}
+                    duration={Math.max(0.4, 0.4 + Math.log10(Math.max(1, c.value)) * 0.15)}
                     separator=","
                     easingFn={(t, b, c, d) => {
                       const tn = t / d - 1;

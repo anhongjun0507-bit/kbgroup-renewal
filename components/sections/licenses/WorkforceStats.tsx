@@ -224,11 +224,11 @@ function StatCard({
             value.toLocaleString("en-US")
           ) : inView ? (
             <CountUp
-              /* Phase 11 P0-C — 70% 진폭에서 시작 (0 노출 방지) */
-              start={Math.round(value * 0.7)}
+              /* Phase 14-B B-3 — 시작 진폭 70%→90%, duration 단축 */
+              start={Math.round(value * 0.9)}
               end={value}
-              duration={Math.max(0.6, 0.6 + Math.log10(Math.max(1, value)) * 0.25)}
-              delay={index * 0.1}
+              duration={Math.max(0.4, 0.4 + Math.log10(Math.max(1, value)) * 0.15)}
+              delay={index * 0.08}
               separator=","
             />
           ) : (
