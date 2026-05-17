@@ -112,28 +112,43 @@ export function EquipmentShowcase() {
               표시 = 법정 의무 장비
             </p>
             <ul className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-2">
-              {HIGHLIGHT_EQUIPMENT.map((e) => (
-                <li
-                  key={e.name}
-                  className="flex items-start gap-2 text-[14px] leading-[1.6] text-ink-muted"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="mt-2 inline-block h-1.5 w-1.5 flex-shrink-0 bg-accent-500"
-                  />
-                  <span className="flex-1">
-                    {e.name}
-                    {e.legal && (
-                      <span
-                        aria-label="법정 의무 장비"
-                        className="ml-1.5 inline-flex h-4 items-center rounded-sm bg-accent-500/15 px-1.5 align-[1px] font-mono-num text-[9px] font-bold uppercase tracking-[0.1em] text-accent-deep"
-                      >
-                        LAW
-                      </span>
-                    )}
-                  </span>
-                </li>
-              ))}
+              {HIGHLIGHT_EQUIPMENT.map((e) => {
+                /* Phase 14-K 추가 — LAW 배지가 줄바꿈 시 다음 줄로 떨어지는 문제 해소.
+                   마지막 어절 + 배지를 inline-flex whitespace-nowrap 묶음으로 그룹화 →
+                   둘이 함께 한 줄에 유지 (앞 부분은 정상 wrap) */
+                const tokens = e.name.split(/(\s+)/);
+                const lastWord = tokens.pop() ?? "";
+                const before = tokens.join("");
+                return (
+                  <li
+                    key={e.name}
+                    className="flex items-start gap-2 text-[14px] leading-[1.6] text-ink-muted"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="mt-2 inline-block h-1.5 w-1.5 flex-shrink-0 bg-accent-500"
+                    />
+                    <span className="flex-1">
+                      {e.legal ? (
+                        <>
+                          {before}
+                          <span className="inline-flex items-baseline whitespace-nowrap">
+                            {lastWord}
+                            <span
+                              aria-label="법정 의무 장비"
+                              className="ml-1.5 inline-flex h-4 items-center rounded-sm bg-accent-500/15 px-1.5 align-[1px] font-mono-num text-[9px] font-bold uppercase tracking-[0.1em] text-accent-deep"
+                            >
+                              LAW
+                            </span>
+                          </span>
+                        </>
+                      ) : (
+                        e.name
+                      )}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
