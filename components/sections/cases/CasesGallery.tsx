@@ -171,6 +171,15 @@ function CaseCard({ complex, hue }: { complex: Complex; hue: number }) {
   ]
     .filter(Boolean)
     .join(" · ");
+  /* Phase 14 P2-08 — 단지명 시드 기반 navy 그라데이션 각도/톤 미세 변화.
+     실사 이미지 매핑 전까지 카드별 변별성 보강. hue prop은 -22~28 범위 */
+  const seed = complex.name
+    .split("")
+    .reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+  const angle = 100 + ((seed % 70) - 10); // 90~170deg
+  const accentPos = (seed % 5) * 15 + 20; // 20~80% accent 라디얼 위치
+  const monoTone = ["#0E1F3A", "#102648", "#0B1A33"][seed % 3];
+  void hue; // 색조 분산을 단지 시드 기반으로 대체
 
   return (
     <article className="group overflow-hidden rounded-md border border-line bg-white transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:shadow-[var(--shadow-card)]">
@@ -198,16 +207,14 @@ function CaseCard({ complex, hue }: { complex: Complex; hue: number }) {
                 aria-hidden="true"
                 className="absolute inset-0"
                 style={{
-                  background:
-                    "linear-gradient(135deg, #0E1F3A 0%, #16315C 50%, #0B1A33 100%)",
+                  background: `linear-gradient(${angle}deg, ${monoTone} 0%, #16315C 50%, #0B1A33 100%)`,
                 }}
               />
               <div
                 aria-hidden="true"
                 className="absolute inset-0 origin-center transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.03]"
                 style={{
-                  background:
-                    "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.18) 0%, transparent 70%)",
+                  background: `radial-gradient(60% 60% at ${accentPos}% 30%, rgba(201,162,75,0.18) 0%, transparent 70%)`,
                 }}
               />
               <div className="absolute inset-0 bg-navy-900/40 transition-opacity duration-500 group-hover:bg-navy-900/20" />

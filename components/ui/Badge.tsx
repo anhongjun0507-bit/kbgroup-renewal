@@ -1,11 +1,13 @@
 import { cn } from "@/lib/cn";
 
+/* Phase 14 UP-06 — variant 정합화: gold alias 제거(accent로 통합),
+   accent 텍스트는 라이트 위 AA 통과 위해 accent-deep 사용 */
+
 type BadgeVariant =
   | "primary"
   | "secondary"
   | "accent"
-  | "neutral"
-  | "gold";
+  | "neutral";
 
 type BadgeProps = {
   children: React.ReactNode;
@@ -16,8 +18,7 @@ type BadgeProps = {
 const VARIANT: Record<BadgeVariant, string> = {
   primary: "border border-primary text-primary",
   secondary: "border border-secondary text-secondary",
-  accent: "border border-accent text-accent",
-  gold: "border border-accent text-accent",
+  accent: "border border-accent-500 text-accent-deep",
   neutral: "border border-line text-ink-muted",
 };
 

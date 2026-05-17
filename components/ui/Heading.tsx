@@ -16,6 +16,8 @@ type HeadingProps = {
   className?: string;
 };
 
+/* Phase 14 UP-06 — globals.css h1/h2/h3 모듈러 스케일과 정합:
+   sm h4(22)·md h2(28~40)·lg display(32~52)·xl hero(40~72) */
 const TITLE_SIZE: Record<HeadingSize, string> = {
   sm: "text-[22px] md:text-[26px]",
   md: "text-[28px] md:text-[34px] lg:text-[40px]",

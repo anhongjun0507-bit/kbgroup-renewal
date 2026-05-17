@@ -22,7 +22,8 @@ export const Label = ({
     >
       {children}
       {required && (
-        <span aria-hidden="true" className="ml-1 text-accent-500">
+        /* Phase 14 UP-06 — 라이트 위 별표는 accent-deep (AA 통과) */
+        <span aria-hidden="true" className="ml-1 text-accent-deep">
           *
         </span>
       )}

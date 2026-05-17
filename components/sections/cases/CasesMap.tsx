@@ -130,12 +130,22 @@ export function CasesMap() {
               {/* 제주 */}
               <ellipse cx="95" cy="362" rx="22" ry="10" fill="#EEF0F4" stroke="#DEE2E8" strokeWidth="1.2" />
 
-              {/* 핀 */}
+              {/* 핀 — Phase 14 UP-03: hover 인터랙션 + native tooltip */}
               {counts.map(({ region, count, lh, pos }) => {
                 const r = 6 + (count / maxCount) * 14;
                 const hasLh = lh > 0;
+                const tooltip =
+                  `${region} · ${count}개 단지` +
+                  (hasLh ? ` (LH 발주 ${lh}개 포함)` : "");
                 return (
-                  <g key={region}>
+                  <g
+                    key={region}
+                    className="cases-map-pin cursor-pointer transition-transform duration-200 [transform-box:fill-box] [transform-origin:center] hover:scale-110 focus-visible:scale-110"
+                    tabIndex={0}
+                    role="img"
+                    aria-label={tooltip}
+                  >
+                    <title>{tooltip}</title>
                     <circle
                       cx={pos.x}
                       cy={pos.y}
@@ -143,6 +153,7 @@ export function CasesMap() {
                       fill={hasLh ? "rgba(201,162,75,0.18)" : "rgba(21,32,63,0.18)"}
                       stroke={hasLh ? "#C9A24B" : "#0E1F3A"}
                       strokeWidth="1.5"
+                      className="transition-[fill,stroke-width] duration-200 group-hover:stroke-[2.5]"
                     />
                     <circle
                       cx={pos.x}

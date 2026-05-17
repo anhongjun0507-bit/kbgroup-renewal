@@ -19,6 +19,8 @@ export type Counter = {
   value: number;
   suffix?: string;
   isPlaceholder?: boolean;
+  /** Phase 14 UP-02 — 데이터 컨텍스트 1줄 (예: "광주시 평균 단지의 5배 규모") */
+  context?: string;
 };
 
 export type BusinessCategory =
@@ -223,6 +225,7 @@ export const counters: Counter[] = [
     /** PDF p10 공동주택 세대수 합산 (대표 단지 기준) */
     value: 32000,
     suffix: "+",
+    context: "약 90,000명의 일상을 책임지는 규모",
   },
   {
     key: "complexes",
@@ -231,6 +234,7 @@ export const counters: Counter[] = [
     /** /cases 페이지 정본 — 실제 운영 중 단지 수 */
     value: 73,
     suffix: "",
+    context: "광주·전남·경기·충청 등 전국 단위 운영",
   },
   {
     key: "licenses",
@@ -239,6 +243,7 @@ export const counters: Counter[] = [
     /** /licenses 페이지 보유 인허가 grid 정본 */
     value: 11,
     suffix: "",
+    context: "주택관리·경비·청소·방역·전기 전 영역 자격 확보",
   },
   {
     key: "workforce",
@@ -247,6 +252,7 @@ export const counters: Counter[] = [
     /** /licenses WorkforceStats 정본 */
     value: 1575,
     suffix: "+",
+    context: "단지당 평균 20명 이상의 전문 인력 투입 가능",
   },
 ];
 

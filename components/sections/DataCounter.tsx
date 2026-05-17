@@ -191,6 +191,12 @@ export function DataCounter() {
               <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.12em] text-accent-deep">
                 {c.caption}
               </p>
+              {/* Phase 14 UP-02 — 데이터스토리텔링 컨텍스트 1줄 */}
+              {c.context && (
+                <p className="mt-3 text-[12px] leading-[1.55] text-ink-faint">
+                  {c.context}
+                </p>
+              )}
             </motion.div>
           ))}
         </motion.div>
