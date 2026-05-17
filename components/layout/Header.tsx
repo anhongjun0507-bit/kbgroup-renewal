@@ -274,36 +274,76 @@ export function Header({ isAuthed = false }: HeaderProps) {
         </div>
       </div>
 
-      {/* Phase 2.4 — 모바일 풀스크린 오버레이 + stagger 등장 */}
+      {/* 모바일 풀스크린 오버레이 — Phase 14 핫픽스:
+          z-index 40→60으로 헤더(z-50) 위로 올림 → 메뉴 안에 자체 헤더(로고+X 버튼) 통합.
+          이전: 헤더 z-50 + 메뉴 z-40 + body overflow lock 조합이 일부 모바일에서
+          헤더 sticky 깨짐 + 메뉴 가시성 문제 유발. */}
       <div
         id="mobile-menu"
         data-surface="dark"
         className={cn(
-          "fixed inset-0 z-40 overflow-y-auto bg-navy-900 transition-opacity duration-300 lg:hidden",
+          "fixed inset-0 z-[60] overflow-y-auto bg-navy-900 transition-opacity duration-200 lg:hidden",
           mobileOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0",
         )}
         aria-hidden={!mobileOpen}
       >
-        <div className="h-[72px] md:h-20" />
+        {/* 메뉴 자체 헤더 — 로고(좌) + 닫기 X(우) */}
+        <div className="sticky top-0 z-10 border-b border-white/10 bg-navy-900/95 backdrop-blur-md">
+          <div className="mx-auto flex h-[72px] max-w-[1280px] items-center justify-between px-5 md:h-20 md:px-8">
+            <Link
+              href="/"
+              aria-label="(주)케이비개발 KB GROUP 메인으로"
+              className="btn-reset flex-shrink-0"
+              onClick={closeMobile}
+            >
+              <span className="flex items-center gap-3">
+                <span
+                  aria-hidden="true"
+                  className="inline-block h-8 w-[3px] flex-shrink-0 bg-accent-500"
+                />
+                <span className="flex flex-col leading-none">
+                  <span className="font-display text-[18px] font-extrabold tracking-tight text-white">
+                    KB GROUP
+                  </span>
+                  <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.18em] text-accent-300">
+                    (주)케이비개발
+                  </span>
+                </span>
+              </span>
+            </Link>
+            <button
+              type="button"
+              aria-label="메뉴 닫기"
+              onClick={() => setMobileOpen(false)}
+              className="btn-reset inline-flex h-11 w-11 items-center justify-center text-white"
+            >
+              <svg
+                width="26"
+                height="26"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                aria-hidden="true"
+              >
+                <path d="M6 6L18 18M6 18L18 6" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
+        </div>
         <nav
           className="mx-auto w-full max-w-[1280px] px-5 pb-12 pt-4 md:px-8"
           aria-label="모바일 메뉴"
         >
-          {NAV_ITEMS.map((item, idx) => {
+          {NAV_ITEMS.map((item) => {
             const hasChildren = !!item.children?.length;
             const expanded = mobileExpand === item.href;
-            const delay = 80 + idx * 60;
             return (
               <div
                 key={item.href}
                 className="border-b border-white/10"
-                style={{
-                  opacity: mobileOpen ? 1 : 0,
-                  transform: mobileOpen ? "translateY(0)" : "translateY(12px)",
-                  transition: `opacity 400ms var(--ease) ${delay}ms, transform 400ms var(--ease) ${delay}ms`,
-                }}
               >
                 {hasChildren ? (
                   <>
@@ -365,14 +405,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
               </div>
             );
           })}
-          <div
-            className="space-y-3 pt-8"
-            style={{
-              opacity: mobileOpen ? 1 : 0,
-              transform: mobileOpen ? "translateY(0)" : "translateY(12px)",
-              transition: `opacity 400ms var(--ease) ${80 + NAV_ITEMS.length * 60}ms, transform 400ms var(--ease) ${80 + NAV_ITEMS.length * 60}ms`,
-            }}
-          >
+          <div className="space-y-3 pt-8">
             {isAuthed ? (
               <>
                 <Link
