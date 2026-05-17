@@ -127,6 +127,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
   };
 
   return (
+    <>
     <header
       className="site-header sticky top-0 z-50 border-b transition-all duration-200 [transition-timing-function:var(--ease)]"
       style={headerStyle}
@@ -273,11 +274,13 @@ export function Header({ isAuthed = false }: HeaderProps) {
           </div>
         </div>
       </div>
+    </header>
 
-      {/* 모바일 풀스크린 오버레이 — Phase 14 핫픽스:
-          z-index 40→60으로 헤더(z-50) 위로 올림 → 메뉴 안에 자체 헤더(로고+X 버튼) 통합.
-          이전: 헤더 z-50 + 메뉴 z-40 + body overflow lock 조합이 일부 모바일에서
-          헤더 sticky 깨짐 + 메뉴 가시성 문제 유발. */}
+    {/* 모바일 풀스크린 오버레이 — Phase 14 핫픽스 (재수정):
+        ⚠️ 메뉴를 반드시 <header> 밖에 위치시켜야 함.
+        header에 backdrop-filter inline style이 있어 자식의 containing block을 생성 →
+        position:fixed가 viewport가 아닌 header 영역(72px)에 갇혀 메뉴 미노출 발생.
+        Fragment(<>...</>)로 header와 형제 관계로 분리. */}
       <div
         id="mobile-menu"
         data-surface="dark"
@@ -437,6 +440,6 @@ export function Header({ isAuthed = false }: HeaderProps) {
           </div>
         </nav>
       </div>
-    </header>
+    </>
   );
 }
