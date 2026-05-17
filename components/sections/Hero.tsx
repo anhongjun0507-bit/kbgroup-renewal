@@ -243,10 +243,12 @@ export function Hero() {
               <h1
                 className="mt-7 font-display text-white"
                 style={{
-                  fontSize: "clamp(2.5rem, 6.5vw, 5rem)",
+                  /* Phase 14-G G-1 — 모바일 줄바꿈 완화: min 2.5rem → 2rem(32px),
+                     viewport 단위 6.5vw → 7vw로 작은 화면에서 더 빨리 줄어듦 */
+                  fontSize: "clamp(2rem, 7vw, 4.5rem)",
                   fontWeight: 900,
                   letterSpacing: "var(--tracking-tight)",
-                  lineHeight: 1.08,
+                  lineHeight: 1.1,
                   textShadow: "0 6px 24px rgba(0,0,0,0.35)",
                 }}
               >

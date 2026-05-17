@@ -67,9 +67,10 @@ export function AboutNav({ current }: Props) {
                     )}
                   >
                     <span>{tab.korean}</span>
+                    {/* Phase 14-G G-2 — 모바일에선 영문 라벨 숨겨 폭 절약 (4개 한 줄 노출) */}
                     <span
                       className={cn(
-                        "text-[10px] font-medium uppercase tracking-[0.18em]",
+                        "hidden text-[10px] font-medium uppercase tracking-[0.18em] sm:inline",
                         isActive ? "text-white/65" : "text-ink-faint",
                       )}
                     >

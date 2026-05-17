@@ -260,11 +260,12 @@ export function Header({ isAuthed = false }: HeaderProps) {
               className="inline-flex h-11 w-11 items-center justify-center text-white transition-colors lg:hidden"
             >
               {mobileOpen ? (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                /* Phase 14-G G-3 — X 아이콘 stroke 1.5 → 2, size 24 → 26으로 시각 강조 */
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <path d="M6 6L18 18M6 18L18 6" strokeLinecap="round" />
                 </svg>
               ) : (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <path d="M4 8H20M4 16H20" strokeLinecap="round" />
                 </svg>
               )}
@@ -317,12 +318,20 @@ export function Header({ isAuthed = false }: HeaderProps) {
                       {item.label}
                       <span
                         className={cn(
-                          "inline-flex transition-transform duration-300",
+                          "inline-flex h-5 w-5 items-center justify-center transition-transform duration-300 [transform-origin:center]",
                           expanded && "rotate-180",
                         )}
                         aria-hidden="true"
                       >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        {/* Phase 14-G G-5 — chevron 크기 명시 + transform-origin center로 회전 안정화 */}
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
                           <path d="M6 9L12 15L18 9" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       </span>
@@ -334,7 +343,7 @@ export function Header({ isAuthed = false }: HeaderProps) {
                             key={child.href}
                             href={child.href}
                             onClick={closeMobile}
-                            className="flex min-h-11 items-center text-base text-white/75 transition-colors hover:text-accent-500"
+                            className="btn-reset flex min-h-11 items-center text-base text-white/75 transition-colors hover:text-accent-300"
                           >
                             {child.label}
                           </Link>
@@ -343,10 +352,12 @@ export function Header({ isAuthed = false }: HeaderProps) {
                     )}
                   </>
                 ) : (
+                  /* Phase 14-G G-4 — btn-reset로 [data-surface="dark"] a 셀렉터 회피.
+                     이전: Link만 accent-300 골드, button은 흰색 → 의미 없는 색 차이 */
                   <Link
                     href={item.href}
                     onClick={closeMobile}
-                    className="block py-5 text-lg font-semibold text-white transition-colors hover:text-accent-500"
+                    className="btn-reset block py-5 text-lg font-semibold text-white transition-colors hover:text-accent-300"
                   >
                     {item.label}
                   </Link>

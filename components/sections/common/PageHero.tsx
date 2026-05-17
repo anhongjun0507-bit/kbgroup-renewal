@@ -127,10 +127,11 @@ export function PageHero({
             id="page-hero-title"
             className="mt-5 font-display"
             style={{
-              fontSize: "clamp(2rem, 5vw, 3.5rem)",
+              /* Phase 14-G G-1 — 모바일 min 2rem → 1.75rem(28px), viewport 5vw → 5.5vw */
+              fontSize: "clamp(1.75rem, 5.5vw, 3.25rem)",
               fontWeight: 900,
               letterSpacing: "var(--tracking-tighter)",
-              lineHeight: 1.1,
+              lineHeight: 1.15,
               color: "#0e1530",
               minHeight: "1.05em",
             }}
