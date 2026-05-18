@@ -35,7 +35,7 @@ export default function AboutPage() {
       <WhyValues />
       <WhyDifferentiators />
       {/* Phase 14-C C-2 — CompanyStrengths 제거 (WhyDifferentiators와 "5개 카드" 형식·메시지 중복).
-          핵심 정보(1,575명·73 단지)는 이미 WhyNumbers에서 데이터 형태로 강조 노출 중.
+          핵심 정보(1,575명·106 단지)는 이미 WhyNumbers에서 데이터 형태로 강조 노출 중.
           컴포넌트는 보존 — 다른 페이지에서 재사용 가능 */}
       <WhyNumbers />
       <EquipmentShowcase />

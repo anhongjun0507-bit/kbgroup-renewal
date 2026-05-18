@@ -168,6 +168,10 @@ export type Contact = {
   email: string;
   careersEmail?: string;
   address: string;
+  /** Phase 14-L — 본사 빌딩 별칭 (지도 검색 정확도 보완용) */
+  buildingAlias?: string;
+  /** Phase 14-L — 사용자 hwpx 요청 반영 */
+  businessHours?: string;
   privacyOfficer: { name: string; phone: string };
   parking: string;
   nearestStops: string[];
@@ -182,6 +186,8 @@ export const contact: Contact = {
   /* Phase 14-K K-1 — 번지수 "223-22"의 hyphen을 non-breaking hyphen(U+2011)으로 교체.
      좁은 컨테이너에서 "223-"와 "22"가 분리 줄바꿈되던 문제 해소. 시각·검색은 동일. */
   address: "광주광역시 광산구 월계로 223‑22, 2층 201·202호",
+  buildingAlias: "윤진리안채 빌딩",
+  businessHours: "평일 09:00~18:00",
   privacyOfficer: { name: "고예근", phone: "062-416-3037" },
   parking: "지하 1층 주차장 (방문객 무료)",
   nearestStops: ["첨단롯데마트", "우편집중국"],
@@ -211,20 +217,21 @@ export const ceoMessage = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Phase 14 P0-05 — 단일 출처 통계 (내부 페이지 기준).
- * 이전: 홈 180 단지 / 9 인허가 / 1,550명 vs /cases 73 / /licenses 11 / 1,575명 불일치
- * 결정: 사용자 합의로 내부 페이지 기준(73 / 11 / 1,575)을 정본으로 통일.
- *   complexes 73 = 실제 운영 중 단지 수 (검증 가능), 'PDF 누적 180' 표기는 제거.
+ * Phase 14 P0-05 / Phase 14-L (2026-05-18) — 단일 출처 통계.
+ * 사용자 제공 "홈페이지 단지 수정 요청.xlsx" 반영으로 운영 단지 73 → 106 확장.
+ *   complexes 106 = 실제 운영 중 단지 수 (배열 length와 자동 동기화).
  *   licenses 11 = /licenses 페이지 보유 인허가 grid 카운트와 일치.
  *   workforce 1,575 = /licenses WorkforceStats 정본.
- * caption 영문도 라벨 정합화.
+ *   households 32,000+ = 사용자 확정 마케팅 표기 (전체 누적 운영 세대 기준).
+ * 주의: counters는 complexes 선언보다 위에 있어 length 직접 참조 불가 →
+ *       하단 invariant assert로 literal 동기화 보장.
  */
 export const counters: Counter[] = [
   {
     key: "households",
     label: "관리 세대수",
     caption: "MANAGED HOUSEHOLDS",
-    /** PDF p10 공동주택 세대수 합산 (대표 단지 기준) */
+    /** 사용자 확정 표기 (2026-05-18 hwpx 확인) */
     value: 32000,
     suffix: "+",
     context: "약 90,000명의 일상을 책임지는 규모",
@@ -233,8 +240,8 @@ export const counters: Counter[] = [
     key: "complexes",
     label: "운영 단지",
     caption: "ACTIVE COMPLEXES",
-    /** /cases 페이지 정본 — 실제 운영 중 단지 수 */
-    value: 73,
+    /** complexes.length 미러 — 배열 수정 시 STATS.activeComplexes가 자동 동기화 */
+    value: 106,
     suffix: "",
     context: "광주·전남·경기·충청 등 전국 단위 운영",
   },
@@ -462,163 +469,121 @@ export const companyStrengths: CompanyStrength[] = [
   { number: "04", title: "대형아파트 위탁관리 전환",
     description: "광주 현장 위탁관리를 케이비개발로 전환하여 현재까지 우수하게 운영 중." },
   { number: "05", title: "빠른 성장력",
-    description: "공동주택관리업을 시작한 이래 73개 단지를 직접 운영하며 빠르게 성장." },
+    description: "공동주택관리업을 시작한 이래 106개 단지를 직접 운영하며 빠르게 성장." },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 8. 관리 단지 — PDF p10~17 기준 (공동주택 37 + 집합건물 36 = 73단지)
+// 8. 관리 단지 — 2026-05-18 사용자 제공 "홈페이지 단지 수정 요청.xlsx" 전면 반영
+//    공동주택 + 집합건물(오피스텔·상가) 총 106단지 (이전 73 → 106 확장)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const complexes: Complex[] = [
-  // ─── 공동주택 (PDF p10) ────────────────────────────────
-  { name: "광주 그랜드 센트럴 아파트", region: "광주광역시", households: 2336, area: 364653,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "운남 삼성아파트", region: "광주광역시", households: 1956, area: 179899,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "성남신흥2 A-1BL 아파트", region: "경기도 성남시", households: 1856, area: 259494,
-    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
-  { name: "파주운정3 A37BL 아파트", region: "경기도 파주시", households: 1810, area: 128143,
-    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
-  { name: "계림동 아이파크 SK뷰", region: "광주광역시", households: 1715, area: 175004,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "평택 브레인시티 대광로제비앙", region: "경기도 평택시", households: 1700, area: 185633,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "오송역 대광로제비앙 그랜드센텀", region: "충청북도 청주시", households: 1615, area: 178211,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "의정부 LH고산3단지", region: "경기도 의정부시", households: 1331, area: 150638,
-    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
-  { name: "고덕국제신도시 대광로제비앙 모아엘가", region: "경기도 평택시", households: 1225, area: 219117,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "첨단1차부영아파트", region: "광주광역시", households: 1198, area: 101801,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "수원 오목천 상송마을", region: "경기도 수원시", households: 1185, area: 83381,
-    scope: "위탁관리", kind: "apartment" },
-  { name: "양주회천 A-21", region: "경기도 양주시", households: 995, area: 151945,
-    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
-  { name: "더샵 광주포레스트 주상복합", region: "광주광역시", households: 991, area: 168658,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "양림1휴먼시아아파트", region: "광주광역시", households: 987, area: 127525,
-    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
-  { name: "의왕초평 A-3BL 아파트", region: "경기도 의왕시", households: 981, area: 125732,
-    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
-  { name: "문흥대주2차 아파트", region: "광주광역시", households: 959, area: 86137,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "휴먼파크 서희 스타힐스 아파트", region: "경기도", households: 946, area: 107277,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "남악 유탑유블레스", region: "전라남도 무안군", households: 895, area: 42521,
-    scope: "전기", kind: "apartment" },
-  { name: "여수 양우내안애아파트", region: "전라남도 여수시", households: 813, area: 81964,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "동천 호반베르디움 아파트", region: "광주광역시", households: 803, area: 140807,
-    scope: "경비,청소", kind: "apartment" },
-  { name: "용해호반리젠시빌스위트 아파트", region: "전라남도 목포시", households: 732, area: 84950,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "순천가곡 대광로제비앙 리버팰리스", region: "전라남도 순천시", households: 727, area: 109150,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "STX KAN 중우하나린", region: "충청남도", households: 700, area: 66871,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "수완현진에버빌1단지", region: "광주광역시", households: 672, area: 106252,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "렉시안 파크타운", region: "충청남도", households: 626, area: 74113,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "어등산 한양수자인 테라스 아파트", region: "광주광역시", households: 592, area: 76999,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "한보라마을 휴먼시아 4단지", region: "경기도 용인시", households: 581, area: 48094,
-    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
-  { name: "광양 푸르지오 더 센트럴", region: "전라남도 광양시", households: 565, area: 75778,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "문흥우성아파트", region: "광주광역시", households: 564, area: 69577,
-    scope: "경비,청소,시설관리", kind: "apartment" },
-  { name: "함안 데시앙 아파트", region: "경상남도 함안군", households: 563, area: 33424,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "LH 트리플 센텀 아파트", region: "경기도 시흥시", households: 546, area: 70972,
-    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
-  { name: "용봉 삼성아파트", region: "광주광역시", households: 544, area: 65734,
-    scope: "경비,청소", kind: "apartment" },
-  { name: "송화 휴먼시아7단지 아파트", region: "광주광역시", households: 530, area: 80556,
-    scope: "위탁관리,경비,청소", kind: "apartment", type: "LH" },
-  { name: "첨단 미르채리버파크 오피스텔", region: "광주광역시", households: 511, area: 29005,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "신창 사랑으로6차 부영아파트", region: "충청남도 아산시", households: 494, area: 57057,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "영광 힐스테이트", region: "전라남도 영광군", households: 493, area: 57509,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-  { name: "첨단 3차 부영아파트", region: "광주광역시", households: 492, area: 50420,
-    scope: "위탁관리,경비,청소", kind: "apartment" },
-
-  // ─── 집합건물 / 주상복합 / 오피스텔 (PDF p11) ─────────────
-  { name: "양산 명지써밋 주상복합", region: "경상남도 양산시", area: 52476,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "금남 지하도상가", region: "광주광역시",
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "나주 이노파크 식스틴 지식산업센터", region: "전라남도 나주시", area: 31000,
-    scope: "위탁관리,청소", kind: "mixed-use" },
-  { name: "첨단 미르채리버파크 오피스텔", region: "광주광역시", area: 29005,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "첨단프라자", region: "광주광역시", area: 23388,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "남악 에드가5차오피스텔", region: "전라남도 무안군", area: 22522,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "남악 에드가6차오피스텔", region: "전라남도 무안군", area: 22258,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "동명동 센트럴파크오피스텔", region: "광주광역시", area: 21900,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "내포 에드가2차 오피스텔", region: "충청남도 홍성군", area: 21876,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "남악 에드가7차오피스텔", region: "전라남도 무안군", area: 20236,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "더샵 광주포레스트 오피스텔", region: "광주광역시", area: 18821,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "금남로 센텀시티", region: "광주광역시", area: 18792,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "남악 에드가8차오피스텔", region: "전라남도 무안군", area: 17097,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "남악 에드가9차", region: "전라남도 무안군", area: 17097,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "남악 에드가2차오피스텔", region: "전라남도 무안군", area: 14645,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "그랜드 센트럴 상가", region: "광주광역시", area: 14104,
-    scope: "위탁관리,청소", kind: "mixed-use" },
-  { name: "제주 영어마을 학원타운", region: "제주특별자치도", area: 12797,
-    scope: "위탁관리,청소", kind: "mixed-use" },
-  { name: "첨단 벨루미체", region: "광주광역시", area: 11047,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "첨단 윤진리안채리버뷰", region: "광주광역시", area: 10099,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "첨단 야스텍타워", region: "광주광역시", area: 8986,
-    scope: "위탁관리,청소", kind: "mixed-use" },
-  { name: "우산동 에드가리움", region: "광주광역시", area: 8546,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "오션블루", region: "전라남도", area: 7925,
-    scope: "위탁관리,청소", kind: "mixed-use" },
-  { name: "첨단 한양에드가3차 302동", region: "광주광역시", area: 7438,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "첨단 한양에드가3차 303동", region: "광주광역시", area: 7438,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "목동 메디컬스퀘어", region: "서울특별시 양천구", area: 6723,
-    scope: "위탁관리,청소", kind: "mixed-use" },
-  { name: "우산동 하이클래스", region: "광주광역시", area: 6067,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "우산동 스카이하이", region: "광주광역시", area: 6025,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "제주 세종안채 오피스텔", region: "제주특별자치도", area: 5553,
-    scope: "위탁관리,경비,청소", kind: "mixed-use" },
-  { name: "계림아이파크 SK뷰 (근린생활)", region: "광주광역시", area: 5193,
-    scope: "위탁관리,청소", kind: "mixed-use" },
-  { name: "선운 메디컬스퀘어", region: "광주광역시", area: 4781,
-    scope: "위탁관리,청소", kind: "mixed-use" },
-  { name: "첨단 AM-STAY 센트럴파크 오피스텔", region: "광주광역시", area: 4039,
-    scope: "위탁관리,청소", kind: "mixed-use" },
-  { name: "미르채 프라자 상가", region: "광주광역시", area: 3738,
-    scope: "위탁관리,청소", kind: "mixed-use" },
-  { name: "영광 뉴스카이", region: "전라남도 영광군", area: 3357,
-    scope: "위탁관리", kind: "mixed-use" },
-  { name: "첨단 윤진리안채상가", region: "광주광역시", area: 3228,
-    scope: "위탁관리,청소", kind: "mixed-use" },
-  { name: "H타워빌딩", region: "광주광역시", area: 2890,
-    scope: "위탁관리", kind: "mixed-use" },
-  { name: "첨단 힐스테이트 리버파크 상가", region: "광주광역시", area: 2791,
-    scope: "청소", kind: "mixed-use" },
+  { name: "동명동 센트럴파크오피스텔", region: "광주광역시 동구", households: 253, scope: "위탁관리·오피스텔", kind: "mixed-use" },
+  { name: "금남로 센텀시티", region: "광주광역시 동구", households: 224, scope: "위탁관리·오피스텔", kind: "mixed-use" },
+  { name: "금남유탑", region: "광주광역시 동구", households: 480, scope: "위탁관리·오피스텔", kind: "mixed-use" },
+  { name: "무등산 명지로드힐", region: "광주광역시 동구", households: 270, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "학1마을아파트", region: "광주광역시 동구", households: 297, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "용산호반맨션", region: "광주광역시 동구", households: 190, scope: "위탁관리", kind: "apartment" },
+  { name: "휴먼빌딩", region: "광주광역시 서구", households: 107, scope: "회계 위탁", kind: "mixed-use" },
+  { name: "화정유탑", region: "광주광역시 서구", households: 286, scope: "위탁관리·오피스텔", kind: "mixed-use" },
+  { name: "광천 프라임 아너팰리스아파트", region: "광주광역시 서구", households: 186, scope: "위탁관리·아파트+오피스텔(임대) (구성 176+10)", kind: "apartment" },
+  { name: "농성 삼익아파트", region: "광주광역시 서구", households: 374, scope: "위탁관리·분양 (관리소)", kind: "apartment" },
+  { name: "쌍촌프라임아너팰리스", region: "광주광역시 서구", households: 52, scope: "위탁관리 (구성 47+5)", kind: "apartment" },
+  { name: "화정한국아델리움 1단지", region: "광주광역시 서구", households: 28, scope: "위탁관리", kind: "apartment" },
+  { name: "화정한국아델리움 2단지", region: "광주광역시 서구", households: 28, scope: "위탁관리", kind: "apartment" },
+  { name: "마륵시티", region: "광주광역시 서구", scope: "청소 (청소인력공급)", kind: "mixed-use" },
+  { name: "효천 천년나무 2단지", region: "광주광역시 남구", households: 324, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "봉선라인2,3차", region: "광주광역시 남구", households: 358, scope: "위탁관리", kind: "apartment" },
+  { name: "방림동 오네뜨하이브", region: "광주광역시 남구", households: 225, scope: "위탁관리 (구성 199+26)", kind: "apartment" },
+  { name: "백운동 프라임로하스", region: "광주광역시 남구", households: 17, scope: "위탁관리 (관리원)", kind: "apartment" },
+  { name: "봉선 유탑 메트로시티", region: "광주광역시 남구", households: 88, scope: "위탁관리·분양 (구성 82+6)", kind: "apartment" },
+  { name: "봉선동 아델리움57 더힐", region: "광주광역시 남구", households: 29, scope: "위탁관리", kind: "apartment" },
+  { name: "봉선무등파크3차2단지", region: "광주광역시 남구", households: 309, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "무등산 자이앤어울림 상가", region: "광주광역시 북구", households: 15, scope: "위탁관리·상가", kind: "mixed-use" },
+  { name: "운암 센텀플로라에듀", region: "광주광역시 북구", households: 60, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "운암 블루시안1차", region: "광주광역시 북구", households: 103, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "중흥 프라임베르가 아파트", region: "광주광역시 북구", households: 114, scope: "위탁관리·아파트+오피스텔(임대) (구성 107+7)", kind: "apartment" },
+  { name: "신안동 프라임로하스", region: "광주광역시 북구", households: 20, scope: "위탁관리·분양 (청소인력공급)", kind: "apartment" },
+  { name: "용봉 금호아파트", region: "광주광역시 북구", households: 221, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "용봉엘리체", region: "광주광역시 북구", households: 430, scope: "위탁관리", kind: "apartment" },
+  { name: "용봉 한국아델리움2차아파트", region: "광주광역시 북구", households: 61, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "임동평화맨션", region: "광주광역시 북구", households: 196, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "오치 우성아파트", region: "광주광역시 북구", households: 402, scope: "위탁관리 (청소)", kind: "apartment" },
+  { name: "양산 명지써밋 주상복합", region: "광주광역시 북구", households: 153, scope: "위탁관리·아파트+오피스텔 (구성 153+120, 광주광역시 153세대)", kind: "apartment" },
+  { name: "오치 대광아파트", region: "광주광역시 북구", households: 111, scope: "위탁관리·분양 (구성 99+12)", kind: "apartment" },
+  { name: "첨단 야스텍타워", region: "광주광역시 광산구", households: 54, scope: "위탁관리·상가", kind: "mixed-use" },
+  { name: "첨단 윤진리안채상가(본사)", region: "광주광역시 광산구", households: 14, scope: "위탁관리·상가", kind: "mixed-use" },
+  { name: "첨단 힐스테이트 리버파크 상가", region: "광주광역시 광산구", households: 36, scope: "위탁관리·상가", kind: "mixed-use" },
+  { name: "우산동 더스위트2차 센트럴빌", region: "광주광역시 광산구", households: 26, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "선운 메디컬스퀘어", region: "광주광역시 광산구", households: 37, scope: "위탁관리·상가", kind: "mixed-use" },
+  { name: "첨단 중해마루힐", region: "광주광역시 광산구", households: 350, scope: "경비·청소 (경비,청소)", kind: "mixed-use" },
+  { name: "무진 테라스", region: "광주광역시 광산구", households: 24, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "신창 부영6차아파트", region: "광주광역시 광산구", households: 494, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "수완2차 중흥S-클래스아파트", region: "광주광역시 광산구", households: 241, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "수완대라수 어썸테라스", region: "광주광역시 광산구", households: 140, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "수완대성베르힐", region: "광주광역시 광산구", households: 410, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "소촌2차 국제미소래 아파트", region: "광주광역시 광산구", households: 382, scope: "위탁관리·임대", kind: "apartment" },
+  { name: "도산 서경아파트", region: "광주광역시 광산구", households: 306, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "도천1단지 중흥파크맨션", region: "광주광역시 광산구", households: 408, scope: "위탁관리", kind: "apartment" },
+  { name: "도산 우미아파트", region: "광주광역시 광산구", households: 348, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "송정역 숲안애1차아파트", region: "광주광역시 광산구", households: 82, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "어등산 대광로제비앙", region: "광주광역시 광산구", households: 213, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "첨단 대라수1차", region: "광주광역시 광산구", households: 315, scope: "위탁관리·임대 (구성 300+15)", kind: "apartment" },
+  { name: "첨단 도휘에드가2차", region: "광주광역시 광산구", households: 288, scope: "위탁관리·분양 (구성 260+28)", kind: "apartment" },
+  { name: "수완 대라수 상가", region: "광주광역시 광산구", households: 33, scope: "위탁관리·상가", kind: "mixed-use" },
+  { name: "미르채 프라자 상가", region: "광주광역시 광산구", households: 31, scope: "위탁관리·상가", kind: "mixed-use" },
+  { name: "첨단 무들에코클래스", region: "광주광역시 광산구", households: 355, scope: "위탁관리·분양 (구성 298+57)", kind: "apartment" },
+  { name: "첨단 윤진리안채리버뷰", region: "광주광역시 광산구", households: 182, scope: "위탁관리·도시형생활주택+오피스텔 (구성 91+91)", kind: "apartment" },
+  { name: "첨단 한양에드가3차 301동", region: "광주광역시 광산구", households: 71, scope: "위탁관리", kind: "apartment" },
+  { name: "첨단 일신프레뷰아파트", region: "광주광역시 광산구", households: 113, scope: "위탁관리·아파트+오피스텔 (구성 85+28)", kind: "apartment" },
+  { name: "LH지행역 더 퍼스트아파트 (LH 동두천송내 행복주택아파트)", region: "경기도 동두천시", households: 420, scope: "위탁관리·분양/임대", kind: "apartment", type: "LH" },
+  { name: "경기광주 월드메르디앙 라 테라스 2단지", region: "경기도 광주시", households: 38, scope: "위탁관리", kind: "apartment" },
+  { name: "안동 어반 마제네스", region: "경상북도 안동시", households: 89, scope: "위탁관리·임대", kind: "apartment" },
+  { name: "포항 일월 LH1단지", region: "경상북도 포항시", households: 460, scope: "위탁관리·임대", kind: "apartment", type: "LH" },
+  { name: "고흥 녹동 승원팰리체", region: "전라남도 고흥군", households: 192, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "고흥 승원팰리체 더퍼스트아파트", region: "전라남도 고흥군", households: 220, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "고흥 남계 승원팰리체 하이엔드", region: "전라남도 고흥군", households: 183, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "곡성 수푸름", region: "전라남도 곡성군", households: 48, scope: "위탁관리·임대", kind: "apartment" },
+  { name: "제이아트 은파 더레이크", region: "전라북도 군산시", households: 219, scope: "위탁관리", kind: "apartment" },
+  { name: "나주 이노파크 식스틴 지식산업센터", region: "전라남도 나주시", households: 400, scope: "위탁관리·지식산업센터", kind: "mixed-use" },
+  { name: "담양 양우내안애1단지", region: "전라남도 담양군", households: 322, scope: "위탁관리", kind: "apartment" },
+  { name: "담양 양우내안애2단지", region: "전라남도 담양군", households: 358, scope: "위탁관리", kind: "apartment" },
+  { name: "담양 퍼스트35 타운하우스", region: "전라남도 담양군", households: 35, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "담양 일신 더 프레뷰", region: "전라남도 담양군", households: 41, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "종원나이스빌 아파트", region: "전라남도 목포시", households: 351, scope: "위탁관리", kind: "apartment" },
+  { name: "평화광장 미래엔스위트", region: "전라남도 목포시", households: 193, scope: "위탁관리", kind: "apartment" },
+  { name: "석현동 에드가안채", region: "전라남도 목포시", households: 114, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "목포 산정 대광로제비앙", region: "전라남도 목포시", households: 416, scope: "위탁관리", kind: "apartment" },
+  { name: "하당 센트럴팰리체1차아파트", region: "전라남도 목포시", households: 134, scope: "위탁관리·임대", kind: "apartment" },
+  { name: "하당 센트럴팰리체2차아파트", region: "전라남도 목포시", households: 85, scope: "위탁관리·임대", kind: "apartment" },
+  { name: "하당 프라임아너팰리스아파트", region: "전라남도 목포시", households: 185, scope: "위탁관리·임대", kind: "apartment" },
+  { name: "남악 에드가채움아파트", region: "전라남도 무안군", households: 116, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "무안 센텀플로라아파트", region: "전라남도 무안군", households: 154, scope: "위탁관리·아파트+오피스텔(임대) (구성 148+6)", kind: "apartment" },
+  { name: "화랑대 디오베이션", region: "서울특별시 노원구", households: 62, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "목동 메디컬스퀘어", region: "서울특별시 강서구", households: 54, scope: "위탁관리·상가", kind: "mixed-use" },
+  { name: "순창 미르채아파트", region: "전라북도 순창군", households: 75, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "순천대광로제비앙 지에이그린웰", region: "전라남도 순천시", households: 436, scope: "위탁관리", kind: "apartment" },
+  { name: "여수 골드 더테라스 하우스", region: "전라남도 여수시", households: 44, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "여수 구송 파르테논 더 테라스", region: "전라남도 여수시", households: 45, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "오션블루", region: "전라남도 여수시", households: 123, scope: "위탁관리·오피스텔", kind: "mixed-use" },
+  { name: "영광 수푸름아파트", region: "전라남도 영광군", households: 48, scope: "위탁관리·임대", kind: "apartment" },
+  { name: "영광 뉴스카이", region: "전라남도 영광군", households: 69, scope: "위탁관리·임대+오피스텔 (구성 45+24)", kind: "apartment" },
+  { name: "영광 성화누리안", region: "전라남도 영광군", households: 198, scope: "위탁관리·임대", kind: "apartment" },
+  { name: "완도 무등파크맨션", region: "전라남도 완도군", households: 240, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "완도 현대아파트", region: "전라남도 완도군", households: 450, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "완도 우성팰리스힐 아파트", region: "전라남도 완도군", households: 159, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "쌍용 더 플래티넘 완도", region: "전라남도 완도군", households: 223, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "완도미르채 센텀시티", region: "전라남도 완도군", households: 108, scope: "위탁관리", kind: "apartment" },
+  { name: "완도 프라임아너스 더 시그니쳐", region: "전라남도 완도군", households: 40, scope: "위탁관리·분양", kind: "apartment" },
+  { name: "장성 수산 LH1단지", region: "전라남도 장성군", households: 150, scope: "위탁관리·임대", kind: "apartment", type: "LH" },
+  { name: "장흥 토광미르채아파트", region: "전라남도 장흥군", households: 210, scope: "위탁관리·임대", kind: "apartment" },
+  { name: "고랑동 광신프로그레스 아파트 신축공사현장", region: "전라북도 전주시", households: 381, scope: "위탁관리 (경비)", kind: "apartment" },
+  { name: "제주 블루빌딩(본사)", region: "제주특별자치도 서귀포시", households: 14, scope: "위탁관리·상가", kind: "mixed-use" },
+  { name: "제주 세종안채 오피스텔", region: "제주특별자치도 서귀포시", households: 100, scope: "위탁관리·오피스텔", kind: "mixed-use" },
+  { name: "내포 에드가2차 오피스텔", region: "충청남도 예산군", households: 300, scope: "위탁관리·오피스텔", kind: "mixed-use" },
+  { name: "영동 수푸름", region: "충청북도 영동군", households: 70, scope: "위탁관리", kind: "apartment" },
+  { name: "지오스테이션", region: "전라남도 화순군", households: 302, scope: "위탁관리", kind: "apartment" },
+  { name: "해남 센트럴팰리체", region: "전라남도 해남군", households: 99, scope: "위탁관리·임대", kind: "apartment" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -700,8 +665,8 @@ export const totalCertHolders = 1575;
  * 사이트 어디서든 이 상수를 import 해 표기 일관성 보장.
  */
 export const STATS = {
-  /** 누적 운영 단지 (LH + 민간) */
-  activeComplexes: 73,
+  /** 누적 운영 단지 (LH + 민간) — complexes 배열과 자동 동기화 */
+  activeComplexes: complexes.length,
   /** 관리 세대수 */
   managedHouseholds: 32000,
   /** 보유 인허가 종수 (정본) — licenses 배열 9건은 운영 면허 노출용 */
@@ -711,6 +676,14 @@ export const STATS = {
   /** 자격증 보유 전문 인력 */
   certifiedProfessionals: 1575,
 } as const;
+
+/* Phase 14-L invariant — counters의 literal 값과 complexes.length 동기화 보장.
+   complexes 배열을 수정한 후 counters[1].value 갱신을 잊으면 즉시 빌드/런타임 경고. */
+if (counters[1].value !== complexes.length) {
+  console.warn(
+    `[site-content] counters.complexes(${counters[1].value}) !== complexes.length(${complexes.length}). counters를 ${complexes.length}로 갱신해 주세요.`,
+  );
+}
 
 const _FOUNDING_DATE = new Date(2013, 8, 1); // 2013년 9월 1일
 export const yearsOfOperation: number = Math.max(

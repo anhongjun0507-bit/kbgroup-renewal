@@ -67,7 +67,7 @@ export function CasesPhotoGallery() {
             kicker="ON-SITE GALLERY"
             title="현장 갤러리"
             italicWord="현장"
-            subtitle="케이비개발이 직접 운영하는 단지의 실제 모습. 광주부터 서울·경기·충청·전라까지 73개 단지의 일상을 책임집니다."
+            subtitle="케이비개발이 직접 운영하는 단지의 실제 모습. 광주부터 서울·경기·충청·전라까지 106개 단지의 일상을 책임집니다."
             align="left"
             size="md"
             as="h2"

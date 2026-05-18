@@ -18,6 +18,9 @@ const CONTACT_ROWS: {
   { label: "TEL", value: contact.phone, href: `tel:${contact.phone}` },
   { label: "FAX", value: contact.fax, href: null },
   { label: "EMAIL", value: contact.email, href: `mailto:${contact.email}` },
+  ...(contact.businessHours
+    ? [{ label: "HOURS", value: contact.businessHours, href: null }]
+    : []),
 ];
 
 const ACCESS_CARDS = [
@@ -117,6 +120,11 @@ export function LocationInfo() {
             <h2 className="mt-5 font-display text-[28px] font-bold leading-[1.3] tracking-tight text-ink-strong md:text-[36px]">
               {contact.address}
             </h2>
+            {contact.buildingAlias && (
+              <p className="mt-3 text-[14px] font-medium text-ink-muted">
+                건물명: {contact.buildingAlias}
+              </p>
+            )}
           </motion.div>
 
           <motion.div variants={itemVariants}>
