@@ -684,7 +684,7 @@ export const pastComplexes: PastComplex[] = [
   { name: "목포 상동 프라임 주상복합아파트", region: "전라남도 목포시", households: 171, area: 21463, period: "2020.6.1 ~ 2026.5.31", kind: "mixed-use" },
   { name: "그랜드센트럴 아파트", region: "광주광역시 동구", households: 2336, area: 364652, period: "2020.9.1 ~ 2021.5.31", kind: "apartment", aliases: ["광주 그랜드 센트럴"], isFeatured: true },
   { name: "어등산 한양수자인 아파트", region: "광주광역시 광산구", households: 592, area: 76999, period: "2021.10.1 ~ 2024.9.30", kind: "apartment" },
-  { name: "의정부 LH고산3단지 아파트", region: "경기도 의정부시", households: 1331, area: 155225, period: "2021.05.13 ~ 2021.12.31", kind: "apartment", type: "LH" },
+  { name: "의정부 LH고산3단지 아파트", region: "경기도 의정부시", households: 1331, area: 155225, period: "2021.05.13 ~ 2021.12.31", kind: "apartment", type: "LH", aliases: ["의정부 LH고산3단지"], isFeatured: true },
   { name: "첨단 부영e그린", region: "광주광역시 광산구", households: 384, area: 44725, period: "2020.1.1 ~ 2025.12.31", kind: "apartment" },
   { name: "봉선라인광장1차아파트", region: "광주광역시 남구", households: 385, area: 33000, period: "2023.1.1 ~ 2025.12.31", kind: "apartment" },
   { name: "여수 양우내안애 아파트", region: "전라남도 여수시", households: 813, area: 113641, period: "2021.9.1 ~ 2024.8.31", kind: "apartment" },

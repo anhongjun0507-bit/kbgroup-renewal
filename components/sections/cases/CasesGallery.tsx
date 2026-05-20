@@ -76,9 +76,11 @@ export function CasesGallery() {
     });
   }, []);
 
-  const lhCount = featured.filter((c) => !c.isPast && isLh(c)).length;
-  const pastCount = featured.filter((c) => c.isPast).length;
-  const currentFeaturedCount = featured.length - lhCount - pastCount;
+  /* Phase 14-M-4 — LH는 현재/과거 합산해서 표기 (hwpx "LH 10" 의도와 일치).
+     "주요(종료)" 카운트는 non-LH 과거만. LH 과거 1건(의정부)은 LH 발주 카운트에 흡수. */
+  const lhCount = featured.filter(isLh).length;
+  const pastNonLhCount = featured.filter((c) => c.isPast && !isLh(c)).length;
+  const currentFeaturedCount = featured.length - lhCount - pastNonLhCount;
 
   return (
     <section
@@ -118,7 +120,7 @@ export function CasesGallery() {
                 주요 (종료)
               </dt>
               <dd className="mt-1 font-display text-[22px] font-extrabold text-ink-muted md:text-[26px]">
-                {pastCount}
+                {pastNonLhCount}
               </dd>
             </div>
           </dl>
