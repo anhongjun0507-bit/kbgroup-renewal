@@ -6,23 +6,23 @@ import { contact } from "@/data/site-content";
 
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
-/* Phase 14-B B-2 + Phase 14-L (2026-05-18) — 본사 핀 위치 정밀 보정.
-   사용자 hwpx 요청: 네이버맵 주소 검색 시 "월계로 223-7 (미르채프라자)"로 잘못 떨어지는 문제.
-   대응:
-   1) OSM 임베드는 정밀 좌표(35.17672, 126.80854)로 직접 마커 고정 — 실제 본사 빌딩(윤진리안채) 위치.
-   2) 외부 지도 링크는 주소 + 건물명 + 회사명을 결합한 쿼리로 변경하여 더 정확한 POI 매칭.
-   3) 네이버는 coord 기반 c 파라미터로 지도 중심을 명시. */
-const COORD_LAT = 35.17672;
-const COORD_LON = 126.80854;
-const BBOX_DELTA = 0.005;
+/* Phase 14-M (2026-05-20) — 본사 핀 좌표 정정.
+   클라 제보: 기존 좌표(35.17672, 126.80854)는 909번 건물 인근 — 약 4km 남서쪽으로 어긋남.
+   정정: 윤진리안채(월계로 223-22, 쌍암동 694-71 추정) 실제 좌표로 교체.
+   검증: OpenStreetMap Nominatim에서 인접 월계로 223-20(첨단도휘에드가2차) 좌표 확보 →
+        35.215202, 126.850066. 윤진리안채는 같은 도로 짝수측 옆 건물(거리 약 10m). */
+const COORD_LAT = 35.2152;
+const COORD_LON = 126.8502;
+const BBOX_DELTA = 0.004;
 
 export function LocationMap() {
   const shouldReduce = useReducedMotion() ?? false;
-  /* 네이버·카카오 검색 쿼리는 회사명을 포함해 동음 주소(미르채프라자 223-7) 오매칭 방지 */
+  /* 네이버·카카오 검색 쿼리는 회사명·건물명 결합으로 윤진리안채 POI 우선 매칭 */
   const searchQuery = encodeURIComponent(
-    `(주)케이비개발 ${contact.address.replace("‑", "-")}`,
+    `${contact.buildingAlias ?? ""} ${contact.address.replace("‑", "-")} (주)케이비개발`.trim(),
   );
-  const kakaoUrl = `https://map.kakao.com/link/map/케이비개발,${COORD_LAT},${COORD_LON}`;
+  /* 카카오 link/map: 표시명,위도,경도 — 좌표가 정확하면 카카오맵에서 정확한 위치에 핀 표시 */
+  const kakaoUrl = `https://map.kakao.com/link/map/${encodeURIComponent("(주)케이비개발 본사 (윤진리안채)")},${COORD_LAT},${COORD_LON}`;
   const naverUrl = `https://map.naver.com/v5/search/${searchQuery}?c=${COORD_LON},${COORD_LAT},18,0,0,0,dh`;
   const osmEmbed =
     `https://www.openstreetmap.org/export/embed.html` +

@@ -10,20 +10,21 @@ import type { BusinessArea, BusinessCategory } from "@/data/site-content";
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 const METRICS: Record<BusinessCategory, { label: string; value: string; suffix?: string }[]> = {
+  /* Phase 14-M (2026-05-20) — 클라 hwpx 요청 반영. 시설관리 09~18, 위생청소 370+, 경비보안 320+/10분. */
   facility: [
-    { label: "관리 대응", value: "24", suffix: "시간" },
+    { label: "관리 대응 시간", value: "09~18", suffix: "시" },
     { label: "일평균 점검 건수", value: "180", suffix: "건+" },
     { label: "평균 응답 시간", value: "15", suffix: "분 이내" },
   ],
   sanitation: [
-    { label: "전용 청소 인력", value: "120", suffix: "명+" },
+    { label: "전용 청소 인력", value: "370", suffix: "명+" },
     { label: "주간 정밀 청소 회수", value: "3", suffix: "회" },
     { label: "방역 주기", value: "월 2", suffix: "회" },
   ],
   security: [
     { label: "통합 관제 운영", value: "24/7" },
-    { label: "근무 인력", value: "85", suffix: "명+" },
-    { label: "긴급 대응 시간", value: "5", suffix: "분 이내" },
+    { label: "근무 인력", value: "320", suffix: "명+" },
+    { label: "긴급 대응 시간", value: "10", suffix: "분 이내" },
   ],
   development: [
     { label: "누적 시공 단지", value: "30", suffix: "단지+" },

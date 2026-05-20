@@ -120,8 +120,8 @@ export function ContactForm({ context, className }: ContactFormProps) {
                 </dd>
               </div>
               <div className="flex items-baseline justify-between py-3">
-                <dt className="text-[13px] text-ink-muted">긴급 야간 대응</dt>
-                <dd className="text-[16px] font-bold text-ink-strong">24시간</dd>
+                <dt className="text-[13px] text-ink-muted">상담시간 외</dt>
+                <dd className="text-[16px] font-bold text-ink-strong">자동 접수</dd>
               </div>
             </dl>
 

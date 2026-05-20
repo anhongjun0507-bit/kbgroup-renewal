@@ -4,6 +4,7 @@ import { CasesStats } from "@/components/sections/cases/CasesStats";
 import { CasesMap } from "@/components/sections/cases/CasesMap";
 import { CasesGallery } from "@/components/sections/cases/CasesGallery";
 import { CasesPhotoGallery } from "@/components/sections/cases/CasesPhotoGallery";
+import { PastProjects } from "@/components/sections/cases/PastProjects";
 import { ContactInvite } from "@/components/sections/common/ContactInvite";
 
 export const metadata: Metadata = {
@@ -29,6 +30,7 @@ export default function CasesPage() {
       <CasesPhotoGallery />
       <CasesMap />
       <CasesGallery />
+      <PastProjects />
       <ContactInvite context="우리 단지의 운영 상담을 시작해 보세요" />
     </>
   );
