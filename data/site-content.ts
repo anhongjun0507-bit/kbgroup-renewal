@@ -97,6 +97,10 @@ export type PastComplex = {
   type?: "LH" | "민간" | "공공";
   /** Phase 14-M — hwpx 등 고객 자료에서 사용된 표기 별칭 */
   aliases?: string[];
+  /**
+   * Phase 14-M-3 (2026-05-20) — hwpx "주요 19개" 명시 단지 중 현재 운영 X 단지.
+   * 카드 영역(CasesGallery)에 "종료" 라벨로 노출. PastProjects에도 그대로 표시. */
+  isFeatured?: boolean;
 };
 
 export type Partner = {
@@ -678,7 +682,7 @@ export const pastComplexes: PastComplex[] = [
   { name: "리안채", region: "전라북도 고창군", households: 160, area: 18257, period: "2018.8.1 ~ 2021.1.31", kind: "apartment" },
   { name: "동우아스트로", region: "광주광역시 북구", households: 158, area: 16306, period: "2019.12 ~ 2020.12.31", kind: "apartment" },
   { name: "목포 상동 프라임 주상복합아파트", region: "전라남도 목포시", households: 171, area: 21463, period: "2020.6.1 ~ 2026.5.31", kind: "mixed-use" },
-  { name: "그랜드센트럴 아파트", region: "광주광역시 동구", households: 2336, area: 364652, period: "2020.9.1 ~ 2021.5.31", kind: "apartment", aliases: ["광주 그랜드 센트럴"] },
+  { name: "그랜드센트럴 아파트", region: "광주광역시 동구", households: 2336, area: 364652, period: "2020.9.1 ~ 2021.5.31", kind: "apartment", aliases: ["광주 그랜드 센트럴"], isFeatured: true },
   { name: "어등산 한양수자인 아파트", region: "광주광역시 광산구", households: 592, area: 76999, period: "2021.10.1 ~ 2024.9.30", kind: "apartment" },
   { name: "의정부 LH고산3단지 아파트", region: "경기도 의정부시", households: 1331, area: 155225, period: "2021.05.13 ~ 2021.12.31", kind: "apartment", type: "LH" },
   { name: "첨단 부영e그린", region: "광주광역시 광산구", households: 384, area: 44725, period: "2020.1.1 ~ 2025.12.31", kind: "apartment" },
@@ -689,7 +693,7 @@ export const pastComplexes: PastComplex[] = [
   { name: "홍성 승원팰리체", region: "충청남도 홍성군", households: 341, area: 36917, period: "2023.10.1 ~ 2025.5.31", kind: "apartment" },
   { name: "남원월락유탑유블레스킹덤", region: "전라북도 남원시", households: 359, area: 41873, period: "2024.8.23 ~ 2025.5.31", kind: "apartment" },
   { name: "함안 데시앙 아파트", region: "경상남도 함안군", households: 563, area: 33424, period: "2023.08.01 ~ 2025.07.31", kind: "apartment" },
-  { name: "문흥대주2차아파트", region: "광주광역시 북구", households: 959, area: 86137, period: "2023.09.05 ~ 2025.09.04", kind: "apartment", aliases: ["문흥대주2차"] },
+  { name: "문흥대주2차아파트", region: "광주광역시 북구", households: 959, area: 86137, period: "2023.09.05 ~ 2025.09.04", kind: "apartment", aliases: ["문흥대주2차"], isFeatured: true },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────

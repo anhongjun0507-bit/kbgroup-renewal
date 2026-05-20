@@ -5,13 +5,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import { complexes, type Complex } from "@/data/site-content";
+import { complexes, pastComplexes, type Complex } from "@/data/site-content";
 
 /* Phase 5.G.4 — 갤러리: placeholder 업그레이드 + 배지 + 메타
    Phase 14-M (2026-05-20) — 클라 hwpx 요청.
    "총 관리단지 중 LH단지 + 주요관리실적 단지만 카드, 나머지는 리스트화" 정책 적용.
-   본 컴포넌트는 LH 9 + isFeatured 15 = 24개 주요 단지만 노출.
+   Phase 14-M-3 — hwpx 주요 19개 중 과거 단지 2건(그랜드센트럴·문흥대주2차)도 카드 포함.
+   "종료" 배지로 현재/과거 명확 시각 구분. 본 컴포넌트는
+   LH 9 + Featured 현재 15 + Featured 과거 2 = 26개 주요 단지 노출.
    전체 154개 검색·필터·정렬은 [[CasesList]]로 분리. */
+
+/* CasesGallery 내부 정규화 타입. PastComplex를 카드 표시용 Complex 형태로 흡수. */
+type GalleryItem = Complex & {
+  /** Phase 14-M-3 — true면 과거 운영 단지 (계약 종료). 카드에 "종료" 배지 노출. */
+  isPast?: boolean;
+  /** 과거 단지의 계약 기간 (예: "2020.9.1 ~ 2021.5.31") */
+  period?: string;
+};
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 const HUES = [0, 14, -10, 22, -16, 6, 28, -22];
@@ -36,20 +46,39 @@ function badgeStyle(type?: Complex["type"]) {
 export function CasesGallery() {
   const shouldReduce = useReducedMotion() ?? false;
 
-  /* 주요 카드 노출 정책: LH 단지 + isFeatured 마킹 단지.
-     LH 9 + Featured 15 = 24개. 정렬은 LH 먼저, 그 다음 이름순. */
-  const featured = useMemo(() => {
-    return [...complexes]
-      .filter((c) => isLh(c) || c.isFeatured)
-      .sort((a, b) => {
-        const aLh = isLh(a) ? 0 : 1;
-        const bLh = isLh(b) ? 0 : 1;
-        if (aLh !== bLh) return aLh - bLh;
-        return a.name.localeCompare(b.name, "ko");
-      });
+  /* 주요 카드 노출 정책: LH + isFeatured.
+     · 현재 complexes 중 LH 또는 isFeatured
+     · pastComplexes 중 isFeatured (hwpx 주요 19개에 포함된 과거 단지)
+     정렬: LH 먼저 → 현재 featured → 과거 featured. 각 그룹 내 이름순. */
+  const featured = useMemo<GalleryItem[]>(() => {
+    const currentItems: GalleryItem[] = complexes.filter(
+      (c) => isLh(c) || c.isFeatured,
+    );
+    const pastItems: GalleryItem[] = pastComplexes
+      .filter((p) => p.isFeatured)
+      .map((p) => ({
+        name: p.name,
+        region: p.region,
+        households: p.households,
+        area: p.area,
+        kind: p.kind,
+        type: p.type,
+        aliases: p.aliases,
+        isFeatured: p.isFeatured,
+        isPast: true,
+        period: p.period,
+      }));
+    const rank = (c: GalleryItem) =>
+      c.isPast ? 2 : isLh(c) ? 0 : 1;
+    return [...currentItems, ...pastItems].sort((a, b) => {
+      if (rank(a) !== rank(b)) return rank(a) - rank(b);
+      return a.name.localeCompare(b.name, "ko");
+    });
   }, []);
 
-  const lhCount = featured.filter(isLh).length;
+  const lhCount = featured.filter((c) => !c.isPast && isLh(c)).length;
+  const pastCount = featured.filter((c) => c.isPast).length;
+  const currentFeaturedCount = featured.length - lhCount - pastCount;
 
   return (
     <section
@@ -67,7 +96,7 @@ export function CasesGallery() {
             size="md"
             as="h2"
           />
-          <dl className="grid grid-cols-2 gap-6 text-center md:text-right">
+          <dl className="grid grid-cols-3 gap-6 text-center md:text-right">
             <div>
               <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-faint">
                 LH 발주
@@ -81,7 +110,15 @@ export function CasesGallery() {
                 주요 단지
               </dt>
               <dd className="mt-1 font-display text-[22px] font-extrabold text-navy-800 md:text-[26px]">
-                {featured.length - lhCount}
+                {currentFeaturedCount}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-faint">
+                주요 (종료)
+              </dt>
+              <dd className="mt-1 font-display text-[22px] font-extrabold text-ink-muted md:text-[26px]">
+                {pastCount}
               </dd>
             </div>
           </dl>
@@ -95,7 +132,7 @@ export function CasesGallery() {
           className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8"
         >
           {featured.map((c, idx) => (
-            <li key={c.name}>
+            <li key={`${c.isPast ? "past:" : "active:"}${c.name}`}>
               <CaseCard complex={c} hue={HUES[idx % HUES.length]} />
             </li>
           ))}
@@ -107,8 +144,9 @@ export function CasesGallery() {
   );
 }
 
-function CaseCard({ complex, hue }: { complex: Complex; hue: number }) {
+function CaseCard({ complex, hue }: { complex: GalleryItem; hue: number }) {
   const lh = isLh(complex);
+  const isPast = complex.isPast ?? false;
   const badge = lh ? "LH" : (complex.type ?? "민간");
   const initial = getInitial(complex.name);
   const slug = encodeURIComponent(complex.name);
@@ -128,10 +166,12 @@ function CaseCard({ complex, hue }: { complex: Complex; hue: number }) {
   const monoTone = ["#0E1F3A", "#102648", "#0B1A33"][seed % 3];
   void hue; // 색조 분산을 단지 시드 기반으로 대체
 
-  return (
-    <article className="group overflow-hidden rounded-md border border-line bg-white transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:shadow-[var(--shadow-card)]">
-      <Link href={`/cases/${slug}`} className="block" aria-label={`${complex.name} 상세보기`}>
-        <div className="relative aspect-[4/5] overflow-hidden bg-navy-900">
+  /* 과거 단지는 카드 자체에 약간 채도 저하 + 종료 배지로 명확 구분.
+     /cases/[slug] 디테일 페이지는 현재 complexes만 lookup 하므로 과거 단지는
+     Link 대신 div로 래핑(404 방지). PastProjects 섹션과 동일한 비클릭 정책. */
+  const cardChildren = (
+    <>
+      <div className="relative aspect-[4/5] overflow-hidden bg-navy-900">
           {/* Phase 14 P0-03 — complex.image 지정 시 실사 사진 우선 표시, 없으면 기존 모노그램 fallback */}
           {complex.image ? (
             <>
@@ -176,14 +216,24 @@ function CaseCard({ complex, hue }: { complex: Complex; hue: number }) {
             </>
           )}
 
-          <span
-            className={
-              "absolute left-3 top-3 z-10 inline-flex items-center rounded-sm px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] " +
-              badgeStyle(badge as Complex["type"])
-            }
-          >
-            {badge}
-          </span>
+          <div className="absolute left-3 top-3 z-10 flex items-center gap-1.5">
+            <span
+              className={
+                "inline-flex items-center rounded-sm px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] " +
+                badgeStyle(badge as Complex["type"])
+              }
+            >
+              {badge}
+            </span>
+            {isPast && (
+              <span
+                aria-label="운영 종료"
+                className="inline-flex items-center rounded-sm bg-gray-200 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-ink-muted"
+              >
+                종료
+              </span>
+            )}
+          </div>
 
           <div className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 rounded-sm bg-white/10 px-2 py-1 text-[10px] font-medium text-white/85 backdrop-blur-sm">
             <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -223,8 +273,34 @@ function CaseCard({ complex, hue }: { complex: Complex; hue: number }) {
               {complex.client}
             </p>
           )}
+          {isPast && complex.period && (
+            <p className="mt-2 text-[11px] font-semibold text-ink-faint">
+              운영 기간 · {complex.period}
+            </p>
+          )}
         </div>
-      </Link>
+    </>
+  );
+
+  return (
+    <article
+      className={`group overflow-hidden rounded-md border bg-white transition-all duration-200 [transition-timing-function:var(--ease)] ${
+        isPast
+          ? "border-line opacity-90 saturate-50"
+          : "border-line hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
+      }`}
+    >
+      {isPast ? (
+        <div className="block">{cardChildren}</div>
+      ) : (
+        <Link
+          href={`/cases/${slug}`}
+          className="block"
+          aria-label={`${complex.name} 상세보기`}
+        >
+          {cardChildren}
+        </Link>
+      )}
     </article>
   );
 }
