@@ -3,6 +3,7 @@ import { PageHero } from "@/components/sections/common/PageHero";
 import { CasesStats } from "@/components/sections/cases/CasesStats";
 import { CasesMap } from "@/components/sections/cases/CasesMap";
 import { CasesGallery } from "@/components/sections/cases/CasesGallery";
+import { CasesList } from "@/components/sections/cases/CasesList";
 import { CasesPhotoGallery } from "@/components/sections/cases/CasesPhotoGallery";
 import { PastProjects } from "@/components/sections/cases/PastProjects";
 import { ContactInvite } from "@/components/sections/common/ContactInvite";
@@ -30,6 +31,7 @@ export default function CasesPage() {
       <CasesPhotoGallery />
       <CasesMap />
       <CasesGallery />
+      <CasesList />
       <PastProjects />
       <ContactInvite context="우리 단지의 운영 상담을 시작해 보세요" />
     </>

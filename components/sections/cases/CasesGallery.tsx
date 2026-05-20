@@ -1,18 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Container } from "@/components/ui";
+import { motion, useReducedMotion } from "framer-motion";
+import { Container, Heading } from "@/components/ui";
 import { complexes, type Complex } from "@/data/site-content";
-import {
-  CasesFilter,
-  type CasesFilterValue,
-  type CasesSortValue,
-} from "./CasesFilter";
 
-/* Phase 5.G.4 — 갤러리: placeholder 업그레이드 + 배지 + 메타 */
+/* Phase 5.G.4 — 갤러리: placeholder 업그레이드 + 배지 + 메타
+   Phase 14-M (2026-05-20) — 클라 hwpx 요청.
+   "총 관리단지 중 LH단지 + 주요관리실적 단지만 카드, 나머지는 리스트화" 정책 적용.
+   본 컴포넌트는 LH 9 + isFeatured 15 = 24개 주요 단지만 노출.
+   전체 154개 검색·필터·정렬은 [[CasesList]]로 분리. */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 const HUES = [0, 14, -10, 22, -16, 6, 28, -22];
@@ -36,127 +35,75 @@ function badgeStyle(type?: Complex["type"]) {
 
 export function CasesGallery() {
   const shouldReduce = useReducedMotion() ?? false;
-  const [filter, setFilter] = useState<CasesFilterValue>("ALL");
-  const [search, setSearch] = useState("");
-  const [sort, setSort] = useState<CasesSortValue>("name");
 
-  const counts = useMemo<Record<CasesFilterValue, number>>(() => {
-    const lh = complexes.filter(isLh).length;
-    return {
-      ALL: complexes.length,
-      LH: lh,
-      민간: complexes.length - lh,
-    };
+  /* 주요 카드 노출 정책: LH 단지 + isFeatured 마킹 단지.
+     LH 9 + Featured 15 = 24개. 정렬은 LH 먼저, 그 다음 이름순. */
+  const featured = useMemo(() => {
+    return [...complexes]
+      .filter((c) => isLh(c) || c.isFeatured)
+      .sort((a, b) => {
+        const aLh = isLh(a) ? 0 : 1;
+        const bLh = isLh(b) ? 0 : 1;
+        if (aLh !== bLh) return aLh - bLh;
+        return a.name.localeCompare(b.name, "ko");
+      });
   }, []);
 
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    let arr = complexes;
-    if (filter === "LH") arr = arr.filter(isLh);
-    else if (filter === "민간") arr = arr.filter((c) => !isLh(c));
-    if (q) {
-      arr = arr.filter(
-        (c) =>
-          c.name.toLowerCase().includes(q) ||
-          c.region.toLowerCase().includes(q) ||
-          (c.client && c.client.toLowerCase().includes(q)),
-      );
-    }
-    arr = [...arr].sort((a, b) => {
-      switch (sort) {
-        case "region":
-          return a.region.localeCompare(b.region, "ko");
-        case "type":
-          return (a.type ?? "민간").localeCompare(b.type ?? "민간", "ko");
-        default:
-          return a.name.localeCompare(b.name, "ko");
-      }
-    });
-    return arr;
-  }, [filter, search, sort]);
+  const lhCount = featured.filter(isLh).length;
 
   return (
-    <>
-      <CasesFilter
-        current={filter}
-        onChange={setFilter}
-        counts={counts}
-        search={search}
-        onSearchChange={setSearch}
-        sort={sort}
-        onSortChange={setSort}
-      />
-
-      <section
-        aria-labelledby="cases-gallery-heading"
-        className="section bg-gray-50"
-      >
-        <Container>
-          {filtered.length > 0 ? (
-            <motion.ul
-              layout
-              className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8"
-            >
-              <AnimatePresence mode="popLayout">
-                {filtered.map((c, idx) => (
-                  <motion.li
-                    key={c.name}
-                    layout
-                    initial={{ opacity: 0, y: shouldReduce ? 0 : 24 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: shouldReduce ? 0 : -16 }}
-                    transition={{
-                      duration: shouldReduce ? 0 : 0.5,
-                      ease: EASE_OUT_EXPO,
-                    }}
-                  >
-                    <CaseCard complex={c} hue={HUES[idx % HUES.length]} />
-                  </motion.li>
-                ))}
-              </AnimatePresence>
-            </motion.ul>
-          ) : (
-            /* Phase 14 P1-09 — empty state 일러스트 + CTA(필터 초기화) */
-            <div className="mx-auto max-w-xl rounded-md border border-line bg-white px-6 py-16 text-center md:py-20">
-              <div className="mx-auto h-12 w-12 text-accent-ink" aria-hidden="true">
-                <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="22" cy="22" r="14" />
-                  <path d="M32 32L42 42" />
-                  <path d="M16 22H28" />
-                </svg>
-              </div>
-              <p className="mt-5 font-display text-[22px] font-bold tracking-tight text-ink-strong md:text-[24px]">
-                조건에 맞는 단지가 없습니다
-              </p>
-              <p className="mt-3 text-[14px] leading-[1.75] text-ink-muted">
-                필터나 검색어를 조정하시거나 전체 단지를 확인해 보세요.
-              </p>
-              <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFilter("ALL");
-                    setSearch("");
-                    setSort("name");
-                  }}
-                  className="inline-flex min-h-11 items-center rounded-sm bg-accent-500 px-5 py-2.5 text-[13px] font-semibold text-navy-900 transition-colors duration-200 hover:bg-accent-600 hover:text-white"
-                >
-                  필터 초기화
-                </button>
-                <a
-                  href="/contact"
-                  className="inline-flex min-h-11 items-center rounded-sm border border-ink-strong px-5 py-2.5 text-[13px] font-semibold text-ink-strong transition-colors duration-200 hover:bg-ink-strong hover:text-white"
-                >
-                  상담 문의 →
-                </a>
-              </div>
+    <section
+      aria-labelledby="cases-gallery-heading"
+      className="section bg-gray-50"
+    >
+      <Container>
+        <div className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <Heading
+            kicker={`KEY PROJECTS · 주요 관리실적 ${featured.length}`}
+            title="LH 발주·주요 단지의 운영 현장"
+            italicWord="운영 현장"
+            subtitle="LH 공공임대 단지와 클라이언트가 직접 지정한 주요 단지의 현황입니다."
+            align="left"
+            size="md"
+            as="h2"
+          />
+          <dl className="grid grid-cols-2 gap-6 text-center md:text-right">
+            <div>
+              <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-faint">
+                LH 발주
+              </dt>
+              <dd className="mt-1 font-display text-[22px] font-extrabold text-navy-800 md:text-[26px]">
+                {lhCount}
+              </dd>
             </div>
-          )}
-        </Container>
+            <div>
+              <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-faint">
+                주요 단지
+              </dt>
+              <dd className="mt-1 font-display text-[22px] font-extrabold text-navy-800 md:text-[26px]">
+                {featured.length - lhCount}
+              </dd>
+            </div>
+          </dl>
+        </div>
 
-        <span id="cases-gallery-heading" className="sr-only">관리 단지 갤러리</span>
-      </section>
-    </>
+        <motion.ul
+          initial={{ opacity: 0, y: shouldReduce ? 0 : 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.05 }}
+          transition={{ duration: shouldReduce ? 0 : 0.6, ease: EASE_OUT_EXPO }}
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8"
+        >
+          {featured.map((c, idx) => (
+            <li key={c.name}>
+              <CaseCard complex={c} hue={HUES[idx % HUES.length]} />
+            </li>
+          ))}
+        </motion.ul>
+      </Container>
+
+      <span id="cases-gallery-heading" className="sr-only">주요 관리실적 단지</span>
+    </section>
   );
 }
 
