@@ -129,9 +129,11 @@ export function Cases() {
                           priority={idx < 4}
                           className="object-cover transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.04]"
                         />
+                        {/* Phase 14 P0-04 hotfix — placeholder 톤다운 제거. 사진 본연 표현.
+                            hover 시에만 살짝 어둡게 (interaction feedback) */}
                         <div
                           aria-hidden="true"
-                          className="absolute inset-0 bg-gradient-to-t from-navy-900/70 via-navy-900/15 to-navy-900/30"
+                          className="absolute inset-0 bg-navy-900/0 transition-colors duration-500 group-hover:bg-navy-900/20"
                         />
                       </>
                     ) : (

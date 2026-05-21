@@ -185,10 +185,11 @@ function CaseCard({ complex, hue }: { complex: GalleryItem; hue: number }) {
                 sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
                 className="object-cover transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.04]"
               />
-              {/* 가독성 보장 그라데이션 오버레이 */}
+              {/* Phase 14 P0-04 hotfix — 사진 영역엔 텍스트 없음(배지·위치 마커는 자체 배경).
+                  hover 시에만 살짝 톤다운(interaction feedback). 평상시는 사진 본연. */}
               <div
                 aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-navy-900/70 via-navy-900/15 to-navy-900/30"
+                className="absolute inset-0 bg-navy-900/0 transition-colors duration-500 group-hover:bg-navy-900/20"
               />
             </>
           ) : (
