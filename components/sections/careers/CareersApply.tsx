@@ -83,30 +83,30 @@ export function CareersApply() {
               <span className="serif-em">지원</span> 방법
             </h2>
 
-            <ol className="mt-12">
+            {/* Phase 14-N (2026-05-21) — 모바일 세로 stack / 데스크탑(lg) 가로 3컬럼 */}
+            <ol className="mt-12 grid grid-cols-1 lg:grid-cols-3 lg:gap-8">
               {STEPS.map((step, idx) => (
                 <li
                   key={step.number}
                   className={
-                    idx === STEPS.length - 1
-                      ? "grid grid-cols-12 items-start gap-6 border-t border-line border-b py-8"
-                      : "grid grid-cols-12 items-start gap-6 border-t border-line py-8"
+                    /* 모바일: 항목 사이 border-t, 마지막에 border-b */
+                    /* 데스크탑(lg): 각 컬럼이 카드형이 되도록 상단 line + 아이템 padding 통일 */
+                    "border-t border-line py-8 lg:border-b-0 " +
+                    (idx === STEPS.length - 1 ? "border-b lg:border-b-0" : "")
                   }
                 >
                   <span
                     aria-hidden="true"
-                    className="col-span-2 font-serif text-2xl italic leading-none text-primary md:text-3xl lg:col-span-1"
+                    className="block font-serif text-2xl italic leading-none text-primary md:text-3xl"
                   >
                     {step.number}
                   </span>
-                  <div className="col-span-10 lg:col-span-11">
-                    <h3 className="font-serif text-lg font-bold leading-tight tracking-[-0.01em] text-ink md:text-xl">
-                      {step.title}
-                    </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-ink-soft md:text-base">
-                      {step.description}
-                    </p>
-                  </div>
+                  <h3 className="mt-4 font-serif text-lg font-bold leading-tight tracking-[-0.01em] text-ink md:text-xl">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-soft md:text-base">
+                    {step.description}
+                  </p>
                 </li>
               ))}
             </ol>

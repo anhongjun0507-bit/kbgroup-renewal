@@ -109,7 +109,10 @@ function NumberCard({
   inView: boolean;
   shouldReduce: boolean;
 }) {
-  const { value, suffix, label, caption } = counter;
+  /* Phase 14-N — displayValue/displaySuffix가 있으면 그것 우선 (마케팅 표기와 실제 length 분리) */
+  const shown = counter.displayValue ?? counter.value;
+  const shownSuffix = counter.displaySuffix ?? counter.suffix;
+  const { label, caption } = counter;
   return (
     <motion.div
       initial={{ opacity: 0, y: shouldReduce ? 0 : 24 }}
@@ -127,22 +130,22 @@ function NumberCard({
           style={{ letterSpacing: "var(--tracking-tight)" }}
         >
           {shouldReduce ? (
-            value.toLocaleString("en-US")
+            shown.toLocaleString("en-US")
           ) : inView ? (
             <CountUp
-              start={Math.round(value * 0.7)}
-              end={value}
-              duration={Math.max(0.6, 0.6 + Math.log10(Math.max(1, value)) * 0.25)}
+              start={Math.round(shown * 0.7)}
+              end={shown}
+              duration={Math.max(0.6, 0.6 + Math.log10(Math.max(1, shown)) * 0.25)}
               delay={index * 0.1}
               separator=","
             />
           ) : (
-            value.toLocaleString("en-US")
+            shown.toLocaleString("en-US")
           )}
         </span>
-        {suffix && (
+        {shownSuffix && (
           <span className="stat-suffix font-mono-num text-[20px] font-bold text-accent-500 md:text-[22px]">
-            {suffix}
+            {shownSuffix}
           </span>
         )}
       </p>

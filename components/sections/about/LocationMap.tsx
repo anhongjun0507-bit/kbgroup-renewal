@@ -10,20 +10,24 @@ const EASE_OUT = [0.22, 1, 0.36, 1] as const;
    클라 제보: 기존 좌표(35.17672, 126.80854)는 909번 건물 인근 — 약 4km 남서쪽으로 어긋남.
    정정: 윤진리안채(월계로 223-22, 쌍암동 694-71 추정) 실제 좌표로 교체.
    검증: OpenStreetMap Nominatim에서 인접 월계로 223-20(첨단도휘에드가2차) 좌표 확보 →
-        35.215202, 126.850066. 윤진리안채는 같은 도로 짝수측 옆 건물(거리 약 10m). */
+        35.215202, 126.850066. 윤진리안채는 같은 도로 짝수측 옆 건물(거리 약 10m).
+
+   Phase 14-N (2026-05-21) — 카카오·네이버 외부 링크는 도로명 주소 검색 방식으로 변경.
+   기존 link/map?coord 방식이 임시 좌표(0~10m 어긋남)에 의존해 클라 PC에서 인접 건물(도휘에드가) 입구로 잡힘 →
+   주소 검색이면 카카오/네이버 자체 POI DB가 정확한 윤진리안채로 매칭. 임베드 좌표는 보존. */
 const COORD_LAT = 35.2152;
 const COORD_LON = 126.8502;
 const BBOX_DELTA = 0.004;
 
 export function LocationMap() {
   const shouldReduce = useReducedMotion() ?? false;
-  /* 네이버·카카오 검색 쿼리는 회사명·건물명 결합으로 윤진리안채 POI 우선 매칭 */
-  const searchQuery = encodeURIComponent(
-    `${contact.buildingAlias ?? ""} ${contact.address.replace("‑", "-")} (주)케이비개발`.trim(),
-  );
-  /* 카카오 link/map: 표시명,위도,경도 — 좌표가 정확하면 카카오맵에서 정확한 위치에 핀 표시 */
-  const kakaoUrl = `https://map.kakao.com/link/map/${encodeURIComponent("(주)케이비개발 본사 (윤진리안채)")},${COORD_LAT},${COORD_LON}`;
-  const naverUrl = `https://map.naver.com/v5/search/${searchQuery}?c=${COORD_LON},${COORD_LAT},18,0,0,0,dh`;
+  /* 도로명 주소를 기본 검색 쿼리로 사용. non-breaking hyphen → 일반 hyphen 정규화 후 query화 */
+  const plainAddress = contact.address.replace("‑", "-");
+  /* 카카오: 도로명 주소 검색 — 카카오 POI DB가 정확한 건물 매칭 */
+  const kakaoUrl = `https://map.kakao.com/?q=${encodeURIComponent(plainAddress)}`;
+  /* 네이버: 윤진리안채 빌딩명 제거. 도로명 주소 + 회사명 결합 (네이버에 윤진리안채 POI 미등록) */
+  const naverQuery = `${plainAddress} (주)케이비개발`;
+  const naverUrl = `https://map.naver.com/v5/search/${encodeURIComponent(naverQuery)}?c=${COORD_LON},${COORD_LAT},18,0,0,0,dh`;
   const osmEmbed =
     `https://www.openstreetmap.org/export/embed.html` +
     `?bbox=${COORD_LON - BBOX_DELTA},${COORD_LAT - BBOX_DELTA / 2}` +

@@ -117,7 +117,11 @@ export function DataCounter() {
           }}
           className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-4 md:gap-x-10 md:gap-y-12"
         >
-          {counters.map((c) => (
+          {counters.map((c) => {
+            /* Phase 14-N — displayValue/displaySuffix 우선 (마케팅 표기와 실제 length 분리) */
+            const shown = c.displayValue ?? c.value;
+            const shownSuffix = c.displaySuffix ?? c.suffix;
+            return (
             <motion.div
               key={c.key}
               variants={item}
@@ -143,14 +147,14 @@ export function DataCounter() {
                       letterSpacing: "var(--tracking-tight)",
                     }}
                   >
-                    {c.value.toLocaleString()}
+                    {shown.toLocaleString()}
                   </span>
                 ) : inView ? (
                   <CountUp
                     /* Phase 14-B B-3 — 시작 진폭 70%→90%, duration 단축 */
-                    start={Math.round(c.value * 0.96)}
-                    end={c.value}
-                    duration={Math.max(0.3, 0.3 + Math.log10(Math.max(1, c.value)) * 0.1)}
+                    start={Math.round(shown * 0.96)}
+                    end={shown}
+                    duration={Math.max(0.3, 0.3 + Math.log10(Math.max(1, shown)) * 0.1)}
                     separator=","
                     easingFn={(t, b, c, d) => {
                       const tn = t / d - 1;
@@ -171,16 +175,16 @@ export function DataCounter() {
                       letterSpacing: "var(--tracking-tight)",
                     }}
                   >
-                    {c.value.toLocaleString()}
+                    {shown.toLocaleString()}
                   </span>
                 )}
-                {c.suffix && (
+                {shownSuffix && (
                   /* Phase 3.B — "+" 만 accent-500 */
                   <span
                     className="font-mono-num font-bold text-accent-500"
                     style={{ fontSize: "clamp(1.5rem, 2.2vw, 2rem)" }}
                   >
-                    {c.suffix}
+                    {shownSuffix}
                   </span>
                 )}
               </div>
@@ -198,7 +202,8 @@ export function DataCounter() {
                 </p>
               )}
             </motion.div>
-          ))}
+            );
+          })}
         </motion.div>
       </Container>
     </section>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
 import { complexes, type Complex } from "@/data/site-content";
@@ -12,10 +12,11 @@ import {
 } from "./CasesFilter";
 
 /* Phase 14-M (2026-05-20) — 전체 단지 컴팩트 리스트.
-   클라 hwpx 요청: "주요 단지는 카드, 나머지는 리스트화". 154개 전체를 행 단위로 표시.
-   CasesGallery(주요 24)와 분리 운영. 검색·필터·정렬 기능은 본 컴포넌트에 집중. */
+   클라 hwpx 요청: "주요 단지는 카드, 나머지는 리스트화". 전체를 행 단위로 표시.
+   Phase 14-N (2026-05-21) — 30개 페이지네이션 + 면적 컬럼 제거. */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+const PAGE_SIZE = 30;
 
 function isLh(c: Complex) {
   return c.name.startsWith("LH") || c.type === "LH";
@@ -39,6 +40,7 @@ export function CasesList() {
   const [filter, setFilter] = useState<CasesFilterValue>("ALL");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<CasesSortValue>("name");
+  const [page, setPage] = useState(1);
 
   const counts = useMemo<Record<CasesFilterValue, number>>(() => {
     const lh = complexes.filter(isLh).length;
@@ -67,6 +69,17 @@ export function CasesList() {
     });
     return arr;
   }, [filter, search, sort]);
+
+  /* 필터·검색·정렬 변경 시 페이지 1로 리셋 */
+  useEffect(() => {
+    setPage(1);
+  }, [filter, search, sort]);
+
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount);
+  const startIdx = (currentPage - 1) * PAGE_SIZE;
+  const endIdx = Math.min(startIdx + PAGE_SIZE, filtered.length);
+  const paged = filtered.slice(startIdx, endIdx);
 
   return (
     <>
@@ -106,9 +119,12 @@ export function CasesList() {
                 ease: EASE_OUT_EXPO,
               }}
             >
-              {/* 결과 카운트 */}
+              {/* 결과 카운트 + 페이지 범위 */}
               <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-faint">
                 {filtered.length}개 단지
+                <span className="ml-2 normal-case text-ink-muted">
+                  · {startIdx + 1}–{endIdx}번째 표시
+                </span>
                 {search.trim() && (
                   <span className="ml-2 normal-case text-ink-muted">
                     · &ldquo;{search.trim()}&rdquo; 검색
@@ -118,7 +134,7 @@ export function CasesList() {
 
               {/* 데스크탑 테이블 / 모바일 카드 리스트 — 동일 데이터, 반응형 표시 */}
               <ul className="divide-y divide-line border-y border-line">
-                {filtered.map((c) => {
+                {paged.map((c) => {
                   const lh = isLh(c);
                   return (
                     <li
@@ -140,7 +156,7 @@ export function CasesList() {
                       </span>
 
                       {/* 단지명 (+ 별칭) */}
-                      <div className="col-span-10 md:col-span-5">
+                      <div className="col-span-10 md:col-span-6">
                         <p className="font-display text-[14px] font-bold leading-snug tracking-tight text-ink-strong md:text-[16px]">
                           {c.name}
                           {c.isFeatured && !lh && (
@@ -170,15 +186,19 @@ export function CasesList() {
                           ? `${c.households.toLocaleString()}세대`
                           : "—"}
                       </p>
-
-                      {/* 면적 (데스크탑만) */}
-                      <p className="hidden text-right font-mono-num text-[12px] text-ink-faint md:col-span-1 md:block md:text-[13px]">
-                        {c.area !== undefined ? c.area.toLocaleString() : "—"}
-                      </p>
                     </li>
                   );
                 })}
               </ul>
+
+              {/* 페이지네이션 — 토스+오늘의집 톤 (가벼운 박스 + 현재 페이지 navy 강조) */}
+              {pageCount > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  pageCount={pageCount}
+                  onChange={setPage}
+                />
+              )}
             </motion.div>
           ) : (
             <div className="mx-auto max-w-xl rounded-md border border-line bg-white px-6 py-16 text-center md:py-20">
@@ -211,5 +231,116 @@ export function CasesList() {
         </Container>
       </section>
     </>
+  );
+}
+
+/* Phase 14-N — 페이지네이션 UI.
+   토스+오늘의집 톤: 미니멀 박스, 현재 페이지만 navy 채움.
+   모바일은 prev/next + "n/N" 압축, 데스크탑은 풀 번호 노출. */
+function Pagination({
+  currentPage,
+  pageCount,
+  onChange,
+}: {
+  currentPage: number;
+  pageCount: number;
+  onChange: (p: number) => void;
+}) {
+  const go = (p: number) => {
+    const next = Math.min(Math.max(1, p), pageCount);
+    if (next === currentPage) return;
+    onChange(next);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: window.scrollY - 80, behavior: "smooth" });
+    }
+  };
+
+  /* 페이지 번호 윈도우 — 현재 ±2, 양끝 항상 표시, 사이는 "…" */
+  const pages: (number | "...")[] = [];
+  const push = (v: number | "...") => {
+    if (pages[pages.length - 1] !== v) pages.push(v);
+  };
+  for (let p = 1; p <= pageCount; p += 1) {
+    if (
+      p === 1 ||
+      p === pageCount ||
+      (p >= currentPage - 2 && p <= currentPage + 2)
+    ) {
+      push(p);
+    } else if (p < currentPage) {
+      push("...");
+    } else {
+      push("...");
+    }
+  }
+
+  return (
+    <nav
+      aria-label="페이지네이션"
+      className="mt-10 flex items-center justify-center gap-2"
+    >
+      <button
+        type="button"
+        onClick={() => go(currentPage - 1)}
+        disabled={currentPage === 1}
+        aria-label="이전 페이지"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-sm border border-line text-ink-muted transition-colors duration-200 hover:border-ink-strong hover:text-ink-strong disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-line disabled:hover:text-ink-muted"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M15 18L9 12L15 6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      {/* 모바일 압축 표기 */}
+      <span className="inline-flex h-10 items-center px-3 font-mono-num text-[13px] text-ink-strong sm:hidden">
+        <span className="font-bold">{currentPage}</span>
+        <span className="px-1 text-ink-faint">/</span>
+        <span className="text-ink-muted">{pageCount}</span>
+      </span>
+
+      {/* 데스크탑·태블릿 번호 노출 */}
+      <ul className="hidden items-center gap-1 sm:inline-flex">
+        {pages.map((p, idx) =>
+          p === "..." ? (
+            <li
+              key={`gap-${idx}`}
+              aria-hidden="true"
+              className="px-2 text-ink-faint"
+            >
+              ⋯
+            </li>
+          ) : (
+            <li key={p}>
+              <button
+                type="button"
+                onClick={() => go(p)}
+                aria-current={p === currentPage ? "page" : undefined}
+                aria-label={`${p} 페이지`}
+                className={cn(
+                  "inline-flex h-10 min-w-10 items-center justify-center rounded-sm px-3 font-mono-num text-[13px] font-semibold transition-colors duration-200",
+                  p === currentPage
+                    ? "bg-navy-800 text-white"
+                    : "border border-line text-ink-muted hover:border-ink-strong hover:text-ink-strong",
+                )}
+              >
+                {p}
+              </button>
+            </li>
+          ),
+        )}
+      </ul>
+
+      <button
+        type="button"
+        onClick={() => go(currentPage + 1)}
+        disabled={currentPage === pageCount}
+        aria-label="다음 페이지"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-sm border border-line text-ink-muted transition-colors duration-200 hover:border-ink-strong hover:text-ink-strong disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-line disabled:hover:text-ink-muted"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M9 18L15 12L9 6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+    </nav>
   );
 }

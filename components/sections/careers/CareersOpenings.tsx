@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
 import { contact } from "@/data/site-content";
 
-/* Phase 5.I.3 — 채용 공고 빈 상태 + 인재 풀 등록 모달 */
+/* Phase 5.I.3 — 채용 공고 빈 상태 + 인재 풀 등록 모달
+   Phase 14-N (2026-05-21) — "이메일로 직접 문의" 클릭 시 클립보드 복사 + 토스트.
+   클라 PC 메일 클라이언트 미설정 시에도 이메일 주소 확보 가능한 fallback. */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
@@ -13,6 +15,25 @@ export function CareersOpenings() {
   const shouldReduce = useReducedMotion() ?? false;
   const careersEmail = contact.careersEmail ?? contact.email;
   const [modalOpen, setModalOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 2400);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  const handleEmailClick = () => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(careersEmail).then(
+        () => setToast(`이메일 주소(${careersEmail})가 복사되었습니다`),
+        () => setToast(`이메일 주소: ${careersEmail}`),
+      );
+    } else {
+      setToast(`이메일 주소: ${careersEmail}`);
+    }
+    /* mailto는 a 태그 기본 동작으로 진행 (preventDefault 안함) */
+  };
 
   const headerVariants: Variants = {
     hidden: { opacity: 0, y: shouldReduce ? 0 : 24 },
@@ -77,13 +98,31 @@ export function CareersOpenings() {
             </button>
             <a
               href={`mailto:${careersEmail}`}
+              onClick={handleEmailClick}
               className="inline-flex h-14 items-center gap-2 rounded-sm border border-ink-strong px-8 text-base font-semibold text-ink-strong transition-colors duration-200 hover:bg-ink-strong hover:text-white"
             >
               이메일로 직접 문의
             </a>
           </div>
+          {/* Phase 14-N — 메일 클라이언트 없어도 주소 확보 가능하도록 풀텍스트 노출 */}
+          <p className="mt-6 font-mono-num text-[13px] text-ink-muted">
+            채용 문의: <span className="font-semibold text-ink-strong">{careersEmail}</span>
+          </p>
         </div>
       </Container>
+
+      {/* 토스트 */}
+      {toast && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed inset-x-0 bottom-8 z-50 flex justify-center px-4 pointer-events-none"
+        >
+          <div className="pointer-events-auto rounded-sm bg-navy-900 px-5 py-3 text-[14px] font-medium text-white shadow-lg">
+            {toast}
+          </div>
+        </div>
+      )}
 
       {modalOpen && (
         <TalentPoolModal

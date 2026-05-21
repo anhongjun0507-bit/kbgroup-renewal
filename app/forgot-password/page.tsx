@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/ui";
 import { PageHero } from "@/components/sections/common/PageHero";
+import { MailtoCard } from "@/components/sections/common/MailtoCard";
 import { contact } from "@/data/site-content";
 
 /* Phase 10 P1-10 — 비밀번호 찾기 동선
@@ -106,22 +107,11 @@ export default function ForgotPasswordPage() {
                   →
                 </span>
               </a>
-              <a
-                href={`mailto:${contact.email}?subject=${encodeURIComponent("[케이비개발] 비밀번호 재설정 요청")}`}
-                className="flex items-center justify-between rounded-md border border-line bg-white px-6 py-5 transition-colors duration-200 hover:border-ink-strong"
-              >
-                <span>
-                  <span className="block text-[12px] uppercase tracking-[0.12em] text-ink-faint">
-                    이메일 문의
-                  </span>
-                  <span className="mt-1 block font-display text-[18px] font-bold text-ink-strong">
-                    {contact.email}
-                  </span>
-                </span>
-                <span aria-hidden="true" className="text-ink-faint">
-                  →
-                </span>
-              </a>
+              <MailtoCard
+                email={contact.email}
+                subject="[케이비개발] 비밀번호 재설정 요청"
+                label="이메일 문의"
+              />
             </div>
 
             <div className="mt-10 text-center">

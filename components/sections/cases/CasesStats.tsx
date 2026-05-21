@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import CountUp from "react-countup";
 import { Container } from "@/components/ui";
-import { complexes } from "@/data/site-content";
+import { complexes, STATS } from "@/data/site-content";
 
 /* Phase 5.G.1 — 다크 배경 통계 (회색 잔존 fix: useInView 대신 IntersectionObserver threshold 0.1) */
 
@@ -39,11 +39,14 @@ export function CasesStats() {
   }, []);
 
   const stats = useMemo<Stat[]>(() => {
-    const totalSites = complexes.length;
+    /* Phase 14-N — 운영 단지는 마케팅 표기(155+) 사용. LH 필터는 type==="LH" 우선 (효천하우스디 등 이름에 LH 없는 단지 포함) */
+    const totalSites = STATS.activeComplexesDisplay;
     const distinctRegions = new Set(
       complexes.map((c) => c.region.split(" ")[0]),
     ).size;
-    const lhCount = complexes.filter((c) => c.name.startsWith("LH")).length;
+    const lhCount = complexes.filter(
+      (c) => c.type === "LH" || c.name.startsWith("LH"),
+    ).length;
     return [
       { key: "sites", value: totalSites, suffix: "+", label: "운영 단지", caption: "SITES OPERATED" },
       { key: "regions", value: distinctRegions, suffix: "+", label: "운영 시도", caption: "REGIONS COVERED" },
@@ -95,7 +98,7 @@ export function CasesStats() {
             className="mt-6 font-display font-extrabold leading-[1.15] tracking-tight"
             style={{ color: "#ffffff", fontSize: "clamp(2rem, 4vw, 3rem)" }}
           >
-            전국 <span className="text-accent-500">{complexes.length}개</span> 단지에서 신뢰를 쌓고 있습니다
+            전국 <span className="text-accent-500">{STATS.activeComplexesDisplay}+</span>개 단지에서 신뢰를 쌓고 있습니다
           </h2>
         </motion.div>
 

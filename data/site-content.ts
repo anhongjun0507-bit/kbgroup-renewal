@@ -21,6 +21,10 @@ export type Counter = {
   isPlaceholder?: boolean;
   /** Phase 14 UP-02 — 데이터 컨텍스트 1줄 (예: "광주시 평균 단지의 5배 규모") */
   context?: string;
+  /** Phase 14-N — 화면 표기용 값 (실제 length 154와 마케팅 표기 155+ 분리). 지정 시 value 대신 노출. */
+  displayValue?: number;
+  /** Phase 14-N — 화면 표기용 suffix (예: "+") */
+  displaySuffix?: string;
 };
 
 export type BusinessCategory =
@@ -93,6 +97,8 @@ export type PastComplex = {
   area?: number;
   /** 계약 기간 (예: "2019.3.1 ~ 2025.10.31") */
   period?: string;
+  /** Phase 14-N — 위탁자 (LH 본부명 등) */
+  client?: string;
   kind?: "apartment" | "mixed-use";
   type?: "LH" | "민간" | "공공";
   /** Phase 14-M — hwpx 등 고객 자료에서 사용된 표기 별칭 */
@@ -269,18 +275,21 @@ export const counters: Counter[] = [
     key: "households",
     label: "관리 세대수",
     caption: "MANAGED HOUSEHOLDS",
-    /** Phase 14-M (2026-05-20) — 154개 단지 세대수 정밀 합산 (47,978 hwpx + 의왕초평 981) */
-    value: 48959,
+    /** Phase 14-N (2026-05-21) — 의왕초평 과거 이동 후 153개 단지 세대수 합산.
+        47,978 hwpx − 의왕초평 981 + 더샵광주포레스트 +907 + 금남유탑 +480 + 창우 +23 + 첨단프라자 +81 = 49,469 */
+    value: 49469,
     suffix: "+",
-    context: "약 14만 6천 명의 일상을 책임지는 규모",
+    context: "약 15만 명의 일상을 책임지는 규모",
   },
   {
     key: "complexes",
     label: "운영 단지",
     caption: "ACTIVE COMPLEXES",
-    /** complexes.length 미러 — 배열 수정 시 STATS.activeComplexes가 자동 동기화 (Phase 14-M: 154) */
-    value: 154,
+    /** Phase 14-N — 실제 length 153, 마케팅 표기 155+ (의왕초평 과거 이동·신규 확보 단지 반영 표기) */
+    value: 153,
     suffix: "",
+    displayValue: 155,
+    displaySuffix: "+",
     context: "광주·전남·경기·충청 등 전국 단위 운영",
   },
   {
@@ -507,7 +516,7 @@ export const companyStrengths: CompanyStrength[] = [
   { number: "04", title: "대형아파트 위탁관리 전환",
     description: "광주 현장 위탁관리를 케이비개발로 전환하여 현재까지 우수하게 운영 중." },
   { number: "05", title: "빠른 성장력",
-    description: "공동주택관리업을 시작한 이래 106개 단지를 직접 운영하며 빠르게 성장." },
+    description: "공동주택관리업을 시작한 이래 155+개 단지를 직접 운영하며 빠르게 성장." },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -520,7 +529,7 @@ export const complexes: Complex[] = [
   { name: "계림아이파크 SK뷰(근린생활)", region: "광주광역시 동구", households: 76, area: 5193, kind: "apartment" },
   { name: "그랜드 센트럴 상가", region: "광주광역시 동구", households: 177, area: 14104, kind: "mixed-use" },
   { name: "금남로 센텀시티", region: "광주광역시 동구", households: 224, area: 18792, kind: "mixed-use" },
-  { name: "금남유탑", region: "광주광역시 동구", kind: "apartment" },
+  { name: "금남유탑유블레스", region: "광주광역시 동구", households: 480, kind: "apartment", aliases: ["금남유탑"] },
   { name: "동명동 센트럴파크오피스텔", region: "광주광역시 동구", households: 253, area: 21899.73, kind: "mixed-use" },
   { name: "무등산 명지로드힐", region: "광주광역시 동구", households: 270, area: 35131.82, kind: "apartment" },
   { name: "용산호반맨션", region: "광주광역시 동구", households: 190, area: 15702, kind: "apartment" },
@@ -544,9 +553,9 @@ export const complexes: Complex[] = [
   { name: "봉선무등파크3차2단지", region: "광주광역시 남구", households: 309, area: 33291.38, kind: "apartment" },
   { name: "스타타워(케이오아시스)", region: "광주광역시 남구", kind: "mixed-use" },
   { name: "양림1휴먼시아", region: "광주광역시 남구", households: 987, area: 127525.6642, kind: "apartment", aliases: ["양림1휴먼시아"], isFeatured: true },
-  { name: "효천 천년나무 2단지", region: "광주광역시 남구", households: 324, area: 16792, kind: "apartment", type: "LH" },
+  { name: "효천하우스디", region: "광주광역시 남구", households: 324, area: 16792, kind: "apartment", type: "LH", aliases: ["효천 천년나무 2단지"] },
   { name: "각화 휴먼파크 서희스타힐스", region: "광주광역시 북구", households: 946, area: 107277, kind: "apartment", aliases: ["각화 휴먼파크 서희스타힐스"], isFeatured: true },
-  { name: "더샵 광주포레스트 오피스텔", region: "광주광역시 북구", households: 84, area: 0, kind: "mixed-use", aliases: ["더샵광주포레스트"], isFeatured: true },
+  { name: "더샵 광주포레스트 아파트", region: "광주광역시 북구", households: 991, kind: "apartment", aliases: ["더샵광주포레스트", "더샵 광주포레스트 오피스텔"], isFeatured: true },
   { name: "무등산 자이앤어울림 상가", region: "광주광역시 북구", households: 15, area: 1994, kind: "mixed-use" },
   { name: "문흥우성아파트", region: "광주광역시 북구", households: 564, kind: "apartment" },
   { name: "신안동 프라임로하스", region: "광주광역시 북구", households: 20, area: 29679, kind: "apartment" },
@@ -572,7 +581,7 @@ export const complexes: Complex[] = [
   { name: "우산동 am-city 스카이하이", region: "광주광역시 광산구", households: 154, area: 6025.0571, kind: "mixed-use" },
   { name: "우산동 am-city 하이클래스", region: "광주광역시 광산구", households: 150, area: 6067.2496, kind: "mixed-use" },
   { name: "우산동 더스위트2차 센트럴빌", region: "광주광역시 광산구", households: 26, area: 2569, kind: "apartment" },
-  { name: "창우빌딩", region: "광주광역시 광산구", area: 4521.77, kind: "mixed-use" },
+  { name: "창우빌딩", region: "광주광역시 광산구", households: 23, area: 4521.77, kind: "mixed-use" },
   { name: "첨단 AM-STAY 센트럴파크 오피스텔", region: "광주광역시 광산구", households: 98, area: 4039, kind: "mixed-use" },
   { name: "첨단 대라수1차", region: "광주광역시 광산구", households: 315, area: 41800.73, kind: "apartment" },
   { name: "첨단 도휘에드가2차", region: "광주광역시 광산구", households: 288, area: 13086.9, kind: "apartment" },
@@ -588,7 +597,7 @@ export const complexes: Complex[] = [
   { name: "첨단 한양에드가3차 302동", region: "광주광역시 광산구", households: 195, area: 7438.37, kind: "apartment" },
   { name: "첨단 한양에드가3차 303동", region: "광주광역시 광산구", households: 195, area: 7438.37, kind: "apartment" },
   { name: "첨단 힐스테이트 리버파크 상가", region: "광주광역시 광산구", households: 36, area: 2790.87, kind: "mixed-use" },
-  { name: "첨단프라자", region: "광주광역시 광산구", kind: "apartment", aliases: ["첨단프라자"], isFeatured: true },
+  { name: "첨단프라자", region: "광주광역시 광산구", households: 81, kind: "apartment", aliases: ["첨단프라자"], isFeatured: true },
   { name: "도산 서경아파트", region: "광주광역시 광산구", households: 306, area: 24041.67, kind: "apartment" },
   { name: "도산 우미아파트", region: "광주광역시 광산구", households: 348, area: 27610, kind: "apartment" },
   { name: "도천1단지 중흥파크맨션", region: "광주광역시 광산구", households: 408, area: 34413.65, kind: "apartment" },
@@ -669,7 +678,6 @@ export const complexes: Complex[] = [
   { name: "담양 일신 더 프레뷰", region: "전라남도 담양군", households: 41, area: 5118, kind: "apartment" },
   { name: "담양 퍼스트35 타운하우스", region: "전라남도 담양군", households: 35, area: 4284, kind: "apartment" },
   { name: "황금 푸르지오 더센트럴", region: "전라남도 광양시", households: 565, area: 75778, kind: "apartment" },
-  { name: "의왕초평 A-3BL 신혼희망타운", region: "경기도 의왕시", households: 981, area: 125868.32, kind: "apartment", type: "LH" },
 ];
 
 /* Phase 14-M (2026-05-20) — 과거 운영 단지 18건.
@@ -694,6 +702,7 @@ export const pastComplexes: PastComplex[] = [
   { name: "남원월락유탑유블레스킹덤", region: "전라북도 남원시", households: 359, area: 41873, period: "2024.8.23 ~ 2025.5.31", kind: "apartment" },
   { name: "함안 데시앙 아파트", region: "경상남도 함안군", households: 563, area: 33424, period: "2023.08.01 ~ 2025.07.31", kind: "apartment" },
   { name: "문흥대주2차아파트", region: "광주광역시 북구", households: 959, area: 86137, period: "2023.09.05 ~ 2025.09.04", kind: "apartment", aliases: ["문흥대주2차"], isFeatured: true },
+  { name: "의왕초평 A-3BL 신혼희망타운", region: "경기도 의왕시 초평동", households: 981, area: 125868.32, period: "2023.10.16 ~ 2026.06.30", client: "한국토지주택공사 경기남부지역본부", kind: "apartment", type: "LH", isFeatured: true },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -777,8 +786,10 @@ export const totalCertHolders = 1575;
 export const STATS = {
   /** 누적 운영 단지 (LH + 민간) — complexes 배열과 자동 동기화 */
   activeComplexes: complexes.length,
-  /** 관리 세대수 */
-  managedHouseholds: 48959,
+  /** Phase 14-N — 마케팅 표기용 (의왕초평 과거 이동·신규 확보 단지 반영). counters.complexes.displayValue와 일치 */
+  activeComplexesDisplay: 155,
+  /** Phase 14-N (2026-05-21) — 관리 세대수 갱신 */
+  managedHouseholds: 49469,
   /** 보유 인허가 종수 (정본) — licenses 배열 9건은 운영 면허 노출용 */
   registeredLicenses: 11,
   /** 기술 인증 종수 */
