@@ -50,7 +50,10 @@ export function Cases() {
     },
   };
 
-  const featured = complexes.slice(0, 8);
+  /* Phase 14 P0-04 — 메인 카드 노출 정책 변경.
+     이전: complexes.slice(0,8) → 지역순 첫 8개 (사진 보유 1건만)
+     변경: isFeatured 단지 우선 8개 노출 → 모두 실사 사진 보유, 시각 위계 일관 */
+  const featured = complexes.filter((c) => c.isFeatured).slice(0, 8);
 
   return (
     <section className="section bg-white">
@@ -123,6 +126,7 @@ export function Cases() {
                           alt={c.name}
                           fill
                           sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+                          priority={idx < 4}
                           className="object-cover transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.04]"
                         />
                         <div

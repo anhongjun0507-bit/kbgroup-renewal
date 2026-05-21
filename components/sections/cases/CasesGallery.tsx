@@ -64,6 +64,7 @@ export function CasesGallery() {
         kind: p.kind,
         type: p.type,
         aliases: p.aliases,
+        image: p.image,
         isFeatured: p.isFeatured,
         isPast: true,
         period: p.period,
