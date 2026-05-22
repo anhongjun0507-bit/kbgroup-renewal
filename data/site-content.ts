@@ -77,6 +77,10 @@ export type Complex = {
    * complexes 배열의 각 항목에 사용자가 매핑 정보 입력 시 자동 적용.
    */
   image?: string;
+  /**
+   * Phase 14 P0-05 — 단지당 추가 사진(여러 장). 상세 페이지 Hero 캐러셀에 image와 함께 표시.
+   * 비어있거나 미지정 시 image만 단일 노출 (현재 정책: 카드는 항상 image 한 장만 사용). */
+  images?: string[];
   /** Phase 14-M (2026-05-20) — hwpx 등 고객 자료에서 사용된 표기 별칭 (검색·필터·SEO 보조) */
   aliases?: string[];
   /**
@@ -105,6 +109,8 @@ export type PastComplex = {
    * 단지 대표 사진 경로 (선택, public/images/cases/* 기준).
    * Phase 14 P0-04 — 과거 단지에도 실사 사진 슬롯 추가. CasesGallery 카드에서 활용. */
   image?: string;
+  /** Phase 14 P0-05 — 과거 단지 추가 사진(여러 장). 상세 페이지 Hero 캐러셀용. */
+  images?: string[];
   /** Phase 14-M — hwpx 등 고객 자료에서 사용된 표기 별칭 */
   aliases?: string[];
   /**
@@ -558,7 +564,7 @@ export const complexes: Complex[] = [
   { name: "봉선무등파크3차2단지", region: "광주광역시 남구", households: 309, area: 33291.38, kind: "apartment" },
   { name: "스타타워(케이오아시스)", region: "광주광역시 남구", kind: "mixed-use" },
   { name: "양림1휴먼시아", region: "광주광역시 남구", households: 987, area: 127525.6642, kind: "apartment", aliases: ["양림1휴먼시아"], image: "/images/cases/featured/양림휴먼시아.png", isFeatured: true },
-  { name: "효천하우스디", region: "광주광역시 남구", households: 324, area: 16792, kind: "apartment", type: "LH", aliases: ["효천 천년나무 2단지"] },
+  { name: "효천하우스디", region: "광주광역시 남구", households: 324, area: 16792, kind: "apartment", type: "LH", aliases: ["효천 천년나무 2단지"], image: "/images/cases/featured/효천하우스디.png" },
   { name: "각화 휴먼파크 서희스타힐스", region: "광주광역시 북구", households: 946, area: 107277, kind: "apartment", aliases: ["각화 휴먼파크 서희스타힐스"], image: "/images/cases/featured/휴먼파크서희.png", isFeatured: true },
   { name: "더샵 광주포레스트 아파트", region: "광주광역시 북구", households: 991, kind: "apartment", aliases: ["더샵광주포레스트", "더샵 광주포레스트 오피스텔"], image: "/images/cases/featured/더샵포레스트아파트.png", isFeatured: true },
   { name: "무등산 자이앤어울림 상가", region: "광주광역시 북구", households: 15, area: 1994, kind: "mixed-use" },
@@ -629,9 +635,9 @@ export const complexes: Complex[] = [
   { name: "고흥 승원팰리체 더퍼스트아파트", region: "전라남도 고흥군", households: 220, area: 32372.85, kind: "apartment" },
   { name: "장흥 토광미르채아파트", region: "전라남도 장흥군", households: 210, area: 23079.54, kind: "apartment" },
   { name: "곡성 수푸름", region: "전라남도 곡성군", households: 48, area: 4839.26, kind: "apartment" },
-  { name: "LH시흥 장현 트리플센텀 (A-8블록)", region: "경기도 시흥시", households: 546, area: 71291, kind: "apartment", type: "LH" },
-  { name: "LH지행역 더 퍼스트아파트 (LH 동두천송내 행복주택아파트)", region: "경기도 동두천시", households: 420, area: 2513.31, kind: "apartment", type: "LH" },
-  { name: "경기 용인 한보라마을 휴먼시아4단지", region: "경기도 용인시", households: 581, area: 48409.24, kind: "apartment", type: "LH" },
+  { name: "LH시흥 장현 트리플센텀 (A-8블록)", region: "경기도 시흥시", households: 546, area: 71291, kind: "apartment", type: "LH", image: "/images/cases/featured/트리플센텀.png" },
+  { name: "LH지행역 더 퍼스트아파트 (LH 동두천송내 행복주택아파트)", region: "경기도 동두천시", households: 420, area: 2513.31, kind: "apartment", type: "LH", image: "/images/cases/featured/지행역.png" },
+  { name: "경기 용인 한보라마을 휴먼시아4단지", region: "경기도 용인시", households: 581, area: 48409.24, kind: "apartment", type: "LH", image: "/images/cases/featured/용인한보라.png" },
   { name: "경기광주 월드메르디앙 라 테라스 2단지", region: "경기도 광주시", households: 38, area: 7512, kind: "apartment" },
   { name: "성남 신흥", region: "경기도 성남시", households: 1856, area: 259494, kind: "apartment", aliases: ["성남 산성역자이푸르지오"], image: "/images/cases/featured/성남신흥.png", isFeatured: true },
   { name: "수원 오목천 상송마을", region: "경기도 수원시", households: 1185, area: 83381, kind: "apartment", type: "LH", image: "/images/cases/featured/수원오목천.png" },
@@ -639,7 +645,7 @@ export const complexes: Complex[] = [
   { name: "파주운정3 A37BL", region: "경기도 파주시", households: 1810, area: 128143, kind: "apartment", type: "LH", aliases: ["파주운정 물향기마을1단지"], image: "/images/cases/featured/파주물향기.png" },
   { name: "평택고덕모아엘가", region: "경기도 평택시", households: 1255, area: 144027.1302, kind: "apartment" },
   { name: "안동 어반 마제네스", region: "경상북도 안동시", households: 89, area: 9425, kind: "apartment" },
-  { name: "포항 일월 LH1단지", region: "경상북도 포항시", households: 460, area: 24179.56, kind: "apartment", type: "LH" },
+  { name: "포항 일월 LH1단지", region: "경상북도 포항시", households: 460, area: 24179.56, kind: "apartment", type: "LH", image: "/images/cases/featured/포항일월.jpg" },
   { name: "순창 미르채아파트", region: "전라북도 순창군", households: 75, area: 9944.09, kind: "apartment" },
   { name: "제이아트 은파 더레이크", region: "전라북도 군산시", households: 219, area: 24393.967, kind: "apartment" },
   { name: "영광 뉴스카이", region: "전라남도 영광군", households: 69, area: 3357, kind: "apartment" },
@@ -648,7 +654,7 @@ export const complexes: Complex[] = [
   { name: "힐스테이트 영광", region: "전라남도 영광군", households: 493, area: 57509.0923, kind: "apartment" },
   { name: "제주 블루빌딩(본사)", region: "제주특별자치도 서귀포시", households: 14, area: 2210.8, kind: "mixed-use" },
   { name: "제주 세종안채 오피스텔", region: "제주특별자치도 서귀포시", households: 100, area: 5553.12, kind: "mixed-use" },
-  { name: "장성 수산 LH1단지", region: "전라남도 장성군", households: 150, area: 8086.0726, kind: "apartment", type: "LH" },
+  { name: "장성 수산 LH1단지", region: "전라남도 장성군", households: 150, area: 8086.0726, kind: "apartment", type: "LH", image: "/images/cases/featured/장성수산.jpg" },
   { name: "STX KAN 중우 하나린", region: "전라남도 나주시", households: 700, area: 66872.9572, kind: "apartment", aliases: ["STX KAN 중우하나린"], image: "/images/cases/featured/중우하나린.png", isFeatured: true },
   { name: "나주 이노파크 식스틴 지식산업센터", region: "전라남도 나주시", households: 400, area: 31000, kind: "mixed-use", aliases: ["나주 이노파크식스틴"], image: "/images/cases/featured/나주이노파크.png", isFeatured: true },
   { name: "해남 센트럴팰리체", region: "전라남도 해남군", households: 99, area: 17908, kind: "apartment" },
