@@ -401,7 +401,7 @@ export const businessAreas: BusinessArea[] = [
       "아파트·오피스텔·도시형 생활주택 시행 사업과, 관계사 ㈜기담종합건설을 통한 유지보수·도장·방수·미장 시공을 제공합니다.",
     highlights: [
       "주거·교통·학군 우수 입지 중심 시행 사업",
-      "시설물 유지관리 다년 노하우 (놀이터·놀이시설 등)",
+      "시설물 유지관리 전문성 기반 운영 (놀이터·놀이시설 등)",
       "도장공사업: 재도장·신축 도장 풍부한 실적",
       "미장·타일·방수·조적 등 습식공사 통합 시공",
     ],
@@ -536,9 +536,9 @@ export const companyStrengths: CompanyStrength[] = [
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const complexes: Complex[] = [
-  { name: "계림아이파크 SK뷰", region: "광주광역시 동구", households: 1715, area: 175004, kind: "apartment", aliases: ["계림 아이파크 sk뷰"], image: "/images/cases/featured/계림아이파크.png", isFeatured: true },
-  { name: "계림아이파크 SK뷰(근린생활)", region: "광주광역시 동구", households: 76, area: 5193, kind: "apartment" },
-  { name: "그랜드 센트럴 상가", region: "광주광역시 동구", households: 177, area: 14104, kind: "mixed-use" },
+  { name: "계림아이파크 SK뷰", region: "광주광역시 동구", households: 1715, area: 175004, kind: "apartment", aliases: ["계림 아이파크 sk뷰"], image: "/images/ipark/계림아이파크 SK뷰.PNG", isFeatured: true },
+  { name: "계림아이파크 SK뷰(근린생활)", region: "광주광역시 동구", households: 76, area: 5193, kind: "apartment", image: "/images/ipark/계림아이파크SK뷰(근린생활).PNG" },
+  { name: "그랜드 센트럴 상가", region: "광주광역시 동구", households: 177, area: 14104, kind: "mixed-use", image: "/images/ipark/그랜드 센트럴 상가.PNG" },
   { name: "금남로 센텀시티", region: "광주광역시 동구", households: 224, area: 18792, kind: "mixed-use" },
   { name: "금남유탑유블레스", region: "광주광역시 동구", households: 480, kind: "apartment", aliases: ["금남유탑"] },
   { name: "동명동 센트럴파크오피스텔", region: "광주광역시 동구", households: 253, area: 21899.73, kind: "mixed-use" },
