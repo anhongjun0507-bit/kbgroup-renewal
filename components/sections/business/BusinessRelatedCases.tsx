@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
@@ -123,24 +124,35 @@ function RelatedCard({
       <Link href="/cases" className="block">
         <div
           className="relative aspect-[4/5] overflow-hidden bg-navy-900"
-          
         >
-          <div
-            aria-hidden="true"
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(135deg, #0E1F3A 0%, #16315C 50%, #0B1A33 100%)",
-            }}
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 origin-center transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.03]"
-            style={{
-              background:
-                "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.18) 0%, transparent 70%)",
-            }}
-          />
+          {complex.image ? (
+            <Image
+              src={complex.image}
+              alt={complex.name}
+              fill
+              className="object-cover transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.03]"
+              sizes="(max-width: 768px) 100vw, 33vw"
+            />
+          ) : (
+            <>
+              <div
+                aria-hidden="true"
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #0E1F3A 0%, #16315C 50%, #0B1A33 100%)",
+                }}
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 origin-center transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.03]"
+                style={{
+                  background:
+                    "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.18) 0%, transparent 70%)",
+                }}
+              />
+            </>
+          )}
           <div className="absolute inset-0 bg-navy-900/40 transition-opacity duration-500 group-hover:bg-navy-900/20" />
 
           <span
@@ -152,14 +164,16 @@ function RelatedCard({
             {badge}
           </span>
 
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span
-              aria-hidden="true"
-              className="font-display text-[clamp(5rem,12vw,9rem)] font-black leading-none text-white/15 transition-colors duration-500 group-hover:text-white/30"
-            >
-              {initial}
-            </span>
-          </div>
+          {!complex.image && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span
+                aria-hidden="true"
+                className="font-display text-[clamp(5rem,12vw,9rem)] font-black leading-none text-white/15 transition-colors duration-500 group-hover:text-white/30"
+              >
+                {initial}
+              </span>
+            </div>
+          )}
         </div>
         <div className="p-5">
           <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-ink-faint">
