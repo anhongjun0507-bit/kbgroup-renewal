@@ -130,6 +130,7 @@ function RelatedCard({
               src={complex.image}
               alt={complex.name}
               fill
+              quality={100}
               className="object-cover transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.03]"
               sizes="(max-width: 768px) 100vw, 33vw"
             />
