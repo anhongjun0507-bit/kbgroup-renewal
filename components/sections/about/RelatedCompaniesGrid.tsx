@@ -51,7 +51,7 @@ export function RelatedCompaniesGrid() {
             kicker="GROUP COMPANIES"
             title="함께 운영하는 계열사"
             italicWord="계열사"
-            subtitle="㈜기담종합건설을 모회사로 한 그룹 시너지로 더 넓은 서비스를 제공합니다."
+            subtitle="그룹사 간 시너지로 부동산 임대 운영부터 시공·금융까지 더 넓은 서비스를 제공합니다."
             align="left"
             size="md"
             as="h2"

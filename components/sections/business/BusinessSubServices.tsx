@@ -1,21 +1,22 @@
 "use client";
 
+import Image from "next/image";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
 import type { BusinessArea } from "@/data/site-content";
 
-/* Phase 4.F.3 — 하위 서비스 그리드 + 작업 갤러리 4장 placeholder
-   실사진 자료 없어서 듀오톤 placeholder + 라벨 */
+/* Phase 4.F.3 — 하위 서비스 그리드 + 작업 갤러리 6장
+   Phase 15 — placeholder/라벨 제거 + 사용자 업로드 갤러리 이미지(public/images/can) 매핑 */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
-const GALLERY_LABELS = [
-  "현장 점검",
-  "정기 관리",
-  "전문 장비 운용",
-  "안전 교육",
-  "고객 응대",
-  "결과 보고",
+const GALLERY_IMAGES = [
+  "/images/can/IMG_1489.PNG",
+  "/images/can/IMG_1490.PNG",
+  "/images/can/IMG_1491.PNG",
+  "/images/can/IMG_1492.PNG",
+  "/images/can/IMG_1493.PNG",
+  "/images/can/IMG_1494.PNG",
 ];
 
 interface Props {
@@ -79,33 +80,21 @@ export function BusinessSubServices({ area }: Props) {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={listVariants}
-          className="mb-16 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-6"
+          className="mb-16 grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-6 lg:gap-8"
         >
-          {GALLERY_LABELS.map((label, idx) => (
+          {GALLERY_IMAGES.map((src, idx) => (
             <motion.figure
-              key={label}
+              key={src}
               variants={itemVariants}
-              className="group relative aspect-[4/5] overflow-hidden rounded-md bg-navy-900"
+              className="group relative aspect-[3/2] overflow-hidden rounded-md bg-navy-900"
             >
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.04]"
-                style={{
-                  background: [
-                    "linear-gradient(135deg, #0E1F3A 0%, #16315C 50%, #0B1A33 100%)",
-                    "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.18) 0%, transparent 70%)",
-                  ].join(", "),
-                  
-                }}
+              <Image
+                src={src}
+                alt={`${area.name} 현장 ${idx + 1}`}
+                fill
+                sizes="(max-width: 640px) 100vw, 50vw"
+                className="object-cover transition-transform duration-700 [transition-timing-function:var(--ease)] group-hover:scale-[1.04]"
               />
-              <div className="absolute inset-0 flex flex-col justify-end p-5">
-                <span className="text-[10px] uppercase tracking-[0.18em] text-white/60">
-                  GALLERY {String(idx + 1).padStart(2, "0")}
-                </span>
-                <span className="mt-1 font-display text-[18px] font-bold text-white">
-                  {label}
-                </span>
-              </div>
               <span
                 aria-hidden="true"
                 className="absolute inset-y-0 left-0 w-[3px] origin-top scale-y-0 bg-accent-500 transition-transform duration-500 group-hover:scale-y-100"

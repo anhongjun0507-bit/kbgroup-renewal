@@ -39,18 +39,15 @@ export function CasesStats() {
   }, []);
 
   const stats = useMemo<Stat[]>(() => {
-    /* Phase 14-N — 운영 단지는 마케팅 표기(155+) 사용. LH 필터는 type==="LH" 우선 (효천하우스디 등 이름에 LH 없는 단지 포함) */
+    /* Phase 14-O — 운영 단지·LH 발주는 마케팅 표기(200+ / 15+) 사용. */
     const totalSites = STATS.activeComplexesDisplay;
     const distinctRegions = new Set(
       complexes.map((c) => c.region.split(" ")[0]),
     ).size;
-    const lhCount = complexes.filter(
-      (c) => c.type === "LH" || c.name.startsWith("LH"),
-    ).length;
     return [
       { key: "sites", value: totalSites, suffix: "+", label: "운영 단지", caption: "SITES OPERATED" },
       { key: "regions", value: distinctRegions, suffix: "+", label: "운영 시도", caption: "REGIONS COVERED" },
-      { key: "lh", value: lhCount, suffix: "+", label: "LH 발주", caption: "LH PROJECTS" },
+      { key: "lh", value: STATS.lhProjectsDisplay, suffix: "+", label: "LH 발주", caption: "LH PROJECTS" },
     ];
   }, []);
 

@@ -296,10 +296,10 @@ export const counters: Counter[] = [
     key: "complexes",
     label: "운영 단지",
     caption: "ACTIVE COMPLEXES",
-    /** Phase 14-N — 실제 length 153, 마케팅 표기 155+ (의왕초평 과거 이동·신규 확보 단지 반영 표기) */
+    /** Phase 14-O — 실제 length 153, 마케팅 표기 200+ */
     value: 153,
     suffix: "",
-    displayValue: 155,
+    displayValue: 200,
     displaySuffix: "+",
     context: "광주·전남·경기·충청 등 전국 단위 운영",
   },
@@ -527,7 +527,7 @@ export const companyStrengths: CompanyStrength[] = [
   { number: "04", title: "대형아파트 위탁관리 전환",
     description: "광주 현장 위탁관리를 케이비개발로 전환하여 현재까지 우수하게 운영 중." },
   { number: "05", title: "빠른 성장력",
-    description: "공동주택관리업을 시작한 이래 155+개 단지를 직접 운영하며 빠르게 성장." },
+    description: "공동주택관리업을 시작한 이래 200+개 단지를 직접 운영하며 빠르게 성장." },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -797,8 +797,10 @@ export const totalCertHolders = 1575;
 export const STATS = {
   /** 누적 운영 단지 (LH + 민간) — complexes 배열과 자동 동기화 */
   activeComplexes: complexes.length,
-  /** Phase 14-N — 마케팅 표기용 (의왕초평 과거 이동·신규 확보 단지 반영). counters.complexes.displayValue와 일치 */
-  activeComplexesDisplay: 155,
+  /** Phase 14-O — 마케팅 표기용. counters.complexes.displayValue와 일치 */
+  activeComplexesDisplay: 200,
+  /** Phase 14-O — LH 발주 마케팅 표기용. NATIONWIDE PORTFOLIO 통계 카드에 노출 */
+  lhProjectsDisplay: 15,
   /** Phase 14-N (2026-05-21) — 관리 세대수 갱신 */
   managedHouseholds: 49469,
   /** 보유 인허가 종수 (정본) — licenses 배열 9건은 운영 면허 노출용 */
@@ -873,9 +875,9 @@ export const history: HistoryEntry[] = [
   { date: "2018.09", event: "저수조청소업 신고" },
   { date: "2019.05", event: "본사 사옥 이전" },
   { date: "2021.04", event: "근로자 파견업 등록" },
+  { date: "2022.02", event: "목포지사 개소" },
   { date: "2023.06", event: "서울 경인지사 개소" },
   { date: "2023.12", event: "안전보건경영시스템 ISO 45001 인증" },
-  { date: "2025.02", event: "목포지사 개소" },
   { date: "2026.02", event: "전남지사 이전" },
 ];
 
@@ -932,9 +934,6 @@ export const organization: { tree: OrgNode; branches: OrgNode[] } = {
 };
 
 export const relatedCompanies: RelatedCompany[] = [
-  { name: "㈜기담종합건설",
-    note: "건설업·시행사·위생관리·시설경비업·금융 및 보험업 (모회사·종합건설)",
-    logo: "/images/partners/gidam-logo.png" },
   { name: "㈜케이비뷰",
     note: "2017.11 설립 — 부동산 임대 운영 관계사",
     logo: "/images/partners/kbview-logo.png" },
@@ -947,7 +946,4 @@ export const relatedCompanies: RelatedCompany[] = [
   { name: "㈜케이위더스",
     note: "주택관리·종합 서비스 관계사",
     logo: "/images/partners/k-withus-logo.png" },
-  { name: "(유)케이오아시스",
-    note: "청소용품 도·소매업 + 경비·청소 서비스",
-    logo: "/images/partners/k-oasis-image1.png" },
 ];

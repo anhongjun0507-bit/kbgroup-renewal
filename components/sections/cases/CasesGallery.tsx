@@ -153,12 +153,6 @@ function CaseCard({ complex, hue }: { complex: GalleryItem; hue: number }) {
   const badge = lh ? "LH" : (complex.type ?? "민간");
   const initial = getInitial(complex.name);
   const slug = encodeURIComponent(complex.name);
-  const meta = [
-    complex.region,
-    complex.households ? `${complex.households.toLocaleString()}세대` : null,
-  ]
-    .filter(Boolean)
-    .join(" · ");
   /* Phase 14 P2-08 — 단지명 시드 기반 navy 그라데이션 각도/톤 미세 변화.
      실사 이미지 매핑 전까지 카드별 변별성 보강. hue prop은 -22~28 범위 */
   const seed = complex.name
@@ -260,28 +254,6 @@ function CaseCard({ complex, hue }: { complex: GalleryItem; hue: number }) {
               <path d="M7 17L17 7M17 7H8M17 7V16" strokeLinecap="round" />
             </svg>
           </span>
-        </div>
-
-        <div className="p-5">
-          <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-ink-faint">
-            {complex.region}
-          </p>
-          <h3 className="mt-2 line-clamp-2 min-h-[3.25rem] font-display text-[16px] font-bold leading-snug tracking-tight text-ink-strong transition-colors duration-300 group-hover:text-accent-500 md:text-[17px]">
-            {complex.name}
-          </h3>
-          {meta && (
-            <p className="mt-3 truncate text-[12px] text-ink-muted">{meta}</p>
-          )}
-          {complex.client && (
-            <p className="mt-1 truncate text-[12px] text-ink-faint">
-              {complex.client}
-            </p>
-          )}
-          {isPast && complex.period && (
-            <p className="mt-2 text-[11px] font-semibold text-ink-faint">
-              운영 기간 · {complex.period}
-            </p>
-          )}
         </div>
     </>
   );

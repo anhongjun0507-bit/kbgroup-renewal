@@ -1,12 +1,14 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
 import { businessAreas, type BusinessCategory } from "@/data/site-content";
 
 /* Phase 4.F.1 — /business 인덱스
-   5개 사업 alternating 좌우 배치 (SK 에코플랜트 / Apple Business 스타일) */
+   5개 사업 alternating 좌우 배치 (SK 에코플랜트 / Apple Business 스타일)
+   Phase 15 — 워터마크 숫자/radial accent 제거 + 사용자 업로드 배너 이미지 매핑 */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
@@ -21,6 +23,14 @@ const VISUAL_BG: Record<BusinessCategory, string> = {
     "linear-gradient(135deg, #0E1F3A 0%, #B88B3A 200%)",
   other:
     "linear-gradient(135deg, #16315C 0%, #0E1F3A 100%)",
+};
+
+const VISUAL_IMAGE: Record<BusinessCategory, string> = {
+  facility: "/images/banner/IMG_1484.PNG",
+  sanitation: "/images/banner/IMG_1485.PNG",
+  security: "/images/banner/IMG_1486.PNG",
+  development: "/images/banner/IMG_1487.PNG",
+  other: "/images/banner/IMG_1488.PNG",
 };
 
 export function BusinessIntroAlternating() {
@@ -56,33 +66,18 @@ export function BusinessIntroAlternating() {
                     (reverse ? "lg:[&>*:first-child]:order-2" : "")
                   }
                 >
-                  {/* 비주얼 */}
+                  {/* 비주얼 — 실제 사진 (사용자 업로드 배너) */}
                   <div
                     className="relative aspect-[5/3] overflow-hidden rounded-md"
                     style={{ background: VISUAL_BG[area.id] }}
                   >
-                    {/* 워터마크 번호 — 모바일 오버플로 방지: clamp + 우상단 inset 정렬 */}
-                    <span
-                      aria-hidden="true"
-                      className="tabular pointer-events-none absolute right-4 top-2 font-display font-extrabold leading-none md:right-6 md:top-4"
-                      style={{
-                        color: "rgba(255,255,255,0.10)",
-                        fontSize: "clamp(72px, 18vw, 140px)",
-                      }}
-                    >
-                      {String(idx + 1).padStart(2, "0")}
-                    </span>
-                    {/* radial accent */}
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0"
-                      style={{
-                        background:
-                          "radial-gradient(60% 60% at 30% 30%, rgba(201,162,75,0.22) 0%, transparent 70%)",
-                      }}
+                    <Image
+                      src={VISUAL_IMAGE[area.id]}
+                      alt={area.name}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      className="object-cover"
                     />
-                    {/* Phase 14-C C-1 — 텍스트 영역 eyebrow(번호·영문명)와 중복되던 좌하단 영문 라벨 제거.
-                        비주얼 영역은 큰 워터마크 번호만 유지 → 시각 노이즈 감소 */}
                   </div>
 
                   {/* 텍스트 */}

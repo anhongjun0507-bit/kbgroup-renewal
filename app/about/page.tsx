@@ -22,13 +22,13 @@ export default function AboutPage() {
     <>
       <PageHero
         kicker="ABOUT US · 회사소개"
-        title="왜 케이비개발인가"
-        italicWord="케이비개발"
+        title="가치의 실현"
+        italicWord="실현"
         subtitle="단순한 시설관리를 넘어, 공간을 책임지는 파트너로."
         breadcrumb={[
           { label: "HOME", href: "/" },
           { label: "ABOUT", href: "/about" },
-          { label: "왜 케이비개발" },
+          { label: "가치의 실현" },
         ]}
       />
       <AboutNav current="why" />

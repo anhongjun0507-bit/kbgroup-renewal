@@ -14,7 +14,7 @@ const TABS: {
   english: string;
   href: string;
 }[] = [
-  { key: "why", korean: "왜 케이비개발", english: "WHY US", href: "/about" },
+  { key: "why", korean: "가치의 실현", english: "REALIZING VALUE", href: "/about" },
   { key: "ceo", korean: "대표 메시지", english: "CEO", href: "/about/ceo" },
   { key: "history", korean: "연혁", english: "HISTORY", href: "/about/history" },
   { key: "location", korean: "오시는 길", english: "LOCATION", href: "/about/location" },

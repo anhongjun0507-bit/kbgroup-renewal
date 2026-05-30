@@ -1,9 +1,20 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
 import { businessAreas, type BusinessCategory } from "@/data/site-content";
+
+/* Phase 15 — 사용자 업로드 배너 이미지 4장 매핑 (1·2·3·4 순서).
+   public/images/banner/ 안의 IMG_1484~1487을 시설관리/위생청소/경비보안/시행건설에 적용.
+   기존 SVG 라인 일러스트 placeholder는 이미지로 대체. */
+const VISUAL_IMAGE: Partial<Record<BusinessCategory, string>> = {
+  facility: "/images/banner/IMG_1484.PNG",
+  sanitation: "/images/banner/IMG_1485.PNG",
+  security: "/images/banner/IMG_1486.PNG",
+  development: "/images/banner/IMG_1487.PNG",
+};
 
 /* Phase 3.C — BUSINESS 5가지
    - 카드 상단 16:9 비주얼 영역 (사업별 컬러 키 + SVG 라인 일러스트)
@@ -176,37 +187,48 @@ export function ServiceCategories() {
             hidden: {},
             visible: { transition: { staggerChildren: shouldReduce ? 0 : 0.06 } },
           }}
-          className="cards-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+          className="cards-grid grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 lg:gap-8"
         >
-          {mainAreas.map((area, idx) => (
+          {mainAreas.map((area) => (
             <motion.article key={area.id} variants={item}>
               <Link
                 href={`/business/${area.slug}`}
                 className="group relative flex h-full flex-col overflow-hidden rounded-md border border-line bg-white transition-all duration-200 [transition-timing-function:var(--ease)] hover:-translate-y-1 hover:border-navy-700 hover:shadow-[var(--shadow-card)]"
                 style={{ "--card-accent": ACCENT_BAR[area.id] } as React.CSSProperties}
               >
-                {/* 16:9 비주얼 영역 */}
+                {/* 16:9 비주얼 영역 — 실제 사진 + 워터마크 숫자 오버레이 */}
                 <div
                   className="relative aspect-[16/9] overflow-hidden"
                   style={{ background: VISUAL_BG[area.id] }}
                 >
+                  {/* 사진 (사용자 업로드 배너) */}
+                  {VISUAL_IMAGE[area.id] ? (
+                    <Image
+                      src={VISUAL_IMAGE[area.id]!}
+                      alt={area.name}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      className="object-cover transition-transform duration-500 [transition-timing-function:var(--ease)] group-hover:scale-[1.04]"
+                    />
+                  ) : (
+                    /* fallback — 사진 없는 카드용 SVG 일러스트 */
+                    <div className="absolute inset-0 flex items-center justify-center p-6">
+                      <VisualIcon id={area.id} />
+                    </div>
+                  )}
+                  {/* 가독성 그라데이션 오버레이 (어두운 톤, 숫자·바 가독성) */}
+                  {VISUAL_IMAGE[area.id] && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-0 bg-gradient-to-br from-black/35 via-black/15 to-black/55"
+                    />
+                  )}
                   {/* Phase 6 B-3 — 좌상단 4px 액센트 색띠 */}
                   <span
                     aria-hidden="true"
                     className="absolute left-0 top-0 z-10 h-1 w-full"
                     style={{ backgroundColor: ACCENT_BAR[area.id] }}
                   />
-                  {/* 워터마크 번호 — hover 시 사업별 액센트 컬러로 점등 */}
-                  <span
-                    aria-hidden="true"
-                    className="number-display absolute right-4 top-3 text-[88px] font-extrabold text-white/[0.12] transition-colors duration-300 group-hover:[color:var(--card-accent)] group-hover:opacity-30"
-                  >
-                    {String(idx + 1).padStart(2, "0")}
-                  </span>
-                  {/* 라인 일러스트 */}
-                  <div className="absolute inset-0 flex items-center justify-center p-6">
-                    <VisualIcon id={area.id} />
-                  </div>
                 </div>
 
                 <div className="flex flex-1 flex-col p-7 lg:p-8">

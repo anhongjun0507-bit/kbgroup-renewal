@@ -2,14 +2,14 @@ import Link from "next/link";
 import { Container } from "@/components/ui";
 import { company, contact } from "@/data/site-content";
 
+/* Phase 15 — 헤더 영문 GNB와 라벨 일치 (krLabel은 보조) */
 const SITEMAP = [
-  /* Phase 9 P2-04 — 헤더 nav와 라벨 일치 */
-  { label: "회사소개", href: "/about" },
-  { label: "사업영역", href: "/business" },
-  { label: "관리현황", href: "/cases" },
-  { label: "인허가", href: "/licenses" },
-  { label: "채용", href: "/careers" },
-  { label: "소식", href: "/notices" },
+  { label: "ABOUT", krLabel: "회사소개", href: "/about" },
+  { label: "BUSINESS", krLabel: "사업영역", href: "/business" },
+  { label: "PROJECTS", krLabel: "관리현황", href: "/cases" },
+  { label: "LICENSES", krLabel: "인허가", href: "/licenses" },
+  { label: "CAREERS", krLabel: "채용", href: "/careers" },
+  { label: "NEWS", krLabel: "소식", href: "/notices" },
 ];
 
 /* Phase 9 P0-09 — 푸터 대비 강화
@@ -29,14 +29,29 @@ export function Footer() {
     >
       <Container as="div" className="pt-12 pb-10 md:pt-20">
         <div className="grid grid-cols-1 gap-10 sm:gap-12 lg:grid-cols-[1.4fr_1px_1fr_1px_1.1fr] lg:gap-12">
-          {/* KB GROUP intro */}
+          {/* KB GROUP intro — 헤더와 동일한 텍스트 로고 마크 (Footer는 좌정렬) */}
           <div>
-            <p className="eyebrow text-accent-300">
+            <div className="flex flex-col items-start leading-none">
+              <span
+                className="font-display font-bold tracking-tight text-accent-300"
+                style={{ fontSize: 24 }}
+              >
+                (주)케이비개발
+              </span>
+              <span
+                aria-hidden="true"
+                className="my-[6px] block h-px w-[60%] bg-accent-300/55"
+              />
+              <span
+                className="font-medium uppercase text-accent-300"
+                style={{ fontSize: 10.5, letterSpacing: "0.4em" }}
+              >
+                KB GROUP
+              </span>
+            </div>
+            <p className="mt-5 text-[11px] font-medium uppercase tracking-[0.18em] text-accent-300/80">
               KB DEVELOPMENT CO.,LTD.
             </p>
-            <h3 className="mt-3 text-[20px] font-bold tracking-tight text-white">
-              (주)케이비개발
-            </h3>
             <p className="mt-6 max-w-sm text-[14px] leading-relaxed text-white/85">
               {company.tagline}로서 주택관리·위생청소·경비보안·시행건설을
               아우르는 종합 시설관리 서비스를 제공합니다.
@@ -59,8 +74,16 @@ export function Footer() {
             <ul className="space-y-3">
               {SITEMAP.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className={LINK_BASE}>
+                  <Link
+                    href={item.href}
+                    aria-label={`${item.label} — ${item.krLabel}`}
+                    className={`${LINK_BASE} font-semibold uppercase`}
+                    style={{ letterSpacing: "0.1em" }}
+                  >
                     {item.label}
+                    <span className="ml-2 text-[11px] font-normal normal-case tracking-normal text-white/55">
+                      {item.krLabel}
+                    </span>
                   </Link>
                 </li>
               ))}

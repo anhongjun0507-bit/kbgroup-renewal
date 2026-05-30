@@ -1,370 +1,372 @@
 "use client";
 
-import { Container, Button } from "@/components/ui";
-import { company, contact } from "@/data/site-content";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { Container } from "@/components/ui";
+import { contact } from "@/data/site-content";
 
-/* Phase 3.A — Hero 전면 재구성
-   배경: 135deg navy 그라데이션 + mesh radial 3blend + 우측 placeholder visual
-   좌측: max-w 720 / "신뢰가" / "자산이 됩니다" 2줄 + underline-gradient SVG
-   CTA: Primary(무료 상담) + Ghost(사업영역 보기)
-   하단 floating glass card 통계 / 우측 하단 Scroll 인디케이터 */
+/* Phase 15 — Hero 풀스크린 영상+사진 슬라이드 (아모레퍼시픽 톤)
+   100svh 풀스크린 / 5장 자동 전환 / crossfade / 좌하단 카피 / 우하단 카운터 / 하단중앙 Scroll 인디케이터 */
 
-/* Phase 14 P2-01 — 슬로건 줄바꿈 재구성.
-   이전: "신뢰가" / "자산이 됩니다" — 첫 줄 시각 무게 불균형
-   변경: "신뢰가 자산이" / "됩니다"  — 의미 단위(주어부 vs 술어) 자연 분할
-       양 키워드("신뢰" 골드, "자산" 밑줄)가 모두 첫 줄에 들어가 강조 정렬 개선 */
-const SLOGAN_LINE_1 = "신뢰가 자산이";
-const SLOGAN_LINE_2 = "됩니다";
-const SLOGAN_LINE_1_HIGHLIGHT = "신뢰";
-const SLOGAN_HIGHLIGHT = "자산";
-const SUBTITLE_LINE_1 = "대한민국 시설관리의 새로운 표준을 만들어갑니다.";
-const SUBTITLE_LINE_2 = "오랜 신뢰가 지금의 케이비개발을 만들었습니다.";
+type Slide =
+  | { type: "video"; src: string; poster: string; alt: string }
+  | { type: "image"; src: string; alt: string };
 
-/* Phase 12 — FLOATING_STATS 제거 (Hero floating card 폐기).
-   동일 정보는 다음 DataCounter 섹션이 4-카드로 노출 */
+/* 슬라이드 순서: 영상 5개 → 사진 3개 (사용자 피드백: 영상 먼저 다 사용)
+   영상은 loop 없이 1회 재생 후 onEnded → 다음 슬라이드 (사용자 피드백: 한 번만 재생)
+   사진은 IMAGE_DURATION 후 다음 슬라이드 */
+const SLIDES: Slide[] = [
+  {
+    type: "video",
+    src: "/images/hero/video-01.mp4",
+    poster: "/images/hero/slide-01.png",
+    alt: "케이비개발 시설관리 현장 01",
+  },
+  {
+    type: "video",
+    src: "/images/hero/video-02.mp4",
+    poster: "/images/hero/slide-02.png",
+    alt: "케이비개발 시설관리 현장 02",
+  },
+  {
+    type: "video",
+    src: "/images/hero/video-03.mp4",
+    poster: "/images/hero/slide-03.png",
+    alt: "케이비개발 시설관리 현장 03",
+  },
+  {
+    type: "video",
+    src: "/images/hero/video-04.mp4",
+    poster: "/images/hero/slide-04.png",
+    alt: "케이비개발 시설관리 현장 04",
+  },
+  {
+    type: "video",
+    src: "/images/hero/video-05.mp4",
+    poster: "/images/hero/slide-05.png",
+    alt: "케이비개발 시설관리 현장 05",
+  },
+  {
+    type: "image",
+    src: "/images/hero/slide-06.png",
+    alt: "주택관리 현장",
+  },
+  {
+    type: "image",
+    src: "/images/hero/slide-07.png",
+    alt: "위생청소 현장",
+  },
+  {
+    type: "image",
+    src: "/images/hero/slide-08.png",
+    alt: "경비보안 현장",
+  },
+];
 
-/* SLOGAN_LINE_1에서 "신뢰" 골드 + "자산" 밑줄을 함께 처리하는 헬퍼.
-   문자열을 [신뢰][가 ][자산][이] 4구간으로 분해 */
-function renderSloganLine1(line: string) {
-  const idxTrust = line.indexOf(SLOGAN_LINE_1_HIGHLIGHT);
-  const idxAsset = line.indexOf(SLOGAN_HIGHLIGHT);
-  if (idxTrust < 0 || idxAsset < 0 || idxAsset <= idxTrust) {
-    return line;
-  }
-  const trustEnd = idxTrust + SLOGAN_LINE_1_HIGHLIGHT.length;
-  const assetEnd = idxAsset + SLOGAN_HIGHLIGHT.length;
-  return (
-    <>
-      {line.slice(0, idxTrust)}
-      <span className="text-accent-300">{SLOGAN_LINE_1_HIGHLIGHT}</span>
-      {line.slice(trustEnd, idxAsset)}
-      <span className="relative inline-block">
-        <span className="relative z-10">{SLOGAN_HIGHLIGHT}</span>
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 200 12"
-          preserveAspectRatio="none"
-          className="absolute inset-x-0 -bottom-1 h-[10px] w-full"
-        >
-          <defs>
-            <linearGradient id="ul" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#C9A24B" />
-              <stop offset="100%" stopColor="#E3C57A" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M2 7 Q 100 1 198 7"
-            stroke="url(#ul)"
-            strokeWidth="4"
-            fill="none"
-            strokeLinecap="round"
-          />
-        </svg>
-      </span>
-      {line.slice(assetEnd)}
-    </>
-  );
-}
+const IMAGE_DURATION = 6500;
+const FADE_DURATION = 2400;
+const FADE_EASE = "cubic-bezier(0.45, 0, 0.15, 1)";
+/* 영상 끝 N초 전에 다음 슬라이드 페이드인 시작 (FADE_DURATION 만큼 미리 시작해야 정확히 끝 프레임에서 페이드 완료) */
+const VIDEO_HANDOFF_LEAD = 1.0;
 
 export function Hero() {
+  const [active, setActive] = useState(0);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  const goTo = (i: number) => setActive(((i % SLIDES.length) + SLIDES.length) % SLIDES.length);
+  const goNext = () => goTo(active + 1);
+
+  /* 사진 슬라이드만 타이머로 다음으로 전환 (영상은 onEnded로 전환) */
+  useEffect(() => {
+    if (reducedMotion) return;
+    const slide = SLIDES[active];
+    if (slide.type !== "image") return;
+    const id = window.setTimeout(() => goNext(), IMAGE_DURATION);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, reducedMotion]);
+
+  /* 활성 슬라이드가 video면 처음부터 재생 (1회), 비활성 영상은 pause.
+     이미 재생 중이면(첫 mount의 autoPlay) 그대로 둬서 부드러운 시작 보장. */
+  useEffect(() => {
+    SLIDES.forEach((slide, i) => {
+      const el = videoRefs.current[i];
+      if (!el || slide.type !== "video") return;
+      if (i === active) {
+        if (el.paused || el.ended) {
+          try {
+            el.currentTime = 0;
+          } catch {
+            /* iOS Safari가 metadata 로딩 전이면 throw — 무시 */
+          }
+          delete el.dataset.t;
+          el.play().catch(() => {});
+        }
+      } else {
+        el.pause();
+      }
+    });
+  }, [active]);
+
+  /* 페이지 진입 직후 모든 영상 사전 로드 (iOS Safari는 preload=auto 무시하므로 load() 강제 호출) */
+  useEffect(() => {
+    SLIDES.forEach((slide, i) => {
+      if (slide.type !== "video") return;
+      const el = videoRefs.current[i];
+      if (!el) return;
+      try {
+        el.load();
+      } catch {
+        /* noop */
+      }
+    });
+  }, []);
 
   return (
-    /* Phase 12 P0 — overflow-hidden을 section에서 제거.
-       배경 레이어 4종(그라데이션·mesh·빌딩·격자)만 wrapper로 묶어 클리핑.
-       카드는 자유롭게 hero 하단 밖으로 튀어나옴 (translate-y-1/2 정상 작동) */
     <section
       aria-label="히어로"
       data-surface="dark"
-      className="relative isolate bg-navy-900 text-white"
-      style={{ minHeight: "min(820px, 92svh)" }}
+      className="relative isolate -mt-[88px] w-full overflow-hidden bg-black text-white md:-mt-[100px] lg:-mt-[148px]"
+      style={{ height: "100svh", minHeight: 600 }}
     >
-      {/* 배경 클리핑 영역 — 배경 4종만 overflow-hidden */}
+      {/* Slide stack */}
+      <div className="absolute inset-0">
+        {SLIDES.map((slide, i) => (
+          <div
+            key={i}
+            aria-hidden={i !== active}
+            className="absolute inset-0"
+            style={{
+              opacity: i === active ? 1 : 0,
+              transition: `opacity ${FADE_DURATION}ms ${FADE_EASE}`,
+              pointerEvents: i === active ? "auto" : "none",
+            }}
+          >
+            {slide.type === "video" ? (
+              <video
+                ref={(el) => {
+                  videoRefs.current[i] = el;
+                }}
+                src={slide.src}
+                poster={slide.poster}
+                autoPlay={i === 0}
+                muted
+                playsInline
+                preload="auto"
+                onTimeUpdate={(e) => {
+                  if (i !== active) return;
+                  const v = e.currentTarget;
+                  if (!v.duration || !isFinite(v.duration)) return;
+                  /* 끝 N초 전에 다음 슬라이드 페이드인 시작 — 페이드 시간이 영상 끝에서 완료되도록 */
+                  if (
+                    v.duration - v.currentTime <= VIDEO_HANDOFF_LEAD &&
+                    !v.dataset.t
+                  ) {
+                    v.dataset.t = "1";
+                    goNext();
+                  }
+                }}
+                onEnded={() => {
+                  if (i === active) goNext();
+                }}
+                className="h-full w-full object-cover"
+                aria-label={slide.alt}
+              />
+            ) : (
+              <Image
+                src={slide.src}
+                alt={slide.alt}
+                fill
+                priority={i === 0}
+                sizes="100vw"
+                quality={85}
+                className={`object-cover ${
+                  i === active && !reducedMotion ? "hero-kenburns" : ""
+                }`}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Gradient overlays — 가독성 + 깊이감 */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 overflow-hidden"
-      >
-      {/* 베이스 그라데이션 — 135deg navy-900 → #1B2A5E → navy-900 */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0"
+        className="absolute inset-0 z-[3]"
         style={{
           background:
-            "linear-gradient(135deg, #0B1A33 0%, #1B2A5E 50%, #0B1A33 100%)",
+            "linear-gradient(180deg, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.30) 45%, rgba(0,0,0,0.78) 100%)",
         }}
       />
-
-      {/* Stripe 스타일 mesh — radial blob 3 blend */}
       <div
         aria-hidden="true"
-        className="absolute inset-0"
+        className="absolute inset-0 z-[3]"
         style={{
-          background: [
-            "radial-gradient(50% 60% at 15% 20%, rgba(201,162,75,0.18) 0%, transparent 60%)",
-            "radial-gradient(45% 55% at 85% 75%, rgba(110,140,255,0.18) 0%, transparent 60%)",
-            "radial-gradient(60% 50% at 70% 15%, rgba(255,255,255,0.06) 0%, transparent 65%)",
-          ].join(", "),
+          background:
+            "linear-gradient(90deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.10) 55%, rgba(0,0,0,0) 100%)",
         }}
       />
 
-      {/* 우측 60% placeholder visual — 추상 단지 실루엣 */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 right-0 hidden w-[58%] lg:block"
-      >
-        {/* 어두운 오버레이 0.55 */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(90deg, rgba(11,26,51,0.85) 0%, rgba(11,26,51,0.35) 35%, rgba(11,26,51,0.55) 100%)",
-          }}
-        />
-        {/* 추상 빌딩 실루엣 SVG */}
-        <svg
-          viewBox="0 0 600 700"
-          className="absolute bottom-0 right-0 h-full w-auto opacity-30"
-          preserveAspectRatio="xMaxYMax meet"
-        >
-          <defs>
-            <linearGradient id="bldg" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#C9A24B" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#16315C" stopOpacity="0.6" />
-            </linearGradient>
-          </defs>
-          {/* 빌딩 블록 5개 */}
-          <rect x="40" y="280" width="80" height="420" fill="url(#bldg)" />
-          <rect x="135" y="200" width="95" height="500" fill="url(#bldg)" />
-          <rect x="245" y="320" width="70" height="380" fill="url(#bldg)" />
-          <rect x="330" y="160" width="110" height="540" fill="url(#bldg)" />
-          <rect x="455" y="240" width="105" height="460" fill="url(#bldg)" />
-          {/* 창문 패턴 — Phase 6 B-1: 일부 창문에 노란 twinkle */}
-          {Array.from({ length: 20 }).map((_, row) =>
-            Array.from({ length: 5 }).map((_, col) => {
-              const idx = row * 5 + col;
-              const twinkle = idx % 17 === 0;
-              const strong = !twinkle && idx % 4 === 0;
-              const dur = 3 + (idx % 4); // 3~6s
-              const delay = (idx % 7) * 0.4;
-              return (
-                <rect
-                  key={`w-${row}-${col}`}
-                  x={50 + col * 100}
-                  y={250 + row * 22}
-                  width={8}
-                  height={10}
-                  fill={twinkle ? "#E3C57A" : "#FFFFFF"}
-                  opacity={twinkle ? 0.8 : strong ? 0.4 : 0.1}
-                  style={
-                    twinkle
-                      ? {
-                          animation: `heroTwinkle ${dur}s ${delay}s ease-in-out infinite`,
-                          transformOrigin: "center",
-                        }
-                      : undefined
-                  }
-                />
-              );
-            }),
-          )}
+      {/* Content — Phase 15: 가로·세로 중앙 정렬 (세로는 살짝 위, 약 56% 지점) */}
+      <div className="relative z-10 flex h-full flex-col">
+        <Container className="flex flex-1 flex-col items-center justify-center pb-32 pt-32 text-center sm:pb-36 sm:pt-36 lg:pb-40 lg:pt-48">
+          <div className="mx-auto max-w-3xl">
+            <p
+              className="hero-anim hero-anim-1 mb-5 text-[11px] font-medium uppercase text-white/85 sm:mb-6 sm:text-[12px]"
+              style={{ letterSpacing: "0.32em" }}
+            >
+              KB GROUP · Facility Management
+            </p>
 
-          {/* Phase 11 P1-C — 빌딩 옥상 디테일 (안테나·물탱크) — 단지 임을 명확화 */}
-          <g stroke="#E3C57A" strokeWidth="2" fill="none" opacity="0.55" strokeLinecap="round">
-            {/* 안테나 (가장 높은 빌딩 위) */}
-            <path d="M385 160 L385 130" />
-            <path d="M380 138 L390 138" />
-            <path d="M382 145 L388 145" />
-            {/* 물탱크 (실루엣) */}
-            <ellipse cx="180" cy="195" rx="14" ry="4" fill="#E3C57A" fillOpacity="0.3" />
-            <path d="M166 195 L166 205 L194 205 L194 195" />
-          </g>
-        </svg>
+            <h1
+              className="font-display text-white"
+              style={{
+                fontSize: "clamp(1.95rem, 6.6vw, 5.25rem)",
+                fontWeight: 800,
+                letterSpacing: "-0.025em",
+                lineHeight: 1.05,
+                textShadow: "0 8px 32px rgba(0,0,0,0.45)",
+              }}
+            >
+              <span className="hero-anim hero-anim-2 block">신뢰가 자산이</span>
+              <span className="hero-anim hero-anim-3 block">됩니다</span>
+            </h1>
 
-        {/* Phase 11 P1-C — 시설관리 픽토그램 floating (메타포 명확화)
-            보안(실드) / 청소(빗자루) / 관리(공구) / 점검(체크) 4종 */}
-        <svg
-          viewBox="0 0 600 700"
-          className="pointer-events-none absolute inset-0 h-full w-full"
-          preserveAspectRatio="xMaxYMid meet"
-          aria-hidden="true"
-        >
-          <g stroke="#E3C57A" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.45">
-            {/* 보안 실드 — 좌상단 */}
-            <g transform="translate(60, 100)">
-              <path d="M0 0 L0 22 C0 32, 12 38, 16 40 C20 38, 32 32, 32 22 L32 0 L16 -6 Z" />
-              <path d="M10 18 L14 24 L24 12" />
-            </g>
-            {/* 청소 브러시 — 우상단 */}
-            <g transform="translate(490, 130)">
-              <rect x="0" y="0" width="40" height="10" />
-              <path d="M3 10 V20 M11 10 V22 M19 10 V20 M27 10 V22 M35 10 V20" />
-              <path d="M0 0 L-12 -10" />
-            </g>
-            {/* 시설 관리 공구 (스패너) — 좌하단 */}
-            <g transform="translate(40, 540)">
-              <circle cx="8" cy="8" r="6" />
-              <path d="M14 14 L38 38" />
-              <path d="M34 34 a8 8 0 1 0 10 10" />
-            </g>
-            {/* 안전 점검 (체크 in 원) — 우하단 */}
-            <g transform="translate(470, 540)">
-              <circle cx="20" cy="20" r="18" />
-              <path d="M12 20 L18 26 L30 14" />
-            </g>
-          </g>
-        </svg>
-      </div>
+            <p
+              className="hero-anim hero-anim-4 mt-6 text-[12px] font-medium uppercase text-accent-300 sm:mt-7 sm:text-[13px]"
+              style={{
+                letterSpacing: "0.28em",
+                textShadow: "0 2px 12px rgba(0,0,0,0.5)",
+              }}
+            >
+              Trusted Facility Management Since 2014
+            </p>
 
-      {/* 가벼운 격자 패턴 */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 opacity-[0.025]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
-          backgroundSize: "80px 80px",
-        }}
-      />
-      </div>
-      {/* /배경 클리핑 영역 끝 */}
+            <p
+              className="mx-auto mt-6 max-w-xl text-[15px] text-white/90 sm:text-base md:text-[17px]"
+              style={{
+                lineHeight: 1.75,
+                textShadow: "0 2px 12px rgba(0,0,0,0.35)",
+              }}
+            >
+              <span className="hero-anim hero-anim-5 block">
+                대한민국 시설관리의 새로운 표준을 만들어갑니다.
+              </span>
+              <span className="hero-anim hero-anim-6 block">
+                오랜 신뢰가 지금의 케이비개발을 만들었습니다.
+              </span>
+            </p>
 
-      <div className="relative z-10 flex min-h-[inherit] flex-col">
-        <Container>
-          <div className="grid grid-cols-1 items-center pt-16 pb-20 sm:pt-20 sm:pb-28 md:pt-28 md:pb-32 lg:grid-cols-[minmax(0,720px)_1fr] lg:gap-12 lg:pt-32 lg:pb-40">
-            <div className="max-w-[720px]">
-              <p
-                className="eyebrow"
-                style={{ color: "rgba(255,255,255,0.75)" }}
+            <div className="hero-anim hero-anim-cta mt-9 flex flex-col items-center justify-center gap-3 sm:mt-10 sm:flex-row sm:gap-4">
+              <Link
+                href="/contact"
+                className="btn-reset inline-flex h-[52px] items-center justify-center gap-2 rounded-sm bg-accent-500 px-7 text-base font-bold text-navy-900 transition-all duration-200 [transition-timing-function:var(--ease)] hover:bg-accent-600 hover:text-white hover:shadow-[0_12px_30px_rgba(201,162,75,0.35)] sm:px-8"
               >
-                (주)케이비개발 · SINCE {company.foundedYear}
-              </p>
-
-              {/* Phase 11 P0-D — 의미 키워드 강조
-                  line1: "신뢰" 골드 컬러 / line2: "자산" 밑줄 gradient */}
-              <h1
-                className="mt-7 font-display text-white"
-                style={{
-                  /* Phase 14-G G-1 — 모바일 줄바꿈 완화: min 2.5rem → 2rem(32px),
-                     viewport 단위 6.5vw → 7vw로 작은 화면에서 더 빨리 줄어듦 */
-                  fontSize: "clamp(2rem, 7vw, 4.5rem)",
-                  fontWeight: 900,
-                  letterSpacing: "var(--tracking-tight)",
-                  lineHeight: 1.1,
-                  textShadow: "0 6px 24px rgba(0,0,0,0.35)",
-                }}
+                무료 상담 신청
+                <span aria-hidden="true">→</span>
+              </Link>
+              <Link
+                href="/business"
+                className="btn-reset inline-flex h-[52px] items-center justify-center gap-2 rounded-sm border border-white/45 bg-white/[0.04] px-7 text-base font-semibold text-white backdrop-blur-sm transition-colors duration-200 [transition-timing-function:var(--ease)] hover:border-white hover:bg-white/12 sm:px-8"
               >
-                <span className="block">{renderSloganLine1(SLOGAN_LINE_1)}</span>
-                {/* Phase 14-B B-4 — 두 줄 span 사이 텍스트 공백.
-                    block 시각엔 영향 없으나 스크린리더가 "신뢰가 자산이됩니다"로
-                    이어 읽는 문제 해소 */}
-                {" "}
-                <span className="block">{SLOGAN_LINE_2}</span>
-              </h1>
+                사업영역 보기
+                <span aria-hidden="true">→</span>
+              </Link>
+            </div>
 
-              <p
-                className="mt-8 max-w-xl text-[16px] md:text-[17px]"
-                style={{
-                  color: "rgba(255,255,255,0.85)",
-                  lineHeight: 1.75,
-                }}
-              >
-                {SUBTITLE_LINE_1}
-                <br />
-                {SUBTITLE_LINE_2}
-              </p>
-
-              {/* CTA — Phase 14-I I-1: 모바일/데스크탑 분기.
-                    모바일(sm 미만): primary = 전화 즉시 통화 (즉시 전환 UX 최적)
-                    데스크탑(sm+): primary = 상담 폼 이동 (전화 보조 텍스트로 분리) */}
-              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
-                {/* 모바일 전용 — 전화 primary */}
+            <p className="hero-anim hero-anim-tel mt-5 text-[13px] text-white/75">
+              <span className="hidden sm:inline">
+                바로 통화 ·{" "}
                 <a
                   href={`tel:${contact.phone}`}
-                  className="btn-reset inline-flex h-[52px] items-center justify-center gap-2 rounded-sm bg-accent-500 px-8 text-base font-bold text-navy-900 transition-all duration-200 [transition-timing-function:var(--ease)] hover:bg-accent-600 hover:text-white hover:shadow-[var(--shadow-cta)] sm:hidden"
+                  className="btn-reset font-semibold text-accent-300 underline-offset-4 hover:text-white hover:underline"
                 >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  </svg>
-                  전화 상담 {contact.phone}
+                  {contact.phone}
                 </a>
-                {/* 데스크탑 전용 — 폼 primary */}
-                <Button
-                  as="link"
-                  href="/contact"
-                  variant="accent"
-                  size="lg"
-                  className="hidden sm:inline-flex"
-                >
-                  무료 상담 신청
-                  <span aria-hidden="true">→</span>
-                </Button>
-                <Button
-                  as="link"
-                  href="/business"
-                  variant="ghost"
-                  size="lg"
-                >
-                  사업영역 보기
-                  <span aria-hidden="true">→</span>
-                </Button>
-              </div>
-              {/* 보조 — 데스크탑에선 tel 텍스트, 모바일에선 폼 링크 */}
-              <p className="mt-5 text-[13px] text-white/70">
-                <span className="hidden sm:inline">
-                  바로 통화 ·{" "}
-                  <a
-                    href={`tel:${contact.phone}`}
-                    className="btn-reset font-semibold text-accent-300 underline-offset-4 hover:text-white hover:underline"
-                  >
-                    {contact.phone}
-                  </a>
-                </span>
-                <span className="sm:hidden">
-                  상세 폼으로 문의 ·{" "}
-                  <a
-                    href="/contact"
-                    className="btn-reset font-semibold text-accent-300 underline-offset-4 hover:text-white hover:underline"
-                  >
-                    /contact →
-                  </a>
-                </span>
-              </p>
-            </div>
+              </span>
+              <a
+                href={`tel:${contact.phone}`}
+                className="btn-reset font-semibold text-accent-300 underline-offset-4 hover:text-white hover:underline sm:hidden"
+              >
+                전화 상담 · {contact.phone}
+              </a>
+            </p>
           </div>
         </Container>
 
-        {/* Phase 12 — floating glass card 제거. DataCounter 섹션이 동일 정보 노출 */}
+        {/* Slide counter — 우하단 */}
+        <div className="absolute bottom-7 right-5 z-20 flex items-center gap-3 text-white/85 sm:bottom-8 sm:right-8 sm:gap-4 lg:right-12">
+          <button
+            type="button"
+            aria-label="이전 슬라이드"
+            onClick={() => goTo(active - 1)}
+            className="btn-reset hidden h-7 w-7 items-center justify-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white sm:inline-flex"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
 
-        {/* Scroll 인디케이터 — 우측 하단 */}
+          <span className="text-[12px] tabular-nums sm:text-[13px]">
+            {String(active + 1).padStart(2, "0")}
+          </span>
+          <div className="relative h-px w-12 overflow-hidden bg-white/25 sm:w-16">
+            <span
+              className="absolute inset-y-0 left-0 bg-white"
+              style={{
+                width: `${((active + 1) / SLIDES.length) * 100}%`,
+                transition: "width 700ms var(--ease)",
+              }}
+            />
+          </div>
+          <span className="text-[12px] tabular-nums text-white/55 sm:text-[13px]">
+            {String(SLIDES.length).padStart(2, "0")}
+          </span>
+
+          <button
+            type="button"
+            aria-label="다음 슬라이드"
+            onClick={() => goTo(active + 1)}
+            className="btn-reset hidden h-7 w-7 items-center justify-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white sm:inline-flex"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Scroll indicator — 하단 중앙 */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute bottom-32 right-6 z-10 hidden flex-col items-center gap-3 lg:flex"
+          className="absolute bottom-7 left-1/2 z-20 hidden -translate-x-1/2 flex-col items-center gap-2 text-white/70 md:flex"
         >
-          <span className="text-[10px] uppercase tracking-[0.25em] text-white/55">
+          <span
+            className="text-[10px] font-medium uppercase"
+            style={{ letterSpacing: "0.32em" }}
+          >
             Scroll
           </span>
-          <div className="relative h-12 w-[1px] overflow-hidden bg-white/20">
+          <div className="relative h-10 w-px overflow-hidden bg-white/20">
             <span
-              className="absolute left-1/2 top-0 h-2 w-[1px] -translate-x-1/2 bg-accent-500"
-              style={{
-                animation: "scrollDot 1.8s var(--ease) infinite",
-              }}
+              className="absolute left-0 top-0 h-3 w-full bg-white"
+              style={{ animation: "heroScrollDot 1.8s var(--ease) infinite" }}
             />
           </div>
         </div>
       </div>
 
       <style jsx>{`
-        @keyframes scrollDot {
+        @keyframes heroScrollDot {
           0% {
             top: -20%;
             opacity: 0;
@@ -378,6 +380,56 @@ export function Hero() {
           100% {
             top: 110%;
             opacity: 0;
+          }
+        }
+      `}</style>
+
+      <style jsx global>{`
+        .hero-kenburns {
+          animation: heroKenBurns 9s ease-out forwards;
+          transform-origin: center;
+        }
+        @keyframes heroKenBurns {
+          0% {
+            transform: scale(1.04);
+          }
+          100% {
+            transform: scale(1.14);
+          }
+        }
+
+        /* Phase 15 — Hero 카피 스태거 등장. 위에서부터 한 줄씩 페이드+슬라이드인 */
+        .hero-anim {
+          opacity: 0;
+          transform: translateY(28px);
+          animation: heroLineIn 1000ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          animation-play-state: running;
+          will-change: opacity, transform;
+        }
+        .hero-anim-1 { animation-delay: 350ms; }
+        .hero-anim-2 { animation-delay: 750ms; }
+        .hero-anim-3 { animation-delay: 1100ms; }
+        .hero-anim-4 { animation-delay: 1450ms; }
+        .hero-anim-5 { animation-delay: 1800ms; }
+        .hero-anim-6 { animation-delay: 2100ms; }
+        .hero-anim-cta { animation-delay: 2500ms; }
+        .hero-anim-tel { animation-delay: 2850ms; }
+
+        @keyframes heroLineIn {
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .hero-kenburns {
+            animation: none !important;
+          }
+          .hero-anim {
+            animation: none !important;
+            opacity: 1 !important;
+            transform: none !important;
           }
         }
       `}</style>

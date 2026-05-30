@@ -1,0 +1,17 @@
+# Hero 원본 자료(영상 6개·사진 22장)는 원본 보존 차원에서 레포에 유지하되,
+# Vercel 100MB 파일 제한 회피 + 배포 용량 절약을 위해 실제 사용하는
+# 영문 alias(video-0X.mp4 / slide-0X.png)만 배포에 포함한다.
+public/images/hero/*
+!public/images/hero/video-01.mp4
+!public/images/hero/video-02.mp4
+!public/images/hero/video-03.mp4
+!public/images/hero/video-04.mp4
+!public/images/hero/video-05.mp4
+!public/images/hero/slide-01.png
+!public/images/hero/slide-02.png
+!public/images/hero/slide-03.png
+!public/images/hero/slide-04.png
+!public/images/hero/slide-05.png
+!public/images/hero/slide-06.png
+!public/images/hero/slide-07.png
+!public/images/hero/slide-08.png
