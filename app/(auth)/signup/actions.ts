@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { translateAuthError } from "@/lib/supabase/auth-errors";
 
@@ -38,7 +39,7 @@ export async function signupAction(
   const supabase = await createClient();
   const origin = (await headers()).get("origin") ?? "";
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -49,6 +50,13 @@ export async function signupAction(
 
   if (error) {
     return { error: translateAuthError(error.message), fieldErrors: {} };
+  }
+
+  // 이메일 인증이 꺼져 있으면(현 Supabase 설정) signUp이 곧바로 세션을 반환 → 자동 로그인.
+  // 인증이 켜진 환경(폴백)에서는 세션이 없으므로 메일 확인 안내 페이지로 이동.
+  if (data.session) {
+    revalidatePath("/", "layout");
+    redirect("/mypage");
   }
 
   redirect(`/signup/confirm?email=${encodeURIComponent(email)}`);

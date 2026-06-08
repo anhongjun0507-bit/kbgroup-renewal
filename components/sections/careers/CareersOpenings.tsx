@@ -1,48 +1,24 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { motion, useReducedMotion, type Variants } from "framer-motion";
-import { Container, Heading } from "@/components/ui";
+import Link from "next/link";
+import { Container, Heading, FadeIn } from "@/components/ui";
 import { contact } from "@/data/site-content";
+import { getActiveOpenings } from "@/lib/jobs";
+import { JobCard } from "./JobCard";
+import { TalentPoolCTA } from "./TalentPoolCTA";
 
-/* Phase 5.I.3 — 채용 공고 빈 상태 + 인재 풀 등록 모달
-   Phase 14-N (2026-05-21) — "이메일로 직접 문의" 클릭 시 클립보드 복사 + 토스트.
-   클라 PC 메일 클라이언트 미설정 시에도 이메일 주소 확보 가능한 fallback. */
+/* /careers 의 "현재 채용 중" 섹션 (서버 컴포넌트).
+   - 활성 공고가 있으면 카드 미리보기(최대 2건) + 전체 보기 링크 + 인재풀 안내.
+   - 0건이면 빈 상태 + 인재풀 등록.
+   Phase 5.I.3 빈 상태 / Phase 14-N 클립보드 fallback 계승.
+   2026-06-08 — 채용 공고 데이터 모델(jobOpenings) 연동 + /careers/openings 분리. */
 
-const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+const PREVIEW_COUNT = 2;
 
 export function CareersOpenings() {
-  const shouldReduce = useReducedMotion() ?? false;
   const careersEmail = contact.careersEmail ?? contact.email;
-  const [modalOpen, setModalOpen] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!toast) return;
-    const t = setTimeout(() => setToast(null), 2400);
-    return () => clearTimeout(t);
-  }, [toast]);
-
-  const handleEmailClick = () => {
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(careersEmail).then(
-        () => setToast(`이메일 주소(${careersEmail})가 복사되었습니다`),
-        () => setToast(`이메일 주소: ${careersEmail}`),
-      );
-    } else {
-      setToast(`이메일 주소: ${careersEmail}`);
-    }
-    /* mailto는 a 태그 기본 동작으로 진행 (preventDefault 안함) */
-  };
-
-  const headerVariants: Variants = {
-    hidden: { opacity: 0, y: shouldReduce ? 0 : 24 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: shouldReduce ? 0 : 0.8, ease: EASE_OUT_EXPO },
-    },
-  };
+  const openings = getActiveOpenings();
+  const now = new Date();
+  const preview = openings.slice(0, PREVIEW_COUNT);
+  const hasMore = openings.length > PREVIEW_COUNT;
 
   return (
     <section
@@ -50,232 +26,97 @@ export function CareersOpenings() {
       className="section bg-gray-50"
     >
       <Container>
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={headerVariants}
-        >
+        <FadeIn>
           <Heading
             kicker="OPEN POSITIONS"
             title="현재 채용 중인 공고"
             italicWord="공고"
-            subtitle="진행 중인 채용 정보입니다. 공고가 없을 때는 인재 풀 등록으로 미리 연결하세요."
+            subtitle={
+              openings.length > 0
+                ? "진행 중인 채용 정보입니다. 관심 있는 직무를 확인하고 지원해 주세요."
+                : "공고가 없을 때는 인재 풀 등록으로 미리 연결하세요. 적합한 포지션이 열리면 먼저 연락드립니다."
+            }
             align="left"
             size="md"
             as="h2"
             className="mb-12"
           />
-        </motion.div>
+        </FadeIn>
 
-        {/* 빈 상태 카드 */}
-        <div className="mx-auto max-w-3xl rounded-md border border-line bg-white p-10 text-center md:p-14">
-          <div className="mx-auto h-12 w-12 text-ink-faint">
-            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="8" y="14" width="32" height="26" rx="2" />
-              <path d="M18 14V10C18 8.9 18.9 8 20 8H28C29.1 8 30 8.9 30 10V14" />
-              <path d="M14 22H34" />
-              <circle cx="20" cy="30" r="1.5" fill="currentColor" />
-              <path d="M24 30H32" />
-            </svg>
+        {openings.length > 0 ? (
+          <div className="space-y-10">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              {preview.map((job, i) => (
+                <FadeIn key={job.id} delay={i * 80}>
+                  <JobCard job={job} now={now} />
+                </FadeIn>
+              ))}
+            </div>
+
+            <div className="flex flex-col items-start justify-between gap-6 border-t border-line pt-8 md:flex-row md:items-center">
+              <Link
+                href="/careers/openings"
+                className="group inline-flex items-center gap-2 text-[15px] font-semibold text-ink-strong"
+              >
+                전체 채용공고 보기
+                <span className="font-mono-num text-ink-faint">
+                  ({openings.length}건)
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="inline-block transition-transform duration-200 group-hover:translate-x-1"
+                >
+                  →
+                </span>
+              </Link>
+
+              <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+                <span className="text-[14px] text-ink-muted">
+                  관심 직무가 없으신가요?
+                </span>
+                <TalentPoolCTA email={careersEmail} compact />
+              </div>
+            </div>
+
+            {hasMore && (
+              <p className="text-[13px] text-ink-faint">
+                ※ 미리보기에는 최신 공고 {PREVIEW_COUNT}건만 표시됩니다. 전체
+                공고는 위 링크에서 확인하세요.
+              </p>
+            )}
           </div>
-          <p className="mt-6 font-display text-[24px] font-bold tracking-tight text-ink-strong md:text-[28px]">
-            현재 진행 중인 공고가 없습니다
-          </p>
-          <p className="mt-4 text-[15px] leading-[1.75] text-ink-muted">
-            신규 공고는 이곳에 게재됩니다. 관심 직무가 있으시면
-            <br className="hidden sm:inline" />
-            인재 풀에 등록해 주세요. 적합한 포지션이 열릴 때 먼저 연락드립니다.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-3">
-            <button
-              type="button"
-              onClick={() => setModalOpen(true)}
-              className="inline-flex h-14 items-center gap-2 rounded-sm bg-accent-500 px-8 text-base font-bold text-navy-900 transition-all duration-200 [transition-timing-function:var(--ease)] hover:bg-accent-600 hover:shadow-[var(--shadow-cta)]"
-            >
-              인재 풀 등록하기
-              <span aria-hidden="true">→</span>
-            </button>
-            <a
-              href={`mailto:${careersEmail}`}
-              onClick={handleEmailClick}
-              className="inline-flex h-14 items-center gap-2 rounded-sm border border-ink-strong px-8 text-base font-semibold text-ink-strong transition-colors duration-200 hover:bg-ink-strong hover:text-white"
-            >
-              이메일로 직접 문의
-            </a>
+        ) : (
+          <div className="mx-auto max-w-3xl rounded-md border border-line bg-white p-10 text-center md:p-14">
+            <div className="mx-auto h-12 w-12 text-ink-faint">
+              <svg
+                viewBox="0 0 48 48"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="8" y="14" width="32" height="26" rx="2" />
+                <path d="M18 14V10C18 8.9 18.9 8 20 8H28C29.1 8 30 8.9 30 10V14" />
+                <path d="M14 22H34" />
+                <circle cx="20" cy="30" r="1.5" fill="currentColor" />
+                <path d="M24 30H32" />
+              </svg>
+            </div>
+            <p className="mt-6 font-display text-[24px] font-bold tracking-tight text-ink-strong md:text-[28px]">
+              현재 진행 중인 공고가 없습니다
+            </p>
+            <p className="mt-4 text-[15px] leading-[1.75] text-ink-muted">
+              신규 공고는 이곳에 게재됩니다. 관심 직무가 있으시면
+              <br className="hidden sm:inline" />
+              인재 풀에 등록해 주세요. 적합한 포지션이 열릴 때 먼저 연락드립니다.
+            </p>
+            <div className="mt-8">
+              <TalentPoolCTA email={careersEmail} />
+            </div>
           </div>
-          {/* Phase 14-N — 메일 클라이언트 없어도 주소 확보 가능하도록 풀텍스트 노출 */}
-          <p className="mt-6 font-mono-num text-[13px] text-ink-muted">
-            채용 문의: <span className="font-semibold text-ink-strong">{careersEmail}</span>
-          </p>
-        </div>
+        )}
       </Container>
-
-      {/* 토스트 */}
-      {toast && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="fixed inset-x-0 bottom-8 z-50 flex justify-center px-4 pointer-events-none"
-        >
-          <div className="pointer-events-auto rounded-sm bg-navy-900 px-5 py-3 text-[14px] font-medium text-white shadow-lg">
-            {toast}
-          </div>
-        </div>
-      )}
-
-      {modalOpen && (
-        <TalentPoolModal
-          email={careersEmail}
-          onClose={() => setModalOpen(false)}
-        />
-      )}
     </section>
-  );
-}
-
-function TalentPoolModal({
-  email,
-  onClose,
-}: {
-  email: string;
-  onClose: () => void;
-}) {
-  const [submitted, setSubmitted] = useState(false);
-
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    const name = String(fd.get("name") ?? "");
-    const phone = String(fd.get("phone") ?? "");
-    const role = String(fd.get("role") ?? "");
-    const summary = String(fd.get("summary") ?? "");
-
-    const subject = `[케이비개발] 인재 풀 등록 — ${name} (${role})`;
-    const body = [
-      `■ 이름: ${name}`,
-      `■ 연락처: ${phone}`,
-      `■ 희망 직무: ${role}`,
-      "",
-      "■ 경력 요약",
-      summary,
-      "",
-      "※ 이력서 파일은 본 메일에 첨부해 주세요.",
-    ].join("\n");
-    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setSubmitted(true);
-  }
-
-  return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="인재 풀 등록"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-navy-900/80 p-5 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <div
-        className="relative w-full max-w-xl rounded-md bg-white p-6 md:p-10"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="닫기"
-          className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-sm text-ink-strong transition-colors hover:bg-gray-100"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M6 6L18 18M6 18L18 6" strokeLinecap="round" />
-          </svg>
-        </button>
-
-        <p className="eyebrow">TALENT POOL</p>
-        <h3 className="mt-4 font-display text-[24px] font-bold tracking-tight text-ink-strong">
-          인재 풀 등록
-        </h3>
-        <p className="mt-3 text-[14px] leading-relaxed text-ink-muted">
-          기본 정보와 경력 요약을 남겨주시면, 적합한 포지션이 열릴 때 먼저
-          연락드립니다.
-        </p>
-
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          <div>
-            <label htmlFor="tp-name" className="eyebrow mb-2 block">
-              이름 *
-            </label>
-            <input
-              id="tp-name"
-              name="name"
-              type="text"
-              required
-              className="block w-full rounded-sm border border-line bg-white px-4 py-3 text-[16px] text-ink-strong placeholder:text-ink-faint focus:border-navy-700 focus:outline-none md:text-[15px]"
-              placeholder="홍길동"
-            />
-          </div>
-          <div>
-            <label htmlFor="tp-phone" className="eyebrow mb-2 block">
-              연락처 *
-            </label>
-            <input
-              id="tp-phone"
-              name="phone"
-              type="tel"
-              required
-              className="block w-full rounded-sm border border-line bg-white px-4 py-3 text-[16px] text-ink-strong placeholder:text-ink-faint focus:border-navy-700 focus:outline-none md:text-[15px]"
-              placeholder="010-0000-0000"
-            />
-          </div>
-          <div>
-            <label htmlFor="tp-role" className="eyebrow mb-2 block">
-              희망 직무 *
-            </label>
-            <input
-              id="tp-role"
-              name="role"
-              type="text"
-              required
-              className="block w-full rounded-sm border border-line bg-white px-4 py-3 text-[16px] text-ink-strong placeholder:text-ink-faint focus:border-navy-700 focus:outline-none md:text-[15px]"
-              placeholder="예) 시설 관리소장 / 경비반장"
-            />
-          </div>
-          <div>
-            <label htmlFor="tp-summary" className="eyebrow mb-2 block">
-              경력 요약 *
-            </label>
-            <textarea
-              id="tp-summary"
-              name="summary"
-              required
-              rows={4}
-              className="block w-full resize-y rounded-sm border border-line bg-white px-4 py-3 text-[16px] text-ink-strong placeholder:text-ink-faint focus:border-navy-700 focus:outline-none md:text-[15px]"
-              placeholder="근무 경력, 보유 자격증, 강점 등을 자유롭게 적어주세요."
-            />
-          </div>
-
-          <div className="flex flex-col items-start gap-3 pt-2 md:flex-row md:items-center md:justify-between">
-            <p className="text-[12px] text-ink-faint">
-              ※ 전송 시 메일 클라이언트가 열리며, 이력서 파일은 직접 첨부하시면
-              됩니다.
-            </p>
-            <button
-              type="submit"
-              className="inline-flex h-12 items-center gap-2 rounded-sm bg-accent-500 px-6 text-[14px] font-bold text-navy-900 transition-all duration-200 [transition-timing-function:var(--ease)] hover:bg-accent-600 hover:shadow-[var(--shadow-cta)]"
-            >
-              메일 작성 시작
-              <span aria-hidden="true">→</span>
-            </button>
-          </div>
-
-          {submitted && (
-            <p
-              role="status"
-              className="rounded-sm border border-success/30 bg-success/5 px-4 py-3 text-[13px] text-success"
-            >
-              메일 클라이언트가 열렸습니다. 발송 버튼을 눌러주세요.
-            </p>
-          )}
-        </form>
-      </div>
-    </div>
   );
 }
