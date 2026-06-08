@@ -135,6 +135,63 @@ export type Database = {
         }
         Relationships: []
       }
+      job_openings: {
+        Row: {
+          apply_email: string | null
+          apply_method: string | null
+          created_at: string
+          deadline: string | null
+          id: string
+          is_published: boolean
+          location: string
+          posted_at: string
+          preferred: string[]
+          requirements: string[]
+          responsibilities: string[]
+          sort_order: number
+          summary: string | null
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          apply_email?: string | null
+          apply_method?: string | null
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          is_published?: boolean
+          location?: string
+          posted_at?: string
+          preferred?: string[]
+          requirements?: string[]
+          responsibilities?: string[]
+          sort_order?: number
+          summary?: string | null
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          apply_email?: string | null
+          apply_method?: string | null
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          is_published?: boolean
+          location?: string
+          posted_at?: string
+          preferred?: string[]
+          requirements?: string[]
+          responsibilities?: string[]
+          sort_order?: number
+          summary?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           author_id: string | null
@@ -181,6 +238,47 @@ export type Database = {
             columns: ["author_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_comments: {
+        Row: {
+          author_id: string | null
+          author_name: string | null
+          content: string
+          created_at: string
+          id: string
+          parent_id: string | null
+          post_id: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          author_name?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          post_id: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          post_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
             referencedColumns: ["id"]
           },
         ]

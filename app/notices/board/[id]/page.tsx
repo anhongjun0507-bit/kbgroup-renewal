@@ -5,6 +5,7 @@ import { Container } from "@/components/ui";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { ConfirmButton } from "@/components/admin/ConfirmButton";
 import { ViewBump } from "@/components/sections/board/ViewBump";
+import { Comments, type CommentRow } from "@/components/sections/board/Comments";
 import { getViewer } from "@/lib/auth";
 import { deletePost } from "../actions";
 
@@ -64,6 +65,13 @@ export default async function PostDetailPage({
   if (!post) notFound();
 
   const canManage = !!user && (user.id === post.author_id || isAdmin);
+
+  const { data: commentRows } = await supabase
+    .from("post_comments")
+    .select("id, parent_id, author_id, author_name, content, created_at")
+    .eq("post_id", post.id)
+    .order("created_at", { ascending: true });
+  const comments = (commentRows ?? []) as CommentRow[];
 
   return (
     <>
@@ -138,6 +146,13 @@ export default async function PostDetailPage({
                 </form>
               </div>
             )}
+
+            {/* 댓글·답글 */}
+            <Comments
+              postId={post.id}
+              comments={comments}
+              viewer={{ userId: user?.id ?? null, isAdmin }}
+            />
 
             {/* 목록 버튼 */}
             <div className="mt-12 text-center">

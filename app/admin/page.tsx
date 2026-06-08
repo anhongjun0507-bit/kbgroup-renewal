@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/ui";
+import { AdminTabs } from "@/components/admin/AdminTabs";
 import { ConfirmButton } from "@/components/admin/ConfirmButton";
 import { requireAdmin } from "@/lib/auth";
 import { updateApplicationStatus, deleteApplication } from "./actions";
@@ -70,6 +71,8 @@ export default async function AdminApplicationsPage({
   return (
     <section className="section min-h-[70vh] bg-bg-soft">
       <Container>
+        <AdminTabs active="applications" />
+
         {/* 헤더 */}
         <div className="flex flex-col gap-4 border-b border-line pb-8 md:flex-row md:items-end md:justify-between">
           <div>

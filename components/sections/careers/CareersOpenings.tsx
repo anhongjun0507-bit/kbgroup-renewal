@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Container, Heading, FadeIn } from "@/components/ui";
 import { contact } from "@/data/site-content";
-import { getActiveOpenings } from "@/lib/jobs";
+import { getPublishedOpenings } from "@/lib/job-openings";
 import { JobCard } from "./JobCard";
 import { TalentPoolCTA } from "./TalentPoolCTA";
 
@@ -13,9 +13,9 @@ import { TalentPoolCTA } from "./TalentPoolCTA";
 
 const PREVIEW_COUNT = 2;
 
-export function CareersOpenings() {
+export async function CareersOpenings() {
   const careersEmail = contact.careersEmail ?? contact.email;
-  const openings = getActiveOpenings();
+  const openings = await getPublishedOpenings();
   const now = new Date();
   const preview = openings.slice(0, PREVIEW_COUNT);
   const hasMore = openings.length > PREVIEW_COUNT;

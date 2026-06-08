@@ -5,7 +5,7 @@ import { Container, FadeIn } from "@/components/ui";
 import { JobCard } from "@/components/sections/careers/JobCard";
 import { TalentPoolCTA } from "@/components/sections/careers/TalentPoolCTA";
 import { contact } from "@/data/site-content";
-import { getActiveOpenings } from "@/lib/jobs";
+import { getPublishedOpenings } from "@/lib/job-openings";
 
 export const metadata: Metadata = {
   title: "채용 공고 | (주)케이비개발",
@@ -13,11 +13,10 @@ export const metadata: Metadata = {
     "(주)케이비개발에서 현재 진행 중인 채용 공고입니다. 관심 직무를 확인하고 지원해 주세요.",
 };
 
-// D-day가 매일 갱신되도록 1시간마다 재검증
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
-export default function OpeningsPage() {
-  const openings = getActiveOpenings();
+export default async function OpeningsPage() {
+  const openings = await getPublishedOpenings();
   const now = new Date();
   const careersEmail = contact.careersEmail ?? contact.email;
 

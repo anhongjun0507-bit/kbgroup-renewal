@@ -1,6 +1,10 @@
 import Link from "next/link";
-import type { JobOpening } from "@/data/site-content";
-import { deadlineBadge, formatDate, type DeadlineTone } from "@/lib/jobs";
+import {
+  deadlineBadge,
+  formatDate,
+  type DeadlineTone,
+  type JobOpening,
+} from "@/lib/jobs";
 
 /* 채용 공고 카드 (서버 컴포넌트).
    /careers 미리보기와 /careers/openings 목록에서 공유. v10 디자인 토큰. */

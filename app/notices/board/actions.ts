@@ -132,3 +132,63 @@ export async function recordView(id: string) {
   const supabase = await createClient();
   await supabase.rpc("increment_post_view", { p_id: id });
 }
+
+// ── 댓글·답글 ──────────────────────────────────────────────────────────────
+
+export type CommentResult = { ok: boolean; error?: string };
+
+/** 댓글/답글 작성. parentId=null이면 댓글, 있으면 답글. */
+export async function addComment(
+  postId: string,
+  parentId: string | null,
+  content: string,
+): Promise<CommentResult> {
+  const text = content.trim();
+  if (!postId || !text) return { ok: false, error: "내용을 입력해주세요." };
+  if (text.length > 2000)
+    return { ok: false, error: "2000자 이내로 입력해주세요." };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "로그인이 필요합니다." };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("display_name, email")
+    .eq("id", user.id)
+    .single();
+  const authorName =
+    profile?.display_name?.trim() ||
+    (profile?.email ?? user.email ?? "회원").split("@")[0];
+
+  const { error } = await supabase.from("post_comments").insert({
+    post_id: postId,
+    parent_id: parentId,
+    author_id: user.id,
+    author_name: authorName,
+    content: text,
+  });
+  if (error) return { ok: false, error: "댓글 등록에 실패했습니다." };
+
+  revalidatePath(`/notices/board/${postId}`);
+  return { ok: true };
+}
+
+/** 댓글 삭제 (작성자·admin만 — RLS). 답글이 있으면 함께 삭제(ON DELETE CASCADE). */
+export async function deleteComment(
+  commentId: string,
+  postId: string,
+): Promise<CommentResult> {
+  if (!commentId) return { ok: false };
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "로그인이 필요합니다." };
+
+  await supabase.from("post_comments").delete().eq("id", commentId);
+  revalidatePath(`/notices/board/${postId}`);
+  return { ok: true };
+}

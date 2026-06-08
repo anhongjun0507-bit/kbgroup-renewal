@@ -4,16 +4,13 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/ui";
 import { MailtoCard } from "@/components/sections/common/MailtoCard";
 import { JobApplyForm } from "@/components/sections/careers/JobApplyForm";
-import { contact, jobOpenings } from "@/data/site-content";
-import { findOpening, deadlineBadge, formatDate } from "@/lib/jobs";
+import { contact } from "@/data/site-content";
+import { deadlineBadge, formatDate } from "@/lib/jobs";
+import { getOpeningById } from "@/lib/job-openings";
 
 type Params = { id: string };
 
-export const revalidate = 3600;
-
-export function generateStaticParams(): Params[] {
-  return jobOpenings.map((j) => ({ id: j.id }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -21,7 +18,7 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const job = findOpening(id);
+  const job = await getOpeningById(id);
   if (!job) return { title: "채용 공고 없음 | (주)케이비개발" };
   return {
     title: `${job.title} (${job.type}) | 채용 공고 | (주)케이비개발`,
@@ -37,11 +34,11 @@ export default async function OpeningDetailPage({
   params: Promise<Params>;
 }) {
   const { id } = await params;
-  const job = findOpening(id);
+  const job = await getOpeningById(id);
   if (!job) notFound();
 
   const badge = deadlineBadge(job.deadline);
-  const closed = !job.isActive || badge.tone === "closed";
+  const closed = badge.tone === "closed";
   const applyEmail = job.applyEmail ?? contact.careersEmail ?? contact.email;
   const applySubject = `[케이비개발] ${job.title} 지원 — `;
 

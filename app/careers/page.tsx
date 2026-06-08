@@ -25,9 +25,10 @@ export default function CareersPage() {
           { label: "CAREERS" },
         ]}
       />
+      {/* 현재 채용 중인 공고를 최상단으로 (클라 요청 2026-06-08) */}
+      <CareersOpenings />
       <CareersValues />
       <CareersWelfare />
-      <CareersOpenings />
       <CareersApply />
       <ContactInvite
         context="채용·사업 관련 일반 문의는 본사 회선으로 직접 연락 주세요"

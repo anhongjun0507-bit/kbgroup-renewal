@@ -6,14 +6,16 @@ import { useEffect, useState } from "react";
 import { LayoutGroup, motion, MotionConfig } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { businessAreas } from "@/data/site-content";
-import { getActiveOpenings } from "@/lib/jobs";
+
+type NavChild = { label: string; href: string };
 
 interface HeaderProps {
   isAuthed?: boolean;
   isAdmin?: boolean;
+  /** CAREERS 드롭다운에 노출할 채용 공고 링크 (서버에서 DB 조회 후 주입) */
+  careerLinks?: NavChild[];
 }
 
-type NavChild = { label: string; href: string };
 type NavItem = {
   label: string;
   krLabel: string;
@@ -36,18 +38,8 @@ const NAV_ITEMS: NavItem[] = [
   },
   { label: "PROJECTS", krLabel: "관리현황", href: "/cases" },
   { label: "LICENSES", krLabel: "인허가", href: "/licenses" },
-  {
-    label: "CAREERS",
-    krLabel: "채용",
-    href: "/careers",
-    // 활성 채용 공고를 드롭다운에 노출 (예: "관리소장 수시채용")
-    children: getActiveOpenings().length
-      ? getActiveOpenings().map((j) => ({
-          label: `${j.title} ${j.type}`,
-          href: `/careers/openings/${j.id}`,
-        }))
-      : undefined,
-  },
+  // CAREERS 드롭다운(채용 공고)은 서버에서 DB 조회 후 careerLinks prop으로 주입
+  { label: "CAREERS", krLabel: "채용", href: "/careers" },
   {
     label: "NEWS",
     krLabel: "소식",
@@ -98,8 +90,19 @@ function KBLogoMark({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
   );
 }
 
-export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
+export function Header({
+  isAuthed = false,
+  isAdmin = false,
+  careerLinks = [],
+}: HeaderProps) {
   const pathname = usePathname();
+
+  // CAREERS 항목에 DB에서 받은 채용 공고를 children으로 주입
+  const navItems: NavItem[] = NAV_ITEMS.map((item) =>
+    item.href === "/careers" && careerLinks.length
+      ? { ...item, children: careerLinks }
+      : item,
+  );
   const isHomepage = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -289,7 +292,7 @@ export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
                   )}
                   aria-label="주 메뉴"
                 >
-                  {NAV_ITEMS.map(renderNavItem)}
+                  {navItems.map(renderNavItem)}
                 </motion.nav>
               </motion.div>
             </LayoutGroup>
@@ -372,7 +375,7 @@ export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
           className="mx-auto w-full max-w-[1400px] px-5 pb-12 pt-4 md:px-8"
           aria-label="모바일 메뉴"
         >
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const hasChildren = !!item.children?.length;
             const expanded = mobileExpand === item.href;
             return (
