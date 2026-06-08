@@ -54,6 +54,7 @@ const NAV_ITEMS: NavItem[] = [
     href: "/notices",
     children: [
       { label: "공지사항", href: "/notices" },
+      { label: "자유게시판", href: "/notices/board" },
       { label: "갤러리", href: "/notices/gallery" },
       { label: "단지소식", href: "/notices/news" },
       { label: "자료실", href: "/notices/resources" },

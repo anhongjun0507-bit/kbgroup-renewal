@@ -28,3 +28,28 @@ export async function requireAdmin(next = "/admin") {
 
   return { user, profile, supabase };
 }
+
+/**
+ * 리다이렉트 없이 현재 뷰어 상태를 반환 (로그인 여부·admin 여부·표시명).
+ * 게시판처럼 비로그인도 접근 가능하지만 로그인 상태에 따라 UI가 달라지는 곳에서 사용.
+ */
+export async function getViewer() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let isAdmin = false;
+  let displayName: string | null = null;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role, display_name")
+      .eq("id", user.id)
+      .single();
+    isAdmin = profile?.role === "admin";
+    displayName = profile?.display_name ?? null;
+  }
+
+  return { user, isAdmin, displayName, supabase };
+}

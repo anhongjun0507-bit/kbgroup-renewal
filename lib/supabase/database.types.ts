@@ -138,6 +138,7 @@ export type Database = {
       posts: {
         Row: {
           author_id: string | null
+          author_name: string | null
           board_type: string
           content: string | null
           created_at: string
@@ -150,18 +151,20 @@ export type Database = {
         }
         Insert: {
           author_id?: string | null
+          author_name?: string | null
           board_type: string
           content?: string | null
           created_at?: string
           id?: string
           is_pinned?: boolean
-          post_number: number
+          post_number?: number
           title: string
           updated_at?: string
           view_count?: number
         }
         Update: {
           author_id?: string | null
+          author_name?: string | null
           board_type?: string
           content?: string | null
           created_at?: string
@@ -215,6 +218,7 @@ export type Database = {
     }
     Functions: {
       is_admin: { Args: never; Returns: boolean }
+      increment_post_view: { Args: { p_id: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
