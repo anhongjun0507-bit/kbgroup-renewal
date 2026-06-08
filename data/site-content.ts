@@ -1012,7 +1012,7 @@ export const jobOpenings: JobOpening[] = [
       "광주광역시 및 인근 지역 거주자",
     ],
     applyMethod: "이메일 접수 — 이력서·자기소개서를 채용 담당 이메일로 보내주세요.",
-    applyEmail: "7970kb@naver.com",
+    applyEmail: "7971kb@naver.com",
     deadline: null,
     postedAt: "2026-06-08",
     isActive: true,
