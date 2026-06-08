@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui";
 import { MailtoCard } from "@/components/sections/common/MailtoCard";
+import { JobApplyForm } from "@/components/sections/careers/JobApplyForm";
 import { contact, jobOpenings } from "@/data/site-content";
 import { findOpening, deadlineBadge, formatDate } from "@/lib/jobs";
 
@@ -164,22 +165,31 @@ export default async function OpeningDetailPage({
                   <SpecRow label="등록일" value={formatDate(job.postedAt)} />
                 </dl>
 
-                <div className="mt-6">
+                <div className="mt-6 space-y-3">
                   {closed ? (
                     <p className="rounded-md border border-line bg-white px-6 py-5 text-center text-[14px] font-semibold text-ink-faint">
                       마감된 공고입니다
                     </p>
                   ) : (
-                    <MailtoCard
-                      email={applyEmail}
-                      subject={applySubject}
-                      label="지원하기 · 이메일 접수"
-                    />
+                    <>
+                      <a
+                        href="#apply"
+                        className="flex h-14 items-center justify-center gap-2 rounded-sm bg-accent-500 px-6 text-base font-bold text-navy-900 transition-all duration-200 [transition-timing-function:var(--ease)] hover:bg-accent-600 hover:shadow-[var(--shadow-cta)]"
+                      >
+                        지원하기 · 온라인 접수
+                        <span aria-hidden="true">↓</span>
+                      </a>
+                      <MailtoCard
+                        email={applyEmail}
+                        subject={applySubject}
+                        label="이메일로 지원"
+                      />
+                      <p className="text-[12px] leading-relaxed text-ink-faint">
+                        온라인 접수 시 담당자가 바로 확인합니다. 이메일 지원도
+                        가능합니다.
+                      </p>
+                    </>
                   )}
-                  <p className="mt-3 text-[12px] leading-relaxed text-ink-faint">
-                    버튼을 누르면 메일 작성 화면이 열립니다. 이력서·자기소개서를
-                    첨부해 보내주세요. (메일 주소는 클릭 시 자동 복사됩니다)
-                  </p>
                 </div>
               </div>
 
@@ -195,6 +205,28 @@ export default async function OpeningDetailPage({
           </div>
         </Container>
       </section>
+
+      {/* 지원 폼 — DB 접수, 관리자 페이지에서 확인 */}
+      {!closed && (
+        <section id="apply" className="section scroll-mt-24 bg-bg-soft">
+          <Container>
+            <div className="mx-auto max-w-2xl">
+              <p className="eyebrow text-accent-deep">APPLY · 지원하기</p>
+              <h2 className="mt-3 font-display text-[26px] font-bold tracking-tight text-ink-strong md:text-[32px]">
+                <span className="text-navy-700">{job.title}</span> 지원
+              </h2>
+              <p className="mt-4 text-[15px] leading-[1.8] text-ink-muted">
+                아래 양식을 작성해 제출하시면 담당자가 검토 후 기재해주신
+                연락처로 개별 연락드립니다. 별도 회원가입 없이 지원하실 수
+                있습니다.
+              </p>
+              <div className="mt-10">
+                <JobApplyForm openingId={job.id} openingTitle={job.title} />
+              </div>
+            </div>
+          </Container>
+        </section>
+      )}
     </>
   );
 }

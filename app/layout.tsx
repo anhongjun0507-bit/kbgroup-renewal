@@ -111,10 +111,20 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
+  let isAdmin = false;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    isAdmin = profile?.role === "admin";
+  }
+
   return (
     <html lang="ko" className={`${jetbrainsMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-white text-ink-strong">
-        <Header isAuthed={!!user} />
+        <Header isAuthed={!!user} isAdmin={isAdmin} />
         <main className="flex-1">{children}</main>
         <Footer />
       </body>

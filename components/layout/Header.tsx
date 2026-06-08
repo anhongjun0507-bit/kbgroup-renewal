@@ -6,9 +6,11 @@ import { useEffect, useState } from "react";
 import { LayoutGroup, motion, MotionConfig } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { businessAreas } from "@/data/site-content";
+import { getActiveOpenings } from "@/lib/jobs";
 
 interface HeaderProps {
   isAuthed?: boolean;
+  isAdmin?: boolean;
 }
 
 type NavChild = { label: string; href: string };
@@ -34,7 +36,18 @@ const NAV_ITEMS: NavItem[] = [
   },
   { label: "PROJECTS", krLabel: "관리현황", href: "/cases" },
   { label: "LICENSES", krLabel: "인허가", href: "/licenses" },
-  { label: "CAREERS", krLabel: "채용", href: "/careers" },
+  {
+    label: "CAREERS",
+    krLabel: "채용",
+    href: "/careers",
+    // 활성 채용 공고를 드롭다운에 노출 (예: "관리소장 수시채용")
+    children: getActiveOpenings().length
+      ? getActiveOpenings().map((j) => ({
+          label: `${j.title} ${j.type}`,
+          href: `/careers/openings/${j.id}`,
+        }))
+      : undefined,
+  },
   {
     label: "NEWS",
     krLabel: "소식",
@@ -84,7 +97,7 @@ function KBLogoMark({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
   );
 }
 
-export function Header({ isAuthed = false }: HeaderProps) {
+export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
   const pathname = usePathname();
   const isHomepage = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
@@ -281,7 +294,19 @@ export function Header({ isAuthed = false }: HeaderProps) {
             </LayoutGroup>
 
             {/* LOGIN — 헤더 우측 세로 가운데 absolute (모핑 영향 X) */}
-            <div className="pointer-events-none absolute right-0 top-0 flex h-full items-center">
+            <div className="pointer-events-none absolute right-0 top-0 flex h-full items-center gap-1">
+              {isAdmin && (
+                <div className="pointer-events-auto">
+                  <Link
+                    href="/admin"
+                    aria-label="ADMIN — 관리자 페이지"
+                    className="inline-flex min-h-9 items-center px-2 text-[11px] font-semibold uppercase text-accent-300 transition-colors duration-200 hover:text-accent-200"
+                    style={{ letterSpacing: "0.18em" }}
+                  >
+                    ADMIN
+                  </Link>
+                </div>
+              )}
               <div className="pointer-events-auto">
                 {isAuthed ? (
                   <Link
@@ -426,6 +451,16 @@ export function Header({ isAuthed = false }: HeaderProps) {
           <div className="space-y-3 pt-8">
             {isAuthed ? (
               <>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    onClick={closeMobile}
+                    className="block rounded-sm border border-accent-500 bg-accent-500/10 px-6 py-3 text-center text-base font-semibold uppercase text-accent-300 transition-colors duration-300 hover:bg-accent-500 hover:text-navy-900"
+                    style={{ letterSpacing: "0.12em" }}
+                  >
+                    ADMIN
+                  </Link>
+                )}
                 <Link
                   href="/mypage"
                   onClick={closeMobile}

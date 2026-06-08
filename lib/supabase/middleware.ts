@@ -10,7 +10,7 @@ import type { Database } from "./database.types";
  *   (페이지 레벨 가드와 이중 안전장치).
  * - 환경변수 미설정 시 통과 (로컬·미설정 환경에서도 사이트 정상 동작).
  */
-const PROTECTED_PREFIXES = ["/mypage"];
+const PROTECTED_PREFIXES = ["/mypage", "/admin"];
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
