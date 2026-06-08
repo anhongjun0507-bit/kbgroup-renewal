@@ -3,7 +3,6 @@ import { JetBrains_Mono } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { createClient } from "@/lib/supabase/server";
-import { getPublishedOpenings } from "@/lib/job-openings";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -122,16 +121,10 @@ export default async function RootLayout({
     isAdmin = profile?.role === "admin";
   }
 
-  const openings = await getPublishedOpenings();
-  const careerLinks = openings.map((o) => ({
-    label: `${o.title} ${o.type}`,
-    href: `/careers/openings/${o.id}`,
-  }));
-
   return (
     <html lang="ko" className={`${jetbrainsMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-white text-ink-strong">
-        <Header isAuthed={!!user} isAdmin={isAdmin} careerLinks={careerLinks} />
+        <Header isAuthed={!!user} isAdmin={isAdmin} />
         <main className="flex-1">{children}</main>
         <Footer />
       </body>
