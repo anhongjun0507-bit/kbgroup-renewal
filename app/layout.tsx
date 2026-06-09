@@ -125,7 +125,9 @@ export default async function RootLayout({
     <html lang="ko" className={`${jetbrainsMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-white text-ink-strong">
         <Header isAuthed={!!user} isAdmin={isAdmin} />
-        <main className="flex-1">{children}</main>
+        {/* 고정(fixed) 헤더가 흐름에서 빠지므로 본문을 헤더 높이만큼 내림.
+            홈 Hero는 동일 값의 음수 마진(-mt)으로 상쇄해 풀스크린 유지. */}
+        <main className="flex-1 pt-16 lg:pt-[72px]">{children}</main>
         <Footer />
       </body>
     </html>

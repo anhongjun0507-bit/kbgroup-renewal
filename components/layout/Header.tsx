@@ -59,33 +59,45 @@ const NAV_ITEMS: NavItem[] = [
 
 const LAYOUT_TX = { duration: 0.45, ease: [0.4, 0, 0.2, 1] as const };
 
-function KBLogoMark({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
+function KBLogoMark({
+  size = "md",
+  tone = "onDark",
+}: {
+  size?: "sm" | "md" | "lg";
+  tone?: "onDark" | "onLight";
+}) {
   const main = size === "sm" ? 17 : size === "lg" ? 28 : 22;
   const sub = size === "sm" ? 8.5 : size === "lg" ? 11.5 : 10;
   const gap = size === "sm" ? 3 : 5;
+  const onLight = tone === "onLight";
+  /* 어두운 배경(투명 헤더, 히어로 위) → 골드 + 그림자.
+     밝은 배경(화이트 헤더) → 네이비 워드마크 + 딥골드 서브 (대비 확보). */
+  const shadow = onLight ? "none" : "0 2px 12px rgba(0,0,0,0.55)";
   return (
     <div className="flex flex-col items-center leading-none">
       <span
-        className="font-display font-bold tracking-tight text-accent-300"
-        style={{
-          fontSize: main,
-          textShadow: "0 2px 12px rgba(0,0,0,0.55)",
-        }}
+        className={cn(
+          "font-display font-bold tracking-tight",
+          onLight ? "text-navy-900" : "text-accent-300",
+        )}
+        style={{ fontSize: main, textShadow: shadow }}
       >
         (주)케이비개발
       </span>
       <span
         aria-hidden="true"
-        className="block h-px w-[72%] bg-accent-300/55"
+        className={cn(
+          "block h-px w-[72%]",
+          onLight ? "bg-accent-deep/40" : "bg-accent-300/55",
+        )}
         style={{ marginTop: gap, marginBottom: gap }}
       />
       <span
-        className="font-medium uppercase text-accent-300"
-        style={{
-          fontSize: sub,
-          letterSpacing: "0.4em",
-          textShadow: "0 2px 12px rgba(0,0,0,0.55)",
-        }}
+        className={cn(
+          "font-medium uppercase",
+          onLight ? "text-accent-deep" : "text-accent-300",
+        )}
+        style={{ fontSize: sub, letterSpacing: "0.4em", textShadow: shadow }}
       >
         KB GROUP
       </span>
@@ -112,10 +124,27 @@ export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
       setScrolled(true);
       return;
     }
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    onScroll();
+    /* rAF 스로틀 + 히스테리시스: 80px 넘으면 컴팩트, 24px 아래로 돌아오면 복귀.
+       임계값을 단일 지점이 아닌 데드존으로 두어 경계 근처 떨림(깜빡임)을 차단. */
+    let raf = 0;
+    const evaluate = () => {
+      raf = 0;
+      const y = window.scrollY;
+      setScrolled((prev) => {
+        if (!prev && y > 80) return true;
+        if (prev && y < 24) return false;
+        return prev;
+      });
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(evaluate);
+    };
+    evaluate();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, [isHomepage]);
 
   useEffect(() => {
@@ -150,11 +179,16 @@ export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
   const solid = scrolled || hovered || !isHomepage;
   /* compact = 1단 레이아웃 (스크롤 후 또는 다른 페이지). 그 외 2단. */
   const compact = scrolled || !isHomepage;
+  /* 솔리드 = 밝은(화이트) 바 → 본문/로고를 다크 톤으로.
+     투명(히어로 위) = 어두운 배경 → 화이트/골드 톤. */
+  const onLight = solid;
 
   const headerStyle: React.CSSProperties = {
-    backgroundColor: solid ? "#0A0908" : "transparent",
-    borderBottomColor: solid ? "rgba(255,255,255,0.06)" : "transparent",
-    boxShadow: solid ? "0 4px 16px rgba(0,0,0,0.30)" : "none",
+    backgroundColor: solid ? "rgba(255,255,255,0.92)" : "transparent",
+    backdropFilter: solid ? "saturate(180%) blur(12px)" : "none",
+    WebkitBackdropFilter: solid ? "saturate(180%) blur(12px)" : "none",
+    borderBottomColor: solid ? "rgba(11,26,51,0.08)" : "transparent",
+    boxShadow: solid ? "0 4px 20px rgba(11,26,51,0.06)" : "none",
     transition:
       "background-color 300ms cubic-bezier(0.4,0,0.2,1), border-color 300ms ease, box-shadow 300ms ease",
   };
@@ -172,31 +206,37 @@ export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
       >
         <Link
           href={item.href}
-          aria-label={`${item.label} — ${item.krLabel}`}
+          aria-label={`${item.krLabel} — ${item.label}`}
           aria-haspopup={hasChildren || undefined}
           aria-expanded={hasChildren ? isOpen : undefined}
           aria-current={active ? "page" : undefined}
           className={cn(
-            "group relative inline-flex min-h-10 items-center px-3 py-2 text-[12.5px] font-semibold uppercase transition-colors duration-200",
+            "group relative inline-flex min-h-10 items-center px-3 py-2 text-[16px] font-semibold transition-colors duration-200",
             "after:absolute after:left-3 after:right-3 after:bottom-0 after:h-[2px] after:w-0 after:rounded-full after:bg-accent-500 after:transition-[width,opacity] after:duration-200 after:[transition-timing-function:var(--ease)]",
             active
               ? "after:w-[calc(100%-1.5rem)] after:opacity-100"
               : "after:opacity-70 hover:after:w-[calc(100%-1.5rem)]",
-            "text-white/85 hover:text-white",
+            onLight
+              ? active
+                ? "text-ink-strong"
+                : "text-ink-muted hover:text-ink-strong"
+              : active
+                ? "text-white"
+                : "text-white/85 hover:text-white",
           )}
-          style={{ letterSpacing: "0.14em" }}
+          style={{ letterSpacing: "0.01em" }}
         >
-          {item.label}
+          {item.krLabel}
         </Link>
         {hasChildren && isOpen && (
           <div className="absolute left-1/2 top-full z-50 -translate-x-1/2">
             <span aria-hidden="true" className="block h-2 w-full" />
-            <div className="min-w-[220px] rounded-sm border border-white/10 bg-[#0A0908] py-2 shadow-[0_12px_32px_rgba(0,0,0,0.5)]">
+            <div className="min-w-[220px] rounded-md border border-line bg-white py-2 shadow-[0_12px_32px_rgba(11,26,51,0.14)]">
               {item.children!.map((child) => (
                 <Link
                   key={child.href}
                   href={child.href}
-                  className="block min-h-11 px-5 py-2.5 text-sm font-medium text-white/85 transition-colors duration-200 hover:bg-accent-500/10 hover:text-accent-300"
+                  className="block min-h-11 px-5 py-2.5 text-[15px] font-medium text-ink-muted transition-colors duration-200 hover:bg-accent-50 hover:text-accent-deep"
                 >
                   {child.label}
                 </Link>
@@ -211,23 +251,26 @@ export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
   return (
     <MotionConfig transition={LAYOUT_TX}>
       <header
-        className="site-header sticky top-0 z-50 border-b"
+        className="site-header fixed inset-x-0 top-0 z-50 border-b"
         style={headerStyle}
         data-scrolled={scrolled || undefined}
-        data-surface="dark"
+        data-surface={solid ? undefined : "dark"}
         onMouseEnter={() => isHomepage && setHovered(true)}
         onMouseLeave={() => isHomepage && setHovered(false)}
       >
         <div className="mx-auto w-full max-w-[1400px] px-5 md:px-8">
-          {/* Mobile (lg 미만) — 항상 1단 / 햄버거 + 가운데 로고 */}
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center pt-4 pb-3 md:pt-5 lg:hidden">
+          {/* Mobile (lg 미만) — 항상 1단 / 햄버거 + 가운데 로고. 고정 높이 h-16(64px). */}
+          <div className="grid h-16 grid-cols-[1fr_auto_1fr] items-center lg:hidden">
             <button
               type="button"
               aria-label={mobileOpen ? "메뉴 닫기" : "메뉴 열기"}
               aria-expanded={mobileOpen}
               aria-controls="mobile-menu"
               onClick={() => setMobileOpen((v) => !v)}
-              className="inline-flex h-11 w-11 items-center justify-center text-white transition-colors"
+              className={cn(
+                "inline-flex h-11 w-11 items-center justify-center transition-colors",
+                onLight ? "text-ink-strong" : "text-white",
+              )}
             >
               {mobileOpen ? (
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -245,7 +288,7 @@ export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
               className="btn-reset flex-shrink-0 justify-self-center"
               onClick={closeMobile}
             >
-              <KBLogoMark size="sm" />
+              <KBLogoMark size="sm" tone={onLight ? "onLight" : "onDark"} />
             </Link>
             <div />
           </div>
@@ -271,7 +314,10 @@ export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
                     className="btn-reset"
                     onClick={closeMobile}
                   >
-                    <KBLogoMark size={compact ? "sm" : "lg"} />
+                    <KBLogoMark
+                      size={compact ? "sm" : "lg"}
+                      tone={onLight ? "onLight" : "onDark"}
+                    />
                   </Link>
                 </motion.div>
 
@@ -296,8 +342,13 @@ export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
                   <Link
                     href="/admin"
                     aria-label="ADMIN — 관리자 페이지"
-                    className="inline-flex min-h-9 items-center px-2 text-[11px] font-semibold uppercase text-accent-300 transition-colors duration-200 hover:text-accent-200"
-                    style={{ letterSpacing: "0.18em" }}
+                    className={cn(
+                      "inline-flex min-h-9 items-center px-2.5 text-[14px] font-semibold uppercase transition-colors duration-200",
+                      onLight
+                        ? "text-accent-deep hover:text-accent-ink"
+                        : "text-accent-300 hover:text-accent-200",
+                    )}
+                    style={{ letterSpacing: "0.16em" }}
                   >
                     ADMIN
                   </Link>
@@ -308,16 +359,26 @@ export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
                   <Link
                     href="/mypage"
                     aria-label="MY PAGE — 마이페이지"
-                    className="inline-flex min-h-9 items-center px-2 text-[11px] font-semibold uppercase text-white/85 transition-colors duration-200 hover:text-white"
-                    style={{ letterSpacing: "0.18em" }}
+                    className={cn(
+                      "inline-flex min-h-9 items-center px-2.5 text-[14px] font-semibold uppercase transition-colors duration-200",
+                      onLight
+                        ? "text-ink-muted hover:text-ink-strong"
+                        : "text-white/85 hover:text-white",
+                    )}
+                    style={{ letterSpacing: "0.16em" }}
                   >
                     MY PAGE
                   </Link>
                 ) : (
                   <Link
                     href="/login"
-                    className="inline-flex min-h-9 items-center px-2 text-[11px] font-semibold uppercase text-white/85 transition-colors duration-200 hover:text-white"
-                    style={{ letterSpacing: "0.18em" }}
+                    className={cn(
+                      "inline-flex min-h-9 items-center px-2.5 text-[14px] font-semibold uppercase transition-colors duration-200",
+                      onLight
+                        ? "text-ink-muted hover:text-ink-strong"
+                        : "text-white/85 hover:text-white",
+                    )}
+                    style={{ letterSpacing: "0.16em" }}
                   >
                     LOGIN
                   </Link>
@@ -385,13 +446,16 @@ export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
                     >
                       <span className="flex flex-col">
                         <span
-                          className="text-[20px] font-bold uppercase text-white"
-                          style={{ letterSpacing: "0.10em" }}
+                          className="text-[22px] font-bold text-white"
+                          style={{ letterSpacing: "0.01em" }}
+                        >
+                          {item.krLabel}
+                        </span>
+                        <span
+                          className="mt-1 text-[11px] uppercase text-white/50"
+                          style={{ letterSpacing: "0.16em" }}
                         >
                           {item.label}
-                        </span>
-                        <span className="mt-1 text-[12px] text-white/55">
-                          {item.krLabel}
                         </span>
                       </span>
                       <span
@@ -430,13 +494,16 @@ export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
                   >
                     <span className="flex flex-col">
                       <span
-                        className="text-[20px] font-bold uppercase text-white"
-                        style={{ letterSpacing: "0.10em" }}
+                        className="text-[22px] font-bold text-white"
+                        style={{ letterSpacing: "0.01em" }}
+                      >
+                        {item.krLabel}
+                      </span>
+                      <span
+                        className="mt-1 text-[11px] uppercase text-white/50"
+                        style={{ letterSpacing: "0.16em" }}
                       >
                         {item.label}
-                      </span>
-                      <span className="mt-1 text-[12px] text-white/55">
-                        {item.krLabel}
                       </span>
                     </span>
                   </Link>

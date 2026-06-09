@@ -136,7 +136,7 @@ export function Hero() {
     <section
       aria-label="히어로"
       data-surface="dark"
-      className="relative isolate -mt-[88px] w-full overflow-hidden bg-black text-white md:-mt-[100px] lg:-mt-[148px]"
+      className="relative isolate -mt-16 w-full overflow-hidden bg-black text-white lg:-mt-[72px]"
       style={{ height: "100svh", minHeight: 600 }}
     >
       {/* Slide stack */}
