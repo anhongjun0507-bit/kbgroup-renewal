@@ -88,6 +88,13 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  /* 네이버 서치어드바이저(서치 플레이스) 사이트 소유확인 메타.
+     Next Metadata API가 <meta name="naver-site-verification" ...>로 <head>에 출력. */
+  verification: {
+    other: {
+      "naver-site-verification": "eac6369278c57917b0c25f51a2b9c6478905f569",
+    },
+  },
 };
 
 /* Phase 14 P0 — viewport 메타 (모바일 렌더링 핵심).
