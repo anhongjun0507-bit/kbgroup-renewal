@@ -1,13 +1,33 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/common/PageHero";
-import { NoticesList } from "@/components/sections/notices/NoticesList";
+import { PostListSection } from "@/components/sections/notices/PostListSection";
+import { getViewer } from "@/lib/auth";
+import { getBoardConfig } from "@/lib/boards";
+import { listPosts } from "@/lib/posts";
 
 export const metadata: Metadata = {
   title: "단지소식 | (주)케이비개발",
   description: "관리 단지의 운영 소식과 입주민 안내.",
 };
 
-export default function NewsPage() {
+export const dynamic = "force-dynamic";
+
+const PAGE_SIZE = 12;
+
+export default async function NewsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; q?: string }>;
+}) {
+  const config = getBoardConfig("news");
+  const { page: rawPage, q: rawQ } = await searchParams;
+  const q = (rawQ ?? "").trim();
+  const page = Math.max(1, Number.parseInt(rawPage ?? "1", 10) || 1);
+
+  const { isAdmin } = await getViewer();
+  const { posts, total } = await listPosts("news", { page, pageSize: PAGE_SIZE, q });
+  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
   return (
     <>
       <PageHero
@@ -21,7 +41,15 @@ export default function NewsPage() {
           { label: "NEWS" },
         ]}
       />
-      <NoticesList items={[]} defaultCategory="complex" lockCategory />
+      <PostListSection
+        config={config}
+        posts={posts}
+        total={total}
+        page={page}
+        pageCount={pageCount}
+        q={q}
+        isAdmin={isAdmin}
+      />
     </>
   );
 }

@@ -2,28 +2,46 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { Container } from "@/components/ui";
-import { NoticesList } from "@/components/sections/notices/NoticesList";
-import { NOTICES } from "./data";
+import { PostListSection } from "@/components/sections/notices/PostListSection";
+import { getViewer } from "@/lib/auth";
+import { getBoardConfig } from "@/lib/boards";
+import { listPosts } from "@/lib/posts";
 
 export const metadata: Metadata = {
   title: "공지사항 | (주)케이비개발",
   description:
-    "케이비개발의 공지·신규단지·언론보도·채용 공고를 한 곳에서 확인하세요.",
+    "(주)케이비개발의 공지·안내 소식을 확인하세요.",
 };
 
-export default function NoticesPage() {
+export const dynamic = "force-dynamic";
+
+const PAGE_SIZE = 12;
+
+export default async function NoticesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; q?: string }>;
+}) {
+  const config = getBoardConfig("notice");
+  const { page: rawPage, q: rawQ } = await searchParams;
+  const q = (rawQ ?? "").trim();
+  const page = Math.max(1, Number.parseInt(rawPage ?? "1", 10) || 1);
+
+  const { isAdmin } = await getViewer();
+  const { posts, total } = await listPosts("notice", { page, pageSize: PAGE_SIZE, q });
+  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
   return (
     <>
       <PageHero
         kicker="NOTICES"
         title="공지사항"
         italicWord="공지"
-        subtitle="(주)케이비개발의 공지·소식을 카테고리별로 확인하세요."
-        breadcrumb={[
-          { label: "HOME", href: "/" },
-          { label: "NOTICES" },
-        ]}
+        subtitle="(주)케이비개발의 공지·소식을 확인하세요."
+        breadcrumb={[{ label: "HOME", href: "/" }, { label: "NOTICES" }]}
       />
+
+      {/* 자유게시판 안내 카드 */}
       <section className="bg-white pt-12 md:pt-16">
         <Container>
           <Link
@@ -60,7 +78,16 @@ export default function NoticesPage() {
           </Link>
         </Container>
       </section>
-      <NoticesList items={NOTICES} />
+
+      <PostListSection
+        config={config}
+        posts={posts}
+        total={total}
+        page={page}
+        pageCount={pageCount}
+        q={q}
+        isAdmin={isAdmin}
+      />
     </>
   );
 }

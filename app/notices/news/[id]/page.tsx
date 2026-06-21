@@ -16,41 +16,42 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const post = await getPost("notice", id);
+  const post = await getPost("news", id);
   return {
     title: post
-      ? `${post.title} | 공지사항 | (주)케이비개발`
-      : "공지사항 | (주)케이비개발",
+      ? `${post.title} | 단지소식 | (주)케이비개발`
+      : "단지소식 | (주)케이비개발",
     description: post?.content?.slice(0, 120) ?? undefined,
   };
 }
 
-export default async function NoticeDetailPage({
+export default async function NewsDetailPage({
   params,
 }: {
   params: Promise<Params>;
 }) {
   const { id } = await params;
-  const config = getBoardConfig("notice");
+  const config = getBoardConfig("news");
 
-  const post = await getPost("notice", id);
+  const post = await getPost("news", id);
   if (!post) notFound();
 
   const { isAdmin } = await getViewer();
   const [attachments, adj] = await Promise.all([
     getAttachments(post.id),
-    getAdjacentPosts("notice", post.postNumber),
+    getAdjacentPosts("news", post.postNumber),
   ]);
 
   return (
     <>
       <PageHero
-        kicker="NOTICE"
+        kicker="DISTRICT NEWS"
         title={post.title}
         subtitle={config.subtitle}
         breadcrumb={[
           { label: "HOME", href: "/" },
           { label: "NOTICES", href: "/notices" },
+          { label: "NEWS", href: "/notices/news" },
           { label: "DETAIL" },
         ]}
       />

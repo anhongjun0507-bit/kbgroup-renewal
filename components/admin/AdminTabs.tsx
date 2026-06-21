@@ -1,14 +1,15 @@
 import Link from "next/link";
 
-/** 관리자 페이지 상단 탭 (지원·문의 / 채용 공고). */
+/** 관리자 페이지 상단 탭 (지원·문의 / 채용 공고 / 소식 관리). */
 export function AdminTabs({
   active,
 }: {
-  active: "applications" | "openings";
+  active: "applications" | "openings" | "posts";
 }) {
   const tabs = [
     { key: "applications", label: "지원·문의", href: "/admin" },
     { key: "openings", label: "채용 공고", href: "/admin/openings" },
+    { key: "posts", label: "소식 관리", href: "/admin/posts" },
   ] as const;
 
   return (

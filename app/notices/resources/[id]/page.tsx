@@ -16,41 +16,41 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const post = await getPost("notice", id);
+  const post = await getPost("resources", id);
   return {
     title: post
-      ? `${post.title} | 공지사항 | (주)케이비개발`
-      : "공지사항 | (주)케이비개발",
-    description: post?.content?.slice(0, 120) ?? undefined,
+      ? `${post.title} | 자료실 | (주)케이비개발`
+      : "자료실 | (주)케이비개발",
   };
 }
 
-export default async function NoticeDetailPage({
+export default async function ResourceDetailPage({
   params,
 }: {
   params: Promise<Params>;
 }) {
   const { id } = await params;
-  const config = getBoardConfig("notice");
+  const config = getBoardConfig("resources");
 
-  const post = await getPost("notice", id);
+  const post = await getPost("resources", id);
   if (!post) notFound();
 
   const { isAdmin } = await getViewer();
   const [attachments, adj] = await Promise.all([
     getAttachments(post.id),
-    getAdjacentPosts("notice", post.postNumber),
+    getAdjacentPosts("resources", post.postNumber),
   ]);
 
   return (
     <>
       <PageHero
-        kicker="NOTICE"
+        kicker="RESOURCES"
         title={post.title}
         subtitle={config.subtitle}
         breadcrumb={[
           { label: "HOME", href: "/" },
           { label: "NOTICES", href: "/notices" },
+          { label: "RESOURCES", href: "/notices/resources" },
           { label: "DETAIL" },
         ]}
       />
