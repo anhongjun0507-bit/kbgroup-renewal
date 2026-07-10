@@ -17,7 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
 const SITE_URL = "https://kbgroup-renewal.vercel.app";
 const SITE_TITLE = "KB GROUP | (주)케이비개발";
 const SITE_DESC =
-  "신뢰받는 종합 시설관리 파트너 — 시설관리·위생청소·경비보안·시행건설 B2B 전문 서비스. 광주광역시 광산구 월계로 223-22.";
+  "신뢰받는 종합 시설관리 파트너 — 시설관리·위생청소·경비보안·시행건설 B2B 전문 서비스. 전남광주특별시 광산구 월계로 223-22.";
 
 export const metadata: Metadata = {
   title: {

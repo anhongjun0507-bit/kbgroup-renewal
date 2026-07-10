@@ -49,7 +49,7 @@ export function OpeningForm({
           name="location"
           label="모집 지역"
           defaultValue={initial?.location}
-          placeholder="예) 광주광역시 광산구"
+          placeholder="예) 전남광주특별시 광산구"
         />
         <Text
           name="deadline"
