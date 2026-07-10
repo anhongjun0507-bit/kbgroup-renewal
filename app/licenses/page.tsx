@@ -21,6 +21,7 @@ export default function LicensesPage() {
         title="검증된 자격, 보장된 신뢰"
         italicWord="신뢰"
         subtitle="11종의 보유 인허가와 1,575명의 자격증 보유 전문 인력이 케이비개발의 기술 자산입니다."
+        bgImage="/images/hero/pages/licenses.png"
         breadcrumb={[
           { label: "HOME", href: "/" },
           { label: "LICENSES" },

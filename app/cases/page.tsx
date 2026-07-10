@@ -20,6 +20,7 @@ export default function CasesPage() {
         title="전국 단지의 신뢰 발자취"
         italicWord="발자취"
         subtitle="LH 공공임대부터 민간 단지까지, 케이비개발이 운영하는 단지의 현황입니다."
+        bgImage="/images/hero/pages/cases.png"
         breadcrumb={[
           { label: "HOME", href: "/" },
           { label: "CASES" },

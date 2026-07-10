@@ -25,6 +25,7 @@ export default function AboutPage() {
         title="가치의 실현"
         italicWord="실현"
         subtitle="단순한 시설관리를 넘어, 공간을 책임지는 파트너로."
+        bgImage="/images/hero/pages/about.png"
         breadcrumb={[
           { label: "HOME", href: "/" },
           { label: "ABOUT", href: "/about" },

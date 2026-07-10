@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Fragment } from "react";
 import {
   motion,
@@ -22,6 +23,10 @@ interface Props {
   italicWord?: string;
   subtitle: string;
   breadcrumb: BreadcrumbItem[];
+  /** 히어로 우측 배경 사진 경로. 지정 시 텍스트 좌측은 bg-soft로 페이드되어 가독성 유지 */
+  bgImage?: string;
+  /** 배경 사진 object-position (기본 center). 예) "right center" */
+  bgPosition?: string;
 }
 
 function renderTitle(title: string, italicWord?: string) {
@@ -44,6 +49,8 @@ export function PageHero({
   italicWord,
   subtitle,
   breadcrumb,
+  bgImage,
+  bgPosition = "center",
 }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
 
@@ -80,7 +87,42 @@ export function PageHero({
       aria-labelledby="page-hero-title"
       className="relative overflow-hidden border-b border-line bg-bg-soft pt-16 pb-14 md:pt-20 md:pb-16 lg:pt-24 lg:pb-20"
     >
-      <Container className="relative">
+      {/* 우측 배경 사진 — 좌측 텍스트 영역은 bg-soft로 페이드되어 가독성 유지.
+          bgImage 미지정 시 렌더링 안 함(기존 텍스트 전용 히어로 유지). */}
+      {bgImage && (
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
+          <div className="absolute inset-y-0 right-0 w-full md:w-[62%] lg:w-[56%]">
+            <Image
+              src={bgImage}
+              alt=""
+              fill
+              priority
+              quality={85}
+              sizes="(max-width: 768px) 100vw, 60vw"
+              className="object-cover"
+              style={{ objectPosition: bgPosition }}
+            />
+          </div>
+          {/* 데스크톱: 좌→우 페이드로 텍스트 배경을 bg-soft 단색으로 */}
+          <div
+            className="absolute inset-0 hidden md:block"
+            style={{
+              background:
+                "linear-gradient(90deg, #F7F8FA 0%, #F7F8FA 30%, rgba(247,248,250,0.72) 46%, rgba(247,248,250,0) 70%)",
+            }}
+          />
+          {/* 모바일: 사진이 전체폭이므로 좌측을 더 강하게 덮어 텍스트 가독 확보 */}
+          <div
+            className="absolute inset-0 md:hidden"
+            style={{
+              background:
+                "linear-gradient(90deg, #F7F8FA 0%, rgba(247,248,250,0.92) 42%, rgba(247,248,250,0.55) 100%)",
+            }}
+          />
+        </div>
+      )}
+
+      <Container className="relative z-10">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="mb-8 md:mb-10">
           <ol className="flex flex-wrap items-center gap-2 text-[11px] tracking-[0.15em] text-ink-muted">

@@ -13,10 +13,11 @@ export default function BusinessIndexPage() {
   return (
     <>
       <PageHero
-        kicker="BUSINESS"
+        kicker="핵심 가치"
         title="다섯 가지 사업 영역"
         italicWord="영역"
-        subtitle="케이비개발은 주택관리부터 시행건설까지 다섯 가지 전문 분야에서 단지의 일상을 책임집니다."
+        subtitle="고객의 다양한 니즈를 반영하여 최적의 솔루션을 제공합니다."
+        bgImage="/images/hero/pages/business.png"
         breadcrumb={[
           { label: "HOME", href: "/" },
           { label: "BUSINESS" },

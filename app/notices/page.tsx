@@ -38,6 +38,7 @@ export default async function NoticesPage({
         title="공지사항"
         italicWord="공지"
         subtitle="(주)케이비개발의 공지·소식을 확인하세요."
+        bgImage="/images/hero/pages/notices.png"
         breadcrumb={[{ label: "HOME", href: "/" }, { label: "NOTICES" }]}
       />
 
