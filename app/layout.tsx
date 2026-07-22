@@ -92,7 +92,7 @@ export const metadata: Metadata = {
      Next Metadata API가 <meta name="naver-site-verification" ...>로 <head>에 출력. */
   verification: {
     other: {
-      "naver-site-verification": "eac6369278c57917b0c25f51a2b9c6478905f569",
+      "naver-site-verification": "cb77b97b9f6e52245246b376b4ee9be4ebf1f05f",
     },
   },
 };
