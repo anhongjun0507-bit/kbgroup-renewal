@@ -15,3 +15,6 @@ public/images/hero/*
 !public/images/hero/slide-06.png
 !public/images/hero/slide-07.png
 !public/images/hero/slide-08.png
+# 서브페이지 히어로 배경(pages/*.png) — 배포에 포함 (2026-07 추가)
+!public/images/hero/pages
+!public/images/hero/pages/*
