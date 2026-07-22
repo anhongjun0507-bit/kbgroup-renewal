@@ -91,35 +91,38 @@ export function PageHero({
           bgImage 미지정 시 렌더링 안 함(기존 텍스트 전용 히어로 유지). */}
       {bgImage && (
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
-          <div className="absolute inset-y-0 right-0 w-full md:w-[62%] lg:w-[56%]">
+          {/* 사진을 full-bleed(전체폭)로 깔아 사진 박스의 세로 모서리(딱 떨어지는 '선')
+              자체를 제거. 왼쪽 텍스트는 그 위에 bg-soft 스크림으로 덮어 가독성 유지.
+              → 흰 배경과 사진이 경계선 없이 매끄럽게 녹아든다. */}
+          <div className="absolute inset-0">
             <Image
               src={bgImage}
               alt=""
               fill
               priority
               quality={85}
-              sizes="(max-width: 768px) 100vw, 60vw"
+              sizes="100vw"
               className="object-cover"
               style={{ objectPosition: bgPosition }}
             />
           </div>
-          {/* 데스크톱: 좌→우 페이드로 텍스트 배경을 bg-soft 단색으로.
-              정지점을 촘촘히 + 알파를 이징 곡선으로 배치해 흰 배경↔사진 경계의
-              '띠(band)' 없이 매끄럽게 연결. 텍스트 영역(≤48%)은 알파 ≥0.8 유지. */}
+          {/* 데스크톱: 좌(단색)→우(투명) 스크림. 사진이 전 폭에 깔려 있으므로
+              모서리 seam이 없고, 알파만 이징 곡선으로 완만히 풀려 부드럽게 이어짐.
+              텍스트 영역(≤~54%)은 알파 ≥0.75로 가독 확보. */}
           <div
             className="absolute inset-0 hidden md:block"
             style={{
               background:
-                "linear-gradient(90deg, #F7F8FA 0%, #F7F8FA 24%, rgba(247,248,250,0.94) 36%, rgba(247,248,250,0.82) 45%, rgba(247,248,250,0.62) 55%, rgba(247,248,250,0.4) 64%, rgba(247,248,250,0.2) 73%, rgba(247,248,250,0.06) 82%, rgba(247,248,250,0) 90%)",
+                "linear-gradient(90deg, #F7F8FA 0%, #F7F8FA 28%, rgba(247,248,250,0.97) 36%, rgba(247,248,250,0.9) 44%, rgba(247,248,250,0.78) 52%, rgba(247,248,250,0.6) 60%, rgba(247,248,250,0.38) 69%, rgba(247,248,250,0.18) 79%, rgba(247,248,250,0.05) 88%, rgba(247,248,250,0) 95%)",
             }}
           />
-          {/* 모바일: 사진이 전체폭이므로 좌측을 더 강하게 덮어 텍스트 가독 확보.
-              끝까지 완전 투명은 아니되(가독성), 단계를 촘촘히 해 부드럽게 이어짐. */}
+          {/* 모바일: 사진이 전체폭이라 텍스트가 사진 위에 겹침 → 좌측을 강하게 덮되
+              끝단도 은은한 베일(0.6)을 남겨 가독 확보. 단계는 촘촘히. */}
           <div
             className="absolute inset-0 md:hidden"
             style={{
               background:
-                "linear-gradient(90deg, #F7F8FA 0%, rgba(247,248,250,0.95) 28%, rgba(247,248,250,0.86) 44%, rgba(247,248,250,0.74) 60%, rgba(247,248,250,0.62) 78%, rgba(247,248,250,0.55) 100%)",
+                "linear-gradient(90deg, #F7F8FA 0%, rgba(247,248,250,0.98) 24%, rgba(247,248,250,0.9) 44%, rgba(247,248,250,0.8) 64%, rgba(247,248,250,0.7) 84%, rgba(247,248,250,0.64) 100%)",
             }}
           />
         </div>
