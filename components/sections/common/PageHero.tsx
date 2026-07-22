@@ -103,20 +103,23 @@ export function PageHero({
               style={{ objectPosition: bgPosition }}
             />
           </div>
-          {/* 데스크톱: 좌→우 페이드로 텍스트 배경을 bg-soft 단색으로 */}
+          {/* 데스크톱: 좌→우 페이드로 텍스트 배경을 bg-soft 단색으로.
+              정지점을 촘촘히 + 알파를 이징 곡선으로 배치해 흰 배경↔사진 경계의
+              '띠(band)' 없이 매끄럽게 연결. 텍스트 영역(≤48%)은 알파 ≥0.8 유지. */}
           <div
             className="absolute inset-0 hidden md:block"
             style={{
               background:
-                "linear-gradient(90deg, #F7F8FA 0%, #F7F8FA 30%, rgba(247,248,250,0.72) 46%, rgba(247,248,250,0) 70%)",
+                "linear-gradient(90deg, #F7F8FA 0%, #F7F8FA 24%, rgba(247,248,250,0.94) 36%, rgba(247,248,250,0.82) 45%, rgba(247,248,250,0.62) 55%, rgba(247,248,250,0.4) 64%, rgba(247,248,250,0.2) 73%, rgba(247,248,250,0.06) 82%, rgba(247,248,250,0) 90%)",
             }}
           />
-          {/* 모바일: 사진이 전체폭이므로 좌측을 더 강하게 덮어 텍스트 가독 확보 */}
+          {/* 모바일: 사진이 전체폭이므로 좌측을 더 강하게 덮어 텍스트 가독 확보.
+              끝까지 완전 투명은 아니되(가독성), 단계를 촘촘히 해 부드럽게 이어짐. */}
           <div
             className="absolute inset-0 md:hidden"
             style={{
               background:
-                "linear-gradient(90deg, #F7F8FA 0%, rgba(247,248,250,0.92) 42%, rgba(247,248,250,0.55) 100%)",
+                "linear-gradient(90deg, #F7F8FA 0%, rgba(247,248,250,0.95) 28%, rgba(247,248,250,0.86) 44%, rgba(247,248,250,0.74) 60%, rgba(247,248,250,0.62) 78%, rgba(247,248,250,0.55) 100%)",
             }}
           />
         </div>
