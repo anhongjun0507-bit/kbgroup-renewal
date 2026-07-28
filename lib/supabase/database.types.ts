@@ -290,6 +290,7 @@ export type Database = {
           email: string
           id: string
           role: string
+          status: string
           updated_at: string
         }
         Insert: {
@@ -298,6 +299,7 @@ export type Database = {
           email: string
           id: string
           role?: string
+          status?: string
           updated_at?: string
         }
         Update: {
@@ -306,6 +308,7 @@ export type Database = {
           email?: string
           id?: string
           role?: string
+          status?: string
           updated_at?: string
         }
         Relationships: []

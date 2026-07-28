@@ -52,12 +52,13 @@ export async function signupAction(
     return { error: translateAuthError(error.message), fieldErrors: {} };
   }
 
-  // 이메일 인증이 꺼져 있으면(현 Supabase 설정) signUp이 곧바로 세션을 반환 → 자동 로그인.
-  // 인증이 켜진 환경(폴백)에서는 세션이 없으므로 메일 확인 안내 페이지로 이동.
+  // 가입 승인제: 계정(profiles.status='pending')은 생성되지만 관리자 승인 전까지는
+  // 로그인할 수 없다. 이메일 인증이 꺼진 현 설정에선 signUp이 세션을 즉시 반환하며
+  // 자동 로그인되므로, 그 세션을 곧바로 로그아웃해 승인 전 접근을 차단한다.
   if (data.session) {
-    revalidatePath("/", "layout");
-    redirect("/mypage");
+    await supabase.auth.signOut();
   }
 
-  redirect(`/signup/confirm?email=${encodeURIComponent(email)}`);
+  revalidatePath("/", "layout");
+  redirect("/signup/pending");
 }

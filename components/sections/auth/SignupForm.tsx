@@ -63,12 +63,17 @@ export function SignupForm() {
             error={state.fieldErrors?.displayName}
           />
 
+          <p className="border-l-2 border-line bg-beige/40 px-4 py-3 text-[13px] leading-relaxed text-ink-soft">
+            가입 신청 후 <span className="font-medium text-ink">관리자 승인</span>이
+            완료되어야 로그인할 수 있습니다.
+          </p>
+
           <button
             type="submit"
             disabled={isPending}
             className="mt-4 w-full bg-primary px-7 py-3.5 text-base font-medium tracking-[0.02em] text-white transition-all duration-300 hover:bg-primary-dark hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
           >
-            {isPending ? "처리 중..." : "회원가입"}
+            {isPending ? "처리 중..." : "가입 신청"}
           </button>
 
           <p className="pt-2 text-center text-sm text-ink-soft">

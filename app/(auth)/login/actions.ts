@@ -29,10 +29,33 @@ export async function loginAction(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
   if (error) {
     return { error: translateAuthError(error.message) };
+  }
+
+  // 가입 승인제 게이트: 승인되지 않은 계정은 로그인 직후 세션을 파기한다.
+  // (관리자는 status와 무관하게 항상 로그인 허용 — 잠금 방지 안전장치)
+  if (data.user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role, status")
+      .eq("id", data.user.id)
+      .single();
+
+    if (profile?.role !== "admin" && profile?.status !== "approved") {
+      await supabase.auth.signOut();
+      return {
+        error:
+          profile?.status === "rejected"
+            ? "가입이 거절된 계정입니다. 자세한 내용은 운영 담당자에게 문의해 주세요."
+            : "관리자 승인 대기 중인 계정입니다. 승인 완료 후 로그인할 수 있습니다.",
+      };
+    }
   }
 
   // Header가 user 상태를 다시 읽도록 layout 단위 revalidate

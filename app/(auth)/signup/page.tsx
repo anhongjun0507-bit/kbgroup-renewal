@@ -14,7 +14,7 @@ export default function SignupPage() {
         kicker="JOIN US · 회원가입"
         title="당신과 함께"
         italicWord="당신"
-        subtitle="회원가입 후 자료실 다운로드 등 추가 기능을 이용하실 수 있습니다."
+        subtitle="가입 신청 후 관리자 승인이 완료되면 자료실 다운로드 등 회원 기능을 이용하실 수 있습니다."
         breadcrumb={[
           { label: "HOME", href: "/" },
           { label: "JOIN" },
