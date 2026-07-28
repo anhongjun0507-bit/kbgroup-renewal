@@ -3,13 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { translateAuthError } from "@/lib/supabase/auth-errors";
-
-export type FormState = {
-  status: "idle" | "success" | "error";
-  message: string | null;
-};
-
-const IDLE: FormState = { status: "idle", message: null };
+import type { FormState } from "./form-state";
 
 export async function updateDisplayName(
   _prev: FormState,
@@ -67,6 +61,3 @@ export async function updatePassword(
 
   return { status: "success", message: "비밀번호를 변경했습니다." };
 }
-
-// _IDLE은 client 측 useActionState 초기값으로도 재사용
-export { IDLE as INITIAL_FORM_STATE };

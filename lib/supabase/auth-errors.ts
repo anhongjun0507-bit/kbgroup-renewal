@@ -28,6 +28,15 @@ const PATTERN_MAP: Array<{ test: RegExp; ko: string }> = [
     ko: "비밀번호는 8자 이상이어야 합니다.",
   },
   {
+    // "New password should be different from the old password." (끝 마침표 포함 변형 대응)
+    test: /different from the old password/i,
+    ko: "기존 비밀번호와 다른 비밀번호를 입력해주세요.",
+  },
+  {
+    test: /weak|known to be|easy to guess|compromised|pwned/i,
+    ko: "보안에 취약한 비밀번호입니다. 다른 비밀번호를 사용해주세요.",
+  },
+  {
     test: /For security purposes, you can only request this after (\d+) seconds/i,
     ko: "보안상 잠시 후 다시 시도해주세요.",
   },
@@ -44,7 +53,10 @@ const PATTERN_MAP: Array<{ test: RegExp; ko: string }> = [
 export function translateAuthError(message: string | null | undefined): string {
   if (!message) return "알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
 
+  // 일부 Supabase 메시지는 끝에 마침표가 붙어 정확 매칭을 놓친다 → 정규화 후에도 조회.
+  const normalized = message.trim().replace(/\.+$/, "");
   if (EXACT_MAP[message]) return EXACT_MAP[message];
+  if (EXACT_MAP[normalized]) return EXACT_MAP[normalized];
 
   for (const { test, ko } of PATTERN_MAP) {
     if (test.test(message)) return ko;

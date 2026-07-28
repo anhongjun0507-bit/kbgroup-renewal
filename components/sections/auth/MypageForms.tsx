@@ -4,9 +4,11 @@ import { useActionState } from "react";
 import {
   updateDisplayName,
   updatePassword,
+} from "@/app/(auth)/mypage/actions";
+import {
   INITIAL_FORM_STATE,
   type FormState,
-} from "@/app/(auth)/mypage/actions";
+} from "@/app/(auth)/mypage/form-state";
 
 interface Props {
   currentDisplayName: string | null;
