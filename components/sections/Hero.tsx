@@ -118,19 +118,25 @@ export function Hero() {
     });
   }, [active]);
 
-  /* 페이지 진입 직후 모든 영상 사전 로드 (iOS Safari는 preload=auto 무시하므로 load() 강제 호출) */
+  /* 활성 슬라이드와 '다음' 슬라이드 영상만 사전 로드.
+     기존엔 진입 즉시 영상 5개를 모두 load()해 홈 초기 로딩이 수십 MB에 달했다.
+     현재+다음 2개만 로드하면 초기 다운로드가 대폭 줄고, 다음 영상은 현재 영상
+     재생 중(수 초)에 미리 받아둬 전환 시점엔 준비가 끝난다.
+     (iOS Safari는 preload 속성을 무시하므로 load() 강제 호출.) */
   useEffect(() => {
-    SLIDES.forEach((slide, i) => {
+    [active, (active + 1) % SLIDES.length].forEach((i) => {
+      const slide = SLIDES[i];
       if (slide.type !== "video") return;
       const el = videoRefs.current[i];
-      if (!el) return;
+      if (!el || el.dataset.loaded) return;
+      el.dataset.loaded = "1";
       try {
         el.load();
       } catch {
         /* noop */
       }
     });
-  }, []);
+  }, [active]);
 
   return (
     <section
@@ -162,7 +168,7 @@ export function Hero() {
                 autoPlay={i === 0}
                 muted
                 playsInline
-                preload="auto"
+                preload={i === 0 ? "auto" : "none"}
                 onTimeUpdate={(e) => {
                   if (i !== active) return;
                   const v = e.currentTarget;

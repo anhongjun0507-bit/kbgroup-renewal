@@ -49,18 +49,28 @@ function formatDate(iso: string): string {
 export default async function AdminMembersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; q?: string }>;
 }) {
   const { supabase, user, profile } = await requireAdmin();
-  const { status: rawStatus } = await searchParams;
+  const { status: rawStatus, q: rawQ } = await searchParams;
   const filter = FILTERS.some((f) => f.key === rawStatus) ? rawStatus! : "all";
+  const q = (rawQ ?? "").trim();
 
   const { data, error } = await supabase
     .from("profiles")
     .select("id, email, display_name, role, status, created_at")
     .order("created_at", { ascending: false });
 
-  const members = data ?? [];
+  const allMembers = data ?? [];
+  // 이름·이메일 검색 (대소문자 무시). 상태 카운트·필터는 검색 결과 안에서 동작.
+  const needle = q.toLowerCase();
+  const members = needle
+    ? allMembers.filter(
+        (m) =>
+          m.email.toLowerCase().includes(needle) ||
+          (m.display_name ?? "").toLowerCase().includes(needle),
+      )
+    : allMembers;
   const counts: Record<string, number> = {
     all: members.length,
     pending: members.filter((m) => m.status === "pending").length,
@@ -69,6 +79,15 @@ export default async function AdminMembersPage({
   };
   const list =
     filter === "all" ? members : members.filter((m) => m.status === filter);
+
+  // 상태 필터 링크에 현재 검색어를 유지. (검색어 초기화 링크에서도 재사용)
+  const buildHref = (statusKey: string) => {
+    const params = new URLSearchParams();
+    if (statusKey !== "all") params.set("status", statusKey);
+    if (q) params.set("q", q);
+    const qs = params.toString();
+    return qs ? `/admin/members?${qs}` : "/admin/members";
+  };
 
   return (
     <section className="section min-h-[70vh] bg-bg-soft">
@@ -83,17 +102,33 @@ export default async function AdminMembersPage({
               회원 관리
             </h1>
             <p className="mt-3 text-[14px] text-ink-muted">
-              {profile?.display_name ?? profile?.email} 님 · 총{" "}
-              <span className="font-semibold text-ink-strong">{counts.all}</span>
-              명
-              {counts.pending > 0 && (
+              {profile?.display_name ?? profile?.email} 님 ·{" "}
+              {q ? (
                 <>
-                  {" "}
-                  · 승인 대기{" "}
-                  <span className="font-semibold text-accent-deep">
-                    {counts.pending}
+                  <span className="font-semibold text-ink-strong">‘{q}’</span>{" "}
+                  검색결과{" "}
+                  <span className="font-semibold text-ink-strong">
+                    {counts.all}
                   </span>
                   명
+                </>
+              ) : (
+                <>
+                  총{" "}
+                  <span className="font-semibold text-ink-strong">
+                    {counts.all}
+                  </span>
+                  명
+                  {counts.pending > 0 && (
+                    <>
+                      {" "}
+                      · 승인 대기{" "}
+                      <span className="font-semibold text-accent-deep">
+                        {counts.pending}
+                      </span>
+                      명
+                    </>
+                  )}
                 </>
               )}
             </p>
@@ -106,18 +141,52 @@ export default async function AdminMembersPage({
           </Link>
         </div>
 
+        {/* 검색 (이름·이메일) */}
+        <form
+          action="/admin/members"
+          method="get"
+          role="search"
+          className="mt-8 flex flex-wrap gap-2"
+        >
+          {filter !== "all" && (
+            <input type="hidden" name="status" value={filter} />
+          )}
+          <input
+            type="search"
+            name="q"
+            defaultValue={q}
+            placeholder="이름 또는 이메일로 검색"
+            aria-label="회원 이름 또는 이메일 검색"
+            className="min-w-0 flex-1 rounded-sm border border-line bg-white px-4 py-2.5 text-[14px] text-ink-strong placeholder:text-ink-placeholder focus:border-navy-700 focus:outline-none md:max-w-xs md:flex-none md:w-80"
+          />
+          <button
+            type="submit"
+            className="shrink-0 rounded-sm bg-navy-900 px-5 py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-navy-800"
+          >
+            검색
+          </button>
+          {q && (
+            <Link
+              href={
+                filter === "all"
+                  ? "/admin/members"
+                  : `/admin/members?status=${filter}`
+              }
+              className="inline-flex shrink-0 items-center rounded-sm border border-line px-4 py-2.5 text-[13px] font-medium text-ink-muted transition-colors hover:border-ink-strong hover:text-ink-strong"
+            >
+              초기화
+            </Link>
+          )}
+        </form>
+
         {/* 상태 필터 */}
-        <div className="mt-8 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-2">
           {FILTERS.map((f) => {
             const active = filter === f.key;
             return (
               <Link
                 key={f.key}
-                href={
-                  f.key === "all"
-                    ? "/admin/members"
-                    : `/admin/members?status=${f.key}`
-                }
+                href={buildHref(f.key)}
                 className={
                   "inline-flex items-center gap-1.5 rounded-sm border px-3.5 py-2 text-[13px] font-semibold transition-colors " +
                   (active
@@ -147,13 +216,16 @@ export default async function AdminMembersPage({
         ) : list.length === 0 ? (
           <div className="mt-12 rounded-md border border-line bg-white p-12 text-center">
             <p className="font-display text-[20px] font-bold text-ink-strong">
-              {filter === "all"
-                ? "아직 가입한 회원이 없습니다"
-                : "해당 상태의 회원이 없습니다"}
+              {q
+                ? "검색 결과가 없습니다"
+                : filter === "all"
+                  ? "아직 가입한 회원이 없습니다"
+                  : "해당 상태의 회원이 없습니다"}
             </p>
             <p className="mt-3 text-[14px] text-ink-muted">
-              회원가입이 접수되면 이곳에 표시됩니다. 신규 가입자는 승인 대기
-              상태로 등록됩니다.
+              {q
+                ? "다른 이름이나 이메일로 검색해 보세요."
+                : "회원가입이 접수되면 이곳에 표시됩니다. 신규 가입자는 승인 대기 상태로 등록됩니다."}
             </p>
           </div>
         ) : (
