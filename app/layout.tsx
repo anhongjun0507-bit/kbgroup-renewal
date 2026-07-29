@@ -3,6 +3,7 @@ import { JetBrains_Mono } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { createClient } from "@/lib/supabase/server";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -14,7 +15,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 /* Phase 10 P2-06/07/08 — OG·favicon·브랜드 명칭 표준 메타
    brand: KB GROUP / legal: (주)케이비개발 / 영문 legal: KB DEVELOPMENT CO., LTD. */
-const SITE_URL = "https://kbgroup-renewal.vercel.app";
+/* SITE_URL은 lib/site.ts에서 단일 관리 (sitemap·robots와 공유). */
 const SITE_TITLE = "KB GROUP | (주)케이비개발";
 const SITE_DESC =
   "신뢰받는 종합 시설관리 파트너 — 시설관리·위생청소·경비보안·시행건설 B2B 전문 서비스. 전남광주특별시 광산구 월계로 223-22.";
