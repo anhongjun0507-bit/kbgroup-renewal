@@ -93,7 +93,7 @@ export const metadata: Metadata = {
      Next Metadata API가 <meta name="...-site-verification" ...>로 <head>에 출력.
      google: 구글 서치콘솔(Search Console) / other.naver: 네이버 서치어드바이저. */
   verification: {
-    google: "3OTY5WLUPe89O-mrxZmKL_W7HEQWY2IHQ01GHf4p828",
+    google: "aWEA71yaBlebAcKreGr6Zbhf8dwS-4uCsFwzZwXtBFI",
     other: {
       "naver-site-verification": "cb77b97b9f6e52245246b376b4ee9be4ebf1f05f",
     },
