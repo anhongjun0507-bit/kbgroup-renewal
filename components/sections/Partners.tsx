@@ -10,7 +10,8 @@ import { partners, type Partner } from "@/data/site-content";
 
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
-/* Phase 13 P2-G — 라벨 명확화 ("발주처 1개사" → "주요 위탁기관") */
+/* Phase 13 P2-G — 라벨 명확화 ("발주처 1개사" → "주요 위탁기관")
+   클라 요청 — "시공사(CONSTRUCTION PARTNERS)" 그룹 노출 제거 */
 const CATEGORY_GROUPS: {
   key: Partner["category"];
   label: string;
@@ -18,7 +19,6 @@ const CATEGORY_GROUPS: {
 }[] = [
   { key: "client", label: "주요 위탁기관", caption: "PRIMARY CLIENT" },
   { key: "public", label: "공공기관", caption: "PUBLIC AGENCIES" },
-  { key: "construction", label: "시공사", caption: "CONSTRUCTION PARTNERS" },
 ];
 
 export function Partners() {
@@ -46,7 +46,7 @@ export function Partners() {
           </h2>
         </div>
 
-        {/* 카테고리별 행 분리 — 발주처 / 공공기관 / 시공사 */}
+        {/* 카테고리별 행 분리 — 발주처 / 공공기관 */}
         <div className="space-y-12">
           {CATEGORY_GROUPS.map((group) => {
             const items = partners.filter((p) => p.category === group.key);

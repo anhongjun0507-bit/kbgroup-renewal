@@ -763,21 +763,23 @@ export const collaborators: Collaborator[] = [
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const licenses: License[] = [
+  /* 증명서 이미지 매핑 — 실제 스캔본 내용 확인 후 정정 (기존 1칸 밀림 오류 수정).
+     p09_06 = 사업자등록증, p09_14 = 전기안전관리 시설물관리업 등록증, p09_15 = 신용평가등급 확인서
+     → 아래 항목 제목과 일치하는 증명서가 아니므로 미연결. */
   { name: "(주)케이비개발 법인 설립", issuer: "광주지방법원 등기소", acquiredAt: "2013.09" },
   { name: "주택임대관리업 등록", issuer: "광산구청", acquiredAt: "2016.01",
     image: "/images/licenses/p09_07.jpeg" },
   { name: "주택관리업 등록", issuer: "광산구청", acquiredAt: "2016.04",
-    image: "/images/licenses/p09_06.jpeg" },
-  { name: "건물위생관리용역업 신고", issuer: "광산구청", acquiredAt: "2016.04",
     image: "/images/licenses/p09_08.jpeg" },
-  { name: "시설경비업 허가", issuer: "광주지방경찰청장", acquiredAt: "2016.04",
+  { name: "건물위생관리용역업 신고", issuer: "광산구청", acquiredAt: "2016.04",
     image: "/images/licenses/p09_09.jpeg" },
-  { name: "소독업 신고", issuer: "전남광주특별시 광산구", acquiredAt: "2018.04",
+  { name: "시설경비업 허가", issuer: "광주지방경찰청장", acquiredAt: "2016.04",
     image: "/images/licenses/p09_10.jpeg" },
-  { name: "저수조청소업 신고", issuer: "광산구청장", acquiredAt: "2018.09",
+  { name: "소독업 신고", issuer: "전남광주특별시 광산구", acquiredAt: "2018.04",
     image: "/images/licenses/p09_11.jpeg" },
-  { name: "근로자파견업 등록", issuer: "광주지방고용노동청", acquiredAt: "2021.04",
-    image: "/images/licenses/p09_14.jpeg" },
+  /* 저수조청소업·근로자파견업 — 해당 증명서 스캔본 미보유 (추후 등록 예정 placeholder 노출) */
+  { name: "저수조청소업 신고", issuer: "광산구청장", acquiredAt: "2018.09" },
+  { name: "근로자파견업 등록", issuer: "광주지방고용노동청", acquiredAt: "2021.04" },
   { name: "안전보건경영시스템 ISO 45001 인증", issuer: "한국표준협회", acquiredAt: "2023.12",
     image: "/images/licenses/p09_13.jpeg" },
 ];
