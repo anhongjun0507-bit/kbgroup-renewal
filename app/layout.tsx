@@ -88,9 +88,11 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  /* 네이버 서치어드바이저(서치 플레이스) 사이트 소유확인 메타.
-     Next Metadata API가 <meta name="naver-site-verification" ...>로 <head>에 출력. */
+  /* 검색엔진 사이트 소유확인 메타.
+     Next Metadata API가 <meta name="...-site-verification" ...>로 <head>에 출력.
+     google: 구글 서치콘솔(Search Console) / other.naver: 네이버 서치어드바이저. */
   verification: {
+    google: "3OTY5WLUPe89O-mrxZmKL_W7HEQWY2IHQ01GHf4p828",
     other: {
       "naver-site-verification": "cb77b97b9f6e52245246b376b4ee9be4ebf1f05f",
     },
