@@ -1,14 +1,14 @@
 # PLAN B — 콘텐츠 관리(CMS) 전환 진행 문서
 
 > 이 파일 하나만 읽고 STEP 2를 시작할 수 있도록 작성한다.
-> 최종 갱신: 2026-08-24 (STEP 2 / DAY 1 완료 — §10 참조)
+> 최종 갱신: 2026-08-24 (STEP 2 / DAY 2 완료 — §11 참조)
 > 대상 저장소: `kbgroup-renewal` / Next.js 16.2.6 + React 19.2.4 + Supabase + Vercel
 
 ---
 
 ## 0. 현재 상태 한 줄
 
-STEP 2 / DAY 1 완료. **캐시 분기 A 확정**(`unstable_cache` 사용 가능). 마이그레이션 6종 + 버킷 2종 작성·적용 완료, 회귀 베이스라인 28장 확보. 다음: DAY 2(시드 + 딥 비교 + 읽기 어댑터).
+STEP 2 / DAY 2 완료. 시드 완료 — `complexes` 172행 + `site_settings` 17키 적재, **코드포인트 단위 딥 비교 불일치 0건**. `content_revisions` SELECT admin 전용으로 축소. 다음: DAY 3(읽기 어댑터 + 파일 폴백 + `CONTENT_SOURCE` 킬스위치).
 
 ---
 
@@ -132,7 +132,7 @@ DAY 1에 Next 16.2.6의 캐시 API를 검증한 뒤 **둘 중 하나로 확정�
 |-----|------|--------|:----:|
 | 1 | **Next 16 캐시 API 검증** (분기 A/B 확정) + 스키마 확정 + 일정 재확인 보고 | 캐시 분기 결론 보고, 확정 스키마 초안 | ☑ |
 | 2 | 마이그레이션 SQL 6종 작성 + RLS 정책 | `supabase/migrations/*.sql` | ☑ (DAY 1 에 완료) |
-| 3 | 시드 스크립트 작성 (`site-content.ts` → DB), **slug 코드포인트 일치 검증 포함** | `scripts/seed-content.mjs`, 검증 리포트 | ☐ |
+| 3 | 시드 스크립트 작성 (`site-content.ts` → DB), **slug 코드포인트 일치 검증 포함** | `scripts/seed-content.ts`, 검증 리포트 | ☑ (실제 DAY 2) |
 | 4 | 읽기 어댑터 (`lib/content/*`) — DB 리더 + 파일 폴백 + `CONTENT_SOURCE` 킬스위치 | `lib/content/` | ☐ |
 | 5 | 관리자 UI — 단지 CRUD | `app/admin/content/complexes` | ☐ |
 | 6 | 관리자 UI — 사이트 설정(`site_settings`) 편집 | `app/admin/content/settings` | ☐ |
@@ -207,7 +207,7 @@ DAY 1에 Next 16.2.6의 캐시 API를 검증한 뒤 **둘 중 하나로 확정�
 
 - [x] DAY 1 — 캐시 API 검증 → **분기 A 확정** · next.config remotePatterns · 회귀 베이스라인 28장 · 마이그레이션 6종+버킷 2종 작성·적용 완료 (§10)
 - [x] DAY 2 — 마이그레이션 SQL 6종 + RLS (DAY 1 로 당겨 완료)
-- [ ] DAY 3 — 시드 스크립트 + slug 코드포인트 검증 통과
+- [x] DAY 3(실제 DAY 2) — 시드 스크립트 + slug 코드포인트 검증 통과 · `content_revisions` SELECT admin 전용 · 브랜치 전략 판단(§11)
 - [ ] DAY 4 — 읽기 어댑터 + 파일 폴백 + `CONTENT_SOURCE` 킬스위치
 - [ ] DAY 5 — 관리자 UI: 단지 CRUD
 - [ ] DAY 6 — 관리자 UI: 사이트 설정
@@ -524,3 +524,108 @@ images: {
 1. **`content_revisions` SELECT 공개** — 지시서 "RLS 전 테이블 SELECT 공개"를 그대로 따랐다. 다만 이 테이블은 감사 테이블이라 `actor_id`(편집자 uuid)와 편집 이력이 익명에게 노출된다. 스냅샷 내용 자체는 어차피 공개 콘텐츠라 실질 유출은 없지만, admin 전용으로 좁히는 편이 자연스럽다. **한 줄 변경으로 가능. 결정 요청.**
 2. **playwright 미추가** — `package.json` 을 건드리지 않고 머신의 기존 playwright 를 `PLAYWRIGHT_PATH` 로 주입했다. 다른 머신에서 캡처하려면 이 경로를 바꿔야 한다.
 3. **`middleware` 파일 규약 deprecation 경고** — 빌드 로그에 `"middleware" file convention is deprecated. Please use "proxy" instead` 가 뜬다. 동작에는 문제 없다. 이번 계약 범위 밖이므로 손대지 않았다. **보고만 한다.**
+
+---
+
+## 11. DAY 2 실행 결과 (2026-08-24)
+
+> 일정표(§4)의 DAY 번호와 실제 진행 DAY 가 하루 어긋나 있다. §4 의 "DAY 2(마이그레이션)"는
+> DAY 1 에 끝냈으므로, **실제 DAY 2 = §4 의 DAY 3(시드 + 검증)** 이다. 이후 DAY 번호는 실제 진행일 기준으로 쓴다.
+
+### 11-1. content_revisions SELECT → admin 전용 (결정 1)
+
+`supabase/migrations/20260824000008_content_revisions_select_admin.sql` 작성·적용 완료.
+
+적용 후 정책 실측 (`pg_policy`):
+
+| 정책 | cmd | roles | using |
+|------|-----|-------|-------|
+| `content_revisions_select_admin` | SELECT | authenticated | `is_admin()` |
+| `content_revisions_admin_insert` | INSERT | authenticated | (with check `is_admin()`) |
+| `content_revisions_admin_delete` | DELETE | authenticated | `is_admin()` |
+
+`content_revisions_select_public` 는 drop 됐다. anon 은 이제 감사 이력을 읽을 수 없다. UPDATE 정책 없음(append-only) 유지.
+
+### 11-2. 브랜치 전략 판단 (결정 2) → **불필요. main 직접 진행이 맞다**
+
+지시의 전제("main push = Vercel 프로덕션 배포")가 이 저장소에서는 **성립하지 않는다.** 실측:
+
+| 확인 | 결과 | 근거 |
+|------|------|------|
+| Vercel 프로젝트 ↔ Git 연동 | **없음** | `GET /v9/projects/kbgroup-renewal` → `link: null`, `productionBranch: null`, `deployHooks: null` |
+| 최근 배포 8건의 트리거 | **전부 `source: "cli"`** | `GET /v6/deployments` — 2026-07-22 ~ 07-29 전건 `cli` / `target: production` |
+
+즉 GitHub 푸시로는 어떤 배포도 발생하지 않는다. 프로덕션 배포는 **`vercel --prod` 를 직접 실행할 때만** 일어난다.
+
+**판단:** 별도 브랜치는 이득 없이 머지 비용만 늘린다. DAY 2~9 도 `main` 에 커밋·푸시하고,
+프로덕션 배포는 DAY 10 검증 후 `vercel --prod` 를 **명시적으로 실행**하는 시점에만 한다.
+(자동 배포 위험이 애초에 존재하지 않으므로 결정 2 의 안전 목표는 이미 충족돼 있다.)
+
+### 11-3. 시드 스크립트 — `scripts/seed-content.ts`
+
+- **Node 22 타입 스트리핑으로 `.ts` 를 그대로 실행한다.** 빌드 단계·의존성 추가 없음(`node scripts/seed-content.ts`).
+  `data/site-content.ts` 를 **원본 모듈 그대로 import** 하므로 파싱 오차가 원리적으로 없다.
+- 모드: 기본(시드+검증) / `--dry-run`(쓰기 없음, slug 검증만) / `--verify-only`(쓰기 없음, 딥 비교만).
+- 쓰기는 `SUPABASE_SERVICE_ROLE_KEY` 로 RLS 우회. upsert(`onConflict: slug` / `key`)라 **재실행 안전(idempotent)**.
+- `tsconfig.json` 에 `allowImportingTsExtensions: true` 1줄 추가 — ESM 이 요구하는 `.ts` 확장자 import 를 타입체크가 막던 것(TS5097) 해소. `noEmit: true` 전제라 안전하며 Next 빌드에 영향 없음.
+
+이관 매핑:
+
+| 대상 | 건수 | 비고 |
+|------|-----:|------|
+| `complexes` (is_active=true) | 153 | `sort_order` = 원본 배열 인덱스 |
+| `complexes` (is_active=false) | 19 | `pastComplexes`. `period` 보존, `scope` null |
+| `site_settings` | 17키 | company·contact·ceoMessage·counters·businessAreas·coreValues·differentiators·processSteps·companyStrengths·partners·collaborators·licenses·certifications·history·organization·relatedCompanies·stats |
+
+`stats` 키에는 **마케팅 표기값만** 넣었다(E-7): `activeComplexesDisplay:200`, `lhProjectsDisplay:15`,
+`managedHouseholds`, `registeredLicenses`, `certificationTypes`, `certifiedProfessionals`, `totalCertHolders`.
+**`STATS.activeComplexes`(실제 단지 수)는 넣지 않았다** — `complexes` 테이블에서 계산한다.
+
+### 11-4. 딥 비교 검증 결과 — **불일치 0건**
+
+```
+검증 대상: complexes 172행 (현재 153 / 과거 19), site_settings 17키
+✅ 전부 일치 — 코드포인트 단위 딥 비교 통과 (7.1s)
+```
+
+검증 항목:
+1. **slug 코드포인트 일치 (E-1)** — 172/172 이 `encodeURIComponent(name)` 과 코드포인트 단위 완전 일치. slug 중복 0.
+2. **complexes 전 필드 딥 비교** — 16컬럼 × 172행. 문자열은 코드포인트 단위, 숫자는 `Object.is`, 배열은 길이+원소별.
+3. **건수** — DB 172 = 원본 172, active 153 / past 19. DB 에만 있는 행 0, 원본에만 있는 행 0.
+4. **site_settings 17키 딥 비교** — JSONB 왕복 후에도 전부 일치. 원본에 없는 키 0.
+5. **E-10 U+2011** — `contact.address` 의 non-breaking hyphen 보존 확인.
+6. **이미지 경로 유효성** — `image` + `images` 전 경로가 `public/` 아래 실제 파일로 존재. 누락 0.
+
+DB 직접 SQL 재확인(스크립트와 독립 경로):
+
+```
+total=172  active=153  past=19  type='LH'=10  site_settings=17  bad_slug=0
+contact.address → position(chr(8209)) = 20,  position('-') = 0   ← U+2011 만 있고 ASCII 하이픈 없음
+```
+
+§8 베이스라인 샘플 3건의 slug 가 DB 값과 정확히 일치함도 재확인:
+
+| 구분 | name | sort_order | image |
+|------|------|-----------:|-------|
+| LH | `LH시흥 장현 트리플센텀 (A-8블록)` | 99 | 있음 |
+| 민간(사진 O) | `계림아이파크 SK뷰` | 0 | 있음 |
+| 민간(사진 X) | `금남로 센텀시티` | 3 | 없음 |
+
+### 11-5. DAY 3(읽기 어댑터) 필수 검증 항목 — 결정 3 반영
+
+**과거 단지 19건은 상세 페이지가 없다. 통합 테이블로 옮겼다고 상세 페이지가 새로 생기면 안 된다.**
+(계약 범위 밖 + 기존 UX 변경). 어댑터 전환 시 아래를 반드시 확인한다.
+
+- [ ] `app/cases/[slug]/page.tsx` 의 `generateStaticParams()` 가 **`is_active = true` 행만** 반환한다 (현행: `complexes` 배열만 순회).
+- [ ] 같은 파일의 `notFound()` 분기가 **`is_active = false` 인 slug 에 대해 그대로 404** 를 낸다 (현행: `findIndex === -1`).
+- [ ] `/cases` 목록(`CasesGallery`·`PastProjects`)에는 과거 단지가 **계속 노출**된다.
+- [ ] `app/sitemap.ts` 에 과거 단지 URL 이 **추가되지 않는다**.
+
+### 11-6. 미결·보고 사항
+
+1. **DAY 2 지시서 뒷부분이 잘려서 도착했다.** `■ 2-1. 시드 스크립트 (scripts/seed-content.ts)` 의
+   `- data/` 이후가 없다. 위 11-3/11-4 는 §6 단계 1·§9·§10-5 의 확정 내용으로 구성했다.
+   잘린 부분에 추가 요구가 있었다면 알려주면 반영한다.
+2. **시드 대상 DB 는 프로덕션 Supabase 프로젝트 하나뿐이다**(`yydvpwjvxyhyplzpxdds`). 다만 현재 라이브 사이트는
+   여전히 `data/site-content.ts` 파일을 읽으므로, 시드 데이터가 라이브 화면에 영향을 주지 않는다.
+   실제 전환은 DAY 3 읽기 어댑터 + `CONTENT_SOURCE` 킬스위치부터다.

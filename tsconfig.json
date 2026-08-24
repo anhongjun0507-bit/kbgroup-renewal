@@ -6,6 +6,9 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
+    // scripts/*.ts 는 Node 22 타입 스트리핑으로 직접 실행한다(빌드 없음).
+    // ESM 규칙상 import 경로에 .ts 확장자가 필요하므로 허용한다. noEmit 전제라 안전.
+    "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
