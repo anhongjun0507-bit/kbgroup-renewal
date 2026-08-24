@@ -1,14 +1,14 @@
 # PLAN B — 콘텐츠 관리(CMS) 전환 진행 문서
 
 > 이 파일 하나만 읽고 STEP 2를 시작할 수 있도록 작성한다.
-> 최종 갱신: 2026-08-24 (STEP 2 / DAY 2 완료 — §11 참조)
+> 최종 갱신: 2026-08-24 (STEP 2 / DAY 3 완료 — §12 참조)
 > 대상 저장소: `kbgroup-renewal` / Next.js 16.2.6 + React 19.2.4 + Supabase + Vercel
 
 ---
 
 ## 0. 현재 상태 한 줄
 
-STEP 2 / DAY 2 완료. 시드 완료 — `complexes` 172행 + `site_settings` 17키 적재, **코드포인트 단위 딥 비교 불일치 0건**. `content_revisions` SELECT admin 전용으로 축소. 다음: DAY 3(읽기 어댑터 + 파일 폴백 + `CONTENT_SOURCE` 킬스위치).
+STEP 2 / DAY 3 완료. `lib/content` 읽기 어댑터 3모드(DB · 파일 폴백 · `CONTENT_SOURCE=file` 킬스위치) 동작 확인, 관리자 단지 CRUD 신설, `/cases`·`/cases/[slug]` 어댑터 전환. 활성 153건 200 / 과거 19건 404 실측 통과. 남은 소비처 51개. 다음: DAY 4(사이트 설정 편집 UI).
 
 ---
 
@@ -208,8 +208,8 @@ DAY 1에 Next 16.2.6의 캐시 API를 검증한 뒤 **둘 중 하나로 확정�
 - [x] DAY 1 — 캐시 API 검증 → **분기 A 확정** · next.config remotePatterns · 회귀 베이스라인 28장 · 마이그레이션 6종+버킷 2종 작성·적용 완료 (§10)
 - [x] DAY 2 — 마이그레이션 SQL 6종 + RLS (DAY 1 로 당겨 완료)
 - [x] DAY 3(실제 DAY 2) — 시드 스크립트 + slug 코드포인트 검증 통과 · `content_revisions` SELECT admin 전용 · 브랜치 전략 판단(§11)
-- [ ] DAY 4 — 읽기 어댑터 + 파일 폴백 + `CONTENT_SOURCE` 킬스위치
-- [ ] DAY 5 — 관리자 UI: 단지 CRUD
+- [x] DAY 4(실제 DAY 3) — 읽기 어댑터 + 파일 폴백 + `CONTENT_SOURCE` 킬스위치 (§12-1)
+- [x] DAY 5(실제 DAY 3) — 관리자 UI: 단지 CRUD + `/cases` 전환 (§12-2, §12-3)
 - [ ] DAY 6 — 관리자 UI: 사이트 설정
 - [ ] DAY 7 — **베이스라인 캡처 → 섹션 레지스트리 전환 → 재캡처 비교**
 - [ ] DAY 8 — 관리자 UI: 섹션 표시·숨김/순서 + 페이지 공개·비공개
@@ -616,10 +616,10 @@ contact.address → position(chr(8209)) = 20,  position('-') = 0   ← U+2011 �
 **과거 단지 19건은 상세 페이지가 없다. 통합 테이블로 옮겼다고 상세 페이지가 새로 생기면 안 된다.**
 (계약 범위 밖 + 기존 UX 변경). 어댑터 전환 시 아래를 반드시 확인한다.
 
-- [ ] `app/cases/[slug]/page.tsx` 의 `generateStaticParams()` 가 **`is_active = true` 행만** 반환한다 (현행: `complexes` 배열만 순회).
-- [ ] 같은 파일의 `notFound()` 분기가 **`is_active = false` 인 slug 에 대해 그대로 404** 를 낸다 (현행: `findIndex === -1`).
-- [ ] `/cases` 목록(`CasesGallery`·`PastProjects`)에는 과거 단지가 **계속 노출**된다.
-- [ ] `app/sitemap.ts` 에 과거 단지 URL 이 **추가되지 않는다**.
+- [x] `app/cases/[slug]/page.tsx` 의 `generateStaticParams()` 가 **`is_active = true` 행만** 반환한다 → 153건, 과거 미포함 (§12-4)
+- [x] 같은 파일의 `notFound()` 분기가 **`is_active = false` 인 slug 에 대해 그대로 404** 를 낸다 → 19/19 실측 404 (§12-4)
+- [x] `/cases` 목록(`CasesGallery`·`PastProjects`)에는 과거 단지가 **계속 노출**된다 → 과거 19 · 주요(종료) 2 유지 (§12-5)
+- [x] `app/sitemap.ts` 에 과거 단지 URL 이 **추가되지 않는다** → sitemap.ts 무수정, 파일 `complexes` 만 순회 (§12-4)
 
 ### 11-6. 미결·보고 사항
 
@@ -629,3 +629,186 @@ contact.address → position(chr(8209)) = 20,  position('-') = 0   ← U+2011 �
 2. **시드 대상 DB 는 프로덕션 Supabase 프로젝트 하나뿐이다**(`yydvpwjvxyhyplzpxdds`). 다만 현재 라이브 사이트는
    여전히 `data/site-content.ts` 파일을 읽으므로, 시드 데이터가 라이브 화면에 영향을 주지 않는다.
    실제 전환은 DAY 3 읽기 어댑터 + `CONTENT_SOURCE` 킬스위치부터다.
+
+---
+
+## 12. DAY 3 실행 결과 (2026-08-24)
+
+> DAY 2 잔여 3건 중 **A(감사 테이블 SELECT admin 전용)와 C(브랜치 전략)는 DAY 2 에 이미 처리**돼 있다
+> (§11-1, §11-2). 실제 신규 작업은 B(읽기 어댑터)와 §4 의 DAY 5(단지 CRUD)·DAY 3-2(/cases 전환)다.
+
+### 12-1. `lib/content` 읽기 어댑터 — 3모드 통과
+
+| 파일 | 역할 |
+|------|------|
+| `lib/content/tags.ts` | 캐시 태그 네임스페이스 5종 (`content:complexes` 외) |
+| `lib/content/types.ts` | `ContentComplex` — DB snake_case → 파일 camelCase 정규 타입. **null 을 undefined 로 정규화** |
+| `lib/content/file-source.ts` | 파일 폴백 소스. `data/site-content.ts` → 정규 형태 변환 (시드 `toRow()` 와 1:1) |
+| `lib/content/source.ts` | 킬스위치 판정 + **쿠키 없는 anon 리드 클라이언트** + 폴백 로깅 |
+| `lib/content/complexes.ts` | `getAllComplexes/getComplexes/getPastComplexes/getComplexBySlug/toSlug` |
+| `lib/content/settings.ts` | `getSetting(key)` / `getSettings()` |
+| `lib/content/index.ts` | 공개 API 재수출 |
+
+설계 결정 3가지:
+
+1. **쿠키 없는 리드 클라이언트를 새로 만들었다.** `lib/supabase/server.ts` 의 `createClient()` 는
+   `cookies()` 를 읽어 요청 스코프에 묶이므로 `unstable_cache` 안에서 쓸 수 없다. 콘텐츠는 전부
+   SELECT 공개(RLS)라 anon 클라이언트로 충분하다.
+2. **캐시 엔트리를 키별로 쪼개지 않고 172행 전체를 1개로 잡았다.** 파생 목록(active/past/slug 조회)은
+   순수 함수다. 단지 하나를 저장해도 무효화 대상이 엔트리 1개뿐이라 **153개 상세 경로 광역 재검증이
+   원리적으로 발생하지 않는다 (E-12)**. `site_settings` 17키도 같은 이유로 1엔트리.
+3. **캐시 안에서는 실패 시 throw 하고, 폴백 판단은 바깥 래퍼에서 한다.** 폴백 결과가 캐시에
+   1시간 눌러앉는 것을 막기 위해서다. "결과가 비어 있음"도 실패로 친다.
+
+3모드 실측 (`node --experimental-strip-types --import ./scripts/node-ts-register.mjs scripts/verify-content-adapter.ts`):
+
+```
+[db]     origin=db   total=172 active=153 past=19 과거slug404=OK → ✅ 파일 원본과 불일치 0건
+[file]   origin=file total=172 active=153 past=19 과거slug404=OK → ✅ 파일 원본과 불일치 0건
+[broken] origin=file total=172 active=153 past=19 과거slug404=OK → ✅ 파일 원본과 불일치 0건
+✅ 3모드 전부 통과
+```
+
+- `db` — 기본. Supabase 조회.
+- `file` — `CONTENT_SOURCE=file` 킬스위치. DB 미조회.
+- `broken` — DB 호스트를 고의로 깨뜨림 → `[content] complexes DB 조회 실패 → data/site-content.ts 폴백:` 로그 후 파일 값 반환.
+
+비교 기준: 172행 × 전 필드(문자열은 **코드포인트 단위**, 숫자 `Object.is`, 배열 원소별) + `site_settings`
+17키(JSONB 왕복이 키 순서를 보존하지 않으므로 키 정렬 후 값 비교). **DB 모드 출력 == 파일 모드 출력.**
+
+`data/site-content.ts` 는 삭제하지 않았다. 폴백 소스로 존치한다.
+
+### 12-2. 관리자 단지 관리 (`/admin/content/complexes`)
+
+| 파일 | 내용 |
+|------|------|
+| `app/admin/content/complexes/page.tsx` | 목록 — 검색(단지명·지역·별칭) / 정렬 5종 / 활성·과거 필터 / 페이지네이션 30건 |
+| `app/admin/content/complexes/new/page.tsx` | 등록 |
+| `app/admin/content/complexes/[id]/edit/page.tsx` | 수정 |
+| `app/admin/content/complexes/actions.ts` | Server Actions 4종 |
+| `components/admin/ComplexForm.tsx` | 등록·수정 공용 폼 |
+| `components/admin/AdminTabs.tsx` | "단지 관리" 탭 추가 (기존 4탭 → 5탭) |
+
+- 검색·정렬·페이지네이션은 172행을 서버에서 전량 읽어 **메모리에서** 처리한다. 별칭(`text[]`) 부분 일치를
+  SQL 로 짜면 쿼리가 복잡해지는데 172행은 페이로드가 무의미하게 작다. 수천 행이 되면 SQL 로 내린다.
+- 관리자 화면은 **캐시된 어댑터가 아니라 DB 를 직접 읽는다** (`force-dynamic`). 저장 직후 최신 값이 보여야 한다.
+- 모든 Server Action 진입부 `requireAdmin()` — RLS `public.is_admin()` 과 이중 방어.
+- **slug 는 읽기 전용 표시만** 한다 (E-1). 편집 UI 없음. DB 트리거로도 물리 차단.
+  신규 등록 시에만 `encodeURIComponent(name)` 로 생성하고, 충돌할 때만 `-2`, `-3` 을 덧붙인다.
+- **낙관적 잠금 (E-8)** — 폼이 `updated_at` 을 hidden 으로 실어 보내고, 저장 시 ①읽어온 값과 비교
+  ②`UPDATE ... WHERE updated_at = <기대값>` 으로 한 번 더 건다. 불일치면 **덮어쓰지 않고** 경고만 띄운다.
+- **저장·삭제·상태전환 직전 `content_revisions` 에 직전 값 스냅샷**을 적재한다 (롤백 레벨 1).
+- 무효화는 `updateTag("content:complexes")` 1줄. `revalidatePath` 는 쓰지 않는다 (E-12).
+- 편집 가능 필드: 단지명 · 지역 · **발주처** · 세대수 · 관리면적 · type(LH 구분) · 계약기간 ·
+  별칭 · 대표사진(경로 입력 + Storage 업로드) · 추가사진 · isFeatured · is_active · sort_order.
+  **발주처(`client`)는 지시서 필드 목록에 없었으나 추가했다** — 정렬 기준에 "발주처"가 있는데
+  편집이 불가능하면 앞뒤가 맞지 않고, 상세 페이지 메타에도 노출되는 값이다.
+
+### 12-3. `/cases` · `/cases/[slug]` 어댑터 전환
+
+- `app/cases/page.tsx` — `async` 서버 컴포넌트로 바꿔 어댑터로 읽고 하위 클라 컴포넌트에 프롭 주입.
+  `CasesStats`·`CasesGallery`·`PastProjects` 가 `"use client"` 라 어댑터를 직접 호출할 수 없다.
+- `app/cases/[slug]/page.tsx` — `generateStaticParams()`·`generateMetadata()`·본문 전부 `getComplexes()`
+  (= `is_active = true` 만) 기준. 카드·prev/next 링크는 **DB 의 불변 slug** 를 쓴다.
+- 전환한 소비처 5개. **남은 소비처 51개** (§9.1 의 56개 − 5).
+- `app/sitemap.ts` 는 **손대지 않았다** — 이번 전환 대상이 아니고, 파일 `complexes` 만 순회하므로
+  과거 단지 URL 이 추가될 여지가 없다.
+
+#### ⚠ 전환 중 잡은 실제 버그 — `params.slug` 인코딩
+
+첫 프로덕션 빌드에서 **활성 153건 상세가 전부 404** 였다. 원인은 새로 만든 `toSlug()` 의 이중 인코딩이다.
+
+실측으로 확정한 사실 (Next 16.2.6):
+
+| 위치 | `params.slug` 형태 |
+|------|--------------------|
+| **페이지 라우트** `app/cases/[slug]/page.tsx` | **퍼센트 인코딩된 채로 도착** |
+| 라우트 핸들러 `app/api/.../[slug]/route.ts` | 디코드돼서 도착 |
+
+전환 전 코드가 `decodeURIComponent(slug)` 를 거쳤던 게 바로 이 때문이다. `toSlug()` 를
+`encodeURIComponent(decodeURIComponent(x))` 멱등 정규화로 고쳤다 — 인코딩된 채로 오든 디코드돼 오든
+같은 값이 나온다. 단지명에 `%` 가 있으면 이 정규화가 깨지지만 172건 전수 확인 결과 0건이고,
+slug 는 불변이라 이후 새 이름이 기존 slug 에 영향을 주지 않는다.
+
+검증: 단일 인코딩 URL → 200, 이중 인코딩 URL → 404 (기대대로).
+
+### 12-4. DAY 3 필수 검증 5개 항목 — 전부 통과
+
+프로덕션 빌드(`npm run build`, EXIT=0) 후 `next start` 로 **실제 HTTP 요청** 검증.
+
+| # | 항목 | 결과 |
+|---|------|------|
+| ① | `generateStaticParams()` 가 `is_active=true` 153건만 반환 | ✅ 153건 · 과거 미포함 |
+| ② | 활성 단지 상세 접근 | ✅ **200 / 153건 전수** |
+| ③ | `is_active=false` slug 접근 시 404 유지 | ✅ **404 / 19건 전수** |
+| ④ | `/cases` 목록에 과거 단지 계속 노출 | ✅ PAST PROJECTS 섹션 19건 · 카드 "주요(종료)" 2건 |
+| ⑤ | `sitemap.ts` 에 과거 단지 URL 추가 안 됨 | ✅ 파일 무수정, `complexes` 만 순회 |
+| ⑥ | `dynamicParams=true` 로 신규 단지 즉시 접근 | ✅ 미등록 slug → 404(동적 평가). 빌드타임 목록에 의존하지 않음 |
+
+> ⑥ 보충 — 이 저장소는 §10-4 대로 전 라우트가 `ƒ`(Dynamic) 이라 `prerender-manifest.json` 의
+> `routes`/`dynamicRoutes` 가 **비어 있다**. 프리렌더되는 경로가 애초에 없으므로
+> `generateStaticParams()` 결과는 프리렌더 목록이 아니라 참고 목록일 뿐이고,
+> 관리자가 등록한 새 단지는 재빌드 없이 곧바로 접근된다.
+
+### 12-5. 회귀 확인 (3-4)
+
+**상세 페이지 3건 × 2뷰포트 = 6장 전부 픽셀 동일** (`before/` ↔ `after/`).
+
+`/cases` 는 픽셀 차이가 났으나 **코드 회귀가 아니라 캡처 아티팩트**다. 근거:
+
+- 코드를 하나도 바꾸지 않고 재캡처했더니 desktop 차이가 **36.8% → 8.6%** 로 떨어졌다.
+- 차이 구간을 잘라보면 레이아웃·배지·카드 위치는 동일하고 **사진만 미로드**(카드 배경 navy 노출) 상태다.
+  로컬 `/_next/image` 최적화가 이 머신(load average 30↑)에서 느려 lazy 이미지가 캡처 시점에 안 붙는다.
+- `before/` 는 프로덕션(Vercel), `after/` 는 로컬 빌드라 이미지 파이프라인 조건 자체가 다르다.
+
+그래서 `/cases` 는 **SSR HTML 전수 비교**로 검증했다 (프로덕션 = 파일 기반 / 로컬 = DB 어댑터):
+
+| 항목 | before(프로덕션) | after(로컬 DB) |
+|------|-----------------|----------------|
+| KEY PROJECTS 카드 수 | 27 | 27 |
+| 주요 단지 / 주요(종료) | 15 / 2 | 15 / 2 |
+| LH 발주 (카드 / 과거) | 10 / 2 | 10 / 2 |
+| 과거 단지 | 19 | 19 |
+| 과거 누적 세대수 | 11,374 | 11,374 |
+| "종료" 배지 | 23 | 23 |
+| `/cases/*` 링크 목록 | 23건 | 23건 · **순서까지 동일** |
+| `aria-label="… 상세보기"` | 23건 | 23건 · 동일 |
+| `<h3>` 단지명 | 21건 | 21건 · 동일 |
+| 계약기간 문자열 | 18건 | 18건 · 동일 |
+
+**전 항목 문자열 단위 완전 일치.**
+
+비교 도구 `scripts/diff-regression.py` 를 추가했다 (PIL 기반, 허용오차 8, 차이 마스크를
+`docs/regression/diff/` 에 출력). `docs/regression` 전체는 이미 `.vercelignore` 로 배포 제외.
+
+> **지시서의 "컴팩트 리스트 154건 / LH 필터 / 페이지네이션" 은 현재 사이트에 존재하지 않는다.**
+> 해당 기능은 `components/sections/cases/CasesList.tsx`(+`CasesFilter.tsx`) 에 구현돼 있으나
+> **어떤 라우트에도 마운트돼 있지 않다**(`CasesMap.tsx` 도 동일). 프로덕션 `/cases` HTML 에
+> "154" 가 0회 등장하는 것으로 확인했다. 전환 전후 모두 미노출이므로 회귀는 아니다. 사장된 코드다.
+
+### 12-6. 미결·보고 사항
+
+1. **`npm run dev` 가 main 에서도 전 요청 500 이다.** `app/globals.css:2` 의
+   `@import url(pretendard)` 가 `@import "tailwindcss"` 뒤에 있어, Tailwind 인라인 확장 후
+   `@import` 가 다른 룰 뒤로 밀리면서 Turbopack CSS 파서가 거부한다(페이지뿐 아니라 API 라우트까지 500).
+   변경을 stash 하고 clean main 으로 재현 확인했다 — **기존 이슈이고 이번 작업과 무관**하다.
+   **프로덕션 빌드에서는 warning 일 뿐이라 라이브 영향은 없다.** 다만 로컬 개발이 불가능해
+   모든 검증을 20분짜리 프로덕션 빌드로 돌려야 한다. 1줄 순서 교체로 끝나고 폰트 결과물은 동일하다.
+   계약 범위 밖이라 **손대지 않았다. 결정 요청.**
+2. **`next.config.ts` 에 `experimental.serverActions.bodySizeLimit: "10mb"` 를 추가했다.**
+   단지 대표 사진 업로드가 Server Action 으로 들어오는데 기본 1MB 로는 `site-images` 버킷
+   상한(10MB)에 한참 못 미쳐 업로드가 막힌다. 편집 필드 "이미지"를 동작시키기 위한 필수 설정이다.
+3. **`lib/supabase/database.types.ts` 를 재생성했다.** DAY 1 의 신규 테이블 6종이 타입에 없었다.
+   Management API `/types/typescript` 로 재생성했고 순수 additive 다(기존 diff 는 알파벳 재정렬뿐).
+   단 `posts.post_number` 는 **수동 보정**했다 — DB 상 `not null` + default 없음이라 생성기가 Insert
+   필수로 뽑지만 실제로는 `assign_post_number()` BEFORE INSERT 트리거가 채운다. 보정 없이는
+   기존 `app/admin/posts/actions.ts`·`app/notices/board/actions.ts` 가 타입 에러가 난다.
+4. **`/cases` HTML 페이로드가 175KB → 252KB 로 늘었다.** 클라 컴포넌트에 단지 데이터를 프롭으로
+   주입하면서 RSC 페이로드에 실린 결과다. 전환 전에는 같은 데이터가 클라이언트 JS 청크에 번들돼
+   있었으므로 총 전송량은 대체로 상쇄되지만, 프롭을 카드 렌더에 필요한 필드로 좁히면 더 줄일 수 있다.
+   **지금은 하지 않았다** — 필드를 깎으면 §12-5 의 "전 필드 동일" 보장이 깨져 회귀 판정이 어려워진다.
+   DAY 10 최적화 후보로 남긴다.
+5. **`"use server"` 파일은 async 함수만 export 할 수 있다.** 첫 빌드가 `actions.ts` 의 상수 export
+   하나 때문에 실패했다. 저장소의 `"use server"` 파일 11개를 전수 점검해 동일 패턴이 없음을 확인했다.
+6. **`components/sections/cases/CasesList.tsx:75` 에 기존 lint 에러**가 있다
+   (`react-hooks/set-state-in-effect`). 손대지 않은 파일이고 어디에도 마운트돼 있지 않다. 보고만 한다.

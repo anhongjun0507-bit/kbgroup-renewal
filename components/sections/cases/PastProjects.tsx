@@ -2,15 +2,23 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import { pastComplexes } from "@/data/site-content";
+import type { ContentComplex } from "@/lib/content/types";
 
 /* Phase 14-M (2026-05-20) — 과거 운영 단지 18건.
    현재 단지(CasesGallery)와 시각적으로 명확 구분: 회색 톤·작은 카드·grayscale 라벨.
-   클라 옵션 A: /cases 페이지 별도 섹션. 카운트는 카운터에 비포함. */
+   클라 옵션 A: /cases 페이지 별도 섹션. 카운트는 카운터에 비포함.
+
+   PLAN B / DAY 3 — data/site-content 직접 import 제거. 서버 페이지가 lib/content
+   어댑터로 읽어 프롭으로 주입한다(클라 컴포넌트라 어댑터를 직접 호출할 수 없다). */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
-export function PastProjects() {
+export function PastProjects({
+  pastComplexes,
+}: {
+  /** is_active = false 단지. 어댑터의 getPastComplexes() 결과. */
+  pastComplexes: ContentComplex[];
+}) {
   const shouldReduce = useReducedMotion() ?? false;
 
   const headerVariants: Variants = {

@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 export async function AdminTabs({
   active,
 }: {
-  active: "applications" | "openings" | "posts" | "members";
+  active: "applications" | "openings" | "posts" | "members" | "complexes";
 }) {
   // 승인 대기 회원 수 — 모든 관리자 페이지에서 한눈에 보이도록 탭 배지로 노출.
   // (admin 세션 기준 RLS로 전체 profiles 카운트 허용. status 컬럼 미적용 시엔 null → 0.)
@@ -27,6 +27,7 @@ export async function AdminTabs({
     { key: "openings", label: "채용 공고", href: "/admin/openings" },
     { key: "posts", label: "소식 관리", href: "/admin/posts" },
     { key: "members", label: "회원 관리", href: "/admin/members" },
+    { key: "complexes", label: "단지 관리", href: "/admin/content/complexes" },
   ] as const;
 
   return (

@@ -4,9 +4,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import CountUp from "react-countup";
 import { Container } from "@/components/ui";
-import { complexes, STATS } from "@/data/site-content";
+import type { ContentComplex } from "@/lib/content/types";
 
-/* Phase 5.G.1 — 다크 배경 통계 (회색 잔존 fix: useInView 대신 IntersectionObserver threshold 0.1) */
+/* Phase 5.G.1 — 다크 배경 통계 (회색 잔존 fix: useInView 대신 IntersectionObserver threshold 0.1)
+
+   PLAN B / DAY 3 — data/site-content 직접 import 제거. 서버 페이지가 lib/content
+   어댑터로 읽어 프롭으로 주입한다. */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
@@ -18,7 +21,20 @@ type Stat = {
   caption: string;
 };
 
-export function CasesStats() {
+/** site_settings.stats 중 이 섹션이 쓰는 마케팅 표기값만 (E-7). */
+export type CasesStatsValues = {
+  activeComplexesDisplay: number;
+  lhProjectsDisplay: number;
+};
+
+export function CasesStats({
+  complexes,
+  stats,
+}: {
+  /** is_active = true 단지. 운영 시도 수 계산에만 쓴다. */
+  complexes: ContentComplex[];
+  stats: CasesStatsValues;
+}) {
   const shouldReduce = useReducedMotion() ?? false;
   const sectionRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
@@ -38,18 +54,18 @@ export function CasesStats() {
     return () => io.disconnect();
   }, []);
 
-  const stats = useMemo<Stat[]>(() => {
+  const cards = useMemo<Stat[]>(() => {
     /* Phase 14-O — 운영 단지·LH 발주는 마케팅 표기(200+ / 15+) 사용. */
-    const totalSites = STATS.activeComplexesDisplay;
+    const totalSites = stats.activeComplexesDisplay;
     const distinctRegions = new Set(
       complexes.map((c) => c.region.split(" ")[0]),
     ).size;
     return [
       { key: "sites", value: totalSites, suffix: "+", label: "운영 단지", caption: "SITES OPERATED" },
       { key: "regions", value: distinctRegions, suffix: "+", label: "운영 시도", caption: "REGIONS COVERED" },
-      { key: "lh", value: STATS.lhProjectsDisplay, suffix: "+", label: "LH 발주", caption: "LH PROJECTS" },
+      { key: "lh", value: stats.lhProjectsDisplay, suffix: "+", label: "LH 발주", caption: "LH PROJECTS" },
     ];
-  }, []);
+  }, [complexes, stats]);
 
   const headerVariants: Variants = {
     hidden: { opacity: 0, y: shouldReduce ? 0 : 24 },
@@ -95,12 +111,12 @@ export function CasesStats() {
             className="mt-6 font-display font-extrabold leading-[1.15] tracking-tight"
             style={{ color: "#ffffff", fontSize: "clamp(2rem, 4vw, 3rem)" }}
           >
-            전국 <span className="text-accent-500">{STATS.activeComplexesDisplay}+</span>개 단지에서 신뢰를 쌓고 있습니다
+            전국 <span className="text-accent-500">{stats.activeComplexesDisplay}+</span>개 단지에서 신뢰를 쌓고 있습니다
           </h2>
         </motion.div>
 
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
-          {stats.map((stat, idx) => (
+          {cards.map((stat, idx) => (
             <StatCard
               key={stat.key}
               stat={stat}

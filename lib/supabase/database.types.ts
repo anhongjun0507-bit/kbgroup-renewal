@@ -96,6 +96,99 @@ export type Database = {
           },
         ]
       }
+      complexes: {
+        Row: {
+          aliases: string[]
+          area: number | null
+          client: string | null
+          created_at: string
+          households: number | null
+          id: string
+          image: string | null
+          images: string[]
+          is_active: boolean
+          is_featured: boolean
+          kind: string | null
+          name: string
+          period: string | null
+          region: string
+          scope: string | null
+          slug: string
+          sort_order: number
+          type: string | null
+          updated_at: string
+        }
+        Insert: {
+          aliases?: string[]
+          area?: number | null
+          client?: string | null
+          created_at?: string
+          households?: number | null
+          id?: string
+          image?: string | null
+          images?: string[]
+          is_active?: boolean
+          is_featured?: boolean
+          kind?: string | null
+          name: string
+          period?: string | null
+          region?: string
+          scope?: string | null
+          slug: string
+          sort_order?: number
+          type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          aliases?: string[]
+          area?: number | null
+          client?: string | null
+          created_at?: string
+          households?: number | null
+          id?: string
+          image?: string | null
+          images?: string[]
+          is_active?: boolean
+          is_featured?: boolean
+          kind?: string | null
+          name?: string
+          period?: string | null
+          region?: string
+          scope?: string | null
+          slug?: string
+          sort_order?: number
+          type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      content_revisions: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          id: string
+          record_id: string
+          snapshot: Json
+          table_name: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          record_id: string
+          snapshot: Json
+          table_name: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          record_id?: string
+          snapshot?: Json
+          table_name?: string
+        }
+        Relationships: []
+      }
       job_applications: {
         Row: {
           created_at: string
@@ -192,55 +285,112 @@ export type Database = {
         }
         Relationships: []
       }
-      posts: {
+      nav_items: {
         Row: {
-          author_id: string | null
-          author_name: string | null
-          board_type: string
-          content: string | null
           created_at: string
+          href: string | null
           id: string
-          is_pinned: boolean
-          post_number: number
-          title: string
+          is_visible: boolean
+          kr_label: string | null
+          label: string
+          location: string
+          parent_id: string | null
+          sort_order: number
           updated_at: string
-          view_count: number
         }
         Insert: {
-          author_id?: string | null
-          author_name?: string | null
-          board_type: string
-          content?: string | null
           created_at?: string
+          href?: string | null
           id?: string
-          is_pinned?: boolean
-          post_number?: number
-          title: string
+          is_visible?: boolean
+          kr_label?: string | null
+          label: string
+          location?: string
+          parent_id?: string | null
+          sort_order?: number
           updated_at?: string
-          view_count?: number
         }
         Update: {
-          author_id?: string | null
-          author_name?: string | null
-          board_type?: string
-          content?: string | null
           created_at?: string
+          href?: string | null
           id?: string
-          is_pinned?: boolean
-          post_number?: number
-          title?: string
+          is_visible?: boolean
+          kr_label?: string | null
+          label?: string
+          location?: string
+          parent_id?: string | null
+          sort_order?: number
           updated_at?: string
-          view_count?: number
         }
         Relationships: [
           {
-            foreignKeyName: "posts_author_id_fkey"
-            columns: ["author_id"]
+            foreignKeyName: "nav_items_parent_id_fkey"
+            columns: ["parent_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "nav_items"
             referencedColumns: ["id"]
           },
         ]
+      }
+      page_sections: {
+        Row: {
+          created_at: string
+          id: string
+          is_visible: boolean
+          page_key: string
+          section_key: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          page_key: string
+          section_key: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          page_key?: string
+          section_key?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      pages: {
+        Row: {
+          created_at: string
+          id: string
+          is_published: boolean
+          path: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          path: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          path?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       post_comments: {
         Row: {
@@ -275,10 +425,76 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "post_comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "post_comments"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "post_comments_post_id_fkey"
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          author_id: string | null
+          author_name: string | null
+          board_type: string
+          content: string | null
+          created_at: string
+          id: string
+          is_pinned: boolean
+          post_number: number
+          title: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          author_id?: string | null
+          author_name?: string | null
+          board_type: string
+          content?: string | null
+          created_at?: string
+          id?: string
+          is_pinned?: boolean
+          // 수동 보정: DB 상 not null·default 없음이라 생성기가 필수로 뽑지만,
+          // 실제로는 assign_post_number() BEFORE INSERT 트리거가 채운다 (20260515000002_posts.sql).
+          post_number?: number
+          title: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string | null
+          board_type?: string
+          content?: string | null
+          created_at?: string
+          id?: string
+          is_pinned?: boolean
+          post_number?: number
+          title?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -313,13 +529,34 @@ export type Database = {
         }
         Relationships: []
       }
+      site_settings: {
+        Row: {
+          description: string | null
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          description?: string | null
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          description?: string | null
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      is_admin: { Args: never; Returns: boolean }
       increment_post_view: { Args: { p_id: string }; Returns: undefined }
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

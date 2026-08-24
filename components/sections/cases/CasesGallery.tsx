@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import { complexes, pastComplexes, type Complex } from "@/data/site-content";
+import type { ContentComplex } from "@/lib/content/types";
 
 /* Phase 5.G.4 — 갤러리: placeholder 업그레이드 + 배지 + 메타
    Phase 14-M (2026-05-20) — 클라 hwpx 요청.
@@ -13,20 +13,21 @@ import { complexes, pastComplexes, type Complex } from "@/data/site-content";
    Phase 14-M-3 — hwpx 주요 19개 중 과거 단지 2건(그랜드센트럴·문흥대주2차)도 카드 포함.
    "종료" 배지로 현재/과거 명확 시각 구분. 본 컴포넌트는
    LH 9 + Featured 현재 15 + Featured 과거 2 = 26개 주요 단지 노출.
-   전체 154개 검색·필터·정렬은 [[CasesList]]로 분리. */
+   전체 154개 검색·필터·정렬은 [[CasesList]]로 분리.
 
-/* CasesGallery 내부 정규화 타입. PastComplex를 카드 표시용 Complex 형태로 흡수. */
-type GalleryItem = Complex & {
+   PLAN B / DAY 3 — data/site-content 직접 import 제거. 서버 페이지가 lib/content
+   어댑터로 읽어 프롭으로 주입한다. */
+
+/* CasesGallery 내부 정규화 타입. 과거 단지를 카드 표시용으로 흡수. */
+type GalleryItem = ContentComplex & {
   /** Phase 14-M-3 — true면 과거 운영 단지 (계약 종료). 카드에 "종료" 배지 노출. */
   isPast?: boolean;
-  /** 과거 단지의 계약 기간 (예: "2020.9.1 ~ 2021.5.31") */
-  period?: string;
 };
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 const HUES = [0, 14, -10, 22, -16, 6, 28, -22];
 
-function isLh(c: Complex) {
+function isLh(c: Pick<ContentComplex, "name" | "type">) {
   return c.name.startsWith("LH") || c.type === "LH";
 }
 
@@ -36,14 +37,22 @@ function getInitial(name: string) {
   return (tokens[tokens.length - 1] ?? noLh).charAt(0) || "K";
 }
 
-function badgeStyle(type?: Complex["type"]) {
+function badgeStyle(type?: ContentComplex["type"]) {
   if (type === "LH") return "bg-accent-500 text-navy-900";
   if (type === "민간") return "bg-navy-800 text-white";
   if (type === "공공") return "bg-navy-700 text-white";
   return "bg-white/85 text-ink-strong";
 }
 
-export function CasesGallery() {
+export function CasesGallery({
+  complexes,
+  pastComplexes,
+}: {
+  /** is_active = true 단지 */
+  complexes: ContentComplex[];
+  /** is_active = false 단지 */
+  pastComplexes: ContentComplex[];
+}) {
   const shouldReduce = useReducedMotion() ?? false;
 
   /* 주요 카드 노출 정책: LH + isFeatured.
@@ -56,26 +65,14 @@ export function CasesGallery() {
     );
     const pastItems: GalleryItem[] = pastComplexes
       .filter((p) => p.isFeatured)
-      .map((p) => ({
-        name: p.name,
-        region: p.region,
-        households: p.households,
-        area: p.area,
-        kind: p.kind,
-        type: p.type,
-        aliases: p.aliases,
-        image: p.image,
-        isFeatured: p.isFeatured,
-        isPast: true,
-        period: p.period,
-      }));
+      .map((p) => ({ ...p, isPast: true }));
     const rank = (c: GalleryItem) =>
       c.isPast ? 2 : isLh(c) ? 0 : 1;
     return [...currentItems, ...pastItems].sort((a, b) => {
       if (rank(a) !== rank(b)) return rank(a) - rank(b);
       return a.name.localeCompare(b.name, "ko");
     });
-  }, []);
+  }, [complexes, pastComplexes]);
 
   /* Phase 14-M-4 — LH는 현재/과거 합산해서 표기 (hwpx "LH 10" 의도와 일치).
      "주요(종료)" 카운트는 non-LH 과거만. LH 과거 1건(의정부)은 LH 발주 카운트에 흡수. */
@@ -152,7 +149,8 @@ function CaseCard({ complex, hue }: { complex: GalleryItem; hue: number }) {
   const isPast = complex.isPast ?? false;
   const badge = lh ? "LH" : (complex.type ?? "민간");
   const initial = getInitial(complex.name);
-  const slug = encodeURIComponent(complex.name);
+  /* E-1 — 링크는 DB 의 불변 slug 를 쓴다. 관리자가 단지명을 바꿔도 URL 은 그대로다. */
+  const slug = complex.slug;
   /* Phase 14 P2-08 — 단지명 시드 기반 navy 그라데이션 각도/톤 미세 변화.
      실사 이미지 매핑 전까지 카드별 변별성 보강. hue prop은 -22~28 범위 */
   const seed = complex.name
@@ -218,7 +216,7 @@ function CaseCard({ complex, hue }: { complex: GalleryItem; hue: number }) {
             <span
               className={
                 "inline-flex items-center rounded-sm px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] " +
-                badgeStyle(badge as Complex["type"])
+                badgeStyle(badge as ContentComplex["type"])
               }
             >
               {badge}

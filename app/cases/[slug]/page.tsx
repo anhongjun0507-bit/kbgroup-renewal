@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { complexes, type Complex } from "@/data/site-content";
+import { getComplexes, toSlug } from "@/lib/content";
+import type { ContentComplex } from "@/lib/content/types";
 import { Container } from "@/components/ui";
 
 /* Phase 6.5 E-3 — /cases/[slug] 5섹션 스켈레톤
@@ -10,12 +11,20 @@ import { Container } from "@/components/ui";
    2) 프로젝트 메타 4-col
    3) 본문 (좌 30% sticky 인덱스 + 우 70% prose)
    4) 갤러리 (4 columns)
-   5) prev/next full-bleed nav 카드 */
+   5) prev/next full-bleed nav 카드
+
+   PLAN B / DAY 3 — lib/content 어댑터 전환.
+   · 상세 페이지는 **현재 운영 단지(is_active = true)만** 대상이다. 과거 단지 19건은
+     통합 테이블로 옮겼어도 상세 페이지가 새로 생기면 안 된다 (PROGRESS §11-5).
+   · 조회 키는 DB 의 불변 slug (E-1). params.slug 는 Next 가 디코드해 넘기므로
+     toSlug() 로 다시 인코딩해 맞춘다. 단지명이 바뀌어도 URL 은 유지된다.
+   · dynamicParams 기본값(true) 유지 — 관리자가 새 단지를 등록하면 재빌드 없이 접근 가능. */
 
 type Params = { slug: string };
 
-export function generateStaticParams(): Params[] {
-  return complexes.map((c) => ({ slug: encodeURIComponent(c.name) }));
+export async function generateStaticParams(): Promise<Params[]> {
+  const complexes = await getComplexes(); // is_active = true 만
+  return complexes.map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({
@@ -24,8 +33,8 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const name = decodeURIComponent(slug);
-  const complex = complexes.find((c) => c.name === name);
+  const complexes = await getComplexes();
+  const complex = complexes.find((c) => c.slug === toSlug(slug));
   if (!complex) return { title: "단지 정보 없음 | (주)케이비개발" };
   return {
     title: `${complex.name} | 관리현황 | (주)케이비개발`,
@@ -39,7 +48,7 @@ function getInitial(name: string) {
   return (tokens[tokens.length - 1] ?? noLh).charAt(0) || "K";
 }
 
-function isLh(c: Complex) {
+function isLh(c: Pick<ContentComplex, "name" | "type">) {
   return c.name.startsWith("LH") || c.type === "LH";
 }
 
@@ -55,8 +64,8 @@ export default async function CaseDetailPage({
   params: Promise<Params>;
 }) {
   const { slug } = await params;
-  const name = decodeURIComponent(slug);
-  const idx = complexes.findIndex((c) => c.name === name);
+  const complexes = await getComplexes(); // is_active = true 만 → 과거 단지 slug 는 아래에서 404
+  const idx = complexes.findIndex((c) => c.slug === toSlug(slug));
   if (idx === -1) notFound();
   const complex = complexes[idx];
   const initial = getInitial(complex.name);
@@ -249,7 +258,7 @@ export default async function CaseDetailPage({
       >
         {prev ? (
           <Link
-            href={`/cases/${encodeURIComponent(prev.name)}`}
+            href={`/cases/${prev.slug}`}
             data-surface="dark"
             className="group relative isolate flex min-h-[200px] items-center overflow-hidden bg-navy-900 p-8 transition-colors md:p-12"
           >
@@ -285,7 +294,7 @@ export default async function CaseDetailPage({
         )}
         {next ? (
           <Link
-            href={`/cases/${encodeURIComponent(next.name)}`}
+            href={`/cases/${next.slug}`}
             data-surface="dark"
             className="group relative isolate flex min-h-[200px] items-center justify-end overflow-hidden bg-navy-900 p-8 text-right transition-colors md:p-12"
           >
