@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getSettings } from "@/lib/content";
 import { PageSections } from "@/lib/sections/PageSections";
+import { UnpublishedNotice } from "@/components/layout/UnpublishedNotice";
+import { requirePublished } from "@/lib/pages/gate";
 import { businessSections } from "./sections";
 
 export const metadata: Metadata = {
@@ -10,7 +12,15 @@ export const metadata: Metadata = {
 };
 
 export default async function BusinessIndexPage() {
+  /* 비공개면 404(리다이렉트 아님). 관리자면 미리보기 + 배너 (PLAN B / DAY 8). */
+  const { preview } = await requirePublished("/business");
+
   const settings = await getSettings();
 
-  return <PageSections page="business" data={{ settings }} sections={businessSections} />;
+  return (
+    <>
+      {preview && <UnpublishedNotice path="/business" />}
+      <PageSections page="business" data={{ settings }} sections={businessSections} />
+    </>
+  );
 }

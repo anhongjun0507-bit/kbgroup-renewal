@@ -1,16 +1,8 @@
+import { Fragment } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui";
 import type { SettingValue } from "@/lib/content";
-
-/* Phase 15 — 헤더 영문 GNB와 라벨 일치 (krLabel은 보조) */
-const SITEMAP = [
-  { label: "ABOUT", krLabel: "회사소개", href: "/about" },
-  { label: "BUSINESS", krLabel: "사업영역", href: "/business" },
-  { label: "PROJECTS", krLabel: "관리현황", href: "/cases" },
-  { label: "LICENSES", krLabel: "인허가", href: "/licenses" },
-  { label: "CAREERS", krLabel: "채용", href: "/careers" },
-  { label: "NEWS", krLabel: "소식", href: "/notices" },
-];
+import type { NavChild, NavItem } from "@/lib/nav/types";
 
 /* Phase 9 P0-09 — 푸터 대비 강화
    `text-white/55→/65 (eyebrow)`, `/75→/85 (link/body)`, copyright `/55→/65` */
@@ -19,13 +11,21 @@ const COL_LABEL =
 const LINK_BASE =
   "text-[14px] leading-relaxed text-white/85 transition-colors duration-200 hover:text-white";
 
-/** 회사 정보·연락처는 app/layout.tsx 가 콘텐츠 어댑터에서 읽어 주입한다 (PLAN B / DAY 4). */
+/**
+ * 회사 정보·연락처는 app/layout.tsx 가 콘텐츠 어댑터에서 읽어 주입한다 (PLAN B / DAY 4).
+ * SITEMAP 열과 법적 고지 링크도 DAY 8 부터 주입받는다 — 헤더 메뉴와 같은 `nav_items` 를
+ * 구독하므로 두 곳에 같은 목록을 적어두는 중복이 사라졌다.
+ */
 export function Footer({
   company,
   contact,
+  sitemap,
+  legal,
 }: {
   company: SettingValue<"company">;
   contact: SettingValue<"contact">;
+  sitemap: NavItem[];
+  legal: NavChild[];
 }) {
   return (
     /* Phase 14 P2-04 — 본문 navy-900 다크 섹션과 시각 분리.
@@ -79,7 +79,7 @@ export function Footer({
           <nav aria-label="사이트맵">
             <h3 className={COL_LABEL}>SITEMAP</h3>
             <ul className="space-y-3">
-              {SITEMAP.map((item) => (
+              {sitemap.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
@@ -147,19 +147,23 @@ export function Footer({
         <div className="mt-14 border-t border-white/10 pt-8">
           {/* Phase 14 P1-10 — 약관·개인정보처리방침 링크 */}
           <nav aria-label="법적 고지" className="mb-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px]">
-            <Link
-              href="/privacy"
-              className="font-semibold text-white/90 underline-offset-4 hover:text-accent-300 hover:underline"
-            >
-              개인정보처리방침
-            </Link>
-            <span aria-hidden="true" className="text-white/30">·</span>
-            <Link
-              href="/terms"
-              className="font-medium text-white/75 underline-offset-4 hover:text-accent-300 hover:underline"
-            >
-              이용약관
-            </Link>
+            {legal.map((item, i) => (
+              <Fragment key={item.href}>
+                {i > 0 && (
+                  <span aria-hidden="true" className="text-white/30">·</span>
+                )}
+                <Link
+                  href={item.href}
+                  className={
+                    i === 0
+                      ? "font-semibold text-white/90 underline-offset-4 hover:text-accent-300 hover:underline"
+                      : "font-medium text-white/75 underline-offset-4 hover:text-accent-300 hover:underline"
+                  }
+                >
+                  {item.label}
+                </Link>
+              </Fragment>
+            ))}
           </nav>
           <div className="flex flex-col gap-3 text-[13px] leading-relaxed text-white/70 md:flex-row md:items-center md:justify-between">
             <div className="space-y-1">

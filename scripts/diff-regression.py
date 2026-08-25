@@ -9,14 +9,17 @@ docs/regression/before/ ↔ docs/regression/after/ 의 동일 파일명끼리 �
   python3 scripts/diff-regression.py                 # 전체
   python3 scripts/diff-regression.py 07 12 13 14     # 순번 prefix 로 일부만
 """
+import os
 import sys
 from pathlib import Path
 
 from PIL import Image, ImageChops
 
 ROOT = Path(__file__).resolve().parent.parent
-BEFORE = ROOT / "docs/regression/before"
-AFTER = ROOT / "docs/regression/after"
+# DAY 8 부터 비교 대상 디렉터리를 환경변수로 바꿀 수 있다 (기본값은 종전과 동일).
+#   REG_BEFORE=after REG_AFTER=day8-after python3 scripts/diff-regression.py
+BEFORE = ROOT / "docs/regression" / os.environ.get("REG_BEFORE", "before")
+AFTER = ROOT / "docs/regression" / os.environ.get("REG_AFTER", "after")
 OUT = ROOT / "docs/regression/diff"
 
 # 픽셀당 이 값 이하의 채널 차이는 인코딩·안티에일리어싱 잡음으로 본다.

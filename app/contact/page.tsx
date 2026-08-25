@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getSetting } from "@/lib/content";
 import { PageSections } from "@/lib/sections/PageSections";
+import { UnpublishedNotice } from "@/components/layout/UnpublishedNotice";
+import { requirePublished } from "@/lib/pages/gate";
 import { contactSections } from "./sections";
 
 /* Phase 6.2 A-5 — /contact 라우트 신설 (Header/Footer/CTAs에서 참조) */
@@ -12,7 +14,15 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
+  /* 비공개면 404(리다이렉트 아님). 관리자면 미리보기 + 배너 (PLAN B / DAY 8). */
+  const { preview } = await requirePublished("/contact");
+
   const contact = await getSetting("contact");
 
-  return <PageSections page="contact" data={{ contact }} sections={contactSections} />;
+  return (
+    <>
+      {preview && <UnpublishedNotice path="/contact" />}
+      <PageSections page="contact" data={{ contact }} sections={contactSections} />
+    </>
+  );
 }

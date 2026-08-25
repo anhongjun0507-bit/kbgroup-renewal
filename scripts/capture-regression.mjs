@@ -22,9 +22,11 @@ const PLAYWRIGHT_PATH = process.env.PLAYWRIGHT_PATH || "playwright";
 const { chromium } = require(PLAYWRIGHT_PATH);
 
 const BASE_URL = process.env.BASE_URL || "https://kbgroup-renewal.vercel.app";
+/* DAY 8 부터 임의 단계명을 받는다 — 「DAY 7 after ↔ DAY 8 after」처럼
+   before/after 두 칸만으로는 세대를 구분할 수 없기 때문이다. */
 const phase = process.argv[2];
-if (phase !== "before" && phase !== "after") {
-  console.error('사용법: node scripts/capture-regression.mjs <before|after>');
+if (!phase || !/^[a-z0-9-]+$/.test(phase)) {
+  console.error("사용법: node scripts/capture-regression.mjs <단계명>  (예: before · after · day8-after)");
   process.exit(1);
 }
 

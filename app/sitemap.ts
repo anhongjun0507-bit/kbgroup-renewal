@@ -2,13 +2,16 @@ import type { MetadataRoute } from "next";
 import { createClient } from "@supabase/supabase-js";
 import { getComplexes, getSetting } from "@/lib/content";
 import { BOARD_ORDER, BOARD_CONFIGS, postDetailPath } from "@/lib/boards";
+import { getPublishedMap, isPublished } from "@/lib/pages/published";
+import { PUBLIC_PAGES, sitemapPath } from "@/lib/pages/registry";
 import { SITE_URL } from "@/lib/site";
 
 /**
  * /sitemap.xml (Next Metadata File Convention).
  *
  * 구성:
- *  1) 정적 공개 페이지 (회사소개·사업영역·실적·채용·공지 허브 등)
+ *  1) 정적 공개 페이지 — `lib/pages/registry.ts` 에서 읽고 `pages.is_published` 로 거른다
+ *     (PLAN B / DAY 8). 비공개로 돌린 페이지는 사이트맵에서도 빠진다.
  *  2) 콘텐츠 기반 동적 경로 — /business/[slug], /cases/[slug]
  *  3) 게시판 글 — Supabase posts 테이블
  *  4) 채용 공고 상세 — Supabase job_openings 테이블 (게시된 공고만)
@@ -39,24 +42,6 @@ const entry = (
   changeFrequency,
   priority,
 });
-
-/** 정적 공개 페이지 — 경로, 우선순위, 변경 빈도. */
-const STATIC_ROUTES: Array<[string, number, Entry["changeFrequency"]]> = [
-  ["", 1.0, "weekly"],
-  ["/about", 0.9, "monthly"],
-  ["/about/ceo", 0.7, "yearly"],
-  ["/about/history", 0.6, "yearly"],
-  ["/about/location", 0.7, "yearly"],
-  ["/business", 0.9, "monthly"],
-  ["/cases", 0.9, "weekly"],
-  ["/licenses", 0.6, "yearly"],
-  ["/careers", 0.8, "weekly"],
-  ["/careers/openings", 0.8, "weekly"],
-  ["/contact", 0.8, "monthly"],
-  ["/notices", 0.7, "weekly"],
-  ["/privacy", 0.3, "yearly"],
-  ["/terms", 0.3, "yearly"],
-];
 
 /** 쿠키·세션이 필요 없는 공개 데이터 전용 클라이언트.
     ssr 클라이언트(cookies 의존)를 쓰면 사이트맵이 동적 라우트가 되므로 분리. */
@@ -128,13 +113,16 @@ async function jobOpeningEntries(): Promise<Entry[]> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [businessAreas, complexes] = await Promise.all([
+  const [businessAreas, complexes, published] = await Promise.all([
     getSetting("businessAreas"),
     getComplexes(),
+    getPublishedMap(),
   ]);
 
-  const staticEntries = STATIC_ROUTES.map(([path, priority, freq]) =>
-    entry(path, priority, freq),
+  /* 경로·우선순위·변경 빈도는 레지스트리가 갖고, DB 는 공개 여부만 얹는다.
+     레지스트리 배열 순서 = 전환 전 STATIC_ROUTES 순서라 사이트맵 항목 순서가 유지된다. */
+  const staticEntries = PUBLIC_PAGES.filter((p) => isPublished(published, p.path)).map(
+    (p) => entry(sitemapPath(p.path), p.priority, p.changeFrequency),
   );
 
   /* 게시판 목록 페이지 (/notices/board, /notices/gallery, ...) */

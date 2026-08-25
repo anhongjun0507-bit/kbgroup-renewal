@@ -1,14 +1,22 @@
 # PLAN B — 콘텐츠 관리(CMS) 전환 진행 문서
 
 > 이 파일 하나만 읽고 STEP 2를 시작할 수 있도록 작성한다.
-> 최종 갱신: 2026-08-25 (STEP 2 / DAY 7 완료 — §17 참조)
+> 최종 갱신: 2026-08-25 (STEP 2 / DAY 8 완료 — §18 참조)
 > 대상 저장소: `kbgroup-renewal` / Next.js 16.2.6 + React 19.2.4 + Supabase + Vercel
 
 ---
 
 ## 0. 현재 상태 한 줄
 
-STEP 2 / DAY 7 완료. 공개 페이지 11개(`/`·`/about`×4·`/business`×2·`/cases`·`/licenses`·`/careers`·`/contact`)를 **섹션 레지스트리 + DB 오버레이** 구조로 전환했다. 컴포넌트 참조와 하드코딩 프롭은 코드(`sections.tsx` 11개)에 남고 DB(`page_sections` 63행)는 `is_visible`·`sort_order` 만 갖는다. 관리자 화면 `/admin/content/sections` 에서 섹션 표시·숨김과 위/아래 순서 변경(DnD 아님)을 한다. 회귀: **SSR 가시 텍스트 16경로 diff 0줄**(전환 전후 같은 로컬 프로덕션 빌드끼리 대조) · 스크린샷 28장 중 15장 픽셀 동일 · 나머지 13장은 전부 **`before`(프로덕션 캡처) 쪽 지연 로딩·리빌 미발화** 아티팩트로 판정(높이 변화 0) · 숨김/순서 왕복 후 원본과 diff 0줄 · 하드코딩 프롭(AboutNav `current` 4개 · ContactInvite `context` 9개) 전부 일치. 다음: DAY 8(페이지 공개·비공개).
+STEP 2 / DAY 8 완료. **메뉴·페이지 관리(ITEM 03)** 를 붙였다. 헤더/푸터 메뉴가 `nav_items` 를,
+공개 페이지 14경로가 `pages.is_published` 를 구독한다(둘 다 코드 기본값 위에 얹는 오버레이 —
+행이 없으면 전환 전과 동일). `Header.tsx`(561줄, `"use client"`)는 **내부 로직 무수정**, 프롭만
+`businessAreas` → `navItems` 로 치환했다(E-2). 비공개 전환은 **404**(리다이렉트 금지)이고
+헤더·푸터 메뉴와 `sitemap.xml` 에서 함께 빠지며 관리자만 배너와 함께 미리보기한다.
+회귀: **SSR 가시 텍스트 16경로 diff 0줄** · 스크린샷 28장 **높이 변화 0** (14장 픽셀 동일,
+14장은 지연 로딩/리빌 캡처 아티팩트 — 양방향으로 갈려 회귀 방향이 아니다) · 실동작 36항목 전부 통과 ·
+토글 가능 13경로 전수 왕복(404→배너→복귀) 통과 · sitemap 191 URL(활성 단지 153 유지, 과거 19 미포함).
+다음: DAY 9(변경 이력).
 
 ## 1. 계약 범위 — 4개 영역 (견적서 원문)
 
@@ -214,8 +222,8 @@ DAY 1에 Next 16.2.6의 캐시 API를 검증한 뒤 **둘 중 하나로 확정�
 - [x] DAY 7(실제 DAY 5) — 사업영역·인허가·인증·연혁·파트너·조직도 편집 UI + 소비처 전환 26개(잔여 0, 사장 코드 4개 제외) + contact 소비처 7개 해소 (§15)
 - [x] DAY 8(실제 DAY 6) — 이미지·영상 업로더 + 전 편집 폼 연결 + 히어로 슬라이드 교체(ITEM 02) + E-4 실증 (§16)
 - [x] DAY 7 — 베이스라인 재캡처 → **섹션 레지스트리 전환 11개 page.tsx** → SSR 전문 diff 0줄 · 스크린샷 재캡처 · 표시/숨김·순서 관리 UI (§17)
-- [ ] DAY 8 — 관리자 UI: **페이지 공개·비공개**(`pages` 테이블). 섹션 표시·숨김/순서는 DAY 7 에서 선행 완료(§17-4)
-- [ ] DAY 9 — 관리자 UI: 네비게이션 + 변경 이력
+- [x] DAY 8 — `nav_items` 전환(헤더·푸터) + 메뉴 편집 UI + **페이지 공개·비공개**(`pages`) + sitemap DB 기준 전환 (§18)
+- [ ] DAY 9 — 관리자 UI: 변경 이력(`content_revisions`). 네비게이션은 DAY 8 에서 선행 완료(§18-2)
 - [ ] DAY 10 — 전체 회귀 · 배포 · 라이브 검증 · 인수 문서
 
 부수 확인 항목:
@@ -1700,3 +1708,237 @@ DAY 4~6 은 「프로덕션(파일 기반) ↔ 로컬(DB)」 대조였다. DAY 7
    - 업로드 교체로 버려진 미참조 Storage 객체 — 롤백 수단이라 남긴다(§16-6-5).
    - `site-images`/`site-videos` 의 DAY 6 테스트 파일 3건 — 참조 여부 확인 없이 지우는 편이 더 위험하다.
    - Pretendard 적용(§15-0) — 계약 범위 밖 별도 안건 상태 유지.
+
+---
+
+## 18. DAY 8 실행 결과 (2026-08-25)
+
+> ITEM 03 「메뉴 · 페이지 관리」. 지시서 8-1 ~ 8-6.
+> 읽는 순서는 §11 → §7 → 이 절. 전 수치는 **로컬 프로덕션 빌드**(`localhost:3210`) 실측이다.
+
+### 18-0. 설계 결정 — 오버레이 원칙을 메뉴·페이지에도 그대로 적용
+
+DAY 7 섹션 레지스트리와 같은 구조다. **코드가 원본, DB 는 그 위에 얹는 오버레이**다.
+
+| | 원본(코드) | 오버레이(DB) |
+|---|---|---|
+| 메뉴 | `lib/nav/types.ts` 의 `HEADER_NAV_DEFAULT`·`FOOTER_NAV_DEFAULT`·`FOOTER_LEGAL` | `nav_items` — 이름·순서·표시 여부 |
+| 페이지 | `lib/pages/registry.ts` 의 `PUBLIC_PAGES` 14경로 | `pages` — `is_published` |
+
+- **행이 없으면 전환 전과 한 글자도 다르지 않다.** 조회 실패·킬스위치(`CONTENT_SOURCE=file`)도 같은 기본값으로 떨어진다.
+- 기본값으로 떨어지는 조건은 「그 location 에 행이 **아예 없을 때**」다. 조립 결과가 비었는지로 판단하면
+  관리자가 전 항목을 숨겼을 때 기본 메뉴가 되살아난다 — 실제로 그렇게 짰다가 고쳤다.
+
+**결정 A — BUSINESS 하위 5종은 `nav_items` 에 넣지 않는다.**
+사업영역 목록은 이미 「사이트 설정 · 사업영역」(DAY 5)에서 편집한다. 같은 목록을 `nav_items` 에도
+복제하면 사업영역을 추가·개명해도 드롭다운이 따라오지 않는 **두 출처 문제**가 생긴다.
+`lib/nav/read.ts` 가 `href === "/business"` 인 항목의 자식만 `businessAreas` 설정에서 파생시킨다.
+관리자 화면에도 그 사실을 안내 줄로 띄운다.
+
+**결정 B — 푸터 법적 고지(개인정보처리방침·이용약관)는 `nav_items` 로 빼지 않는다.**
+법정 고지라 이름을 바꾸거나 지울 대상이 아니다. 다만 **해당 페이지를 비공개로 돌리면 링크도 사라진다**(연쇄 영향).
+「푸터 정보」쪽(주소·연락처·대표·사업자번호·개인정보보호책임자)은 DAY 4~5 의 「사이트 설정」이 이미 담당한다.
+
+**결정 C — href(경로) 편집 UI 는 만들지 않는다.**
+계약 문구는 「이름 변경 · 순서 조정 · 표시·숨김」까지다. 경로를 열어주면 실재하지 않는 라우트를
+가리켜 404 를 만들 수 있다. 서버 액션에도 `href` 를 받는 입구가 없다.
+
+**결정 D — 게이트를 페이지마다 명시적으로 부른다.**
+`PageSections` 안에 숨길 수도 있었지만(11개 파일 무수정) 이름이 하는 일을 감춘다. 13개 페이지가
+각자 `await requirePublished("/경로")` 를 부른다 — grep 하면 어디에 걸려 있는지 한눈에 보이고,
+빠뜨린 페이지는 §18-5 의 **13경로 전수 스윕**이 잡는다.
+
+**결정 E — `requirePublished` 를 `published.ts` 에서 분리했다.**
+게이트는 `getViewer()` 를 통해 `next/headers` 를 끌어온다. `app/sitemap.ts` 는 쿠키를 읽지 않는
+정적 라우트(`○`)라 그 체인이 닿으면 안 된다. 그래서 `lib/pages/gate.ts` 로 갈랐다.
+빌드 라우트 표에서 `/sitemap.xml` 이 `○` 로 남은 것으로 확인했다(§18-7).
+
+### 18-1. 신규·변경 파일
+
+| 구분 | 파일 | 내용 |
+|------|------|------|
+| 신규 | `lib/nav/types.ts` | 메뉴 타입 + 기본값. **클라 번들에 들어가므로 server-only 금지** |
+| 신규 | `lib/nav/read.ts` | `nav_items` 캐시 리더 + 조립 + 비공개 필터. 태그 `content:nav` |
+| 신규 | `lib/pages/registry.ts` | 공개 페이지 14경로(구 `STATIC_ROUTES`) + priority·changeFrequency |
+| 신규 | `lib/pages/published.ts` | `pages` 캐시 리더. 태그 `content:pages`. **쿠키 미의존** |
+| 신규 | `lib/pages/gate.ts` | `requirePublished()` — 404 / 관리자 미리보기 |
+| 신규 | `components/layout/UnpublishedNotice.tsx` | 관리자 미리보기 배너 |
+| 신규 | `app/admin/content/nav/{page.tsx,actions.ts}` | 메뉴 편집 UI (이름·순서·표시숨김) |
+| 신규 | `app/admin/content/pages/{page.tsx,actions.ts}` | 페이지 공개 토글 UI |
+| 신규 | `scripts/seed-nav-pages.ts` | 기본값 시드 (재실행 안전) |
+| 신규 | `scripts/verify-day8-nav-pages.mjs` | 실동작 검증 36항목 |
+| 신규 | `scripts/verify-day8-pages-sweep.mjs` | 토글 13경로 전수 왕복 |
+| 변경 | `components/layout/Header.tsx` | **프롭 치환만** — `businessAreas` → `navItems`. `buildNavItems`·`useMemo` 제거 (−54/+7줄) |
+| 변경 | `components/layout/Footer.tsx` | `SITEMAP` 상수 제거 → `sitemap`·`legal` 프롭 |
+| 변경 | `app/layout.tsx` | `getSiteNav()` 1회 조회 후 프롭 주입 |
+| 변경 | `app/sitemap.ts` | `STATIC_ROUTES` 배열 → 레지스트리 + `is_published` 필터 |
+| 변경 | `components/admin/AdminTabs.tsx` | 탭 2개 추가 (7 → 9) |
+| 변경 | 공개 페이지 13개 `page.tsx` | 게이트 1줄 + 배너 렌더 |
+| 변경 | `scripts/capture-regression.mjs` | 단계명을 임의 문자열로 (`day8-after`) |
+| 변경 | `scripts/diff-regression.py` | `REG_BEFORE`/`REG_AFTER` 환경변수 |
+
+`middleware.ts` 와 `app/robots.ts` 는 **손대지 않았다**(지시 8-3·8-6 그대로).
+비공개 경로를 robots 에 적으면 오히려 목록을 노출하고, 미들웨어 DB 조회는 엣지에서 전 요청에 붙는다.
+
+### 18-2. 헤더 전환 — 「내부 로직 무수정」 실측
+
+`Header.tsx` diff 는 **−54 / +7줄**이고 전부 파일 상단(타입·상수·프롭 시그니처)이다.
+스크롤 모핑 `useEffect`, 드롭다운 상태, 모바일 오버레이, `renderNavItem` 본문은 **한 줄도 바뀌지 않았다.**
+
+클라 번들 확인 — 메뉴 라벨 문자열이 **클라이언트 청크에서 전부 사라졌다**:
+
+| 검색어 | Header 청크(`137rc.36io5rz.js`, 25,719 B) | 전체 `.next/static/chunks/` |
+|--------|--:|--:|
+| `KB 인재채용` | 0건 | **0건** |
+| `관리현황` · `인허가` · `자료실` | 0건 | — |
+
+DAY 5 에서 이미 `businessAreas` 가 프롭이었으므로 **번들 감소분 자체는 크지 않다**(라벨 문자열 수백 바이트).
+정직하게 말하면 이번 이득은 크기보다 **출처 단일화**다 — 헤더/푸터가 같은 테이블을 본다.
+
+### 18-3. 검증 ① — SSR 가시 텍스트 전문 diff
+
+DAY 7 `after`(= 현재 HEAD 코드의 로컬 프로덕션 빌드) ↔ DAY 8 `day8-after`. 같은 서버·같은 조건이다.
+
+| 경로 | 줄 수 | diff | | 경로 | 줄 수 | diff |
+|------|--:|--:|---|------|--:|--:|
+| `/` | 164 | **0** | | `/business/security` | 110 | **0** |
+| `/about` | 194 | **0** | | `/business/construction` | 110 | **0** |
+| `/about/ceo` | 71 | **0** | | `/business/others` | 111 | **0** |
+| `/about/history` | 79 | **0** | | `/cases` | 223 | **0** |
+| `/about/location` | 74 | **0** | | `/licenses` | 191 | **0** |
+| `/business` | 87 | **0** | | `/careers` | 120 | **0** |
+| `/business/facility` | 109 | **0** | | `/contact` | 62 | **0** |
+| `/business/sanitation` | 112 | **0** | | `/notices` (대조군) | 53 | **0** |
+
+**16경로 전부 diff 0줄.** 이 시점 DB 에는 시드된 `nav_items` 18행 · `pages` 14행이 이미 들어 있다.
+즉 "DB 경로로 렌더해도 코드 기본값과 한 글자도 다르지 않다"는 확인이다.
+검증 스크립트가 왕복 쓰기를 마친 뒤 다시 찍어도 **또 0줄**이었다.
+
+### 18-4. 검증 ② — 실동작 36항목 (`scripts/verify-day8-nav-pages.mjs`)
+
+실제 브라우저로 관리자 버튼을 **클릭**하고 공개 페이지·사이트맵을 HTTP 로 다시 읽는다. 전부 원복까지 돈다.
+
+**헤더 동작 (지시 8-5 필수 항목)**
+
+| 항목 | 결과 |
+|------|------|
+| 히어로 위 — 투명 | `data-surface="dark"` |
+| 히어로 위 — 2단 로고 | `font-size: 28px` |
+| 스크롤 후 — 불투명 전환 | `background-color: rgba(255,255,255,0.92)` · `data-surface` 해제 |
+| 스크롤 후 — 로고 모핑 | `28px → 17px` (1단 컴팩트) |
+| 스크롤 복귀 | `17px → 28px` 원복 |
+| GNB 항목 | `회사소개,사업영역,관리현황,인허가,채용,소식` — 전환 전과 동일 |
+| BUSINESS 드롭다운 | 주택관리 / 위생청소 / 경비보안 / 시행건설 / 기타 — **5종** |
+| 모바일 햄버거 | 오버레이 `opacity: 1` · 항목 **6개** |
+
+**메뉴 왕복**
+
+| 항목 | 결과 |
+|------|------|
+| 이름 변경 | 회사소개 → **회사안내** 헤더 반영 |
+| 이름 왕복 | 되돌리면 diff **0줄** |
+| 순서 이동 | ABOUT 아래로 → 사업영역이 회사소개보다 앞 |
+| 순서 — 줄 수 | **164줄 유지**(자리만 바뀜) |
+| 순서 왕복 | 되돌리면 diff **0줄** |
+| 표시·숨김 | LICENSES 숨김 → GNB `회사소개,사업영역,관리현황,채용,소식` (5개) |
+| 숨김 왕복 | 되돌리면 diff **0줄** |
+
+**페이지 공개·비공개 — 지시 8-5 의 4항목 (`/licenses` 기준)**
+
+| # | 항목 | 결과 |
+|---|------|------|
+| ① | 방문자에게 404 | HTTP **404** (리다이렉트 아님) |
+| ② | 헤더·푸터 메뉴에서 제외 | 「인허가」·「LICENSES」 둘 다 소멸 |
+| ③ | sitemap 에서 제외 | **191 → 190 URL**, `/licenses` 항목 소멸 |
+| ④ | 관리자 미리보기 | 페이지 정상 렌더 + 배너 1개 |
+| — | 되돌리면 전부 복구 | `/licenses` diff 0줄 · `/` diff 0줄 · sitemap **191 복귀** |
+
+**③ 은 캐시 설계의 실증이기도 하다.** `/sitemap.xml` 은 `○ Static · revalidate 1h` 인데
+Server Action 의 `updateTag("content:pages")` 로 **즉시** 반영됐다 — 내부 `unstable_cache` 태그가
+라우트 캐시까지 전파된다는 뜻이다. 광역 `revalidatePath` 없이 목표를 달성했다(E-12).
+
+### 18-5. 검증 ③ — 토글 13경로 전수 스윕 (`scripts/verify-day8-pages-sweep.mjs`)
+
+게이트를 빠뜨린 페이지가 없는지 확인한다. 경로마다 비공개 → 404 → 배너 → 복귀 → 200.
+
+```
+PASS  /about            PASS  /careers            PASS  /privacy
+PASS  /about/ceo        PASS  /careers/openings   PASS  /terms
+PASS  /about/history    PASS  /contact
+PASS  /about/location   PASS  /notices
+PASS  /business         PASS  /cases              PASS  /licenses
+```
+
+**13경로 전부 통과** (비공개=404 · 배너=1 · 복귀=200). `/` 는 토글 대상이 아니다 —
+메인을 닫으면 사이트 전체가 404 가 되고 되돌릴 길이 좁아진다. UI 는 「공개 고정」, 서버 액션도 거부한다.
+
+### 18-6. 검증 ④ — 스크린샷 28장 재캡처
+
+DAY 7 `after` ↔ DAY 8 `day8-after`. **28장 전부 크기(높이) 동일 — 레이아웃 변화 0.**
+
+**픽셀 동일 14장** — `03_about-ceo`·`04_about-history`·`05_about-location_desktop`·`10_contact`·
+`11_notices`·`12_cases-detail-lh`·`13_cases-detail-private`·`14_cases-detail-nophoto`.
+
+나머지 14장은 **지연 로딩·리빌 캡처 아티팩트**다. 근거 세 가지:
+
+1. **차이 구간이 카드 격자 주기와 정확히 일치한다.** `07_cases_desktop` 은 452px 주기,
+   `06_business_desktop` 은 363px, `07_cases_mobile` 은 210px 반복 블록이다.
+2. **어느 쪽이 비어 있는지가 캡처마다 갈린다** — 회귀라면 한 방향으로만 나와야 한다.
+
+   | 파일 | 차이 | 그 구간의 빈 쪽 |
+   |------|-----:|------|
+   | `07_cases_desktop` | 36.96% | **DAY 7 쪽이 순백**(std 0.0 / mean 255) · DAY 8 에는 단지 사진이 그려짐 |
+   | `06_business_desktop` | 8.96% | **DAY 7 쪽이 순백** |
+   | `07_cases_mobile` | 5.23% | **DAY 8 쪽이 순백** (반대 방향) |
+   | `02_about_mobile` | 3.89% | 리빌 중간 프레임 |
+   | `01_home_desktop` 2.48% · `02_about_desktop` 0.54% · `09_careers` 0.47%/0.14% · `06_business_mobile` 0.23% · `01_home_mobile` 0.21% · `08_licenses` 0.07%/0.11% · `05_about-location_mobile` 0.004% | | 같은 리빌 아티팩트 |
+
+3. **정지 상태에서 직접 확인했다.** 전체 스크롤 후 2.5초 정지시켜 이미지 로드 상태를 읽었다:
+
+   | 페이지 | desktop | mobile |
+   |--------|---------|--------|
+   | `/cases` | img **40/40** 로드 · 높이 10291 | img **40/40** · 높이 21628 |
+   | `/` | 15/15 · 7291 | 15/15 · 12526 |
+   | `/about` | 8/8 · 9887 | 8/8 · 12970 |
+   | `/business` | 6/6 · 4503 | 6/6 · 5990 |
+   | `/licenses`·`/careers`·`/about/location` | 전부 로드 | 전부 로드 |
+
+   높이는 스크린샷 높이와 **정확히 일치**한다. 콘텐츠 손실이 아니다.
+
+### 18-7. 검증 ⑤ — 빌드 · 정적 검사
+
+| 항목 | 결과 |
+|------|------|
+| `tsc --noEmit` | EXIT **0** |
+| `eslint` (신규·변경 전량) | 신규 error·warning **0건**. `Header.tsx:90 set-state-in-effect` 1건은 **HEAD 에도 있던 기존 경고**(stash 후 재현 확인, 이번에 건드리지 않은 줄) |
+| `npm run build` | EXIT **0** · 4.0분 |
+| 라우트 표 | **53 → 55**. 추가된 것은 `/admin/content/nav`·`/admin/content/pages` **2개뿐**, 기존 라우트의 `○`/`ƒ` 판정 무변화 |
+| `/sitemap.xml` | **`○ Static · 1h`** 유지 — 게이트 분리(결정 E)가 의도대로 동작 |
+| sitemap 구성 | 총 **191 URL** · 활성 단지 **153건 = DB 153건** · 과거 단지 19건 중 누출 **0건** · 정적 14경로 전부 포함 |
+| 시드 | `nav_items` **18행**(헤더 6+6, 푸터 6) · `pages` **14행** · 기본값 대조 일치 |
+| DB 최종 상태 | nav 숨김 **0** · pages 비공개 **0** — 검증 쓰기 전부 원복 |
+
+### 18-8. 보고 사항
+
+1. **프로덕션 DB(같은 Supabase 프로젝트)에 `nav_items` 18행 · `pages` 14행을 실제로 넣었다.**
+   전부 기본값이라 현재 렌더 결과는 행이 없을 때와 동일하다(§18-3 diff 0줄이 그 증거).
+   `seed-nav-pages.ts` 재실행은 안전하다 — `nav_items` 는 행이 있으면 쓰지 않고(`--force` 필요),
+   `pages` 는 `ignoreDuplicates` 라 **이미 비공개로 돌려둔 페이지를 되살리지 않는다.**
+2. **검증 스크립트가 프로덕션 DB 에 쓰기를 했다.** 메뉴 이름 1건 · 순서 1건 · 숨김 1건 ·
+   페이지 비공개 토글 13경로 × 2회. **전부 원복했고 원복 결과를 스냅샷·DB 양쪽으로 대조**했다(§18-3·18-7).
+3. **전수 스윕 1회차가 10분 타임아웃으로 8경로에서 끊겼다.** 즉시 DB 를 확인해 **비공개로 남은 행이
+   없음**을 확인한 뒤 나머지 5경로를 이어 돌렸다. 그 경험을 반영해 스크립트 말미에 「비공개 잔존 행 확인」을
+   넣어 뒀다 — 중간에 죽어도 다음 실행이 잡는다.
+4. **비공개는 연쇄되지 않는다.** `/business` 를 닫아도 `/business/facility` 는 살아 있고 sitemap 에도 남는다.
+   `/cases/[slug]`·`/careers/openings/[id]`·게시판 목록(`/notices/board` 등)도 마찬가지다.
+   지시서에 연쇄 차단이 없었고, 상세 라우트까지 닫는 것은 「기존 페이지의 노출 토글」 범위를 넘는다.
+   **필요하면 말해 달라 — 레지스트리에 부모-자식 관계 한 줄이면 된다.**
+5. **BUSINESS 하위 항목은 메뉴 화면에서 편집되지 않는다**(결정 A). 관리자에게 헷갈릴 여지가 있어
+   해당 자리에 「사이트 설정 · 사업영역에서 관리합니다」 안내와 링크를 띄웠다.
+6. **메뉴 항목 추가·삭제는 없다.** 계약 문구는 「이름 변경 · 순서 조정 · 표시·숨김 · 푸터 정보·링크 관리」다.
+   숨김이 곧 삭제 대용이고, 추가는 가리킬 페이지가 있어야 하는데 페이지 신규 생성이 범위 밖이다(§3).
+7. **`/sitemap.xml` 즉시 반영은 태그 전파에 의존한다**(§18-4 ③). Next 16.2.6 로컬 프로덕션 빌드에서
+   실측했다. **Vercel 에서도 같은지는 DAY 10 배포 후 확인 항목으로 남긴다** — §11-5 의 교훈 그대로,
+   "로컬에서 됐다"는 프로덕션 검증이 아니다. 최악의 경우에도 1시간 뒤 자동 갱신되고 404 는 즉시 걸린다.
+8. **회귀 아티팩트 판정 근거를 §18-6 에 수치로 남겼다.** `07_cases_desktop` 36.96% 는 이번 회차에서
+   가장 큰 차이지만 **DAY 7 캡처 쪽이 빈 화면**이었던 경우다. 판정을 뒤집을 만한 근거가 보이면 알려 달라.

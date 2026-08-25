@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { getSetting } from "@/lib/content";
+import { UnpublishedNotice } from "@/components/layout/UnpublishedNotice";
+import { requirePublished } from "@/lib/pages/gate";
 
 export const metadata: Metadata = {
   title: "개인정보처리방침",
@@ -78,10 +80,14 @@ const SECTIONS = [
 ];
 
 export default async function PrivacyPage() {
+  /* 비공개면 404(리다이렉트 아님). 관리자면 미리보기 + 배너 (PLAN B / DAY 8). */
+  const { preview } = await requirePublished("/privacy");
+
   const [company, contact] = await Promise.all([getSetting("company"), getSetting("contact")]);
 
   return (
     <>
+      {preview && <UnpublishedNotice path="/privacy" />}
       <PageHero
         kicker="PRIVACY POLICY"
         title="개인정보처리방침"

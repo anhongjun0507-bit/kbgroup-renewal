@@ -6,6 +6,8 @@ import { JobCard } from "@/components/sections/careers/JobCard";
 import { TalentPoolCTA } from "@/components/sections/careers/TalentPoolCTA";
 import { getSetting } from "@/lib/content";
 import { getPublishedOpenings } from "@/lib/job-openings";
+import { UnpublishedNotice } from "@/components/layout/UnpublishedNotice";
+import { requirePublished } from "@/lib/pages/gate";
 
 export const metadata: Metadata = {
   title: "채용 공고 | (주)케이비개발",
@@ -16,6 +18,9 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function OpeningsPage() {
+  /* 비공개면 404(리다이렉트 아님). 관리자면 미리보기 + 배너 (PLAN B / DAY 8). */
+  const { preview } = await requirePublished("/careers/openings");
+
   const openings = await getPublishedOpenings();
   const now = new Date();
   const contact = await getSetting("contact");
@@ -23,6 +28,7 @@ export default async function OpeningsPage() {
 
   return (
     <>
+      {preview && <UnpublishedNotice path="/careers/openings" />}
       <PageHero
         kicker="OPEN POSITIONS · 채용 공고"
         title="현재 채용 중인 공고"

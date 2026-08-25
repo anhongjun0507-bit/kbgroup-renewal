@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { getSetting } from "@/lib/content";
+import { UnpublishedNotice } from "@/components/layout/UnpublishedNotice";
+import { requirePublished } from "@/lib/pages/gate";
 
 export const metadata: Metadata = {
   title: "이용약관",
@@ -82,11 +84,15 @@ const sections = (legalName: string) => [
 ];
 
 export default async function TermsPage() {
+  /* 비공개면 404(리다이렉트 아님). 관리자면 미리보기 + 배너 (PLAN B / DAY 8). */
+  const { preview } = await requirePublished("/terms");
+
   const company = await getSetting("company");
   const SECTIONS = sections(company.legalName);
 
   return (
     <>
+      {preview && <UnpublishedNotice path="/terms" />}
       <PageHero
         kicker="TERMS OF SERVICE"
         title="이용약관"

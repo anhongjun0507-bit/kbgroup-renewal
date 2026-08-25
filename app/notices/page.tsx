@@ -6,6 +6,8 @@ import { PostListSection } from "@/components/sections/notices/PostListSection";
 import { getViewer } from "@/lib/auth";
 import { getBoardConfig } from "@/lib/boards";
 import { listPosts } from "@/lib/posts";
+import { UnpublishedNotice } from "@/components/layout/UnpublishedNotice";
+import { requirePublished } from "@/lib/pages/gate";
 
 export const metadata: Metadata = {
   title: "공지사항 | (주)케이비개발",
@@ -22,6 +24,9 @@ export default async function NoticesPage({
 }: {
   searchParams: Promise<{ page?: string; q?: string }>;
 }) {
+  /* 비공개면 404(리다이렉트 아님). 관리자면 미리보기 + 배너 (PLAN B / DAY 8). */
+  const { preview } = await requirePublished("/notices");
+
   const config = getBoardConfig("notice");
   const { page: rawPage, q: rawQ } = await searchParams;
   const q = (rawQ ?? "").trim();
@@ -33,6 +38,7 @@ export default async function NoticesPage({
 
   return (
     <>
+      {preview && <UnpublishedNotice path="/notices" />}
       <PageHero
         kicker="NOTICES"
         title="공지사항"

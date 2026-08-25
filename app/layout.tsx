@@ -4,6 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { createClient } from "@/lib/supabase/server";
 import { getSetting } from "@/lib/content";
+import { getSiteNav } from "@/lib/nav/read";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -125,6 +126,10 @@ export default async function RootLayout({
     getSetting("businessAreas"),
   ]);
 
+  /* 메뉴는 nav_items(캐시 태그 content:nav) + pages(content:pages) 를 합쳐 서버에서 조립한다.
+     Header 는 "use client" 라 DB 를 못 읽는다 — 프롭으로만 넣는다 (E-2·E-14). */
+  const nav = await getSiteNav(businessAreas);
+
   let isAdmin = false;
   if (user) {
     const { data: profile } = await supabase
@@ -138,11 +143,16 @@ export default async function RootLayout({
   return (
     <html lang="ko" className={`${jetbrainsMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-white text-ink-strong">
-        <Header isAuthed={!!user} isAdmin={isAdmin} businessAreas={businessAreas} />
+        <Header isAuthed={!!user} isAdmin={isAdmin} navItems={nav.header} />
         {/* 고정(fixed) 헤더가 흐름에서 빠지므로 본문을 헤더 높이만큼 내림.
             홈 Hero는 동일 값의 음수 마진(-mt)으로 상쇄해 풀스크린 유지. */}
         <main className="flex-1 pt-16 lg:pt-[72px]">{children}</main>
-        <Footer company={company} contact={contact} />
+        <Footer
+          company={company}
+          contact={contact}
+          sitemap={nav.footer}
+          legal={nav.legal}
+        />
       </body>
     </html>
   );
