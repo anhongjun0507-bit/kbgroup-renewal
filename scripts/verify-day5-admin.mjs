@@ -27,6 +27,8 @@ for (const line of readFileSync(".env.local", "utf8").split("\n")) {
 
 const BASE = process.env.BASE_URL || "http://localhost:3210";
 const ADMIN_EMAIL = process.env.INSPECT_ADMIN_EMAIL || "inspect-admin@kbgroup.kr";
+/** READONLY=1 — 렌더 확인만 하고 DB 를 건드리지 않는다. 라이브 배포 검증용. */
+const READONLY = process.env.READONLY === "1";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -147,10 +149,10 @@ await ctx.addCookies(
   jar.map((c) => ({
     name: c.name,
     value: c.value,
-    domain: "localhost",
+    domain: new URL(BASE).hostname,
     path: "/",
     httpOnly: false,
-    secure: false,
+    secure: BASE.startsWith("https"),
     sameSite: "Lax",
   })),
 );
@@ -199,6 +201,16 @@ check(
     ORIGINAL_NODES,
   `${await page.locator("[data-org-row]").count()}노드`,
 );
+
+if (READONLY) {
+  await browser.close();
+  console.log(
+    failures === 0
+      ? "\n✅ READONLY — 편집 UI 렌더 확인 통과 (DB 무변경)"
+      : `\n❌ ${failures}건 실패`,
+  );
+  process.exit(failures === 0 ? 0 : 1);
+}
 
 /* ── 0-b) 무변경 왕복 — 11개 목록 키를 그대로 저장했을 때 값이 1바이트도 안 바뀌는지 ──
    범용 편집기의 유일한 치명적 실패 모드는 "화면에 없는 필드가 저장 때 조용히 사라지는 것"이다.
