@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
-/** 관리자 페이지 상단 탭 (지원·문의 / 채용 공고 / 소식 관리 / 회원 관리).
+/** 관리자 페이지 상단 탭 (지원·문의 / 채용 공고 / 소식 관리 / 회원 관리 / 단지 관리 / 사이트 설정).
  *  회원 관리 탭에는 승인 대기 인원 배지를 표시한다. */
 export async function AdminTabs({
   active,
 }: {
-  active: "applications" | "openings" | "posts" | "members" | "complexes";
+  active: "applications" | "openings" | "posts" | "members" | "complexes" | "settings";
 }) {
   // 승인 대기 회원 수 — 모든 관리자 페이지에서 한눈에 보이도록 탭 배지로 노출.
   // (admin 세션 기준 RLS로 전체 profiles 카운트 허용. status 컬럼 미적용 시엔 null → 0.)
@@ -28,6 +28,7 @@ export async function AdminTabs({
     { key: "posts", label: "소식 관리", href: "/admin/posts" },
     { key: "members", label: "회원 관리", href: "/admin/members" },
     { key: "complexes", label: "단지 관리", href: "/admin/content/complexes" },
+    { key: "settings", label: "사이트 설정", href: "/admin/content/settings" },
   ] as const;
 
   return (

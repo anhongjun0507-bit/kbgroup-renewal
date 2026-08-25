@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import { organization, type OrgNode } from "@/data/site-content";
+import type { OrgNode, SettingValue } from "@/lib/content";
 
 /* Phase 14-M (2026-05-20) — 본사 조직도.
    클라 hwpx 요청 + image2 도식. 카드 그리드 + CSS 연결선. 모바일 세로 stack 자동 전환.
@@ -112,7 +112,11 @@ function BranchConnector({ count }: { count: number }) {
   );
 }
 
-export function OrganizationChart() {
+export function OrganizationChart({
+  organization,
+}: {
+  organization: SettingValue<"organization">;
+}) {
   const shouldReduce = useReducedMotion() ?? false;
 
   const headerVariants: Variants = {

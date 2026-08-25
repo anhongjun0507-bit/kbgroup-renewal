@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import CountUp from "react-countup";
 import { Container } from "@/components/ui";
-import { counters, type Counter } from "@/data/site-content";
+import type { Counter, SettingValue } from "@/lib/content";
 
 /* Phase 13 — WhyNumbers 전면 갱신
    기존 v9 톤(font-serif + leading-none + ink 배경)이 P0-C/P0-G 처방 누락.
@@ -13,7 +13,8 @@ import { counters, type Counter } from "@/data/site-content";
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
-export function WhyNumbers() {
+/** 카운터는 app/about/page.tsx 가 콘텐츠 어댑터에서 읽어 주입한다 (PLAN B / DAY 4). */
+export function WhyNumbers({ counters }: { counters: SettingValue<"counters"> }) {
   const shouldReduce = useReducedMotion() ?? false;
   const sectionRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);

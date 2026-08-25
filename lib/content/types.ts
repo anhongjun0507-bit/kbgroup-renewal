@@ -36,3 +36,24 @@ export type ContentComplex = {
 
 /** 어댑터가 실제로 어디서 값을 읽었는지 — 진단·로깅용. */
 export type ContentOrigin = "db" | "file";
+
+/**
+ * 콘텐츠 구조 타입 재수출 (PLAN B / DAY 4).
+ *
+ * `data/site-content.ts` 는 값의 폴백 소스인 동시에 이 도메인 타입들의 정의처다.
+ * 소비처가 타입만 쓰겠다고 데이터 파일을 직접 import 하면 "누가 아직 파일을 보고 있나"를
+ * grep 으로 셀 수 없게 된다. 타입도 어댑터 한 곳을 통해 가져가게 한다.
+ * (타입 전용 재수출이라 번들에는 아무것도 남지 않는다.)
+ */
+export type {
+  BusinessArea,
+  BusinessCategory,
+  Certification,
+  Complex,
+  Contact,
+  Counter,
+  HistoryEntry,
+  License,
+  OrgNode,
+  Partner,
+} from "@/data/site-content";

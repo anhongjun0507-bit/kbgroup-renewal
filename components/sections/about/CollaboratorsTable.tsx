@@ -2,13 +2,17 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import { collaborators } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 7 — PDF p45 협력업체 15개사 */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
-export function CollaboratorsTable() {
+export function CollaboratorsTable({
+  collaborators,
+}: {
+  collaborators: SettingValue<"collaborators">;
+}) {
   const shouldReduce = useReducedMotion() ?? false;
 
   const headerVariants: Variants = {

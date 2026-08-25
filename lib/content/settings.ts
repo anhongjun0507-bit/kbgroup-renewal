@@ -67,3 +67,22 @@ export async function getSettings(): Promise<typeof FILE_SETTINGS> {
 }
 
 export type { SettingKey, SettingValue };
+
+/**
+ * 운영 연차 (PLAN B / DAY 4).
+ *
+ * 기존 `data/site-content.ts` 의 `yearsOfOperation` 상수를 대체한다. 설정 키가 아니라
+ * company.founded 에서 파생되는 값이라 어댑터 함수로 둔다 — 관리자가 설립 연월을 고치면
+ * 연차도 따라 바뀌어야 하기 때문이다.
+ * 계산식은 파일 원본과 동일하다(설립 월 1일 기준, 365.25일/년 내림).
+ */
+export async function getYearsOfOperation(): Promise<number> {
+  const company = await getSetting("company");
+  const [year, month] = String(company.founded).split("-").map(Number);
+  if (!Number.isFinite(year)) return 0;
+  const start = new Date(year, (Number.isFinite(month) ? month : 1) - 1, 1);
+  return Math.max(
+    0,
+    Math.floor((Date.now() - start.getTime()) / (365.25 * 24 * 60 * 60 * 1000)),
+  );
+}

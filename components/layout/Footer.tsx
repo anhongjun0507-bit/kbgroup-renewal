@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/ui";
-import { company, contact } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 15 — 헤더 영문 GNB와 라벨 일치 (krLabel은 보조) */
 const SITEMAP = [
@@ -19,7 +19,14 @@ const COL_LABEL =
 const LINK_BASE =
   "text-[14px] leading-relaxed text-white/85 transition-colors duration-200 hover:text-white";
 
-export function Footer() {
+/** 회사 정보·연락처는 app/layout.tsx 가 콘텐츠 어댑터에서 읽어 주입한다 (PLAN B / DAY 4). */
+export function Footer({
+  company,
+  contact,
+}: {
+  company: SettingValue<"company">;
+  contact: SettingValue<"contact">;
+}) {
   return (
     /* Phase 14 P2-04 — 본문 navy-900 다크 섹션과 시각 분리.
        배경 navy-950(#081427) 한 단계 더 깊게 + 상단 hairline 1px */

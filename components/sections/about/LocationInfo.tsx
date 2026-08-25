@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
-import { contact } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 4.E.6 — 오시는 길 보조 카드
    상단: ADDRESS + 연락처 (좌) — 그대로
@@ -10,20 +10,8 @@ import { contact } from "@/data/site-content";
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
-const CONTACT_ROWS: {
-  label: string;
-  value: string;
-  href: string | null;
-}[] = [
-  { label: "TEL", value: contact.phone, href: `tel:${contact.phone}` },
-  { label: "FAX", value: contact.fax, href: null },
-  { label: "EMAIL", value: contact.email, href: `mailto:${contact.email}` },
-  ...(contact.businessHours
-    ? [{ label: "HOURS", value: contact.businessHours, href: null }]
-    : []),
-];
-
-const ACCESS_CARDS = [
+/* 정류장·주차 안내가 연락처 설정에서 오므로 상수가 아니라 함수로 둔다 (PLAN B / DAY 4). */
+const accessCards = (contact: SettingValue<"contact">) => [
   {
     key: "transit",
     label: "BY PUBLIC TRANSIT",
@@ -83,7 +71,23 @@ const ACCESS_CARDS = [
   },
 ];
 
-export function LocationInfo() {
+/** 연락처는 app/about/location/page.tsx 가 콘텐츠 어댑터에서 읽어 주입한다 (PLAN B / DAY 4). */
+export function LocationInfo({ contact }: { contact: SettingValue<"contact"> }) {
+  const CONTACT_ROWS: {
+    label: string;
+    value: string;
+    href: string | null;
+  }[] = [
+    { label: "TEL", value: contact.phone, href: `tel:${contact.phone}` },
+    { label: "FAX", value: contact.fax, href: null },
+    { label: "EMAIL", value: contact.email, href: `mailto:${contact.email}` },
+    ...(contact.businessHours
+      ? [{ label: "HOURS", value: contact.businessHours, href: null }]
+      : []),
+  ];
+
+  const ACCESS_CARDS = accessCards(contact);
+
   const shouldReduce = useReducedMotion() ?? false;
 
   const containerVariants: Variants = {

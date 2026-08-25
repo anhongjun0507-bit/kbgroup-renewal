@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/ui";
 import { PageHero } from "@/components/sections/common/PageHero";
-import { company } from "@/data/site-content";
+import { getSetting } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "이용약관",
@@ -13,11 +13,12 @@ export const metadata: Metadata = {
 /* Phase 14 P1-10 — 이용약관 페이지 신설.
    본 약관은 홈페이지 정보 제공 및 상담 문의 접수에 한정. 추후 회원 서비스 확장 시 갱신. */
 
-const SECTIONS = [
+/* 제1조에 법인 정식 명칭이 들어가므로 상수가 아니라 함수로 둔다 (PLAN B / DAY 4). */
+const sections = (legalName: string) => [
   {
     title: "제1조 (목적)",
     body: [
-      `본 약관은 ${company.legalName}(이하 "회사")가 운영하는 홈페이지(이하 "본 사이트")의 이용에 관한 회사와 이용자 간의 권리·의무 및 책임사항을 규정함을 목적으로 합니다.`,
+      `본 약관은 ${legalName}(이하 "회사")가 운영하는 홈페이지(이하 "본 사이트")의 이용에 관한 회사와 이용자 간의 권리·의무 및 책임사항을 규정함을 목적으로 합니다.`,
     ],
   },
   {
@@ -80,7 +81,10 @@ const SECTIONS = [
   },
 ];
 
-export default function TermsPage() {
+export default async function TermsPage() {
+  const company = await getSetting("company");
+  const SECTIONS = sections(company.legalName);
+
   return (
     <>
       <PageHero

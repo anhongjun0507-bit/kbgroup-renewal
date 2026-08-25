@@ -1,14 +1,14 @@
 # PLAN B — 콘텐츠 관리(CMS) 전환 진행 문서
 
 > 이 파일 하나만 읽고 STEP 2를 시작할 수 있도록 작성한다.
-> 최종 갱신: 2026-08-24 (STEP 2 / DAY 3 완료 — §12 참조)
+> 최종 갱신: 2026-08-25 (STEP 2 / DAY 4 완료 — §13 참조)
 > 대상 저장소: `kbgroup-renewal` / Next.js 16.2.6 + React 19.2.4 + Supabase + Vercel
 
 ---
 
 ## 0. 현재 상태 한 줄
 
-STEP 2 / DAY 3 완료. `lib/content` 읽기 어댑터 3모드(DB · 파일 폴백 · `CONTENT_SOURCE=file` 킬스위치) 동작 확인, 관리자 단지 CRUD 신설, `/cases`·`/cases/[slug]` 어댑터 전환. 활성 153건 200 / 과거 19건 404 실측 통과. 남은 소비처 51개. 다음: DAY 4(사이트 설정 편집 UI).
+STEP 2 / DAY 4 완료. 관리자 사이트 설정 편집 UI(company·contact·ceoMessage·counters·stats) 신설, STATS 이원화 대조표 + 경고 배너(E-7), `counters[1]` 인덱스 → key 조회 교체(E-6), U+2011 왕복 보존 검증 통과(E-10), `/about/*`·`/contact` + contact 서버 소비처 어댑터 전환(22파일). `globals.css` @import 문제는 **죽어 있던 규칙 제거**로 해소 — dev 500 해결, 렌더 결과 무변화. 남은 소비처 30개(타입 전용 5 포함). 다음: DAY 5(섹션 레지스트리 전환 · §4 의 DAY 7).
 
 ---
 
@@ -210,7 +210,7 @@ DAY 1에 Next 16.2.6의 캐시 API를 검증한 뒤 **둘 중 하나로 확정�
 - [x] DAY 3(실제 DAY 2) — 시드 스크립트 + slug 코드포인트 검증 통과 · `content_revisions` SELECT admin 전용 · 브랜치 전략 판단(§11)
 - [x] DAY 4(실제 DAY 3) — 읽기 어댑터 + 파일 폴백 + `CONTENT_SOURCE` 킬스위치 (§12-1)
 - [x] DAY 5(실제 DAY 3) — 관리자 UI: 단지 CRUD + `/cases` 전환 (§12-2, §12-3)
-- [ ] DAY 6 — 관리자 UI: 사이트 설정
+- [x] DAY 6(실제 DAY 4) — 관리자 UI: 사이트 설정 + `/about/*`·`/contact` 전환 + E-6·E-7·E-10 처리 (§13)
 - [ ] DAY 7 — **베이스라인 캡처 → 섹션 레지스트리 전환 → 재캡처 비교**
 - [ ] DAY 8 — 관리자 UI: 섹션 표시·숨김/순서 + 페이지 공개·비공개
 - [ ] DAY 9 — 관리자 UI: 네비게이션 + 변경 이력
@@ -812,3 +812,290 @@ slug 는 불변이라 이후 새 이름이 기존 slug 에 영향을 주지 않�
    하나 때문에 실패했다. 저장소의 `"use server"` 파일 11개를 전수 점검해 동일 패턴이 없음을 확인했다.
 6. **`components/sections/cases/CasesList.tsx:75` 에 기존 lint 에러**가 있다
    (`react-hooks/set-state-in-effect`). 손대지 않은 파일이고 어디에도 마운트돼 있지 않다. 보고만 한다.
+
+---
+
+## 13. DAY 4 실행 결과 (2026-08-25)
+
+### 13-0. globals.css `@import` — 결정과 **원안 정정**
+
+지시는 "`@import url(pretendard)` 를 `@import "tailwindcss"` 위로 올리는 1줄 교체" 였다.
+**그 방법으로는 해소되지 않는다.** 실측으로 확인한 사실:
+
+| 확인 | 결과 |
+|------|------|
+| 소스 순서를 pretendard → tailwindcss 로 교체 | dev 500 **그대로**. 에러 위치가 `globals.css:4513` 으로 동일하게 나온다 |
+| 이유 | Tailwind v4 가 `@import "tailwindcss"` 를 4,500여 줄로 **인라인 확장**하면서 그 출력이 앞에 놓인다. 소스에서 pretendard 를 위로 올려도 생성된 CSS 에서는 여전히 확장분 **뒤**로 밀려 `@import rules must precede all rules` 위반이 된다 |
+| 프로덕션 빌드는? | 경고만 내고 이 `@import` 를 **통째로 버린다**. 배포된 CSS 번들 `_next/static/chunks/13~0m58fe3nd2.css`(95KB) 를 직접 받아 grep 한 결과 **`pretendard` 문자열이 0회** |
+
+즉 **라이브 사이트는 처음부터 Pretendard 를 받은 적이 없다.** `--font-sans` 의 다음 후보로 렌더돼 왔다.
+
+이 사실 때문에 "고치는 방법"이 두 갈래로 갈린다.
+
+| 안 | 내용 | 렌더 결과 |
+|----|------|-----------|
+| **A (채택)** | 죽어 있던 `@import` 를 **제거**만 한다 | 현재 라이브와 **완전 동일** |
+| B | `layout.tsx` 에 `<link rel="stylesheet">` 로 옮겨 실제로 로드시킨다 | **전 페이지 텍스트 메트릭이 바뀐다** |
+
+B 를 먼저 구현해 빌드·재캡처까지 돌려봤고, 실제로 전 페이지 높이가 줄었다
+(`01_home_mobile` 12,526px → 12,356px, `02_about_desktop` 9,887px → 9,859px 등 8/12장에서 크기 변화).
+지시서 조건이 **"로드되는 폰트 CSS와 최종 렌더 결과가 동일해야 한다"** 였으므로 B 를 되돌리고 **A 로 확정**했다.
+
+- 결과: `npm run dev` 정상 기동 · 전 요청 200. 프로덕션 빌드 EXIT=0, 라우트 표 무변화(`○` 는 `/robots.txt`·`/sitemap.xml` 2개 그대로).
+- 재캡처 대조에서 크기 변화 **0건**.
+
+> **결정 요청** — Pretendard 를 실제로 적용할지 여부. 디자인 의도상 본문 한글은 Pretendard 가 맞지만
+> (`--font-sans` 1순위로 선언돼 있다) 지금 켜면 전 페이지 줄바꿈·높이가 바뀐다. 이번 계약 범위 밖이라
+> **켜지 않았다.** 켜려면 `layout.tsx` 에 `<link>` 1줄이면 되고, 켜는 순간 회귀 베이스라인 28장을
+> 전부 다시 잡아야 한다.
+
+### 13-1. 관리자 사이트 설정 (`/admin/content/settings`)
+
+| 파일 | 내용 |
+|------|------|
+| `app/admin/content/settings/page.tsx` | 편집 화면 셸 + 실제값 집계 + 키 누락 안내 |
+| `app/admin/content/settings/actions.ts` | Server Actions 5종 (company·contact·ceoMessage·counters·stats) |
+| `components/admin/SettingsForms.tsx` | 5개 독립 폼 (클라이언트) |
+| `components/admin/StatsReconciliation.tsx` | 실제값 ↔ 표기값 대조표 (E-7) |
+| `components/admin/AdminTabs.tsx` | "사이트 설정" 탭 추가 (5탭 → 6탭) |
+
+- **키마다 독립 `<form>`.** `site_settings` 는 키별로 `updated_at` 이 따로 있으므로 낙관적 잠금(E-8)도
+  폼 단위로 걸린다. 연락처를 편집하는 중에 다른 관리자가 인사말을 저장해도 서로 충돌하지 않는다.
+- 저장 흐름은 DAY 3 단지 CRUD 와 동일: `requireAdmin()` → 현재 행 읽기 → `updated_at` 비교 →
+  `content_revisions` 스냅샷 → `UPDATE ... WHERE updated_at = <기대값>` → `updateTag("content:settings")`.
+  `revalidatePath` 는 쓰지 않는다 (E-12).
+- 선택 필드(`careersEmail`·`buildingAlias`·`businessHours`·`displayValue`·`displaySuffix`·`context`)는
+  **빈 값이면 키 자체를 넣지 않는다.** 빈 문자열을 넣으면 소비처의 `contact.businessHours ? ...`
+  분기가 의도와 다르게 참이 된다.
+- 관리자 화면은 캐시 어댑터가 아니라 DB 직접 조회(`force-dynamic`). 저장 직후 최신 `updated_at` 이
+  보여야 하기 때문이다.
+
+### 13-2. STATS 이원화 UI (E-7)
+
+`StatsReconciliation` 이 실제값과 표기값을 6행으로 나란히 보여주고, 괴리가 있으면 경고 배너를 띄운다.
+배너 문구에 **"의도된 불일치"** 와 **"200+ 는 2026-05-30 클라이언트 요청 확정값(커밋 8a27ace)"** 을 명시했다.
+자동 동기화 버튼은 만들지 않았다.
+
+실측값 (2026-08-25, DB 직접 SQL):
+
+| 항목 | 실제값 (자동 계산) | 표기값 (수기) | 차이 |
+|------|-------------------|--------------|-----:|
+| 운영 단지 | `complexes` `is_active = true` = **153** | `stats.activeComplexesDisplay` = **200** | +47 |
+| LH 발주 | 운영 단지 중 `type = 'LH'` = **8** | `stats.lhProjectsDisplay` = **15** | +7 |
+| 관리 세대수 | 운영 단지 `households` 합계 = **49,469** | `stats.managedHouseholds` = **49,469** | 일치 |
+| 보유 인허가 | `licenses` 항목 수 = **9** | `stats.registeredLicenses` = **11** | +2 |
+| 기술 인증 | `certifications` 항목 수 = **27** | `stats.certificationTypes` = **27** | 일치 |
+| 자격증 보유 인력 | `certifications` 인원 합계 = **1,575** | `stats.certifiedProfessionals` = **1,575** | 일치 |
+
+→ 현재 괴리 3건(운영 단지·LH 발주·보유 인허가). 전부 문서화된 의도적 값이다.
+   ※ `type='LH'` 전체는 10건이지만 그중 2건은 과거 단지라 **운영 중 LH 는 8건**이다.
+   §11-4 의 `type='LH'=10` 은 활성·과거를 합친 수치이므로 이 표와 모순되지 않는다.
+
+추가로 **카운터 표기값 ↔ STATS 표기값 교차 경고**를 넣었다. `counters(key="complexes").displayValue`(200)와
+`stats.activeComplexesDisplay`(200)는 서로 다른 키에 저장되지만 각각 메인 카운터와 `/cases` 통계 카드에
+같은 숫자로 노출된다. 한쪽만 고치면 두 페이지가 다른 숫자를 말하므로 불일치 시 경고한다.
+
+### 13-3. E-6 — `counters[1]` 인덱스 하드코딩 제거
+
+`data/site-content.ts:818` 의 invariant 를 `counters.find((c) => c.key === "complexes")` 로 교체했다.
+관리자 화면(`page.tsx`)도 전부 key 조회를 쓴다. 인덱스 참조는 저장소 전체에 **0건**
+(`grep -rn "counters\[" app components lib data scripts` → invariant 주석 외 히트 없음).
+
+### 13-4. E-10 — U+2011 왕복 보존 **통과**
+
+검증 스크립트 `scripts/verify-settings-roundtrip.ts` 신설. 실행:
+
+```
+node --experimental-strip-types --import ./scripts/node-ts-register.mjs \
+  scripts/verify-settings-roundtrip.ts
+```
+
+결과 — **18개 항목 전부 통과**:
+
+```
+✅ actions.ts 에 유니코드 정규화(normalize) 호출 없음
+✅ actions.ts 에 하이픈 치환(replace) 호출 없음
+✅ 저장 전 DB 주소에 U+2011 포함 — U+0020 U+0032 U+0032 U+0033 U+2011 U+0032 U+0032 U+002C ...
+✅ multipart 전송 왕복 후 주소 코드포인트 동일 / U+2011 보존 / ASCII 하이픈 미혼입
+✅ 낙관적 잠금 조건부 UPDATE 성공 · 토큰 갱신됨 · 표식 필드 저장 확인
+✅ DB 왕복 후 주소 코드포인트 동일 / U+2011 보존 / ASCII 하이픈 미혼입
+   SQL: {"nb_hyphen_pos":20,"ascii_hyphen_pos":0,"len":35}
+✅ SQL position(chr(8209)) > 0     ← 20
+✅ SQL position('-') = 0
+✅ 원래 값으로 원복 · 코드포인트 동일 · 표식 제거
+```
+
+검증 경로 4단계:
+1. **정적 가드** — `actions.ts` 코드(주석 제외)에 `normalize(` 또는 하이픈 치환 `replace(/…-…/)` 가 없는지.
+   `normalize("NFKC"|"NFKD")` 는 U+2011 을 U+002D 로 **조용히** 바꾸므로 이 파일에 들어오면 안 된다.
+2. **전송 왕복** — 브라우저 폼과 동일하게 `new Request(..., { body: FormData })` → `await req.formData()`
+   로 multipart/form-data 인코딩·디코딩을 실제로 태운 뒤 액션이 주소에 적용하는 유일한 처리(`.trim()`)까지 통과.
+3. **DB 왕복** — 낙관적 잠금 조건부 `UPDATE` → 재조회 → 코드포인트 단위 비교.
+   `buildingAlias` 에 표식을 붙여 UPDATE 가 실제로 실행됐음을 증명한다.
+4. **SQL 직접 확인** — Management API `/database/query` 로 `position(chr(8209))` / `position('-')`.
+
+**추가로 실제 브라우저 폼 왕복도 돌렸다.** service_role 로 기존 점검 계정(`inspect-admin@kbgroup.kr`)의
+매직링크를 발급해 세션 쿠키를 만든 뒤, playwright 로 `/admin/content/settings` 를 열고
+**주소 입력란을 비웠다가 원래 값을 다시 입력해 저장**했다(관리자가 실제로 할 법한 최악의 시나리오).
+
+```
+DB 저장 전 주소 : "전남광주특별시 광산구 월계로 223‑22, 2층 201·202호"  U+2011 포함: true
+폼에 표시된 주소  : "전남광주특별시 광산구 월계로 223‑22, 2층 201·202호"  코드포인트 동일: true
+폼 제출 결과      : 저장 완료 배너 확인
+DB 저장 후 주소   : "전남광주특별시 광산구 월계로 223‑22, 2층 201·202호"
+  코드포인트 동일 : true | U+2011 보존: true | ASCII 하이픈 혼입: false
+  표식 저장 확인  : true | updated_at 갱신: true
+SQL 확인          : {"nb":20,"ascii":0}          ← position(chr(8209))=20, position('-')=0
+감사 이력         : {"c":1}                       ← content_revisions 스냅샷 1건 적재
+원복 확인         : true
+```
+
+검증 후 값은 원래대로 원복했다(원복 후 코드포인트 재확인 포함).
+점검 과정에서 `content_revisions` 에 `site_settings/contact` 스냅샷이 몇 건 남았다 — 감사 테이블이므로 정상이다.
+편집 폼에도 안내를 넣었다 — 주소 입력란 아래에 "번지수 하이픈은 U+2011 이니 일반 하이픈으로 바꾸지 마세요"
+문구 + 현재 값에 U+2011 이 있는지 실시간 표시.
+
+### 13-5. 소비처 전환 — 22개 파일
+
+**전환 완료 (22)**
+
+| 구분 | 파일 |
+|------|------|
+| 루트 레이아웃 경유 | `app/layout.tsx` → `components/layout/Footer.tsx` (company·contact) |
+| 서버 페이지·라우트 | `app/api/contact/route.ts`, `app/not-found.tsx`, `app/privacy/page.tsx`, `app/terms/page.tsx`, `app/(auth)/signup/pending/page.tsx`, `app/forgot-password/page.tsx`, `app/careers/openings/page.tsx`, `app/careers/openings/[id]/page.tsx` |
+| `/about` | `CompanyOffice`, `WhyValues`, `WhyDifferentiators`, `WhyNumbers`, `OrganizationChart`, `RelatedCompaniesGrid`, `CollaboratorsTable` |
+| `/about/ceo` | `CeoPortrait`, `CeoMessage` |
+| `/about/history` | `HistoryTimeline` |
+| `/about/location` | `LocationMap`, `LocationInfo` |
+| `/contact` | `ContactForm` |
+
+- 하위 섹션이 전부 `"use client"` 라 페이지를 `async` 서버 컴포넌트로 바꿔 프롭으로 주입하는
+  DAY 3 `/cases` 패턴을 그대로 썼다.
+- **`Footer` 는 `app/layout.tsx` 에서 주입**했다. 페이지를 하나도 건드리지 않고 전 페이지 푸터가
+  한 번에 DB 를 보게 되는 유일한 지점이라 파급 대비 비용이 가장 싸다.
+- 모듈 최상단 파생 상수 3개(`CompanyOffice.FACTS`, `LocationInfo.CONTACT_ROWS`/`ACCESS_CARDS`,
+  `terms.SECTIONS`)는 프롭을 받아야 하므로 함수 안으로 옮기거나 팩토리 함수로 바꿨다.
+- `yearsOfOperation` 은 설정 키가 아니라 `company.founded` 파생값이라
+  **`lib/content/settings.ts` 에 `getYearsOfOperation()` 을 추가**했다. 계산식은 파일 원본과 동일
+  (설립 월 1일 기준·365.25일/년 내림). 오늘 기준 양쪽 다 **12** 로 일치 확인.
+- **도메인 타입 재수출** — `lib/content/types.ts` 에서 `Counter`·`Contact`·`OrgNode`·`HistoryEntry` 등
+  10종을 타입 전용으로 재수출했다. 타입만 쓰겠다고 소비처가 데이터 파일을 직접 import 하면
+  "누가 아직 파일을 보고 있나"를 grep 으로 셀 수 없어진다. 번들에는 아무것도 남지 않는다.
+
+**남은 소비처 — 30개** (`grep -rl 'from "@/data/site-content"' app components`)
+
+이 중 5개는 **타입 전용** import 다 (`BusinessHero`·`BusinessSubServices`·`BusinessOverview`·
+`BusinessFAQ`·`BusinessRelatedCases`).
+
+### 13-6. ⚠ 미결 — contact 소비처 7개가 아직 파일을 본다
+
+지시서 4-4 의 **"나머지 페이지는 건드리지 말 것"** 을 지키느라 전환하지 못한 `contact` 소비처가 남았다.
+전부 **범위 밖 페이지에 마운트돼 있어, 전환하려면 그 페이지를 `async` 로 바꾸고 프롭 1줄을 넘겨야 한다.**
+
+| 파일 | 마운트 위치 | 필요한 페이지 수정 |
+|------|-------------|-------------------|
+| `components/sections/common/ContactInvite.tsx` | `/`, `/about`, `/about/ceo`, `/about/history`, `/about/location`, `/business`, `/cases`, `/licenses` | `app/page.tsx`·`app/business/page.tsx`·`app/licenses/page.tsx` (나머지는 이미 async) |
+| `components/sections/Hero.tsx` | `/` | `app/page.tsx` |
+| `components/sections/auth/LoginForm.tsx` | `/login` | `app/(auth)/login/page.tsx` |
+| `components/sections/careers/CareersApply.tsx` | `/careers` | `app/careers/page.tsx` |
+| `components/sections/careers/CareersOpenings.tsx` | `/careers` | `app/careers/page.tsx` |
+| `components/sections/business/BusinessCTA.tsx` | `/business/[slug]` | `app/business/[slug]/page.tsx` (`businessAreas`·`complexes` 전환과 함께 해야 함) |
+| `components/sections/CTA.tsx` | **없음 — 어디에도 마운트되지 않음** | 사장된 코드 (`CasesList`·`CasesMap` 과 동일 부류) |
+
+**리스크:** 지금 상태에서 관리자가 대표 전화번호를 바꾸면 **푸터·오시는 길·상담 폼·개인정보처리방침 등
+12곳은 즉시 바뀌지만, 메인 히어로·각 페이지 하단 ContactInvite·채용 페이지는 안 바뀐다.**
+인수 전에 반드시 해소해야 하는 항목이다. `ContactInvite` + `Hero` 만 처리해도 사용자 눈에 띄는
+불일치는 사라진다(페이지 3개에 `async` + 프롭 1줄). **진행 승인을 요청한다.**
+
+### 13-6b. 관리자 UI · 캐시 무효화 실동작 검증
+
+로그인 세션으로 프로덕션 빌드(`next start -p 3210`)에 붙어 실제 HTTP 로 확인했다.
+
+- `/admin/content/settings` → **200**. 대조표·경고 배너·5개 폼 전부 정상 렌더.
+  렌더된 값이 DB 실측과 일치: 운영 단지 153/200(+47) · LH 8/15(+7) · 세대수 49,469/49,469(일치) ·
+  인허가 9/11(+2) · 기술 인증 27/27(일치) · 인력 1,575/1,575(일치) → **"괴리 3건" 배너 표시 확인**.
+- **캐시 태그 무효화 (E-12 규약대로 `updateTag("content:settings")` 1줄)** — 폼에서 대표 전화를
+  `062-416-3021` → `062-000-9999` 로 저장한 직후 재배포·재빌드 없이:
+
+| 경로 | 새 번호 노출 | 옛 번호 잔존 |
+|------|:---:|:---:|
+| `/contact` | ✅ | 없음 |
+| `/privacy` | ✅ | 없음 |
+| `/notices` (푸터) | ✅ | — |
+| `/about/location` | ✅ | **있음** ← `ContactInvite` (§13-6 미전환분) |
+
+`/about/location` 에 옛 번호가 남는 것이 바로 §13-6 이 말하는 문제다. 같은 페이지 안에서
+`LocationInfo`(전환됨)는 새 번호를, 하단 `ContactInvite`(미전환)는 옛 번호를 보여준다.
+**§13-6 을 처리하지 않으면 인수 시 이 화면이 그대로 노출된다.**
+
+검증 후 전화번호는 폼으로 다시 원복했고 `/contact` 재조회로 원복을 확인했다.
+
+### 13-7. 회귀 대조
+
+프로덕션 빌드(EXIT=0) → `next start -p 3210` → 실제 HTTP 로 검증했다.
+
+**① SSR 텍스트 전수 대조 — 5개 페이지 전부 diff 0줄**
+
+프로덕션(`kbgroup-renewal.vercel.app`, 파일 기반) ↔ 로컬(DB 어댑터) 의 렌더 HTML 에서
+`<script>`/`<style>` 을 걷어내고 태그를 제거한 **가시 텍스트 전문**을 비교했다.
+
+| 페이지 | 프로덕션 줄 수 | 로컬 줄 수 | diff |
+|--------|---------------:|-----------:|-----:|
+| `/about` | 322 | 322 | **0** |
+| `/about/ceo` | 117 | 117 | **0** |
+| `/about/history` | 175 | 175 | **0** |
+| `/about/location` | 128 | 128 | **0** |
+| `/contact` | 131 | 131 | **0** |
+
+`/about/location`·`/contact` 렌더 HTML 의 U+2011 등장 횟수도 프로덕션·로컬 **각각 1회로 동일**.
+
+**② 스크린샷 대조 (`before/` ↔ `after/`, 12장)**
+
+| 파일 | 결과 |
+|------|------|
+| `03_about-ceo_desktop` / `_mobile` | **픽셀 동일** |
+| `04_about-history_desktop` / `_mobile` | **픽셀 동일** |
+| `10_contact_desktop` / `_mobile` | **픽셀 동일** |
+| `02_about_desktop` / `_mobile` | 1.86% / 3.60% — **캡처 아티팩트** (아래) |
+| `05_about-location_desktop` / `_mobile` | 0.51% / 2.58% — **캡처 아티팩트** (아래) |
+| `01_home_desktop` / `_mobile` | 9.66% / 27.32% — **이번 DAY 에 코드를 하나도 안 바꾼 페이지**. 노이즈 하한선 |
+
+크기 변화 **0건** (13-0 의 B안에서는 8장에서 크기가 바뀌었다).
+
+**아티팩트 판정 근거** — 차이 구간을 잘라 직접 확인했다.
+
+- `02_about` 차이 구간 (1063~1222, 3806~4010 …) 은 **`before` 쪽에서 해당 블록이 통째로 안 보이는** 상태다.
+  `after` 에는 「본사 소재지 / 운영 시작 / 자본금」 패널과 「49,469+ / 200+ / 11 / 1,575+」 카운터가 정상 렌더돼 있다.
+  섹션 전체 높이는 9,887px 로 **양쪽 동일** — 자리는 차지하고 있고 `opacity` 만 0 이다.
+  framer-motion `whileInView` 스태거가 프로덕션 캡처 시점에 발화하지 않은 것으로, **`before` 쪽 캡처 결함**이다.
+  같은 텍스트가 프로덕션 HTML 에도 존재함을 ①에서 확인했다(`본사 소재지`·`자본금`·`12억 1천만원` 각 1회, 양쪽 동일).
+  덤으로 이 캡처가 **DB 값이 그대로 렌더된다는 증거**가 된다 — 운영 단지 카운터가 `200+` 로 나온다.
+- `05_about-location` 차이 구간은 **OpenStreetMap iframe 타일 영역 단일 구간**이다.
+  로컬 캡처에서 타일이 안 붙었다. 주소 텍스트·버튼·레이아웃은 동일.
+- `01_home` 은 이번 DAY 에 코드 변경이 **전혀 없는** 페이지인데도 9.66%/27.32% 차이가 난다.
+  `before` 는 Vercel 프로덕션, `after` 는 이 머신의 로컬 빌드라 이미지 파이프라인 조건 자체가 다르다
+  (§12-5 에서 `/cases` 에 대해 이미 확인한 것과 같은 현상). **/about·/about/location 의 차이는 이 하한선보다 작다.**
+
+### 13-8. 검증 요약
+
+| 항목 | 결과 |
+|------|------|
+| `tsc --noEmit` | EXIT=0 |
+| `eslint` (변경 파일 전수) | 신규 error·warning **0건** (기존 `app/api/contact/route.ts` warning 2건은 `git stash` 로 사전 존재 확인) |
+| `npm run build` | EXIT=0 · 라우트 표 무변화 · `/admin/content/settings` 신규 등록 |
+| `npm run dev` | **정상 기동** — `/`·`/about`·`/about/location`·`/contact` 전부 **200** (기존 전 요청 500 해소) |
+| 관리자 UI 실동작 | 로그인 세션으로 `/admin/content/settings` 200 · 대조표/배너/폼 정상 · 저장 → 공개 페이지 즉시 반영 |
+| U+2011 왕복 | 18/18 통과 · `position(chr(8209)) = 20`, `position('-') = 0` |
+| SSR 텍스트 대조 | 5페이지 diff **0줄** |
+| 스크린샷 | 6장 픽셀 동일 · 나머지 4장은 캡처 아티팩트 판정 · 크기 변화 0 |
+
+### 13-9. 미결·보고 사항
+
+1. **§13-6 — contact 소비처 7개 미전환.** 진행 승인 요청. (가장 시급)
+2. **§13-0 — Pretendard 실제 적용 여부.** 결정 요청. 지금은 라이브와 동일하게 **로드하지 않는다**.
+3. **`components/sections/CTA.tsx` 는 어디에도 마운트돼 있지 않다.** `CasesList`·`CasesMap` 과 같은
+   사장된 코드다. 삭제 여부는 범위 밖이라 보고만 한다.
+4. **`counters` 항목의 추가·삭제·순서 변경 UI 는 만들지 않았다.** 계약 문구는 "메인 카운터 4종"이고
+   순서 변경은 §4 DAY 8(섹션 순서)의 대상이다. 현재는 4개 항목의 값·라벨·표기값만 편집한다.
+5. **`scripts/verify-settings-roundtrip.ts` 는 프로덕션 DB 에 실제 쓰기를 한다.** 검증 후 원복하지만
+   `content_revisions` 에는 남지 않는다(액션이 아니라 service_role 직접 쓰기라서). 재실행 안전하다.

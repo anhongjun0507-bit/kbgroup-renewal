@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import { differentiators, yearsOfOperation } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 4.E.4 — 다섯 가지 차이
    좌측 sticky 큰 번호(01~05) + 우측 스크롤 stacking (Linear "How it works" 스타일)
@@ -10,7 +10,13 @@ import { differentiators, yearsOfOperation } from "@/data/site-content";
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
-export function WhyDifferentiators() {
+export function WhyDifferentiators({
+  differentiators,
+  yearsOfOperation,
+}: {
+  differentiators: SettingValue<"differentiators">;
+  yearsOfOperation: number;
+}) {
   const shouldReduce = useReducedMotion() ?? false;
 
   const headerVariants: Variants = {

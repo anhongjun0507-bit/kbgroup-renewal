@@ -11,7 +11,19 @@ export {
   getComplexBySlug,
   toSlug,
 } from "./complexes";
-export { getSetting, getSettings } from "./settings";
+export { getSetting, getSettings, getYearsOfOperation } from "./settings";
 export { CONTENT_TAGS, type ContentTag } from "./tags";
 export type { ContentComplex, ContentOrigin } from "./types";
+export type {
+  BusinessArea,
+  BusinessCategory,
+  Certification,
+  Complex,
+  Contact,
+  Counter,
+  HistoryEntry,
+  License,
+  OrgNode,
+  Partner,
+} from "./types";
 export type { SettingKey, SettingValue } from "./settings";

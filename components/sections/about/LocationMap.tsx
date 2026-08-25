@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { Container } from "@/components/ui";
-import { contact } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
@@ -19,7 +19,8 @@ const COORD_LAT = 35.2152;
 const COORD_LON = 126.8502;
 const BBOX_DELTA = 0.004;
 
-export function LocationMap() {
+/** 연락처는 app/about/location/page.tsx 가 콘텐츠 어댑터에서 읽어 주입한다 (PLAN B / DAY 4). */
+export function LocationMap({ contact }: { contact: SettingValue<"contact"> }) {
   const shouldReduce = useReducedMotion() ?? false;
   /* 도로명 주소를 기본 검색 쿼리로 사용. non-breaking hyphen → 일반 hyphen 정규화 후 query화 */
   const plainAddress = contact.address.replace("‑", "-");

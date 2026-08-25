@@ -3,6 +3,7 @@ import { JetBrains_Mono } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { createClient } from "@/lib/supabase/server";
+import { getSetting } from "@/lib/content";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -117,9 +118,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const [{ data: { user } }, company, contact] = await Promise.all([
+    supabase.auth.getUser(),
+    getSetting("company"),
+    getSetting("contact"),
+  ]);
 
   let isAdmin = false;
   if (user) {
@@ -138,7 +141,7 @@ export default async function RootLayout({
         {/* 고정(fixed) 헤더가 흐름에서 빠지므로 본문을 헤더 높이만큼 내림.
             홈 Hero는 동일 값의 음수 마진(-mt)으로 상쇄해 풀스크린 유지. */}
         <main className="flex-1 pt-16 lg:pt-[72px]">{children}</main>
-        <Footer />
+        <Footer company={company} contact={contact} />
       </body>
     </html>
   );

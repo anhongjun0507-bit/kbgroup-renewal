@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { MailtoCard } from "@/components/sections/common/MailtoCard";
-import { contact } from "@/data/site-content";
+import { getSetting } from "@/lib/content";
 
 /* Phase 10 P1-10 — 비밀번호 찾기 동선
    B2B 특성상 자체 비밀번호 재설정 메일 흐름 대신 운영 담당자 직접 안내 */
@@ -13,7 +13,9 @@ export const metadata: Metadata = {
   description: "케이비개발 사이트 비밀번호 재설정 안내.",
 };
 
-export default function ForgotPasswordPage() {
+export default async function ForgotPasswordPage() {
+  const contact = await getSetting("contact");
+
   return (
     <>
       <PageHero

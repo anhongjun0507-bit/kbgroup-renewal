@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
-import { history, type HistoryEntry } from "@/data/site-content";
+import type { HistoryEntry, SettingValue } from "@/lib/content";
 
 /* Phase 4.E.5 — 연혁
    좌측 연도 sticky + 우측 세로 타임라인 (점·라인) + 주요 마일스톤에 아이콘
@@ -53,7 +53,7 @@ const NORMAL_DOT = (
   </svg>
 );
 
-export function HistoryTimeline() {
+export function HistoryTimeline({ history }: { history: SettingValue<"history"> }) {
   const shouldReduce = useReducedMotion() ?? false;
   const groups = groupByYear(history);
 

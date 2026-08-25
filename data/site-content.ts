@@ -814,10 +814,14 @@ export const STATS = {
 } as const;
 
 /* Phase 14-L invariant — counters의 literal 값과 complexes.length 동기화 보장.
-   complexes 배열을 수정한 후 counters[1].value 갱신을 잊으면 즉시 빌드/런타임 경고. */
-if (counters[1].value !== complexes.length) {
+   complexes 배열을 수정한 후 운영 단지 카운터의 value 갱신을 잊으면 즉시 빌드/런타임 경고.
+
+   PLAN B / DAY 4 (E-6) — 인덱스 하드코딩(counters[1])을 key 조회로 교체했다.
+   관리자가 카운터 순서를 바꾸면 인덱스 1이 엉뚱한 항목을 가리켜 잘못된 값을 비교한다. */
+const _complexesCounter = counters.find((c) => c.key === "complexes");
+if (_complexesCounter && _complexesCounter.value !== complexes.length) {
   console.warn(
-    `[site-content] counters.complexes(${counters[1].value}) !== complexes.length(${complexes.length}). counters를 ${complexes.length}로 갱신해 주세요.`,
+    `[site-content] counters.complexes(${_complexesCounter.value}) !== complexes.length(${complexes.length}). counters를 ${complexes.length}로 갱신해 주세요.`,
   );
 }
 

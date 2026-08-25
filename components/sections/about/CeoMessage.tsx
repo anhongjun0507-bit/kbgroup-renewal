@@ -6,11 +6,12 @@ import {
   type Variants,
 } from "framer-motion";
 import { Container } from "@/components/ui";
-import { ceoMessage } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
-export function CeoMessage() {
+/** 인사말은 app/about/ceo/page.tsx 가 콘텐츠 어댑터에서 읽어 주입한다 (PLAN B / DAY 4). */
+export function CeoMessage({ ceoMessage }: { ceoMessage: SettingValue<"ceoMessage"> }) {
   const shouldReduce = useReducedMotion() ?? false;
 
   const stagger: Variants = {

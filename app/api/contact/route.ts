@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { contact } from "@/data/site-content";
+import { getSetting } from "@/lib/content";
 
 /* Phase 9 P0-06 — 상담 폼 API Route
    백엔드 우선순위:
@@ -64,7 +64,7 @@ async function sendViaResend(p: Payload): Promise<boolean> {
     },
     body: JSON.stringify({
       from,
-      to: [contact.email],
+      to: [(await getSetting("contact")).email],
       reply_to: p.email,
       subject: `[케이비개발] ${p.context ?? "상담 문의"} — ${p.company}`,
       html,

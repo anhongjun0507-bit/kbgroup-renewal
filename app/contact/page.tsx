@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { ContactForm } from "@/components/sections/common/ContactForm";
+import { getSetting } from "@/lib/content";
 
 /* Phase 6.2 A-5 — /contact 라우트 신설 (Header/Footer/CTAs에서 참조) */
 
@@ -10,7 +11,9 @@ export const metadata: Metadata = {
     "단지 규모·관리 범위·운영 형태에 맞춰 견적을 산정합니다. 영업일 기준 평균 4시간 안에 회신드립니다.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const contact = await getSetting("contact");
+
   return (
     <>
       <PageHero
@@ -23,7 +26,7 @@ export default function ContactPage() {
           { label: "CONTACT" },
         ]}
       />
-      <ContactForm context="CONTACT 페이지" />
+      <ContactForm context="CONTACT 페이지" contact={contact} />
     </>
   );
 }

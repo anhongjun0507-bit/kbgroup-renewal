@@ -2,20 +2,27 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
-import { company, contact } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 8 — 본사 외관 풀블리드 (PDF p4·p7·p22) */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
-const FACTS = [
-  { label: "본사 소재지", value: contact.address.split(",")[0] },
-  { label: "운영 시작", value: `${company.foundedYear}년` },
-  { label: "자본금", value: company.capital },
-];
-
-export function CompanyOffice() {
+/** 회사 정보·연락처는 app/about/page.tsx 가 콘텐츠 어댑터에서 읽어 주입한다 (PLAN B / DAY 4). */
+export function CompanyOffice({
+  company,
+  contact,
+}: {
+  company: SettingValue<"company">;
+  contact: SettingValue<"contact">;
+}) {
   const shouldReduce = useReducedMotion() ?? false;
+
+  const FACTS = [
+    { label: "본사 소재지", value: contact.address.split(",")[0] },
+    { label: "운영 시작", value: `${company.foundedYear}년` },
+    { label: "자본금", value: company.capital },
+  ];
 
   const itemVariants: Variants = {
     hidden: { opacity: 0, y: shouldReduce ? 0 : 24 },

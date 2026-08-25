@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/ui";
-import { contact } from "@/data/site-content";
+import { getSetting } from "@/lib/content";
 
 /* Phase 9 P0-03 — 404 페이지
    Next.js 기본 흰화면 + 영문 한 줄 → 브랜드 톤 + 한국어 + 회복 동선 3종 */
@@ -11,7 +11,9 @@ export const metadata: Metadata = {
   description: "주소가 변경되었거나 삭제된 페이지일 수 있습니다.",
 };
 
-export default function NotFound() {
+export default async function NotFound() {
+  const contact = await getSetting("contact");
+
   return (
     <section
       data-surface="dark"

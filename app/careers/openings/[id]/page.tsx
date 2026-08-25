@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/ui";
 import { MailtoCard } from "@/components/sections/common/MailtoCard";
 import { JobApplyForm } from "@/components/sections/careers/JobApplyForm";
-import { contact } from "@/data/site-content";
+import { getSetting } from "@/lib/content";
 import { deadlineBadge, formatDate } from "@/lib/jobs";
 import { getOpeningById } from "@/lib/job-openings";
 
@@ -39,6 +39,7 @@ export default async function OpeningDetailPage({
 
   const badge = deadlineBadge(job.deadline);
   const closed = badge.tone === "closed";
+  const contact = await getSetting("contact");
   const applyEmail = job.applyEmail ?? contact.careersEmail ?? contact.email;
   const applySubject = `[케이비개발] ${job.title} 지원 — `;
 

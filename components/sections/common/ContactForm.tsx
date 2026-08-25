@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Container, Input, Textarea, Select, Label } from "@/components/ui";
-import { contact } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 2.12 — CONTACT 인라인 문의 폼
    필드: 회사명/담당자/연락처/단지규모(세대수)/문의유형/상담희망일/문의내용 + 개인정보 동의
@@ -22,6 +22,8 @@ export type ContactFormProps = {
   /** 페이지별 컨텍스트 — 메일 제목 prefix */
   context?: string;
   className?: string;
+  /** 연락처는 마운트하는 페이지가 콘텐츠 어댑터에서 읽어 주입한다 (PLAN B / DAY 4). */
+  contact: SettingValue<"contact">;
 };
 
 type SubmitState =
@@ -30,7 +32,7 @@ type SubmitState =
   | { status: "success" }
   | { status: "error"; message: string };
 
-export function ContactForm({ context, className }: ContactFormProps) {
+export function ContactForm({ context, className, contact }: ContactFormProps) {
   /* Phase 9 P0-06 — mailto fallback 제거 → /api/contact POST */
   const [state, setState] = useState<SubmitState>({ status: "idle" });
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/ui";
 import { PageHero } from "@/components/sections/common/PageHero";
-import { company, contact } from "@/data/site-content";
+import { getSetting } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "개인정보처리방침",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 /* Phase 14 P1-10 — 개인정보처리방침 페이지 신설.
-   상담 폼 동의 항목·footer 링크에서 접근. 사업자 정보·연락처는 site-content 단일 출처. */
+   상담 폼 동의 항목·footer 링크에서 접근. 사업자 정보·연락처는 콘텐츠 어댑터(lib/content) 단일 출처. */
 
 const SECTIONS = [
   {
@@ -77,7 +77,9 @@ const SECTIONS = [
   },
 ];
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const [company, contact] = await Promise.all([getSetting("company"), getSetting("contact")]);
+
   return (
     <>
       <PageHero

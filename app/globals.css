@@ -1,5 +1,15 @@
+/* Pretendard Variable 은 여기서 로드하지 않는다 (PLAN B / DAY 4).
+   원래 이 자리에 @import url(...pretendardvariable-dynamic-subset.css) 가 있었으나,
+   Tailwind v4 가 @import "tailwindcss" 를 4,500여 줄로 인라인 확장하면서 이 규칙이 그 뒤로 밀려
+   "@import rules must precede all rules" 위반이 된다. 소스 순서를 바꿔도 확장 결과 순서는 같다.
+     · dev(Turbopack)  → CSS 파싱 실패로 전 요청 500
+     · production 빌드 → 경고만 내고 이 @import 를 통째로 **버린다**
+   실제로 배포된 CSS 번들(_next/static/chunks/*.css)에 pretendard 문자열이 하나도 없음을 확인했다.
+   즉 라이브 사이트는 처음부터 Pretendard 를 받은 적이 없고, --font-sans 의 다음 후보로 렌더돼 왔다.
+   현재 렌더 결과를 그대로 유지하기 위해 죽어 있던 이 @import 를 제거만 했다.
+   Pretendard 를 실제로 적용하려면 layout.tsx 에 <link rel="stylesheet"> 를 추가하면 되지만,
+   전 페이지 텍스트 메트릭이 바뀌므로 별도 승인이 필요한 변경이다. */
 @import "tailwindcss";
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css");
 
 /* SUIT Variable — 헤딩 전용 */
 @font-face {

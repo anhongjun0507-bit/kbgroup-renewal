@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import { coreValues } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 4.E.3 — 세 가지 가치
    3컬럼 카드 + 큰 라인 아이콘 + hover 좌측 라인 24 → 64 expand */
@@ -33,7 +33,7 @@ const VALUE_ICONS: Record<string, React.ReactNode> = {
   ),
 };
 
-export function WhyValues() {
+export function WhyValues({ coreValues }: { coreValues: SettingValue<"coreValues"> }) {
   const shouldReduce = useReducedMotion() ?? false;
 
   const headerVariants: Variants = {

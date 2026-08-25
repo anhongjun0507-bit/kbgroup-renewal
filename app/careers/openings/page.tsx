@@ -4,7 +4,7 @@ import { PageHero } from "@/components/sections/common/PageHero";
 import { Container, FadeIn } from "@/components/ui";
 import { JobCard } from "@/components/sections/careers/JobCard";
 import { TalentPoolCTA } from "@/components/sections/careers/TalentPoolCTA";
-import { contact } from "@/data/site-content";
+import { getSetting } from "@/lib/content";
 import { getPublishedOpenings } from "@/lib/job-openings";
 
 export const metadata: Metadata = {
@@ -18,6 +18,7 @@ export const dynamic = "force-dynamic";
 export default async function OpeningsPage() {
   const openings = await getPublishedOpenings();
   const now = new Date();
+  const contact = await getSetting("contact");
   const careersEmail = contact.careersEmail ?? contact.email;
 
   return (

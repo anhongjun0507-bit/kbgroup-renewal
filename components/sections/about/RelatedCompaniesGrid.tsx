@@ -2,14 +2,18 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import { relatedCompanies } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 7 — PDF p43~44 계열사 4사 (로고 포함)
    Phase 14-M (2026-05-20) — 6개로 확장 (㈜금태건설·㈜더케이금융대부 신규). lg:grid-cols-3 (3×2). */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
-export function RelatedCompaniesGrid() {
+export function RelatedCompaniesGrid({
+  relatedCompanies,
+}: {
+  relatedCompanies: SettingValue<"relatedCompanies">;
+}) {
   const shouldReduce = useReducedMotion() ?? false;
 
   const headerVariants: Variants = {
