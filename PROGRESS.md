@@ -212,6 +212,7 @@ DAY 1에 Next 16.2.6의 캐시 API를 검증한 뒤 **둘 중 하나로 확정�
 - [x] DAY 5(실제 DAY 3) — 관리자 UI: 단지 CRUD + `/cases` 전환 (§13-2, §13-3)
 - [x] DAY 6(실제 DAY 4) — 관리자 UI: 사이트 설정 + `/about/*`·`/contact` 전환 + E-6·E-7·E-10 처리 (§14)
 - [x] DAY 7(실제 DAY 5) — 사업영역·인허가·인증·연혁·파트너·조직도 편집 UI + 소비처 전환 26개(잔여 0, 사장 코드 4개 제외) + contact 소비처 7개 해소 (§15)
+- [x] DAY 8(실제 DAY 6) — 이미지·영상 업로더 + 전 편집 폼 연결 + 히어로 슬라이드 교체(ITEM 02) + E-4 실증 (§16)
 - [ ] DAY 7 — **베이스라인 캡처 → 섹션 레지스트리 전환 → 재캡처 비교**
 - [ ] DAY 8 — 관리자 UI: 섹션 표시·숨김/순서 + 페이지 공개·비공개
 - [ ] DAY 9 — 관리자 UI: 네비게이션 + 변경 이력
@@ -1365,3 +1366,123 @@ DAY 4 의 `persist()` 를 그대로 재사용했다. `revalidatePath` 는 여전
 5. **`scripts/verify-day5-admin.mjs` 는 프로덕션 DB 에 실제 쓰기를 한다.** 검증 후 전부 원복하며
    원복 결과를 다시 대조한다. 재실행 안전하다. playwright 는 `PLAYWRIGHT_PATH` 주입 방식 유지
    (`package.json` 무수정).
+
+---
+
+## 16. DAY 6 실행 결과 (2026-08-25)
+
+### 16-0. 설계 결정 — 업로드를 Server Action 으로 보내지 않는다
+
+DAY 3·5 의 이미지 업로드는 파일을 **Server Action 본문**에 실어 보냈다. 로컬에서는 동작하지만
+**프로덕션에서는 4.5MB 를 넘는 순간 막힌다** — Vercel 서버리스 함수의 요청 본문 상한이 4.5MB 이고,
+`next.config.ts` 의 `serverActions.bodySizeLimit` 을 아무리 올려도 이 상한은 그대로다.
+히어로 영상은 이미 20MB(버킷 상한 50MB)라 이 경로로는 **원천적으로 불가능**하다.
+
+그래서 `components/admin/MediaUploader.tsx` 는 **브라우저에서 Storage 로 직접 올린다.**
+
+| 항목 | 처리 |
+|------|------|
+| 인증 | 브라우저 Supabase 클라이언트(anon key) + Storage RLS `is_admin()` (마이그레이션 007). 서버 경유와 보안 등가 |
+| 경로 | `{scope}/{entity-id}/{timestamp}-{slug}.{ext}` · 파일명은 ASCII 로만 (한글 원본명은 Storage 키를 깨뜨린다) |
+| 덮어쓰기 | **하지 않는다** (`upsert: false`). 항상 새 키로 올린다 |
+| 포인터 교체 | **업로드 성공 후에만** hidden input 값을 바꾼다. 실패하면 기존 값 그대로 — 액션은 포인터 교체만 책임진다 |
+| 삭제 | **포인터만 비운다. Storage 객체는 지우지 않는다** — 지우면 `content_revisions` 스냅샷으로 되돌려도 이미지가 404 가 되어 롤백이 반쪽이 된다 |
+| 검증 | 클라이언트에서 MIME·크기를 버킷 스펙(이미지 10MB / 영상 50MB)과 대조한 뒤 올린다 |
+
+Server Action 쪽에서는 `uploadSettingImage()`·`uploadImage()`(단지) 두 함수와 `File` 처리 분기를
+전부 걷어냈다. 액션이 받는 것은 **문자열 하나**뿐이다.
+
+### 16-1. 신규·변경 파일
+
+| 파일 | 내용 |
+|------|------|
+| `components/admin/MediaUploader.tsx` | **신규.** 업로드·교체·삭제·미리보기 공용 위젯 (이미지·영상 겸용) |
+| `components/admin/ListEditor.tsx` | `kind: "image"` 필드를 MediaUploader 로 교체 · 행 삭제 버튼에 `data-row-delete` |
+| `components/admin/settings-schema.ts` | `accept` 필드 추가 · **`heroSlides`·`businessGallery` 스키마 2종 신설** |
+| `components/admin/SettingsForms.tsx` | 대표 인사말 폼에 대표 프로필 사진 업로더 |
+| `components/admin/ComplexForm.tsx` | 단지 대표 사진을 MediaUploader 로 교체 |
+| `components/sections/Hero.tsx` | 모듈 상수 `SLIDES` 제거 → `slides` 프롭 주입 |
+| `components/sections/business/BusinessSubServices.tsx` | 모듈 상수 `GALLERY_IMAGES` 제거 → `gallery` 프롭 주입 |
+| `components/sections/about/CeoPortrait.tsx` | 하드코딩 사진 경로 → `ceoMessage.portrait` |
+| `data/site-content.ts` | `heroSlides`·`businessGallery` export 추가 · `ceoMessage.portrait` 추가 |
+| `lib/content/*` | FILE_SETTINGS 17키 → **19키** · 타입 재수출 2종 |
+| `supabase/migrations/20260825000001·2` | `heroSlides` · `businessGallery` 삽입 + `ceoMessage.portrait` 덧붙이기 (**적용 완료**) |
+| `scripts/lib/admin-session.mjs` | **신규.** 관리자 로그인 브라우저 세션 (DAY 5·6 검증 스크립트 공용) |
+| `scripts/verify-day6-media.mjs` | **신규.** 실제 파일 업로드 → 저장 → 반영 → 원복 전 과정 검증 |
+
+편집 블록은 17개 → **19개**, 목록형 키는 11개 → **13개**가 됐다.
+
+### 16-2. 히어로 영상·사진 교체 (계약 ITEM 02)
+
+- 기존 8슬라이드(영상 5 + 사진 3)를 `site_settings.heroSlides` 로 올렸다. **값·순서·문자열 동일.**
+- 관리자가 **추가·삭제·순서 변경·교체**를 모두 할 수 있다. 슬라이드 카운터(`01 / 08`)는
+  하드코딩이 아니라 배열 길이에서 계산하므로 개수를 바꾸면 **자동으로 따라간다** (9슬라이드 → `09` 실측).
+- `src` 필드는 `accept: "both"` 다 — **파일 종류(MIME)로 버킷을 자동 선택**한다.
+  영상이면 `site-videos`(50MB), 사진이면 `site-images`(10MB).
+- crossfade·자동전환·영상 onEnded 핸드오프·Ken Burns·reduced-motion 로직은 **한 줄도 바꾸지 않았다.**
+  변경분은 모듈 상수를 프롭으로 바꾼 것과 `SLIDES.length` → `count` 치환이 전부다.
+
+### 16-3. 기존 자산과 공존 (6-2)
+
+`/images/...` 로컬 경로와 `https://...supabase.co/...` Storage URL 이 **같은 필드에 섞여 들어간다.**
+렌더러는 분기하지 않고 `next/image`·`<video>` 에 그대로 넘긴다. `public/images` 190MB 는
+**마이그레이션하지 않았다**(범위 밖) — 8슬라이드 전부 로컬 경로로 시작해 필요한 것만 갈아 끼우면 된다.
+
+### 16-4. 검증 — `scripts/verify-day6-media.mjs` (실제 업로드)
+
+```
+업로드 대상 — 이미지 2.4MB · 영상 19.3MB
+
+✅ 히어로 슬라이드 8개 렌더 (영상 5 · 사진 3) · 사업영역 현장 사진 6장 렌더
+✅ 업로더 위젯 36개 렌더
+✅ 이미지 업로드 — site-images/related-companies/0/1787661029901-slide-06.png · 직접 접근 200
+✅ 저장 후 DB 포인터 교체 · 나머지 계열사 3건 무변경 · /about 즉시 반영(재빌드 없이)
+✅ E-4 remotePatterns — /_next/image?url=<Storage URL> → HTTP 200 · image/png
+✅ 영상 업로드 (19.3MB) — site-videos/hero/0/… · 200 · 20,192,088 bytes 크기 일치
+✅ heroSlides[0].src 교체 · 슬라이드 수 유지 · 나머지 7슬라이드 무변경 · 메인 즉시 반영
+✅ 카운터 08 · 다음 버튼 → 02 · video 5 / img 3 렌더
+✅ 슬라이드 추가 → 9개 · 카운터 09 자동 증가 → 순서 변경(이름 집합 불변) → 삭제 → 8개 원복
+✅ heroSlides·relatedCompanies 원복 — 원본과 완전 일치
+✅ 무변경 왕복(캐시 무효화 겸용) → 메인·/about 원래 경로로 복귀
+✅ DAY 6 전 항목 통과
+```
+
+**E-4 는 이것으로 해소됐다.** DAY 1 에 `remotePatterns` 를 넣기만 했지 Storage URL 이 실제로
+`/_next/image` 를 통과하는지는 확인한 적이 없었다. 이제 200 + `image/png` 로 실측했다.
+
+**50MB 상한 실측** — 19.3MB 영상이 업로드·저장·재생까지 전부 통과했다. Server Action 경로였다면
+프로덕션에서 4.5MB 에서 막혔을 크기다.
+
+### 16-5. 회귀
+
+| 항목 | 결과 |
+|------|------|
+| 무변경 왕복 (DAY 5 스크립트, **13키**) | heroSlides(8)·businessGallery(6) 포함 **13/13 저장 전후 JSON 완전 일치** |
+| 단지 편집 폼 | 기존 로컬 경로(`/images/ipark/계림아이파크 SK뷰.PNG`) 유지 · 무변경 저장 시 **전 컬럼 완전 일치** |
+| DAY 5 전 항목 | 대표 전화 14곳·연혁 추가/삭제·조직도 13노드 이동·원복 **전부 통과** |
+| 어댑터 3모드 | `[db]`·`[file]`·`[broken]` 전부 파일 원본과 불일치 0건 |
+| 시드 딥 비교 | complexes 172행 + **site_settings 19키** 코드포인트 단위 **전부 일치** |
+| SSR 가시 텍스트 (18경로) | 프로덕션(파일) ↔ 로컬(DB) **전 경로 diff 0줄** |
+| 메인 스크린샷 | `01_home_desktop` 0.29% / `_mobile` 0.58% — DAY 4 노이즈 하한선(9.66%/27.32%)보다 **훨씬 작다.** 크기 변화 0 |
+| 모바일 히어로 | 390×844 에서 높이 844px 풀스크린 · 카운터 `01/08` · 9초 후 `02` 자동 전환 · video 5 |
+| `tsc --noEmit` | EXIT=0 |
+| `eslint` (변경 22파일) | **신규 error·warning 0건.** 보고된 1 error 는 `Hero.tsx:37` 의 사전 존재분(§15-6) |
+| `npm run build` | EXIT=0 · **라우트 표 무변화** (`○` 2개 그대로, 나머지 51개 `ƒ`) |
+
+### 16-6. 보고 사항
+
+1. **DAY 3·5 의 업로드 경로는 프로덕션에서 4.5MB 초과 파일을 올릴 수 없는 상태였다.**
+   로컬에서만 검증했기 때문에 드러나지 않았다. DAY 6 에서 브라우저 직접 업로드로 바꿔 해소했다.
+   `next.config.ts` 의 `serverActions.bodySizeLimit: "10mb"` 는 이제 업로드와 무관하다 —
+   설정 자체는 건드리지 않았다(텍스트 폼 여유분으로 남긴다).
+2. **`ceoMessage` 에 `portrait` 키를 덧붙였다.** 마이그레이션은 기존 값(인사말 7문단)을 보존한 채
+   `value || '{"portrait":…}'` 로 병합한다. 적용 후 문단·작성자·직함 보존을 실측 확인했다.
+3. **`businessGallery` 는 5개 사업영역이 공유하는 6장이다.** 영역별로 다른 사진을 쓰려면
+   구조 자체를 바꿔야 한다(영역당 배열). 현재 구조를 유지했다 — alt 는 사업영역명에서 생성되므로
+   SSR 텍스트에 영향이 없고, 그래서 18경로 diff 가 0줄로 유지됐다.
+4. **`/images/hero` 에는 쓰이지 않는 영상 4개(합계 약 37MB)와 PNG 다수가 남아 있다.**
+   슬라이드에 연결된 것은 `video-01~05.mp4` + `slide-01~08.png` 뿐이다. 정리는 범위 밖이라 보고만 한다.
+5. **업로드 후 교체·삭제로 버려진 Storage 객체는 지우지 않는다** (16-0 의 롤백 근거).
+   장기적으로 미참조 객체가 쌓이면 정리가 필요하다 — 별도 안건.
+6. 검증이 `content_revisions` 에 스냅샷을 남겼고, `site-images`/`site-videos` 에 테스트 파일
+   3건(이미지 2 · 영상 1)이 남아 있다. 감사·롤백 근거라 지우지 않았다.

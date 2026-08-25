@@ -48,10 +48,12 @@ export type ContentOrigin = "db" | "file";
 export type {
   BusinessArea,
   BusinessCategory,
+  BusinessGalleryPhoto,
   Certification,
   Complex,
   Contact,
   Counter,
+  HeroSlide,
   HistoryEntry,
   License,
   OrgNode,

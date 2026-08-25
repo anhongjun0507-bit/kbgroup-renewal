@@ -22,6 +22,7 @@ import {
   ceoMessage,
   counters,
   businessAreas,
+  businessGallery,
   coreValues,
   differentiators,
   processSteps,
@@ -32,6 +33,7 @@ import {
   collaborators,
   licenses,
   certifications,
+  heroSlides,
   history,
   organization,
   relatedCompanies,
@@ -173,7 +175,7 @@ const complexRows: ComplexRow[] = [
   ...pastComplexes.map((c, i) => toRow(c as unknown as Record<string, unknown>, i, false)),
 ];
 
-// ── 2) site_settings 행 생성 (마이그레이션 DDL 주석의 17 키) ────────────────
+// ── 2) site_settings 행 생성 (마이그레이션 DDL 주석의 17 키 + DAY 6 heroSlides) ──
 /** STATS 중 "마케팅 표기값"만 담는다. activeComplexes(실제 수)는 complexes 테이블에서 계산한다 (E-7). */
 const marketingStats = {
   activeComplexesDisplay: STATS.activeComplexesDisplay,
@@ -202,6 +204,8 @@ const settings: { key: string; value: unknown; description: string }[] = [
   { key: "history", value: history, description: "연혁" },
   { key: "organization", value: organization, description: "조직도 트리 { tree, branches }" },
   { key: "relatedCompanies", value: relatedCompanies, description: "계열사" },
+  { key: "heroSlides", value: heroSlides, description: "메인 히어로 슬라이드 (영상 5 + 사진 3, 순서가 곧 재생 순서)" },
+  { key: "businessGallery", value: businessGallery, description: "사업영역 상세 현장 사진 6장 (5개 영역 공용)" },
   { key: "stats", value: marketingStats, description: "STATS 중 마케팅 표기값만. 실제 단지 수는 complexes 에서 계산 (E-7)" },
 ];
 

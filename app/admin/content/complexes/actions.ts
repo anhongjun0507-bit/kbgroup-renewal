@@ -32,7 +32,6 @@ const SNAPSHOT_COLUMNS =
 type Parsed = {
   values: Record<string, unknown>;
   fieldErrors: NonNullable<ComplexFormState["fieldErrors"]>;
-  imageFile: File | null;
 };
 
 function toLines(v: FormDataEntryValue | null): string[] {
@@ -69,8 +68,6 @@ function parseForm(formData: FormData): Parsed {
   const rawType = String(formData.get("type") ?? "").trim();
   const type = rawType === "LH" || rawType === "민간" || rawType === "공공" ? rawType : null;
 
-  const file = formData.get("imageFile");
-  const imageFile = file instanceof File && file.size > 0 ? file : null;
 
   return {
     values: {
@@ -94,28 +91,10 @@ function parseForm(formData: FormData): Parsed {
       sort_order: Number.parseInt(String(formData.get("sortOrder") ?? "0"), 10) || 0,
     },
     fieldErrors,
-    imageFile,
   };
 }
 
 type Supabase = Awaited<ReturnType<typeof requireAdmin>>["supabase"];
-
-/** 업로드한 이미지를 site-images 버킷에 넣고 공개 URL 을 돌려준다. */
-async function uploadImage(
-  supabase: Supabase,
-  slug: string,
-  file: File,
-): Promise<{ url: string } | { error: string }> {
-  const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
-  // 파일명은 ASCII 로만 만든다 — 한글 단지명을 그대로 쓰면 Storage 키가 깨진다.
-  const path = `complexes/${slug}-${Date.now()}.${ext || "jpg"}`;
-  const { error } = await supabase.storage
-    .from("site-images")
-    .upload(path, file, { contentType: file.type, upsert: false });
-  if (error) return { error: `이미지 업로드 실패: ${error.message}` };
-  const { data } = supabase.storage.from("site-images").getPublicUrl(path);
-  return { url: data.publicUrl };
-}
 
 /** 저장 직전 값을 감사 테이블에 남긴다. 실패해도 본 저장은 막지 않되 로그는 남긴다. */
 async function snapshot(supabase: Supabase, row: Record<string, unknown>, actorId: string) {
@@ -146,16 +125,10 @@ export async function createComplex(
   formData: FormData,
 ): Promise<ComplexFormState> {
   const { supabase } = await requireAdmin(`${ADMIN_LIST}/new`);
-  const { values, fieldErrors, imageFile } = parseForm(formData);
+  const { values, fieldErrors } = parseForm(formData);
   if (Object.keys(fieldErrors).length > 0) return { error: null, fieldErrors };
 
   const slug = await buildSlug(supabase, values.name as string);
-
-  if (imageFile) {
-    const up = await uploadImage(supabase, slug, imageFile);
-    if ("error" in up) return { error: up.error };
-    values.image = up.url;
-  }
 
   const { error } = await supabase.from("complexes").insert({ ...values, slug } as never);
   if (error) {
@@ -176,7 +149,7 @@ export async function updateComplex(
   const expectedUpdatedAt = String(formData.get("updatedAt") ?? "");
   if (!id || !expectedUpdatedAt) return { error: "잘못된 접근입니다." };
 
-  const { values, fieldErrors, imageFile } = parseForm(formData);
+  const { values, fieldErrors } = parseForm(formData);
   if (Object.keys(fieldErrors).length > 0) return { error: null, fieldErrors };
 
   const { data: current, error: readError } = await supabase
@@ -192,12 +165,6 @@ export async function updateComplex(
       error: null,
       conflict: true,
     };
-  }
-
-  if (imageFile) {
-    const up = await uploadImage(supabase, current.slug, imageFile);
-    if ("error" in up) return { error: up.error };
-    values.image = up.url;
   }
 
   await snapshot(supabase, current as unknown as Record<string, unknown>, user.id);

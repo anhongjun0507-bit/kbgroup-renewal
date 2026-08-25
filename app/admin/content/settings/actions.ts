@@ -252,6 +252,8 @@ export async function saveCeoMessage(
     authorName: str(fd, "authorName"),
     authorTitle: str(fd, "authorTitle"),
     paragraphs,
+    // DAY 6 — 업로드는 브라우저가 이미 끝냈다. 여기서는 포인터 문자열만 받는다.
+    portrait: str(fd, "portrait"),
   });
 }
 
@@ -332,24 +334,6 @@ export async function saveStats(
  * 임의 키로 site_settings 를 덮어쓸 수 없어야 하기 때문이다.
  */
 
-/** 업로드한 이미지를 site-images 버킷에 넣고 공개 URL 을 돌려준다 (단지 CRUD 와 같은 규약). */
-async function uploadSettingImage(
-  supabase: Supabase,
-  prefix: string,
-  index: number,
-  file: File,
-): Promise<{ url: string } | { error: string }> {
-  const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
-  // 파일명은 ASCII 로만 만든다 — 한글 원본 파일명을 그대로 쓰면 Storage 키가 깨진다.
-  const path = `${prefix}/${index}-${Date.now()}.${ext || "jpg"}`;
-  const { error } = await supabase.storage
-    .from("site-images")
-    .upload(path, file, { contentType: file.type, upsert: false });
-  if (error) return { error: `이미지 업로드 실패: ${error.message}` };
-  const { data } = supabase.storage.from("site-images").getPublicUrl(path);
-  return { url: data.publicUrl };
-}
-
 export async function saveListSetting(
   _prev: SettingsFormState,
   fd: FormData,
@@ -410,24 +394,13 @@ export async function saveListSetting(
         continue;
       }
 
-      // text · textarea · select · readonly · image — 전부 문자열. 유니코드 정규화 금지 (E-10).
+      /* text · textarea · select · readonly · image — 전부 문자열. 유니코드 정규화 금지 (E-10).
+         DAY 6 — image 도 여기서 문자열 하나로 끝난다. 파일은 브라우저가 Storage 에 직접 올리고
+         (`MediaUploader`) 폼에는 업로드 성공 후의 공개 URL 만 실려 온다. 업로드가 실패하면
+         값이 바뀌지 않으므로 이 액션은 "포인터 교체"만 책임진다. */
       // 여러 줄 입력은 브라우저가 CRLF 로 보낸다(HTML 폼 규격). 줄바꿈만 LF 로 맞춘다 —
       // 문자 정규화가 아니라 개행 표기 통일이라 U+2011 같은 문자에는 영향이 없다.
-      let v = f.kind === "textarea" ? str(fd, name).replace(/\r\n/g, "\n") : str(fd, name);
-
-      if (f.kind === "image") {
-        const file = fd.get(`${f.name}File_${i}`);
-        if (file instanceof File && file.size > 0) {
-          const up = await uploadSettingImage(
-            supabase,
-            f.uploadPrefix ?? key,
-            i,
-            file,
-          );
-          if ("error" in up) return { ok: null, error: up.error };
-          v = up.url;
-        }
-      }
+      const v = f.kind === "textarea" ? str(fd, name).replace(/\r\n/g, "\n") : str(fd, name);
 
       if (f.required && !v) rowErrors.push(`${label}을(를) 입력해주세요.`);
       if (v) empty = false;

@@ -36,8 +36,10 @@ export type ListField = {
   options?: readonly { value: string; label: string }[];
   /** kind: "pairs" — 한 줄 `왼쪽|오른쪽` 을 이 두 키를 가진 객체로 만든다. */
   pairKeys?: readonly [string, string];
-  /** kind: "image" — Storage `site-images` 버킷 안의 경로 접두사. */
+  /** kind: "image" — Storage 경로 접두사(`{scope}` 부분). 항목 번호가 `{entity-id}` 로 붙는다. */
   uploadPrefix?: string;
+  /** kind: "image" — 허용 종류. 기본 image. `both` 는 파일 종류로 버킷을 고른다(히어로 슬라이드). */
+  accept?: "image" | "video" | "both";
   /** 2열 그리드에서 한 줄 전체를 차지한다. */
   wide?: boolean;
 };
@@ -64,6 +66,49 @@ const PARTNER_CATEGORIES = [
 ] as const;
 
 export const LIST_SCHEMAS: readonly ListSchema[] = [
+  {
+    key: "heroSlides",
+    title: "메인 히어로 슬라이드",
+    desc:
+      "메인 첫 화면의 영상·사진 슬라이드입니다. 목록 순서가 곧 재생 순서이고, 우하단 카운터(01/08)는 항목 수에서 자동으로 계산됩니다.",
+    where: "/ — Hero",
+    labelField: "alt",
+    mutable: true,
+    addLabel: "슬라이드 추가",
+    fields: [
+      {
+        name: "type",
+        label: "종류",
+        kind: "select",
+        required: true,
+        options: [
+          { value: "video", label: "영상 (재생이 끝나면 다음 슬라이드)" },
+          { value: "image", label: "사진 (6.5초 후 다음 슬라이드)" },
+        ],
+      },
+      { name: "alt", label: "대체 텍스트 (스크린리더·SEO)", kind: "text", required: true },
+      {
+        name: "src",
+        label: "슬라이드 파일",
+        kind: "image",
+        accept: "both",
+        uploadPrefix: "hero",
+        required: true,
+        wide: true,
+        hint: "「종류」와 맞는 파일을 올리세요. 영상은 mp4·webm(50MB), 사진은 jpeg·png·webp·avif(10MB)입니다.",
+      },
+      {
+        name: "poster",
+        label: "영상 포스터 (영상일 때만)",
+        kind: "image",
+        accept: "image",
+        uploadPrefix: "hero-poster",
+        optional: true,
+        wide: true,
+        hint: "영상의 첫 프레임이 로딩되기 전에 대신 보여줄 사진입니다. 사진 슬라이드에는 필요 없습니다.",
+      },
+    ],
+  },
   {
     key: "coreValues",
     title: "핵심 가치",
@@ -210,6 +255,26 @@ export const LIST_SCHEMAS: readonly ListSchema[] = [
       { name: "name", label: "자격증명", kind: "text", required: true },
       { name: "count", label: "보유 인원", kind: "number", required: true },
       { name: "issuer", label: "발급 기관", kind: "text", required: true, wide: true },
+    ],
+  },
+  {
+    key: "businessGallery",
+    title: "사업영역 현장 사진",
+    desc:
+      "5개 사업영역 상세 페이지가 공유하는 현장 사진입니다. 대체 텍스트는 사업영역명에서 자동으로 만들어집니다.",
+    where: "/business/[slug] — BusinessSubServices 갤러리",
+    labelField: "src",
+    mutable: true,
+    addLabel: "사진 추가",
+    fields: [
+      {
+        name: "src",
+        label: "사진",
+        kind: "image",
+        uploadPrefix: "business-gallery",
+        required: true,
+        wide: true,
+      },
     ],
   },
   {

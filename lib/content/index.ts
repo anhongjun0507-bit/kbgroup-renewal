@@ -17,10 +17,12 @@ export type { ContentComplex, ContentOrigin } from "./types";
 export type {
   BusinessArea,
   BusinessCategory,
+  BusinessGalleryPhoto,
   Certification,
   Complex,
   Contact,
   Counter,
+  HeroSlide,
   HistoryEntry,
   License,
   OrgNode,

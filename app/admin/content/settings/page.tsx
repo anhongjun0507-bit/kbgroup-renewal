@@ -188,7 +188,7 @@ export default async function AdminSettingsPage() {
             변경 이력에 자동 보관됩니다.
           </p>
 
-          {/* 편집 항목이 17개라 페이지가 길다. 바로 이동할 수 있게 목차를 둔다. */}
+          {/* 편집 항목이 19개라 페이지가 길다. 바로 이동할 수 있게 목차를 둔다. */}
           <nav aria-label="설정 항목 바로가기" className="mt-6 flex flex-wrap gap-2">
             {TOC.map((t) => (
               <a
@@ -274,7 +274,7 @@ export default async function AdminSettingsPage() {
             <Missing label="마케팅 표기값(STATS)" settingKey="stats" />
           )}
 
-          {/* 목록형 11키 — 필드 정의는 settings-schema.ts 한 곳에 있다. */}
+          {/* 목록형 13키 (DAY 6 에 heroSlides·businessGallery 추가) — 필드 정의는 settings-schema.ts 한 곳에 있다. */}
           {LIST_SCHEMAS.map((schema) => {
             const row = pick(rows, schema.key);
             if (!row) return <Missing key={schema.key} label={schema.title} settingKey={schema.key} />;

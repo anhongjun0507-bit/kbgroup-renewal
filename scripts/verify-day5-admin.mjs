@@ -15,9 +15,9 @@
  */
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
+import { openAdminBrowser } from "./lib/admin-session.mjs";
 
 const require = createRequire(import.meta.url);
-const { chromium } = require(process.env.PLAYWRIGHT_PATH || "playwright");
 const { createClient } = require("@supabase/supabase-js");
 
 for (const line of readFileSync(".env.local", "utf8").split("\n")) {
@@ -87,78 +87,11 @@ function countNodes(nodes) {
 const ORIGINAL_NODES =
   countNodes([originalOrg.tree]) + countNodes(originalOrg.branches ?? []);
 
-/* ── 로그인 세션 만들기 ──────────────────────────────────────────────────
-   매직링크의 redirect_to 는 Supabase 허용 목록에 없는 localhost 로는 못 간다(프로덕션으로 튕긴다).
-   그래서 링크를 브라우저로 열지 않고 Node 에서 verifyOtp 로 세션만 받은 뒤,
-   앱이 실제로 쓰는 @supabase/ssr 쿠키 형식 그대로 브라우저 컨텍스트에 심는다. */
-
-const { data: link, error: linkError } = await supabase.auth.admin.generateLink({
-  type: "magiclink",
-  email: ADMIN_EMAIL,
+const { browser, page } = await openAdminBrowser({
+  base: BASE,
+  adminEmail: ADMIN_EMAIL,
+  supabase,
 });
-if (linkError) {
-  console.error("❌ 매직링크 발급 실패:", linkError.message);
-  process.exit(1);
-}
-
-const anon = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  { auth: { autoRefreshToken: false, persistSession: false } },
-);
-const { data: otp, error: otpError } = await anon.auth.verifyOtp({
-  type: "magiclink",
-  token_hash: link.properties.hashed_token,
-});
-if (otpError || !otp.session) {
-  console.error("❌ verifyOtp 실패:", otpError?.message);
-  process.exit(1);
-}
-
-// 앱과 같은 @supabase/ssr 어댑터로 쿠키를 만들게 해 이름·청크 규칙을 직접 흉내내지 않는다.
-const { createServerClient } = require("@supabase/ssr");
-const jar = [];
-const ssr = createServerClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  {
-    cookies: {
-      getAll: () => jar.map(({ name, value }) => ({ name, value })),
-      setAll: (list) => {
-        for (const c of list) {
-          const i = jar.findIndex((x) => x.name === c.name);
-          if (i >= 0) jar[i] = { name: c.name, value: c.value };
-          else jar.push({ name: c.name, value: c.value });
-        }
-      },
-    },
-  },
-);
-await ssr.auth.setSession({
-  access_token: otp.session.access_token,
-  refresh_token: otp.session.refresh_token,
-});
-if (jar.length === 0) {
-  console.error("❌ @supabase/ssr 쿠키를 만들지 못했습니다.");
-  process.exit(1);
-}
-
-const browser = await chromium.launch();
-const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-await ctx.addCookies(
-  jar.map((c) => ({
-    name: c.name,
-    value: c.value,
-    domain: new URL(BASE).hostname,
-    path: "/",
-    httpOnly: false,
-    secure: BASE.startsWith("https"),
-    sameSite: "Lax",
-  })),
-);
-const page = await ctx.newPage();
-page.setDefaultTimeout(120_000);
-page.setDefaultNavigationTimeout(120_000);
 
 await page.goto(`${BASE}/admin/content/settings`, { waitUntil: "domcontentloaded" });
 check("설정 페이지 응답", !page.url().includes("/login"), page.url());
@@ -168,8 +101,10 @@ check("관리자 로그인 후 /admin/content/settings 진입", true, page.url()
 
 /* ── 0) 편집기 렌더 확인 ───────────────────────────────────────────────── */
 
+/* DAY 6 에 heroSlides·businessGallery 편집기가 늘어 17 → 19개다. */
 const SECTION_IDS = [
   "company", "contact", "ceoMessage", "counters", "stats",
+  "heroSlides", "businessGallery",
   "coreValues", "differentiators", "companyStrengths", "history",
   "partners", "collaborators", "relatedCompanies", "licenses",
   "certifications", "businessAreas", "processSteps", "organization",
@@ -178,7 +113,7 @@ for (const id of SECTION_IDS) {
   const n = await page.locator(`#setting-${id}`).count();
   if (n !== 1) check(`편집 섹션 #setting-${id} 렌더`, false, `${n}개`);
 }
-check(`편집 섹션 17개 전부 렌더`, true);
+check(`편집 섹션 ${SECTION_IDS.length}개 전부 렌더`, true);
 
 check(
   "인허가 9건 렌더",
@@ -212,11 +147,14 @@ if (READONLY) {
   process.exit(failures === 0 ? 0 : 1);
 }
 
-/* ── 0-b) 무변경 왕복 — 11개 목록 키를 그대로 저장했을 때 값이 1바이트도 안 바뀌는지 ──
+/* ── 0-b) 무변경 왕복 — 목록 키를 그대로 저장했을 때 값이 1바이트도 안 바뀌는지 ──
    범용 편집기의 유일한 치명적 실패 모드는 "화면에 없는 필드가 저장 때 조용히 사라지는 것"이다.
-   아무것도 고치지 않고 저장 → 저장 전후 JSON 완전 일치 를 11개 키 전부에 대해 확인한다. */
+   아무것도 고치지 않고 저장 → 저장 전후 JSON 완전 일치 를 전 목록 키에 대해 확인한다.
+   DAY 6 에 heroSlides·businessGallery 가 늘어 13키다 — 이미지 필드가 MediaUploader 의
+   hidden input 으로 바뀐 뒤에도 값이 그대로 실려 오는지를 이 왕복이 증명한다. */
 
 const LIST_KEYS = [
+  "heroSlides", "businessGallery",
   "coreValues", "differentiators", "companyStrengths", "history",
   "partners", "collaborators", "relatedCompanies", "licenses",
   "certifications", "businessAreas", "processSteps",

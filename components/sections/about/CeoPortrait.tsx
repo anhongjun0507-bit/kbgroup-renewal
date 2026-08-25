@@ -53,7 +53,7 @@ export function CeoPortrait({ ceoMessage }: { ceoMessage: SettingValue<"ceoMessa
           <motion.div variants={item} className="lg:col-span-5">
             <div className="relative aspect-[3/4] overflow-hidden bg-navy-900">
               <Image
-                src="/images/company/ceo-portrait.png"
+                src={ceoMessage.portrait}
                 alt={`${ceoMessage.authorName} ${ceoMessage.authorTitle} 공식 프로필 사진`}
                 fill
                 priority

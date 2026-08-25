@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import { MediaUploader } from "./MediaUploader";
 import { FormShell, type Action } from "./SettingsForms";
 import type { ListField, ListSchema } from "./settings-schema";
 
@@ -11,6 +12,10 @@ import type { ListField, ListSchema } from "./settings-schema";
  * "같은 모양의 항목이 N개 반복"이라는 구조를 공유한다. 키마다 폼을 따로 쓰면 같은 코드를 11번
  * 반복하게 되고, 그중 한 곳만 고치는 실수가 곧바로 데이터 유실이 된다.
  * 필드 정의는 `settings-schema.ts` 한 곳에 있고 Server Action 도 같은 스키마를 읽는다.
+ *
+ * DAY 6 — `kind: "image"` 필드는 `MediaUploader` 로 바뀌었다. 파일이 Server Action 본문에
+ * 실려 오지 않고 브라우저에서 Storage 로 직접 올라간 뒤 **공개 URL 문자열만** 폼에 담긴다
+ * (Vercel 4.5MB 본문 제한 회피 — `MediaUploader` 주석 참고).
  *
  * 값 보존 규칙 — 항목은 **rowId 를 React key 로 삼는 비제어 입력**이다.
  * 순서를 바꾸거나 중간 항목을 지워도 DOM 노드가 통째로 이동·제거되므로 나머지 입력값이 그대로 남는다.
@@ -47,10 +52,12 @@ function Field({
   field,
   index,
   data,
+  settingKey,
 }: {
   field: ListField;
   index: number;
   data: Item;
+  settingKey: string;
 }) {
   const name = `${field.name}_${index}`;
   const id = `le-${name}`;
@@ -128,29 +135,13 @@ function Field({
     return (
       <div className={wrap}>
         {label}
-        <input id={id} name={name} type="text" defaultValue={value} className={INPUT} />
-        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
-          <input
-            id={`${id}-file`}
-            name={`${field.name}File_${index}`}
-            type="file"
-            accept="image/*"
-            className="block w-full text-[13px] text-ink-muted file:mr-3 file:rounded-sm file:border-0 file:bg-navy-900 file:px-4 file:py-2 file:text-[13px] file:font-semibold file:text-white"
-          />
-          {value && (
-            /* next/image 는 도메인 등록이 필요하고 관리자 미리보기는 최적화 이득이 없다. */
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={value}
-              alt=""
-              className="h-14 w-auto shrink-0 rounded-sm border border-line bg-white object-contain p-1"
-            />
-          )}
-        </div>
-        <p className="mt-2 text-[12px] text-ink-faint">
-          파일을 고르면 업로드 후 위 경로가 자동으로 교체됩니다. 비워두면 기존 이미지를 유지합니다.
-        </p>
-        {hint}
+        <MediaUploader
+          name={name}
+          defaultValue={value}
+          accept={field.accept ?? "image"}
+          prefix={`${field.uploadPrefix ?? settingKey}/${index}`}
+          hint={field.hint}
+        />
       </div>
     );
   }
@@ -253,6 +244,7 @@ export function ListEditor({
                 </button>
                 <button
                   type="button"
+                  data-row-delete
                   onClick={() => remove(row.rowId)}
                   className="btn-reset inline-flex h-9 items-center rounded-sm border border-red-300 bg-white px-3 text-[13px] font-semibold text-red-700 hover:bg-red-50"
                 >
@@ -263,7 +255,7 @@ export function ListEditor({
 
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               {schema.fields.map((f) => (
-                <Field key={f.name} field={f} index={i} data={row.data} />
+                <Field key={f.name} field={f} index={i} data={row.data} settingKey={schema.key} />
               ))}
             </div>
           </fieldset>

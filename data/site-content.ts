@@ -255,6 +255,9 @@ export const contact: Contact = {
 export const ceoMessage = {
   authorName: "김 현",
   authorTitle: "(주)케이비개발 대표이사",
+  /* 대표 프로필 사진 (PLAN B / DAY 6). 기존 CeoPortrait 의 하드코딩 경로를 옮긴 것이다.
+     로컬 경로와 Storage 공개 URL 을 모두 받는다. */
+  portrait: "/images/company/ceo-portrait.png",
   paragraphs: [
     "안녕하십니까? (주)케이비개발입니다.",
     "당사는 주택관리, 경비, 상주청소, 저수조청소, 방역소독, 수목관리 등의 사업을 하는 종합주택관리회사입니다.",
@@ -952,4 +955,44 @@ export const relatedCompanies: RelatedCompany[] = [
   { name: "㈜케이위더스",
     note: "주택관리·종합 서비스 관계사",
     logo: "/images/partners/k-withus-logo.png" },
+];
+
+/* ── 메인 히어로 슬라이드 (PLAN B / DAY 6, 계약 ITEM 02) ──────────────────
+   기존 `components/sections/Hero.tsx` 의 모듈 상수 SLIDES 를 여기로 옮긴 것이다.
+   값·순서·문자열 모두 원본과 동일하다 (영상 5 → 사진 3).
+   `type: "video"` 는 poster 가 필요하고 재생이 끝나면 다음 슬라이드로 넘어간다.
+   `type: "image"` 는 IMAGE_DURATION 후 넘어간다.
+   src·poster 는 로컬 경로(`/images/...`)와 Storage 공개 URL(`https://...`)을 모두 받는다. */
+export type HeroSlide = {
+  type: "video" | "image";
+  src: string;
+  /** 영상 전용 — 첫 프레임 로딩 전에 보여줄 사진. */
+  poster?: string;
+  alt: string;
+};
+
+export const heroSlides: HeroSlide[] = [
+  { type: "video", src: "/images/hero/video-01.mp4", poster: "/images/hero/slide-01.png", alt: "케이비개발 시설관리 현장 01" },
+  { type: "video", src: "/images/hero/video-02.mp4", poster: "/images/hero/slide-02.png", alt: "케이비개발 시설관리 현장 02" },
+  { type: "video", src: "/images/hero/video-03.mp4", poster: "/images/hero/slide-03.png", alt: "케이비개발 시설관리 현장 03" },
+  { type: "video", src: "/images/hero/video-04.mp4", poster: "/images/hero/slide-04.png", alt: "케이비개발 시설관리 현장 04" },
+  { type: "video", src: "/images/hero/video-05.mp4", poster: "/images/hero/slide-05.png", alt: "케이비개발 시설관리 현장 05" },
+  { type: "image", src: "/images/hero/slide-06.png", alt: "주택관리 현장" },
+  { type: "image", src: "/images/hero/slide-07.png", alt: "위생청소 현장" },
+  { type: "image", src: "/images/hero/slide-08.png", alt: "경비보안 현장" },
+];
+
+/* ── 사업영역 현장 사진 (PLAN B / DAY 6) ─────────────────────────────────
+   기존 `BusinessSubServices.tsx` 의 모듈 상수 GALLERY_IMAGES 를 옮긴 것이다.
+   5개 사업영역 상세 페이지가 같은 6장을 공유한다. alt 는 사업영역명에서 생성하므로
+   여기에는 경로만 둔다 — 관리자가 사진만 갈아 끼우면 된다. */
+export type BusinessGalleryPhoto = { src: string };
+
+export const businessGallery: BusinessGalleryPhoto[] = [
+  { src: "/images/can/IMG_1489.PNG" },
+  { src: "/images/can/IMG_1490.PNG" },
+  { src: "/images/can/IMG_1491.PNG" },
+  { src: "/images/can/IMG_1492.PNG" },
+  { src: "/images/can/IMG_1493.PNG" },
+  { src: "/images/can/IMG_1494.PNG" },
 ];

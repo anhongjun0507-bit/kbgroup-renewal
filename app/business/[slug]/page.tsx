@@ -65,7 +65,7 @@ export default async function BusinessDetailPage({
         ]}
       />
       <BusinessOverview area={area} />
-      <BusinessSubServices area={area} />
+      <BusinessSubServices area={area} gallery={settings.businessGallery} />
       <BusinessProcess processSteps={settings.processSteps} />
       <BusinessFAQ areaId={area.id} />
       <BusinessRelatedCases complexes={relatedComplexes} />

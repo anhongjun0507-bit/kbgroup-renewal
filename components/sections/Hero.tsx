@@ -4,65 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/ui";
-import type { SettingValue } from "@/lib/content";
+import type { HeroSlide, SettingValue } from "@/lib/content";
 
 /* Phase 15 — Hero 풀스크린 영상+사진 슬라이드 (아모레퍼시픽 톤)
    100svh 풀스크린 / 5장 자동 전환 / crossfade / 좌하단 카피 / 우하단 카운터 / 하단중앙 Scroll 인디케이터 */
-
-type Slide =
-  | { type: "video"; src: string; poster: string; alt: string }
-  | { type: "image"; src: string; alt: string };
-
-/* 슬라이드 순서: 영상 5개 → 사진 3개 (사용자 피드백: 영상 먼저 다 사용)
-   영상은 loop 없이 1회 재생 후 onEnded → 다음 슬라이드 (사용자 피드백: 한 번만 재생)
-   사진은 IMAGE_DURATION 후 다음 슬라이드 */
-const SLIDES: Slide[] = [
-  {
-    type: "video",
-    src: "/images/hero/video-01.mp4",
-    poster: "/images/hero/slide-01.png",
-    alt: "케이비개발 시설관리 현장 01",
-  },
-  {
-    type: "video",
-    src: "/images/hero/video-02.mp4",
-    poster: "/images/hero/slide-02.png",
-    alt: "케이비개발 시설관리 현장 02",
-  },
-  {
-    type: "video",
-    src: "/images/hero/video-03.mp4",
-    poster: "/images/hero/slide-03.png",
-    alt: "케이비개발 시설관리 현장 03",
-  },
-  {
-    type: "video",
-    src: "/images/hero/video-04.mp4",
-    poster: "/images/hero/slide-04.png",
-    alt: "케이비개발 시설관리 현장 04",
-  },
-  {
-    type: "video",
-    src: "/images/hero/video-05.mp4",
-    poster: "/images/hero/slide-05.png",
-    alt: "케이비개발 시설관리 현장 05",
-  },
-  {
-    type: "image",
-    src: "/images/hero/slide-06.png",
-    alt: "주택관리 현장",
-  },
-  {
-    type: "image",
-    src: "/images/hero/slide-07.png",
-    alt: "위생청소 현장",
-  },
-  {
-    type: "image",
-    src: "/images/hero/slide-08.png",
-    alt: "경비보안 현장",
-  },
-];
 
 const IMAGE_DURATION = 6500;
 const FADE_DURATION = 2400;
@@ -70,12 +15,19 @@ const FADE_EASE = "cubic-bezier(0.45, 0, 0.15, 1)";
 /* 영상 끝 N초 전에 다음 슬라이드 페이드인 시작 (FADE_DURATION 만큼 미리 시작해야 정확히 끝 프레임에서 페이드 완료) */
 const VIDEO_HANDOFF_LEAD = 1.0;
 
-/** 연락처 (어댑터 주입). 대표 전화만 사용한다. */
 interface Props {
+  /** 연락처 (어댑터 주입). 대표 전화만 사용한다. */
   contact: SettingValue<"contact">;
+  /**
+   * 히어로 슬라이드 (어댑터 주입 · PLAN B / DAY 6, 계약 ITEM 02).
+   * 관리자가 추가·삭제·순서 변경·교체할 수 있다. 배열 순서가 곧 재생 순서다.
+   * src·poster 는 로컬 경로(`/images/...`)와 Storage 공개 URL 을 모두 받는다 —
+   * 렌더러는 분기 없이 그대로 next/image·<video> 에 넘긴다.
+   */
+  slides: HeroSlide[];
 }
 
-export function Hero({ contact }: Props) {
+export function Hero({ contact, slides }: Props) {
   const [active, setActive] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
@@ -88,23 +40,24 @@ export function Hero({ contact }: Props) {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  const goTo = (i: number) => setActive(((i % SLIDES.length) + SLIDES.length) % SLIDES.length);
+  const count = slides.length;
+  const goTo = (i: number) => setActive(count === 0 ? 0 : ((i % count) + count) % count);
   const goNext = () => goTo(active + 1);
 
   /* 사진 슬라이드만 타이머로 다음으로 전환 (영상은 onEnded로 전환) */
   useEffect(() => {
     if (reducedMotion) return;
-    const slide = SLIDES[active];
-    if (slide.type !== "image") return;
+    const slide = slides[active];
+    if (!slide || slide.type !== "image") return;
     const id = window.setTimeout(() => goNext(), IMAGE_DURATION);
     return () => window.clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, reducedMotion]);
+  }, [active, reducedMotion, slides]);
 
   /* 활성 슬라이드가 video면 처음부터 재생 (1회), 비활성 영상은 pause.
      이미 재생 중이면(첫 mount의 autoPlay) 그대로 둬서 부드러운 시작 보장. */
   useEffect(() => {
-    SLIDES.forEach((slide, i) => {
+    slides.forEach((slide, i) => {
       const el = videoRefs.current[i];
       if (!el || slide.type !== "video") return;
       if (i === active) {
@@ -121,7 +74,7 @@ export function Hero({ contact }: Props) {
         el.pause();
       }
     });
-  }, [active]);
+  }, [active, slides]);
 
   /* 활성 슬라이드와 '다음' 슬라이드 영상만 사전 로드.
      기존엔 진입 즉시 영상 5개를 모두 load()해 홈 초기 로딩이 수십 MB에 달했다.
@@ -129,8 +82,9 @@ export function Hero({ contact }: Props) {
      재생 중(수 초)에 미리 받아둬 전환 시점엔 준비가 끝난다.
      (iOS Safari는 preload 속성을 무시하므로 load() 강제 호출.) */
   useEffect(() => {
-    [active, (active + 1) % SLIDES.length].forEach((i) => {
-      const slide = SLIDES[i];
+    if (count === 0) return;
+    [active, (active + 1) % count].forEach((i) => {
+      const slide = slides[i];
       if (slide.type !== "video") return;
       const el = videoRefs.current[i];
       if (!el || el.dataset.loaded) return;
@@ -141,7 +95,7 @@ export function Hero({ contact }: Props) {
         /* noop */
       }
     });
-  }, [active]);
+  }, [active, count, slides]);
 
   return (
     <section
@@ -152,7 +106,7 @@ export function Hero({ contact }: Props) {
     >
       {/* Slide stack */}
       <div className="absolute inset-0">
-        {SLIDES.map((slide, i) => (
+        {slides.map((slide, i) => (
           <div
             key={i}
             aria-hidden={i !== active}
@@ -335,13 +289,13 @@ export function Hero({ contact }: Props) {
             <span
               className="absolute inset-y-0 left-0 bg-white"
               style={{
-                width: `${((active + 1) / SLIDES.length) * 100}%`,
+                width: `${count === 0 ? 0 : ((active + 1) / count) * 100}%`,
                 transition: "width 700ms var(--ease)",
               }}
             />
           </div>
           <span className="text-[12px] tabular-nums text-white/55 sm:text-[13px]">
-            {String(SLIDES.length).padStart(2, "0")}
+            {String(count).padStart(2, "0")}
           </span>
 
           <button

@@ -13,7 +13,7 @@ export default async function Home() {
 
   return (
     <>
-      <Hero contact={settings.contact} />
+      <Hero contact={settings.contact} slides={settings.heroSlides} />
       <FadeIn as="div" distance={32} duration={800}>
         <TrustSignals partners={settings.partners} />
       </FadeIn>

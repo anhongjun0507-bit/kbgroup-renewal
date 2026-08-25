@@ -3,27 +3,20 @@
 import Image from "next/image";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import type { BusinessArea } from "@/lib/content";
+import type { BusinessArea, SettingValue } from "@/lib/content";
 
 /* Phase 4.F.3 — 하위 서비스 그리드 + 작업 갤러리 6장
    Phase 15 — placeholder/라벨 제거 + 사용자 업로드 갤러리 이미지(public/images/can) 매핑 */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
-const GALLERY_IMAGES = [
-  "/images/can/IMG_1489.PNG",
-  "/images/can/IMG_1490.PNG",
-  "/images/can/IMG_1491.PNG",
-  "/images/can/IMG_1492.PNG",
-  "/images/can/IMG_1493.PNG",
-  "/images/can/IMG_1494.PNG",
-];
-
 interface Props {
   area: BusinessArea;
+  /** 현장 사진 (어댑터 주입 · PLAN B / DAY 6). 5개 사업영역이 같은 목록을 공유한다. */
+  gallery: SettingValue<"businessGallery">;
 }
 
-export function BusinessSubServices({ area }: Props) {
+export function BusinessSubServices({ area, gallery }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
   const { subBusinesses } = area;
 
@@ -82,7 +75,7 @@ export function BusinessSubServices({ area }: Props) {
           variants={listVariants}
           className="mb-16 grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-6 lg:gap-8"
         >
-          {GALLERY_IMAGES.map((src, idx) => (
+          {gallery.map(({ src }, idx) => (
             <motion.figure
               key={src}
               variants={itemVariants}

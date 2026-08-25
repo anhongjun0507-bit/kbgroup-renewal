@@ -8,8 +8,10 @@ import {
   coreValues,
   counters,
   businessAreas,
+  businessGallery,
   certifications,
   differentiators,
+  heroSlides,
   history,
   licenses,
   organization,
@@ -94,7 +96,7 @@ const marketingStats: MarketingStats = {
   totalCertHolders,
 };
 
-/** site_settings 17키의 파일 원본. 시드 스크립트의 settings 배열과 동일하다. */
+/** site_settings 19키의 파일 원본. 시드 스크립트의 settings 배열과 동일하다. */
 export const FILE_SETTINGS = {
   company,
   contact,
@@ -113,6 +115,8 @@ export const FILE_SETTINGS = {
   organization,
   relatedCompanies,
   stats: marketingStats,
+  heroSlides,
+  businessGallery,
 };
 
 export type SettingKey = keyof typeof FILE_SETTINGS;

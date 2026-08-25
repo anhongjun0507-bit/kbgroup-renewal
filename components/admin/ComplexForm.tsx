@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
+import { MediaUploader } from "./MediaUploader";
 import type { ComplexFormState } from "@/app/admin/content/complexes/actions";
 
 /**
@@ -160,38 +161,15 @@ export function ComplexForm({
         placeholder={"계림 아이파크\n계림 SK뷰"}
       />
 
-      {/* 이미지 — 업로드하면 Storage 공개 URL 로 대표 사진을 교체한다. */}
-      <div className="space-y-4 rounded-md border border-line bg-bg-soft p-4">
+      {/* 대표 사진 — DAY 6: 브라우저에서 Storage 로 직접 업로드하고 경로 포인터만 교체한다. */}
+      <div className="space-y-3 rounded-md border border-line bg-bg-soft p-4">
         <p className="eyebrow">대표 사진</p>
-        {initial?.image && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={initial.image}
-            alt={`${initial.name} 현재 대표 사진`}
-            className="h-32 w-full max-w-xs rounded-sm object-cover"
-          />
-        )}
-        <Text
+        <MediaUploader
           name="image"
-          label="대표 사진 경로 / URL (비우면 모노그램 표시)"
           defaultValue={initial?.image ?? ""}
-          placeholder="/images/cases/featured/단지명.png"
+          prefix={`complexes/${initial?.slug ?? "new"}`}
+          hint="비우면 목록·상세에서 모노그램이 대신 표시됩니다. 기존 /images/... 경로도 그대로 쓸 수 있습니다."
         />
-        <div>
-          <label htmlFor="cf-imageFile" className="eyebrow mb-2 block">
-            새 파일 업로드 (선택 · jpeg·png·webp·avif, 10MB 이하)
-          </label>
-          <input
-            id="cf-imageFile"
-            name="imageFile"
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/avif"
-            className="block w-full rounded-sm border border-line bg-white px-4 py-3 text-[14px] text-ink-muted file:mr-4 file:rounded-sm file:border-0 file:bg-navy-900 file:px-4 file:py-2 file:text-[13px] file:font-semibold file:text-white"
-          />
-          <p className="mt-2 text-[12px] text-ink-faint">
-            업로드하면 위 경로 입력값 대신 업로드된 파일이 대표 사진이 됩니다.
-          </p>
-        </div>
       </div>
 
       <Area

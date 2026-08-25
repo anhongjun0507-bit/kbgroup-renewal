@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { MediaUploader } from "./MediaUploader";
 import type { SettingsFormState } from "@/app/admin/content/settings/actions";
 
 /**
@@ -349,6 +350,8 @@ export type CeoMessageValue = {
   authorName: string;
   authorTitle: string;
   paragraphs: string[];
+  /** 대표 프로필 사진 (DAY 6). 로컬 경로·Storage 공개 URL 모두 가능. */
+  portrait: string;
 };
 
 export function CeoMessageForm({
@@ -378,6 +381,13 @@ export function CeoMessageForm({
         defaultValue={value.paragraphs.join("\n")}
         rows={12}
         hint="빈 줄은 무시됩니다. 문단을 나누려면 줄을 바꾸세요."
+      />
+      <MediaUploader
+        name="portrait"
+        label="대표 프로필 사진"
+        defaultValue={value.portrait}
+        prefix="ceo/portrait"
+        hint="세로 3:4 비율로 잘려 표시됩니다. 비우면 사진 영역이 빈 채로 남으니 주의하세요."
       />
     </FormShell>
   );
