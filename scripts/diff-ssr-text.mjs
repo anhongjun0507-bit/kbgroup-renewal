@@ -12,6 +12,8 @@
  * 종료코드: 모든 경로 diff 0줄이면 0, 하나라도 다르면 1.
  */
 
+import { visibleLines } from "./lib/visible-text.mjs";
+
 const BASE_A = process.env.BASE_A || "https://kbgroup-renewal.vercel.app";
 const BASE_B = process.env.BASE_B || "http://localhost:3210";
 const paths = process.argv.slice(2);
@@ -19,26 +21,6 @@ const paths = process.argv.slice(2);
 if (paths.length === 0) {
   console.error("사용법: node scripts/diff-ssr-text.mjs <경로...>");
   process.exit(1);
-}
-
-/** HTML → 가시 텍스트 줄 배열. */
-function visibleLines(html) {
-  return html
-    .replace(/<!--[\s\S]*?-->/g, " ")
-    .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
-    .replace(/<(br|\/p|\/div|\/li|\/h[1-6]|\/section|\/tr|\/td)\b[^>]*>/gi, "\n")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
-    .split("\n")
-    .map((l) => l.replace(/[ \t]+/g, " ").trim())
-    .filter(Boolean);
 }
 
 async function fetchLines(base, p) {

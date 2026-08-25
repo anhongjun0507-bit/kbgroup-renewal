@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
-import { PageHero } from "@/components/sections/common/PageHero";
-import { CasesStats } from "@/components/sections/cases/CasesStats";
-import { CasesGallery } from "@/components/sections/cases/CasesGallery";
-import { CasesPhotoGallery } from "@/components/sections/cases/CasesPhotoGallery";
-import { PastProjects } from "@/components/sections/cases/PastProjects";
-import { ContactInvite } from "@/components/sections/common/ContactInvite";
 import { getComplexes, getPastComplexes, getSetting } from "@/lib/content";
+import { PageSections } from "@/lib/sections/PageSections";
+import { casesSections } from "./sections";
 
 export const metadata: Metadata = {
   title: "관리현황 | (주)케이비개발",
@@ -24,29 +20,10 @@ export default async function CasesPage() {
   ]);
 
   return (
-    <>
-      <PageHero
-        kicker="CASES"
-        title="전국 단지의 신뢰 발자취"
-        italicWord="발자취"
-        subtitle="LH 공공임대부터 민간 단지까지, 케이비개발이 운영하는 단지의 현황입니다."
-        bgImage="/images/hero/pages/cases.png"
-        breadcrumb={[
-          { label: "HOME", href: "/" },
-          { label: "CASES" },
-        ]}
-      />
-      <CasesStats
-        complexes={complexes}
-        stats={{
-          activeComplexesDisplay: stats.activeComplexesDisplay,
-          lhProjectsDisplay: stats.lhProjectsDisplay,
-        }}
-      />
-      <CasesPhotoGallery />
-      <CasesGallery complexes={complexes} pastComplexes={pastComplexes} />
-      <PastProjects pastComplexes={pastComplexes} />
-      <ContactInvite contact={contact} context="우리 단지의 운영 상담을 시작해 보세요" />
-    </>
+    <PageSections
+      page="cases"
+      data={{ complexes, pastComplexes, stats, contact }}
+      sections={casesSections}
+    />
   );
 }

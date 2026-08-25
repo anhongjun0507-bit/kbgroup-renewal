@@ -1,14 +1,14 @@
 # PLAN B — 콘텐츠 관리(CMS) 전환 진행 문서
 
 > 이 파일 하나만 읽고 STEP 2를 시작할 수 있도록 작성한다.
-> 최종 갱신: 2026-08-25 (STEP 2 / DAY 5 완료 — §15 참조)
+> 최종 갱신: 2026-08-25 (STEP 2 / DAY 7 완료 — §17 참조)
 > 대상 저장소: `kbgroup-renewal` / Next.js 16.2.6 + React 19.2.4 + Supabase + Vercel
 
 ---
 
 ## 0. 현재 상태 한 줄
 
-STEP 2 / DAY 5 완료. `site_settings` 잔여 12키(사업영역·인허가·인증·연혁·파트너·협력사·계열사·조직도·핵심가치·차별점·강점·프로세스) 편집 UI 신설 — 스키마 기반 범용 목록 편집기 1개 + 조직도 아웃라인 편집기. 소비처 전환 26파일로 **살아 있는 소비처 잔여 0**(사장 코드 4개 제외), §14-6 contact 미결 7개 전부 해소해 대표 전화 변경이 공개 페이지 14곳에 100% 반영됨을 실측. 회귀: SSR 텍스트 18경로 diff 0줄 · sitemap 191 URL 일치 · 조직도 노드 13 → 13 · 무변경 왕복 11/11. Pretendard 는 계약 범위 밖 별도 안건으로 기록(§15-0). 다음: DAY 8(섹션 표시·숨김/순서 + 페이지 공개·비공개).
+STEP 2 / DAY 7 완료. 공개 페이지 11개(`/`·`/about`×4·`/business`×2·`/cases`·`/licenses`·`/careers`·`/contact`)를 **섹션 레지스트리 + DB 오버레이** 구조로 전환했다. 컴포넌트 참조와 하드코딩 프롭은 코드(`sections.tsx` 11개)에 남고 DB(`page_sections` 63행)는 `is_visible`·`sort_order` 만 갖는다. 관리자 화면 `/admin/content/sections` 에서 섹션 표시·숨김과 위/아래 순서 변경(DnD 아님)을 한다. 회귀: **SSR 가시 텍스트 16경로 diff 0줄**(전환 전후 같은 로컬 프로덕션 빌드끼리 대조) · 스크린샷 28장 중 15장 픽셀 동일 · 나머지 13장은 전부 **`before`(프로덕션 캡처) 쪽 지연 로딩·리빌 미발화** 아티팩트로 판정(높이 변화 0) · 숨김/순서 왕복 후 원본과 diff 0줄 · 하드코딩 프롭(AboutNav `current` 4개 · ContactInvite `context` 9개) 전부 일치. 다음: DAY 8(페이지 공개·비공개).
 
 ## 1. 계약 범위 — 4개 영역 (견적서 원문)
 
@@ -213,8 +213,8 @@ DAY 1에 Next 16.2.6의 캐시 API를 검증한 뒤 **둘 중 하나로 확정�
 - [x] DAY 6(실제 DAY 4) — 관리자 UI: 사이트 설정 + `/about/*`·`/contact` 전환 + E-6·E-7·E-10 처리 (§14)
 - [x] DAY 7(실제 DAY 5) — 사업영역·인허가·인증·연혁·파트너·조직도 편집 UI + 소비처 전환 26개(잔여 0, 사장 코드 4개 제외) + contact 소비처 7개 해소 (§15)
 - [x] DAY 8(실제 DAY 6) — 이미지·영상 업로더 + 전 편집 폼 연결 + 히어로 슬라이드 교체(ITEM 02) + E-4 실증 (§16)
-- [ ] DAY 7 — **베이스라인 캡처 → 섹션 레지스트리 전환 → 재캡처 비교**
-- [ ] DAY 8 — 관리자 UI: 섹션 표시·숨김/순서 + 페이지 공개·비공개
+- [x] DAY 7 — 베이스라인 재캡처 → **섹션 레지스트리 전환 11개 page.tsx** → SSR 전문 diff 0줄 · 스크린샷 재캡처 · 표시/숨김·순서 관리 UI (§17)
+- [ ] DAY 8 — 관리자 UI: **페이지 공개·비공개**(`pages` 테이블). 섹션 표시·숨김/순서는 DAY 7 에서 선행 완료(§17-4)
 - [ ] DAY 9 — 관리자 UI: 네비게이션 + 변경 이력
 - [ ] DAY 10 — 전체 회귀 · 배포 · 라이브 검증 · 인수 문서
 
@@ -585,6 +585,14 @@ DAY 10 배포 전 Vercel 프로젝트 환경변수에 위 1~3 + (필요 시) `CO
 2. 푸시 후 **배포 감지 폴링 금지** — 자동 배포가 없으므로 영원히 안 바뀐다.
 3. `--no-verify`, `git push --force`, `git reset --hard`, 마이그레이션 미적용 배포 금지.
 4. 검증 스크립트가 **프로덕션 DB 에 쓰기를 하면 반드시 원복 + 원복 대조**까지 한다.
+
+### 11-5. 프로덕션 제약은 로컬에서 드러나지 않는다
+
+**로컬에서 통과한 기능이 프로덕션에서 막힐 수 있다.** DAY 6 에서 실증됐다 — Server Action 요청
+본문 4.5MB 상한은 로컬 `next start` 에서는 전혀 나타나지 않고 Vercel 에서만 걸린다(§16-0·§16-6-1).
+DAY 7~9 에도 같은 함정이 있을 수 있다: 응답 크기·실행 시간·동시성·파일 시스템 쓰기·환경변수 유무.
+**"로컬에서 됐다"는 프로덕션 검증이 아니다.** 새 기능이 플랫폼 한계에 닿을 여지가 있으면
+설계 단계에서 상한을 먼저 확인하고, 못 하면 DAY 10 배포 절차서에 확인 항목으로 남긴다.
 
 ---
 
@@ -1486,3 +1494,209 @@ Server Action 쪽에서는 `uploadSettingImage()`·`uploadImage()`(단지) 두 �
    장기적으로 미참조 객체가 쌓이면 정리가 필요하다 — 별도 안건.
 6. 검증이 `content_revisions` 에 스냅샷을 남겼고, `site-images`/`site-videos` 에 테스트 파일
    3건(이미지 2 · 영상 1)이 남아 있다. 감사·롤백 근거라 지우지 않았다.
+
+
+---
+
+## 17. DAY 7 실행 결과 (2026-08-25)
+
+11개 `page.tsx` 를 전부 건드리는 이번 계약 최대 위험 작업(E-3). 페이지 단위로 전환 → 검증 →
+다음 페이지 순으로 진행했다. 순서는 구조가 단순한 것부터:
+`/contact` → `/licenses`·`/careers` → `/about`×4 → `/business`×2 → `/cases` → `/`(맨 마지막).
+
+### 17-0. 설계 결정 — 레지스트리를 **메타(데이터)** 와 **렌더(코드)** 로 쪼갰다
+
+| 결정 | 이유 |
+|------|------|
+| DB 에 컴포넌트 이름 문자열을 넣지 않는다 | 타입 안전성. DB 가 갖는 것은 `page_key`·`section_key`·`is_visible`·`sort_order` 뿐이다 |
+| `lib/sections/meta.ts` 는 **컴포넌트를 import 하지 않는다** | 관리자 화면이 이 파일만으로 목록을 그린다. 관리자 라우트에 공개 페이지 컴포넌트 그래프가 딸려 들어가지 않는다 |
+| 렌더 맵은 각 페이지 폴더 `sections.tsx` 에 **콜로케이션** | `/contact` 라우트가 `Hero`·`Cases` 를 끌고 오지 않는다 |
+| 렌더 맵 타입 = `Record<SectionKey<P>, (data) => ReactNode>` | 키가 하나라도 빠지면 **컴파일 에러**. 하드코딩 프롭(`<AboutNav current="why">`)은 JSX 안에 남아 프롭 누락도 컴파일 시점에 잡힌다 |
+| `defaultOrder` 숫자 필드를 두지 않았다 | **배열 선언 순서 = 기본 순서.** 두 값이 어긋날 여지를 없앤다. 시드도 이 순서를 그대로 쓴다 |
+| 오버레이 행이 없으면 = 전환 전 화면 | 조회 실패·킬스위치(`CONTENT_SOURCE=file`)도 같은 기본값으로 떨어진다. DB 가 죽어도 배치가 무너지지 않는다 |
+| 레지스트리에 없는 `section_key` 행은 무시 | 코드 롤백 시 데이터 보존 (마이그레이션 주석의 규약 그대로) |
+| `page_sections` 는 낙관적 잠금·리비전 스냅샷을 걸지 않았다 | 값이 표시·순서뿐이고 화면에서 한 번의 클릭으로 되돌아간다. 단지·설정 편집과 달리 덮어쓰기 손실이 없다 |
+
+`app/page.tsx` 의 `<FadeIn as="div" distance={32} duration={800}>` 6겹 래핑은 **렌더러로 이관**했다
+(메타의 `fade: true`). 감싸는 마크업은 전환 전과 완전히 동일하다.
+
+### 17-1. 신규·변경 파일
+
+**신규 (18)**
+
+| 파일 | 역할 |
+|------|------|
+| `lib/sections/meta.ts` | 페이지 11 · 섹션 63 메타(키·라벨·`removable`·`fade`) + 타입 |
+| `lib/sections/overlay.ts` | `page_sections` 읽기(`unstable_cache`, 태그 `content:sections`) + `orderSections`/`resolveSections` |
+| `lib/sections/PageSections.tsx` | 렌더러. 오버레이 적용 + `fade` 섹션 `<FadeIn>` 래핑 |
+| `app/sections.tsx` 외 10개 `sections.tsx` | 페이지별 렌더 맵(컴포넌트 참조 + 하드코딩 프롭) |
+| `app/admin/content/sections/page.tsx` · `actions.ts` | 표시·숨김 토글, 위/아래 이동 |
+| `scripts/seed-page-sections.ts` | 레지스트리 → `page_sections` 시드 + 대조 |
+| `scripts/snapshot-ssr-text.mjs` | **같은 오리진의 전환 전후** SSR 텍스트 스냅샷·비교 |
+| `scripts/verify-day7-sections.mjs` | 관리 화면 실클릭 → 공개 페이지 반영 → 원복 왕복 |
+| `scripts/lib/visible-text.mjs` | HTML → 가시 텍스트 (기존 `diff-ssr-text.mjs` 에서 추출, 두 스크립트 공용) |
+
+**변경 (15)** — `page.tsx` 11개(데이터만 읽어 `<PageSections>` 에 넘김), `components/admin/AdminTabs.tsx`
+(탭 「섹션 구성」 추가), `scripts/diff-ssr-text.mjs`(공용 모듈 사용), `scripts/capture-regression.mjs`
+(`WAIT_UNTIL` 환경변수 — 아래 17-5 참조), `PROGRESS.md`.
+
+**DB** — 테이블은 DAY 1 마이그레이션(`20260824000003_page_sections.sql`)에 이미 있었다.
+새 마이그레이션 없음. 시드로 **63행** 적재(전부 `is_visible=true`, `sort_order` = 선언 순서).
+
+### 17-2. 레지스트리 — 페이지 11 / 섹션 63 / 필수 16
+
+| `page_key` | 섹션 수 | 필수(숨김 불가) | 기본 배치 |
+|------------|--------:|----------------:|-----------|
+| `home` | 7 | 1 | hero → trust-signals → data-counter → service-categories → cases → partners → contact-invite |
+| `about` | 11 | 2 | page-hero → about-nav → company-office → why-values → why-differentiators → why-numbers → organization → equipment → related-companies → collaborators → contact-invite |
+| `about/ceo` | 5 | 2 | page-hero → about-nav → ceo-portrait → ceo-message → contact-invite |
+| `about/history` | 4 | 2 | page-hero → about-nav → history-timeline → contact-invite |
+| `about/location` | 5 | 2 | page-hero → about-nav → location-map → location-info → contact-invite |
+| `business` | 3 | 1 | page-hero → business-intro → contact-invite |
+| `business/[slug]` | 7 | 1 | page-hero → overview → sub-services → process → faq → related-cases → cta |
+| `cases` | 6 | 1 | page-hero → cases-stats → photo-gallery → cases-gallery → past-projects → contact-invite |
+| `licenses` | 7 | 1 | page-hero → workforce-stats → licenses-kpi → licenses-overview → licenses-grid → certifications-grid → contact-invite |
+| `careers` | 6 | 1 | page-hero → openings → values → welfare → apply → contact-invite |
+| `contact` | 2 | 2 | page-hero → contact-form |
+
+필수(`removable: false`)로 잠근 것은 **페이지 히어로**, **회사소개 서브 내비**(숨기면 4개
+소개 페이지 사이 이동 수단이 사라진다), **`/contact` 문의 폼**(숨기면 페이지가 빈다),
+그리고 메인 **히어로**다. `business/[slug]` 는 5개 슬러그가 레지스트리와 오버레이를 공유한다.
+
+### 17-3. 검증 ① — SSR 가시 텍스트 전문 diff (주 수단)
+
+DAY 4~6 은 「프로덕션(파일 기반) ↔ 로컬(DB)」 대조였다. DAY 7 은 **같은 로컬 프로덕션 빌드의
+코드 변경 전후**를 대조한다 — 환경 차이라는 노이즈가 아예 끼지 않는다.
+
+전환 전 baseline 은 **HEAD(DAY 6) 코드로 새로 빌드**해 캡처했고, DAY 6 세션에서 떠 있던
+서버의 스냅샷과 16경로 diff 0줄로 동일함을 먼저 확인했다(baseline 자체의 신뢰성 확인).
+
+| 경로 | 전환 전 | 전환 후 | diff |
+|------|--------:|--------:|-----:|
+| `/` | 164줄 | 164줄 | **0** |
+| `/about` | 194 | 194 | **0** |
+| `/about/ceo` | 71 | 71 | **0** |
+| `/about/history` | 79 | 79 | **0** |
+| `/about/location` | 74 | 74 | **0** |
+| `/business` | 87 | 87 | **0** |
+| `/business/facility` | 109 | 109 | **0** |
+| `/business/sanitation` | 112 | 112 | **0** |
+| `/business/security` | 110 | 110 | **0** |
+| `/business/construction` | 110 | 110 | **0** |
+| `/business/others` | 111 | 111 | **0** |
+| `/cases` | 223 | 223 | **0** |
+| `/licenses` | 191 | 191 | **0** |
+| `/careers` | 120 | 120 | **0** |
+| `/contact` | 62 | 62 | **0** |
+| `/notices` (대조군·미전환) | 53 | 53 | **0** |
+
+11개 전환 대상 + `business/[slug]` 5슬러그 전부 + 미전환 대조군까지 **전 경로 diff 0줄**.
+스냅샷 원본은 `docs/regression/ssr/{before,after}/*.txt` (개발 서버 기준 중간 검증분은
+`before-dev`/`after-dev`). 페이지 단위로 전환할 때마다 개발 서버에서 같은 대조를 먼저 돌렸다.
+
+**이 시점의 DB 에는 시드된 63행이 이미 들어 있다.** 즉 위 결과는 "오버레이 경로로 렌더해도
+레지스트리 기본 배치와 한 글자도 다르지 않다"는 확인이기도 하다.
+
+### 17-4. 검증 ② — 표시·숨김 / 순서 왕복 (`scripts/verify-day7-sections.mjs`)
+
+실제 브라우저로 관리자 화면 버튼을 **클릭**하고 공개 페이지를 HTTP 로 다시 읽어 확인한 뒤 원복한다.
+
+| 항목 | 결과 |
+|------|------|
+| `/admin/content/sections` | HTTP **200** · 페이지 카드 **11개** · 섹션 행 **63행** · 「표시 고정」 **16개** |
+| 숨김 반영 | `/licenses` 「기술 자격증」 숨김 → 「27종의 전문 기술 자격」 소멸 · **191줄 → 133줄** |
+| 숨김 범위 | 사라진 줄 외 **나머지 133줄 전부 보존** (부분집합 검사 통과) |
+| 숨김 **왕복** | 되돌리면 전환 전 스냅샷과 **diff 0줄** |
+| 순서 반영 | `/careers` 「인재상」을 「채용 중인 공고」 위로 → `OUR PEOPLE`(24) < `OPEN POSITIONS`(40) |
+| 순서 — 줄 수 | **120줄 유지**(내용 손실 없이 자리만 바뀜) |
+| 순서 **왕복** | 되돌리면 전환 전 스냅샷과 **diff 0줄** |
+| DB 최종 상태 | 63행 전부 `is_visible=true` · `sort_order` = 레지스트리 선언 순서 |
+
+필수 섹션은 UI 에서 토글 자체가 없고(「표시 고정」), 서버 액션도 `removable=false` 요청을 거부한다.
+
+### 17-5. 검증 ③ — 스크린샷 28장 재캡처
+
+`before/`(DAY 1 프로덕션 캡처) ↔ `after/`(전환 후 로컬 프로덕션 빌드). **크기(높이) 변화 0건.**
+
+**픽셀 동일 15장** — `03_about-ceo`·`04_about-history`·`05_about-location`·`10_contact`·
+`11_notices`·`12_cases-detail-lh`·`13_cases-detail-private_desktop`·`14_cases-detail-nophoto` (desktop·mobile).
+
+| 파일 | 차이 | 판정 |
+|------|-----:|------|
+| `07_cases_mobile` | 16.44% | `before` 쪽 **단지 카드 사진이 지연 로딩 전**이라 빈 카드로 찍혔다. `after` 에는 사진이 정상 렌더 — 차이 구간이 434px 주기로 반복되는 카드 블록이다 |
+| `01_home_desktop` | 3.10% | `before` 쪽 인허가 카드 6장이 **리빌 애니메이션 미발화**로 비어 있다(§14-7 과 같은 현상). 노이즈 하한선 9.66% 이내 |
+| `06_business_desktop` | 2.98% | `before` 쪽 「02 · SANITATION」 블록이 **opacity 0** 상태로 찍혔다. 높이는 동일 |
+| `13_cases-detail-private_mobile` | 1.56% | **이번 DAY 에 코드를 건드리지 않은 페이지.** 히어로 사진(65~279행) 단일 구간 — 이미지 파이프라인 차이 |
+| `02_about_mobile` / `_desktop` | 1.47% / 0.38% | 같은 리빌 아티팩트 |
+| `06_business_mobile` | 0.44% | 〃 |
+| `07_cases_desktop` | 0.76% | 〃 |
+| `08_licenses` d/m | 0.13% / 0.17% | 〃 |
+| `09_careers` d/m | 0.08% / 0.0004% | 〃 |
+| `01_home_mobile` | 0.07% | 〃 (DAY 4 하한선 27.32% 대비 무시 가능) |
+
+**리빌 아티팩트라고 판정한 근거** — 스크립트 스크롤이 아니라 실제로 섹션을 뷰포트에 넣고
+애니메이션이 끝난 뒤 계산된 `opacity` 를 읽어 프로덕션과 대조했다.
+
+| 대상 | 프로덕션(전환 전 코드) | 로컬(전환 후) |
+|------|------------------------|----------------|
+| `/business` 「위생청소」 | opacity **1.00** | opacity **1.00** |
+| `/` 「관리 단지」 | opacity **1.00** | opacity **1.00** |
+| `/about` 「조직도」(모바일) | opacity **1.00** | opacity **1.00** |
+
+차이 구간을 잘라 직접 눈으로도 확인했다 — 전부 **`after` 쪽이 더 많이 그려진** 상태다
+(빈 카드 → 사진, 빈 블록 → 텍스트). 회귀 방향이 아니다.
+
+`05_about-location_desktop` 만 `networkidle` 로 캡처가 되지 않아(OpenStreetMap iframe 요청이
+로컬에서 끝나지 않는다) `capture-regression.mjs` 에 `WAIT_UNTIL` 환경변수를 추가하고
+`WAIT_UNTIL=load` 로 찍었다. 결과는 **픽셀 동일**이다.
+
+### 17-6. 검증 ④ — 하드코딩 프롭
+
+`AboutNav current` 는 CSS 클래스와 `aria-current` 로만 드러나 SSR 텍스트 diff 에 잡히지 않는다.
+그래서 전환 후 로컬과 **프로덕션(전환 전 코드)** 의 `aria-current="page"` 링크 집합을 직접 대조했다.
+
+| 페이지 | 프로덕션 | 로컬(전환 후) |
+|--------|----------|----------------|
+| `/about` | `["/about","/about"]` | 동일 |
+| `/about/ceo` | `["/about","/about/ceo"]` | 동일 |
+| `/about/history` | `["/about","/about/history"]` | 동일 |
+| `/about/location` | `["/about","/about/location"]` | 동일 |
+
+(2건씩 나오는 것은 헤더 GNB 의 `/about` 하이라이트 + `AboutNav` 의 현재 탭이다.)
+
+`ContactInvite context` 는 가시 텍스트라 diff 0줄로 이미 담보되지만, 전환 후 스냅샷에서
+페이지별로 다시 뽑아 대조했다 — `/`·`/about`·`/about/ceo`·`/about/history`·`/about/location`·
+`/business`·`/cases`·`/licenses`·`/careers` **9개 전부 원문 그대로**.
+`/careers` 의 `ctaLabel="문의 페이지 이동"` 1건도 유지. `/business/[slug]` 는 `ContactInvite` 가
+아니라 `BusinessCTA` 를 쓰는 것이 원본이고, 전환 후에도 그대로다.
+
+### 17-7. 검증 요약
+
+| 항목 | 결과 |
+|------|------|
+| `tsc --noEmit` | EXIT=0 (페이지 전환 단계마다 실행) |
+| `eslint` (신규·변경 전량) | 신규 error·warning **0건** |
+| `npm run build` | EXIT=0 · 라우트 표 변화는 **`/admin/content/sections` 1개 추가뿐**, 기존 52개 라우트의 `○`/`ƒ` 판정 무변화(52 → 53) |
+| SSR 가시 텍스트 | 16경로 **전부 diff 0줄** |
+| 스크린샷 | 28장 중 **15장 픽셀 동일** · 13장은 캡처 아티팩트 판정 · **크기 변화 0** |
+| 왕복 테스트 | 숨김·순서 각각 원복 후 **diff 0줄** · DB 최종 상태 정상 |
+| 시드 | `page_sections` **63행** · 레지스트리와 대조 일치 |
+
+### 17-8. 보고 사항
+
+1. **`page_sections` 시드는 프로덕션 DB(같은 Supabase 프로젝트)에 63행을 실제로 넣었다.**
+   전부 기본값(표시·선언 순서)이라 현재 렌더 결과는 행이 없을 때와 동일하다. 재실행 안전(upsert).
+2. **검증 스크립트가 프로덕션 DB 에 쓰기를 했다.** `/licenses` 숨김 1건, `/careers` 순서 1건 —
+   **둘 다 원복했고 원복 결과를 스냅샷과 대조**했다(§17-4). 최종 상태는 전부 기본값이다.
+3. **`business/[slug]` 는 5개 슬러그가 오버레이 1개를 공유한다.** 「주택관리만 FAQ 숨기기」 같은
+   슬러그별 구성은 지금 구조로는 안 된다. 계약 문구는 「섹션 구성 관리」이고 슬러그별 분기는
+   범위 밖이라 이렇게 뒀다 — 필요해지면 `page_key` 를 `business/facility` 처럼 쪼개면 된다.
+4. **`/notices` 는 전환 대상이 아니다.** §8 베이스라인 11개에는 들어 있지만 DAY 7 지시(7-4)의
+   11개 목록에는 `/business/[slug]` 가 대신 들어 있다. `/notices` 는 **대조군**으로 계속 찍는다.
+5. **순서 변경은 위/아래 화살표뿐이다.** DnD 는 범위 밖(§3). 필수 섹션도 위치는 옮길 수 있다 —
+   잠근 것은 숨김뿐이다.
+6. **별도 안건(범위 밖, 기록만)**
+   - `/images/hero` 미사용 영상 4개(약 37MB) + PNG 다수 — 정리하지 않는다(DAY 6 지시).
+   - 업로드 교체로 버려진 미참조 Storage 객체 — 롤백 수단이라 남긴다(§16-6-5).
+   - `site-images`/`site-videos` 의 DAY 6 테스트 파일 3건 — 참조 여부 확인 없이 지우는 편이 더 위험하다.
+   - Pretendard 적용(§15-0) — 계약 범위 밖 별도 안건 상태 유지.

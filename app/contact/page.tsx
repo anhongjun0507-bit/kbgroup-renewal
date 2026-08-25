@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { PageHero } from "@/components/sections/common/PageHero";
-import { ContactForm } from "@/components/sections/common/ContactForm";
 import { getSetting } from "@/lib/content";
+import { PageSections } from "@/lib/sections/PageSections";
+import { contactSections } from "./sections";
 
 /* Phase 6.2 A-5 — /contact 라우트 신설 (Header/Footer/CTAs에서 참조) */
 
@@ -14,19 +14,5 @@ export const metadata: Metadata = {
 export default async function ContactPage() {
   const contact = await getSetting("contact");
 
-  return (
-    <>
-      <PageHero
-        kicker="CONTACT"
-        title="상담 문의"
-        italicWord="상담"
-        subtitle="단지 규모·관리 범위·운영 형태에 맞춰 견적을 드립니다."
-        breadcrumb={[
-          { label: "HOME", href: "/" },
-          { label: "CONTACT" },
-        ]}
-      />
-      <ContactForm context="CONTACT 페이지" contact={contact} />
-    </>
-  );
+  return <PageSections page="contact" data={{ contact }} sections={contactSections} />;
 }

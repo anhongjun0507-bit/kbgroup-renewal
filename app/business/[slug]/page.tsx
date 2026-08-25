@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getComplexes, getSetting, getSettings } from "@/lib/content";
-import { PageHero } from "@/components/sections/common/PageHero";
-import { BusinessOverview } from "@/components/sections/business/BusinessOverview";
-import { BusinessSubServices } from "@/components/sections/business/BusinessSubServices";
-import { BusinessProcess } from "@/components/sections/business/BusinessProcess";
-import { BusinessFAQ } from "@/components/sections/business/BusinessFAQ";
-import { BusinessRelatedCases } from "@/components/sections/business/BusinessRelatedCases";
-import { BusinessCTA } from "@/components/sections/business/BusinessCTA";
+import { PageSections } from "@/lib/sections/PageSections";
+import { businessDetailSections } from "./sections";
 
 type Params = { slug: string };
 
@@ -52,24 +47,16 @@ export default async function BusinessDetailPage({
   const relatedComplexes = complexes.slice(0, 3);
 
   return (
-    <>
-      <PageHero
-        kicker={area.englishName}
-        title={`${area.name} 서비스`}
-        italicWord="서비스"
-        subtitle={area.tagline}
-        breadcrumb={[
-          { label: "HOME", href: "/" },
-          { label: "BUSINESS", href: "/business" },
-          { label: area.englishName },
-        ]}
-      />
-      <BusinessOverview area={area} />
-      <BusinessSubServices area={area} gallery={settings.businessGallery} />
-      <BusinessProcess processSteps={settings.processSteps} />
-      <BusinessFAQ areaId={area.id} />
-      <BusinessRelatedCases complexes={relatedComplexes} />
-      <BusinessCTA area={area} contact={settings.contact} />
-    </>
+    <PageSections
+      page="business/[slug]"
+      data={{
+        area,
+        gallery: settings.businessGallery,
+        processSteps: settings.processSteps,
+        contact: settings.contact,
+        relatedComplexes,
+      }}
+      sections={businessDetailSections}
+    />
   );
 }

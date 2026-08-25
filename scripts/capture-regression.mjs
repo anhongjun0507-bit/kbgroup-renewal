@@ -77,7 +77,9 @@ const FREEZE_CSS = `
 
 async function capture(page, url, outfile) {
   const res = await page.goto(BASE_URL + url, {
-    waitUntil: "networkidle",
+    /* 기본은 networkidle. /about/location 은 OpenStreetMap iframe 요청이 로컬에서 끝나지 않아
+       networkidle 에 도달하지 못한다 — 그 페이지만 WAIT_UNTIL=load 로 내려 찍는다. */
+    waitUntil: process.env.WAIT_UNTIL || "networkidle",
     timeout: 90_000,
   });
   const status = res?.status() ?? 0;
