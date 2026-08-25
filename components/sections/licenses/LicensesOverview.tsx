@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import { certifications, licenses, STATS } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 4.H.4 — 분야별 도넛 차트
    자격증을 5개 카테고리로 자동 분류 후 SVG donut */
@@ -32,7 +32,12 @@ function categorizeCert(name: string): CertCategory {
   return "환경·기타";
 }
 
-export function LicensesOverview() {
+interface Props {
+  certifications: SettingValue<"certifications">;
+  stats: SettingValue<"stats">;
+}
+
+export function LicensesOverview({ certifications, stats: STATS }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
 
   /* 카테고리별 인원수 합산 */

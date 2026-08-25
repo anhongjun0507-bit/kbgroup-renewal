@@ -2,8 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Button } from "@/components/ui";
-import type { BusinessArea } from "@/data/site-content";
-import { contact } from "@/data/site-content";
+import type { BusinessArea, SettingValue } from "@/lib/content";
 
 /* Phase 4 — BusinessCTA 톤 정비 (navy-900 + accent-500 통일) */
 
@@ -11,9 +10,11 @@ const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 interface Props {
   area: BusinessArea;
+  /** 연락처 (어댑터 주입). 대표 전화만 사용한다. */
+  contact: SettingValue<"contact">;
 }
 
-export function BusinessCTA({ area }: Props) {
+export function BusinessCTA({ area, contact }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
 
   const parentVariants: Variants = {

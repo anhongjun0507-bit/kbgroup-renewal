@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { createClient } from "@supabase/supabase-js";
-import { businessAreas, complexes } from "@/data/site-content";
+import { getComplexes, getSetting } from "@/lib/content";
 import { BOARD_ORDER, BOARD_CONFIGS, postDetailPath } from "@/lib/boards";
 import { SITE_URL } from "@/lib/site";
 
@@ -128,6 +128,11 @@ async function jobOpeningEntries(): Promise<Entry[]> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [businessAreas, complexes] = await Promise.all([
+    getSetting("businessAreas"),
+    getComplexes(),
+  ]);
+
   const staticEntries = STATIC_ROUTES.map(([path, priority, freq]) =>
     entry(path, priority, freq),
   );
@@ -137,14 +142,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry(BOARD_CONFIGS[board].listPath, 0.7, "weekly"),
   );
 
-  /* 사업영역 상세 — data/site-content.ts의 slug 기준 */
+  /* 사업영역 상세 — businessAreas 설정의 slug 기준 */
   const businessEntries = businessAreas.map((area) =>
     entry(`/business/${area.slug}`, 0.8, "monthly"),
   );
 
-  /* 실적 상세 — /cases/[slug]가 encodeURIComponent(name)을 slug로 사용 */
+  /* 실적 상세 — E-1. DB 의 불변 slug 를 그대로 쓴다(= 최초 시드 시점 encodeURIComponent(name)). */
   const caseEntries = complexes.map((c) =>
-    entry(`/cases/${encodeURIComponent(c.name)}`, 0.6, "monthly"),
+    entry(`/cases/${c.slug}`, 0.6, "monthly"),
   );
 
   const [postEntries, openingEntries] = await Promise.all([

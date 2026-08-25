@@ -118,10 +118,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const supabase = await createClient();
-  const [{ data: { user } }, company, contact] = await Promise.all([
+  const [{ data: { user } }, company, contact, businessAreas] = await Promise.all([
     supabase.auth.getUser(),
     getSetting("company"),
     getSetting("contact"),
+    getSetting("businessAreas"),
   ]);
 
   let isAdmin = false;
@@ -137,7 +138,7 @@ export default async function RootLayout({
   return (
     <html lang="ko" className={`${jetbrainsMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-white text-ink-strong">
-        <Header isAuthed={!!user} isAdmin={isAdmin} />
+        <Header isAuthed={!!user} isAdmin={isAdmin} businessAreas={businessAreas} />
         {/* 고정(fixed) 헤더가 흐름에서 빠지므로 본문을 헤더 높이만큼 내림.
             홈 Hero는 동일 값의 음수 마진(-mt)으로 상쇄해 풀스크린 유지. */}
         <main className="flex-1 pt-16 lg:pt-[72px]">{children}</main>

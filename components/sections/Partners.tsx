@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
-import { partners, type Partner } from "@/data/site-content";
+import type { Partner, SettingValue } from "@/lib/content";
 
 /* Phase 10 P1-06 — 카테고리별 행 그룹 + stagger 압축
    기존 4x2 fade-in이 600ms 이상 지연되던 문제 → 전체 stagger ≤ 400ms로 축소
@@ -21,7 +21,11 @@ const CATEGORY_GROUPS: {
   { key: "public", label: "공공기관", caption: "PUBLIC AGENCIES" },
 ];
 
-export function Partners() {
+interface Props {
+  partners: SettingValue<"partners">;
+}
+
+export function Partners({ partners }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
 
   /* Phase 11 P1-A — 헤딩 fade 흐릿 해소

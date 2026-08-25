@@ -6,7 +6,7 @@ import {
   type Variants,
 } from "framer-motion";
 import { Container } from "@/components/ui";
-import { contact } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
@@ -36,7 +36,12 @@ const STEPS: ApplyStep[] = [
   },
 ];
 
-export function CareersApply() {
+/** 연락처 (어댑터 주입). 채용 이메일·대표 전화를 사용한다. */
+interface Props {
+  contact: SettingValue<"contact">;
+}
+
+export function CareersApply({ contact }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
   const careersEmail = contact.careersEmail ?? contact.email;
 

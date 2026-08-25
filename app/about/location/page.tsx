@@ -30,7 +30,7 @@ export default async function LocationPage() {
       <AboutNav current="location" />
       <LocationMap contact={contact} />
       <LocationInfo contact={contact} />
-      <ContactInvite context="본사 방문 상담을 원하시면 사전 예약을 권장드립니다" />
+      <ContactInvite contact={contact} context="본사 방문 상담을 원하시면 사전 예약을 권장드립니다" />
     </>
   );
 }

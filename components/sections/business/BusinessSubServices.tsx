@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import type { BusinessArea } from "@/data/site-content";
+import type { BusinessArea } from "@/lib/content";
 
 /* Phase 4.F.3 — 하위 서비스 그리드 + 작업 갤러리 6장
    Phase 15 — placeholder/라벨 제거 + 사용자 업로드 갤러리 이미지(public/images/can) 매핑 */

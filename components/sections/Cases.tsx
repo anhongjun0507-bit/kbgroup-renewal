@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
-import { complexes, type Complex } from "@/data/site-content";
+import type { ContentComplex } from "@/lib/content";
 
 /* Phase 3.D — CASES
    - placeholder 업그레이드: 그라데이션 + 단지 이니셜 로고 SVG + 좌상단 배지 + 우하단 위치 마커
@@ -31,14 +31,18 @@ function getInitial(name: string): string {
   return "KB";
 }
 
-function badgeStyle(type?: Complex["type"]) {
+function badgeStyle(type?: ContentComplex["type"]) {
   if (type === "LH") return "bg-accent-500 text-navy-900";
   if (type === "민간") return "bg-navy-800 text-white";
   if (type === "공공") return "bg-navy-700 text-white";
   return "bg-white/85 text-ink-strong";
 }
 
-export function Cases() {
+interface Props {
+  complexes: ContentComplex[];
+}
+
+export function Cases({ complexes }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
 
   const item: Variants = {
@@ -105,7 +109,8 @@ export function Cases() {
             const badge = c.type ?? "민간";
             /* Phase 14-D D-2 — 홈 단지 카드를 /cases/[slug] 상세로 직접 연결.
                이전: 모두 /cases 인덱스로 이동해 카드 클릭 의미 없음 */
-            const slug = encodeURIComponent(c.name);
+            /* E-1 — 링크는 DB 의 불변 slug 를 쓴다. 관리자가 단지명을 바꿔도 URL 은 그대로다. */
+            const slug = c.slug;
             return (
               <motion.article
                 key={`${c.name}-${idx}`}

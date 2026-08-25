@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import type { BusinessCategory } from "@/data/site-content";
+import type { BusinessCategory } from "@/lib/content";
 import { cn } from "@/lib/cn";
 
 /* Phase 4.F.4 — FAQ accordion (사업별 자주 묻는 질문) */

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import type { Complex } from "@/data/site-content";
+import type { ContentComplex } from "@/lib/content";
 
 /* Phase 4.F.5 — 동일 사업 다른 단지 3개 (Cases 톤 통일) */
 
@@ -17,7 +17,7 @@ function getInitial(name: string) {
   return (tokens[tokens.length - 1] ?? noLh).charAt(0) || "K";
 }
 
-function badgeStyle(type?: Complex["type"]) {
+function badgeStyle(type?: ContentComplex["type"]) {
   if (type === "LH") return "bg-accent-500 text-navy-900";
   if (type === "민간") return "bg-navy-800 text-white";
   if (type === "공공") return "bg-navy-700 text-white";
@@ -25,7 +25,7 @@ function badgeStyle(type?: Complex["type"]) {
 }
 
 interface Props {
-  complexes: Complex[];
+  complexes: ContentComplex[];
 }
 
 export function BusinessRelatedCases({ complexes }: Props) {
@@ -101,7 +101,7 @@ function RelatedCard({
   shouldReduce,
   index,
 }: {
-  complex: Complex;
+  complex: ContentComplex;
   hue: number;
   shouldReduce: boolean;
   index: number;

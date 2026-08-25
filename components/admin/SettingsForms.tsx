@@ -13,29 +13,37 @@ import type { SettingsFormState } from "@/app/admin/content/settings/actions";
 
 const INITIAL: SettingsFormState = { ok: null, error: null };
 
-type Action = (prev: SettingsFormState, fd: FormData) => Promise<SettingsFormState>;
+export type Action = (prev: SettingsFormState, fd: FormData) => Promise<SettingsFormState>;
 
 /* ── 폼 셸 ─────────────────────────────────────────────────────────────── */
 
-function FormShell({
+/** DAY 5 — ListEditor·OrgChartEditor 도 같은 셸을 쓴다(저장 버튼·충돌 배너·상태 표시 일원화). */
+export function FormShell({
   title,
   desc,
   action,
   updatedAt,
   children,
+  note,
+  id,
 }: {
   title: string;
   desc: string;
   action: Action;
   updatedAt: string;
   children: React.ReactNode;
+  /** 셸 안쪽 최상단에 두는 부가 안내 (선택). */
+  note?: React.ReactNode;
+  /** 페이지 내 목차 앵커 (선택). */
+  id?: string;
 }) {
   const [state, formAction, isPending] = useActionState(action, INITIAL);
 
   return (
-    <section className="rounded-md border border-line bg-white p-6 md:p-8">
+    <section id={id} className="scroll-mt-24 rounded-md border border-line bg-white p-6 md:p-8">
       <h2 className="text-[19px] font-bold text-ink-strong">{title}</h2>
       <p className="mt-1 text-[13px] text-ink-muted">{desc}</p>
+      {note}
 
       <form action={formAction} className="mt-6 space-y-6">
         <input type="hidden" name="updatedAt" value={updatedAt} />
@@ -182,6 +190,7 @@ export function CompanyForm({
 }) {
   return (
     <FormShell
+      id="setting-company"
       title="회사 기본 정보"
       desc="푸터·이용약관·개인정보처리방침·회사소개 전반에 노출되는 법인 정보입니다."
       action={action}
@@ -258,6 +267,7 @@ export function ContactSettingsForm({
 
   return (
     <FormShell
+      id="setting-contact"
       title="연락처"
       desc={`전화·팩스·이메일·주소·영업시간. 사이트 ${consumerCount}곳에 동시 반영됩니다.`}
       action={action}
@@ -352,6 +362,7 @@ export function CeoMessageForm({
 }) {
   return (
     <FormShell
+      id="setting-ceoMessage"
       title="대표 인사말"
       desc="/about/ceo 페이지 본문입니다."
       action={action}
@@ -399,6 +410,7 @@ export function CountersForm({
 }) {
   return (
     <FormShell
+      id="setting-counters"
       title="메인 카운터"
       desc="메인 페이지 DataCounter · 회사소개 WhyNumbers 에 노출되는 숫자 4종입니다."
       action={action}
@@ -492,6 +504,7 @@ export function StatsForm({
 }) {
   return (
     <FormShell
+      id="setting-stats"
       title="마케팅 표기값 (STATS)"
       desc="/cases · /licenses 통계 카드에 노출되는 수기 표기값입니다. 실제 DB 집계와는 별개로 관리됩니다."
       action={action}

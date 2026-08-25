@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { LoginForm } from "@/components/sections/auth/LoginForm";
+import { getSetting } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "로그인 | (주)케이비개발",
@@ -12,7 +13,7 @@ interface Props {
 }
 
 export default async function LoginPage({ searchParams }: Props) {
-  const { next } = await searchParams;
+  const [{ next }, contact] = await Promise.all([searchParams, getSetting("contact")]);
 
   return (
     <>
@@ -26,7 +27,7 @@ export default async function LoginPage({ searchParams }: Props) {
           { label: "LOGIN" },
         ]}
       />
-      <LoginForm next={next} />
+      <LoginForm next={next} contact={contact} />
     </>
   );
 }

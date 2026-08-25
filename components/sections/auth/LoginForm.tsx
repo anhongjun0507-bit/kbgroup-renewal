@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { Container, Input, Label } from "@/components/ui";
 import { loginAction, type LoginState } from "@/app/(auth)/login/actions";
-import { contact } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 10 P1-07 / P1-10 — 단일 Input/Label 적용 + 비밀번호 찾기·회원가입 동선 */
 
@@ -12,9 +12,11 @@ const INITIAL_STATE: LoginState = { error: null };
 
 interface Props {
   next?: string;
+  /** 연락처 (어댑터 주입). 대표 전화만 사용한다. */
+  contact: SettingValue<"contact">;
 }
 
-export function LoginForm({ next }: Props) {
+export function LoginForm({ next, contact }: Props) {
   const [state, formAction, isPending] = useActionState(
     loginAction,
     INITIAL_STATE,

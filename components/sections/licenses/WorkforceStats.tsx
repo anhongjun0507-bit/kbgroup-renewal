@@ -4,16 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import CountUp from "react-countup";
 import { Container } from "@/components/ui";
-import {
-  certifications,
-  licenses,
-  STATS,
-  totalCertHolders,
-  yearsOfOperation,
-} from "@/data/site-content";
-
-void certifications;
-void licenses;
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 4.H.1, 4.H.2 — 인력·인증 통계 대시보드
    - 4컬럼 → 2 row 카드 그리드 + 좌측 라인 아이콘
@@ -38,7 +29,12 @@ const ICON_BASE = {
   strokeLinejoin: "round" as const,
 };
 
-export function WorkforceStats() {
+interface Props {
+  stats: SettingValue<"stats">;
+  yearsOfOperation: number;
+}
+
+export function WorkforceStats({ stats: STATS, yearsOfOperation }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
   const sectionRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
@@ -61,7 +57,7 @@ export function WorkforceStats() {
   const stats: Stat[] = [
     {
       key: "workforce",
-      value: totalCertHolders,
+      value: STATS.totalCertHolders,
       suffix: "명+",
       label: "자격증 보유 인력",
       caption: "CERTIFIED PROFESSIONALS",
@@ -166,7 +162,7 @@ export function WorkforceStats() {
               fontSize: "clamp(2rem, 4vw, 3rem)",
             }}
           >
-            {totalCertHolders.toLocaleString("en-US")}명의{" "}
+            {STATS.totalCertHolders.toLocaleString("en-US")}명의{" "}
             <span className="text-accent-500">전문 인력</span>이 함께합니다
           </h2>
         </motion.div>

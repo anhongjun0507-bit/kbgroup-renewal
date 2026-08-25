@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import CountUp from "react-countup";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
-import { counters } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 3.B — BY THE NUMBERS
    - 카운트 종료 후 색 잔존 버그 fix: 종료 후 navy-800 solid 유지, "+" 만 accent-500
@@ -47,7 +47,11 @@ const ICONS: Record<string, React.ReactNode> = {
   ),
 };
 
-export function DataCounter() {
+interface Props {
+  counters: SettingValue<"counters">;
+}
+
+export function DataCounter({ counters }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
   const sectionRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);

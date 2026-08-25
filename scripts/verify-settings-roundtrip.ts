@@ -59,9 +59,13 @@ check(
   "actions.ts 에 유니코드 정규화(normalize) 호출 없음",
   !/\.normalize\s*\(/.test(actionsSrc),
 );
+/* DAY 5 — 문자 클래스 안의 하이픈은 범위 표기(`[^a-z0-9]`)라 치환 대상이 아니다.
+   업로드 파일 확장자 정리(`.replace(/[^a-z0-9]/g, "")`)가 여기에 걸려 오탐이 났다.
+   문자 클래스를 지운 뒤 검사하면 진짜 하이픈 치환(`.replace(/‑/g, "-")`)만 걸린다. */
+const actionsSrcNoClass = actionsSrc.replace(/\[[^\]]*\]/g, "[]");
 check(
   "actions.ts 에 하이픈 치환(replace) 호출 없음",
-  !/replace\s*\(\s*\/[^/]*[-‑][^/]*\//.test(actionsSrc),
+  !/replace\s*\(\s*\/[^/]*[-‑][^/]*\//.test(actionsSrcNoClass),
 );
 
 /* ── 2) 전송 왕복 (브라우저 폼과 동일한 multipart 인코딩) ───────────────── */

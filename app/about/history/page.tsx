@@ -11,7 +11,10 @@ export const metadata: Metadata = {
 };
 
 export default async function HistoryPage() {
-  const history = await getSetting("history");
+  const [history, contact] = await Promise.all([
+    getSetting("history"),
+    getSetting("contact"),
+  ]);
 
   return (
     <>
@@ -28,7 +31,7 @@ export default async function HistoryPage() {
       />
       <AboutNav current="history" />
       <HistoryTimeline history={history} />
-      <ContactInvite context="13년 운영의 신뢰를 단지에서 직접 경험해 보세요" />
+      <ContactInvite contact={contact} context="13년 운영의 신뢰를 단지에서 직접 경험해 보세요" />
     </>
   );
 }

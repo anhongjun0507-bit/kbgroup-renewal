@@ -2,16 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { LayoutGroup, motion, MotionConfig } from "framer-motion";
 import { cn } from "@/lib/cn";
-import { businessAreas } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 type NavChild = { label: string; href: string };
 
 interface HeaderProps {
   isAuthed?: boolean;
   isAdmin?: boolean;
+  /** 사업영역 (어댑터 주입). BUSINESS 드롭다운 하위 항목을 만든다. */
+  businessAreas: SettingValue<"businessAreas">;
 }
 
 type NavItem = {
@@ -23,39 +25,45 @@ type NavItem = {
 
 /* Phase 15 — 스크롤에 따라 헤더가 2단(가운데 정렬) ↔ 1단(좌 로고/우 메뉴)으로 변형.
    framer-motion layout으로 로고·메뉴 위치 보간 → 자연스러운 FLIP 애니메이션. */
-const NAV_ITEMS: NavItem[] = [
-  { label: "ABOUT", krLabel: "회사소개", href: "/about" },
-  {
-    label: "BUSINESS",
-    krLabel: "사업영역",
-    href: "/business",
-    children: businessAreas.map((b) => ({
-      label: b.name,
-      href: `/business/${b.slug}`,
-    })),
-  },
-  { label: "PROJECTS", krLabel: "관리현황", href: "/cases" },
-  { label: "LICENSES", krLabel: "인허가", href: "/licenses" },
-  {
-    label: "CAREERS",
-    krLabel: "채용",
-    href: "/careers",
-    // 호버 시 "KB 인재채용" 단일 항목 → 현재 채용 중인 공고 목록으로 이동
-    children: [{ label: "KB 인재채용", href: "/careers/openings" }],
-  },
-  {
-    label: "NEWS",
-    krLabel: "소식",
-    href: "/notices",
-    children: [
-      { label: "공지사항", href: "/notices" },
-      { label: "자유게시판", href: "/notices/board" },
-      { label: "갤러리", href: "/notices/gallery" },
-      { label: "단지소식", href: "/notices/news" },
-      { label: "자료실", href: "/notices/resources" },
-    ],
-  },
-];
+/* PLAN B / DAY 5 — businessAreas 가 DB 값이 되면서 모듈 최상단 상수로 둘 수 없다.
+   프롭을 받아 만드는 팩토리로 바꿨다. 항목 순서·구조는 기존과 동일하다 (E-2). */
+function buildNavItems(
+  businessAreas: SettingValue<"businessAreas">,
+): NavItem[] {
+  return [
+    { label: "ABOUT", krLabel: "회사소개", href: "/about" },
+    {
+      label: "BUSINESS",
+      krLabel: "사업영역",
+      href: "/business",
+      children: businessAreas.map((b) => ({
+        label: b.name,
+        href: `/business/${b.slug}`,
+      })),
+    },
+    { label: "PROJECTS", krLabel: "관리현황", href: "/cases" },
+    { label: "LICENSES", krLabel: "인허가", href: "/licenses" },
+    {
+      label: "CAREERS",
+      krLabel: "채용",
+      href: "/careers",
+      // 호버 시 "KB 인재채용" 단일 항목 → 현재 채용 중인 공고 목록으로 이동
+      children: [{ label: "KB 인재채용", href: "/careers/openings" }],
+    },
+    {
+      label: "NEWS",
+      krLabel: "소식",
+      href: "/notices",
+      children: [
+        { label: "공지사항", href: "/notices" },
+        { label: "자유게시판", href: "/notices/board" },
+        { label: "갤러리", href: "/notices/gallery" },
+        { label: "단지소식", href: "/notices/news" },
+        { label: "자료실", href: "/notices/resources" },
+      ],
+    },
+  ];
+}
 
 const LAYOUT_TX = { duration: 0.45, ease: [0.4, 0, 0.2, 1] as const };
 
@@ -105,7 +113,12 @@ function KBLogoMark({
   );
 }
 
-export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
+export function Header({
+  isAuthed = false,
+  isAdmin = false,
+  businessAreas,
+}: HeaderProps) {
+  const navItems = useMemo(() => buildNavItems(businessAreas), [businessAreas]);
   const pathname = usePathname();
   const isHomepage = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
@@ -330,7 +343,7 @@ export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
                   )}
                   aria-label="주 메뉴"
                 >
-                  {NAV_ITEMS.map(renderNavItem)}
+                  {navItems.map(renderNavItem)}
                 </motion.nav>
               </motion.div>
             </LayoutGroup>
@@ -428,7 +441,7 @@ export function Header({ isAuthed = false, isAdmin = false }: HeaderProps) {
           className="mx-auto w-full max-w-[1400px] px-5 pb-12 pt-4 md:px-8"
           aria-label="모바일 메뉴"
         >
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const hasChildren = !!item.children?.length;
             const expanded = mobileExpand === item.href;
             return (

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import { licenses, type License } from "@/data/site-content";
+import type { License, SettingValue } from "@/lib/content";
 import { cn } from "@/lib/cn";
 
 /* Phase 4.H.3 — 보유 인허가 그리드
@@ -11,7 +11,11 @@ import { cn } from "@/lib/cn";
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
-export function LicensesGrid() {
+interface Props {
+  licenses: SettingValue<"licenses">;
+}
+
+export function LicensesGrid({ licenses }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 

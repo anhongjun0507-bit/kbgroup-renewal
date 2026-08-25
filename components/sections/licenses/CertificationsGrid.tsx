@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import { certifications, type Certification } from "@/data/site-content";
+import type { Certification, SettingValue } from "@/lib/content";
 
 /* Phase 4 — CertificationsGrid 톤 정비 */
 
@@ -31,7 +31,11 @@ function categorizeCert(name: string): CertCategory {
   return "환경·기타";
 }
 
-export function CertificationsGrid() {
+interface Props {
+  certifications: SettingValue<"certifications">;
+}
+
+export function CertificationsGrid({ certifications }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
 
   const headerVariants: Variants = {

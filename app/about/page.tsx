@@ -53,7 +53,7 @@ export default async function AboutPage() {
       <EquipmentShowcase />
       <RelatedCompaniesGrid relatedCompanies={settings.relatedCompanies} />
       <CollaboratorsTable collaborators={settings.collaborators} />
-      <ContactInvite context="(주)케이비개발과 단지 운영을 함께할 준비가 되었습니다" />
+      <ContactInvite contact={settings.contact} context="(주)케이비개발과 단지 운영을 함께할 준비가 되었습니다" />
     </>
   );
 }

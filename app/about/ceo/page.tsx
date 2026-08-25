@@ -12,7 +12,10 @@ export const metadata: Metadata = {
 };
 
 export default async function CeoPage() {
-  const ceoMessage = await getSetting("ceoMessage");
+  const [ceoMessage, contact] = await Promise.all([
+    getSetting("ceoMessage"),
+    getSetting("contact"),
+  ]);
 
   return (
     <>
@@ -30,7 +33,7 @@ export default async function CeoPage() {
       <AboutNav current="ceo" />
       <CeoPortrait ceoMessage={ceoMessage} />
       <CeoMessage ceoMessage={ceoMessage} />
-      <ContactInvite context="대표 메시지에 공감하셨다면 함께 시작해 주세요" />
+      <ContactInvite contact={contact} context="대표 메시지에 공감하셨다면 함께 시작해 주세요" />
     </>
   );
 }

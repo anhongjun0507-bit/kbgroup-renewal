@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Container, Heading, FadeIn } from "@/components/ui";
-import { contact } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 import { getPublishedOpenings } from "@/lib/job-openings";
 import { JobCard } from "./JobCard";
 import { TalentPoolCTA } from "./TalentPoolCTA";
@@ -13,7 +13,12 @@ import { TalentPoolCTA } from "./TalentPoolCTA";
 
 const PREVIEW_COUNT = 2;
 
-export async function CareersOpenings() {
+/** 연락처 (어댑터 주입). 채용 이메일만 사용한다. */
+interface Props {
+  contact: SettingValue<"contact">;
+}
+
+export async function CareersOpenings({ contact }: Props) {
   const careersEmail = contact.careersEmail ?? contact.email;
   const openings = await getPublishedOpenings();
   const now = new Date();

@@ -7,7 +7,7 @@ import {
   type Variants,
 } from "framer-motion";
 import { Container } from "@/components/ui";
-import type { BusinessArea } from "@/data/site-content";
+import type { BusinessArea } from "@/lib/content";
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 

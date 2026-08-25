@@ -3,6 +3,8 @@
 import { updateTag } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { CONTENT_TAGS } from "@/lib/content/tags";
+import { findListSchema } from "@/components/admin/settings-schema";
+import { buildOrgTree, countOrgNodes, type OutlineRow } from "@/components/admin/org-tree";
 
 /**
  * 사이트 설정(site_settings) 편집 Server Actions (PLAN B / DAY 4).
@@ -33,6 +35,18 @@ const LABELS: Record<string, string> = {
   ceoMessage: "대표 인사말",
   counters: "메인 카운터",
   stats: "마케팅 표기값(STATS)",
+  coreValues: "핵심 가치",
+  differentiators: "차별점",
+  companyStrengths: "회사 강점",
+  history: "연혁",
+  partners: "발주처·시공사",
+  collaborators: "협력업체",
+  relatedCompanies: "계열사",
+  licenses: "보유 인허가",
+  certifications: "기술 자격증",
+  businessAreas: "사업영역",
+  processSteps: "서비스 프로세스",
+  organization: "조직도",
 };
 
 /* ── 공통 헬퍼 ─────────────────────────────────────────────────────────── */
@@ -307,4 +321,210 @@ export async function saveStats(
   /* activeComplexes(실제 단지 수)는 여기에 저장하지 않는다. complexes 테이블에서 계산한다 (E-7).
      실제값과 표기값을 한 필드로 합치지 않는 것이 이 설계의 핵심이다. */
   return persist(supabase, actorId, "stats", expected, value);
+}
+
+/* ── 목록형 키 공용 저장 (DAY 5) ───────────────────────────────────────── */
+
+/**
+ * 11개 목록형 키를 **하나의 액션**으로 처리한다.
+ * 필드 정의는 `components/admin/settings-schema.ts` 한 곳에만 있고 폼과 이 액션이 함께 읽는다.
+ * 폼이 실어 보낸 settingKey 는 스키마 화이트리스트에 없으면 그대로 거절한다 —
+ * 임의 키로 site_settings 를 덮어쓸 수 없어야 하기 때문이다.
+ */
+
+/** 업로드한 이미지를 site-images 버킷에 넣고 공개 URL 을 돌려준다 (단지 CRUD 와 같은 규약). */
+async function uploadSettingImage(
+  supabase: Supabase,
+  prefix: string,
+  index: number,
+  file: File,
+): Promise<{ url: string } | { error: string }> {
+  const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+  // 파일명은 ASCII 로만 만든다 — 한글 원본 파일명을 그대로 쓰면 Storage 키가 깨진다.
+  const path = `${prefix}/${index}-${Date.now()}.${ext || "jpg"}`;
+  const { error } = await supabase.storage
+    .from("site-images")
+    .upload(path, file, { contentType: file.type, upsert: false });
+  if (error) return { error: `이미지 업로드 실패: ${error.message}` };
+  const { data } = supabase.storage.from("site-images").getPublicUrl(path);
+  return { url: data.publicUrl };
+}
+
+export async function saveListSetting(
+  _prev: SettingsFormState,
+  fd: FormData,
+): Promise<SettingsFormState> {
+  const key = str(fd, "settingKey");
+  const schema = findListSchema(key);
+  if (!schema) return { ok: null, error: "잘못된 접근입니다." };
+
+  const { supabase, actorId } = await begin(key);
+  const expected = str(fd, "updatedAt");
+  if (!expected) return { ok: null, error: "잘못된 접근입니다." };
+
+  const errors: string[] = [];
+  const count = Number(str(fd, "count")) || 0;
+  const items: Record<string, unknown>[] = [];
+
+  for (let i = 0; i < count; i++) {
+    const item: Record<string, unknown> = {};
+    /* 이 행에서 나온 오류. 행이 통째로 버려지면(빈 행) 오류도 함께 버린다 —
+       "추가"만 누르고 아무것도 입력하지 않은 행 때문에 저장이 막히면 안 된다. */
+    const rowErrors: string[] = [];
+    let empty = true;
+
+    for (const f of schema.fields) {
+      const name = `${f.name}_${i}`;
+      const label = `${i + 1}번 항목 ${f.label}`;
+
+      if (f.kind === "checkbox") {
+        if (fd.get(name) === "on") item[f.name] = true;
+        continue;
+      }
+
+      if (f.kind === "number") {
+        const n = num(fd, name, rowErrors, label);
+        item[f.name] = n;
+        if (n !== 0) empty = false;
+        continue;
+      }
+
+      if (f.kind === "lines") {
+        const arr = lines(fd, name);
+        item[f.name] = arr;
+        if (arr.length > 0) empty = false;
+        continue;
+      }
+
+      if (f.kind === "pairs") {
+        const [ka, kb] = f.pairKeys ?? ["title", "description"];
+        const pairs = lines(fd, name).map((line) => {
+          const [a, b] = line.split("|");
+          return { [ka]: (a ?? "").trim(), [kb]: (b ?? "").trim() };
+        });
+        if (pairs.some((p) => !p[ka] || !p[kb])) {
+          rowErrors.push(`${label}은(는) "제목|설명" 형식으로 한 줄에 하나씩 입력해주세요.`);
+        }
+        item[f.name] = pairs;
+        if (pairs.length > 0) empty = false;
+        continue;
+      }
+
+      // text · textarea · select · readonly · image — 전부 문자열. 유니코드 정규화 금지 (E-10).
+      // 여러 줄 입력은 브라우저가 CRLF 로 보낸다(HTML 폼 규격). 줄바꿈만 LF 로 맞춘다 —
+      // 문자 정규화가 아니라 개행 표기 통일이라 U+2011 같은 문자에는 영향이 없다.
+      let v = f.kind === "textarea" ? str(fd, name).replace(/\r\n/g, "\n") : str(fd, name);
+
+      if (f.kind === "image") {
+        const file = fd.get(`${f.name}File_${i}`);
+        if (file instanceof File && file.size > 0) {
+          const up = await uploadSettingImage(
+            supabase,
+            f.uploadPrefix ?? key,
+            i,
+            file,
+          );
+          if ("error" in up) return { ok: null, error: up.error };
+          v = up.url;
+        }
+      }
+
+      if (f.required && !v) rowErrors.push(`${label}을(를) 입력해주세요.`);
+      if (v) empty = false;
+      // 선택 필드는 비면 키 자체를 넣지 않는다 — 빈 문자열은 소비처의 `x ? … : …` 분기를 뒤집는다.
+      if (f.optional && !v) continue;
+      item[f.name] = v;
+    }
+
+    /* 관리자가 "추가"만 누르고 아무것도 입력하지 않은 행은 조용히 버린다.
+       빈 항목을 그대로 저장하면 공개 화면에 빈 카드가 생긴다. */
+    if (empty) continue;
+    errors.push(...rowErrors);
+    items.push(item);
+  }
+
+  if (!schema.mutable && items.length !== count) {
+    return { ok: null, error: "필수 항목이 비어 있습니다. 값을 확인해주세요." };
+  }
+  if (errors.length > 0) return { ok: null, error: errors.join(" ") };
+
+  return persist(supabase, actorId, key, expected, items);
+}
+
+/* ── organization (재귀 트리) ──────────────────────────────────────────── */
+
+/**
+ * `<prefix>Count` / `<prefix>Depth_i` / `<prefix>Name_i` / `<prefix>Role_i` → 아웃라인 행.
+ *
+ * 이름이 빈 노드는 **버리지 않고 오류로 돌려준다.** 조용히 버리면 그 노드의 자식들이
+ * 다른 부모 밑으로 옮겨 붙어 "자식 유실 없음" 보장이 깨진다.
+ */
+function readOutline(
+  fd: FormData,
+  prefix: string,
+  errors: string[],
+  label: string,
+): OutlineRow[] {
+  const count = Number(str(fd, `${prefix}Count`)) || 0;
+  const rows: OutlineRow[] = [];
+  for (let i = 0; i < count; i++) {
+    const name = str(fd, `${prefix}Name_${i}`);
+    if (!name) {
+      errors.push(`${label} ${i + 1}번 조직명을 입력해주세요.`);
+      continue;
+    }
+    rows.push({
+      depth: Math.max(0, Number(str(fd, `${prefix}Depth_${i}`)) || 0),
+      name,
+      role: str(fd, `${prefix}Role_${i}`),
+    });
+  }
+  return rows;
+}
+
+/**
+ * 조직도 저장.
+ *
+ * 아웃라인 행 수 == 저장되는 노드 수. 트리로 세우는 과정에서 노드가 사라지지 않았는지
+ * 저장 직전에 다시 세어 확인하고, 어긋나면 **저장하지 않는다**.
+ */
+export async function saveOrganization(
+  _prev: SettingsFormState,
+  fd: FormData,
+): Promise<SettingsFormState> {
+  const { supabase, actorId } = await begin("organization");
+  const expected = str(fd, "updatedAt");
+  if (!expected) return { ok: null, error: "잘못된 접근입니다." };
+
+  const errors: string[] = [];
+  const treeRows = readOutline(fd, "tree", errors, "본사 조직");
+  const branchRows = readOutline(fd, "branch", errors, "별도 지사");
+  if (errors.length > 0) return { ok: null, error: errors.join(" ") };
+  if (treeRows.length === 0) return { ok: null, error: "조직도 최상위 노드가 필요합니다." };
+
+  const roots = buildOrgTree(treeRows);
+  if (roots.length !== 1) {
+    return {
+      ok: null,
+      error: "본사 조직도의 최상위는 하나여야 합니다. 들여쓰기를 확인해주세요.",
+    };
+  }
+  const branches = buildOrgTree(branchRows);
+
+  const expectedNodes = treeRows.length + branchRows.length;
+  const actualNodes = countOrgNodes(roots) + countOrgNodes(branches);
+  if (expectedNodes !== actualNodes) {
+    console.error(
+      `[settings] organization 노드 수 불일치: 입력 ${expectedNodes} → 변환 ${actualNodes}`,
+    );
+    return {
+      ok: null,
+      error: "조직도 변환 중 노드 수가 달라져 저장을 중단했습니다. 다시 시도해주세요.",
+    };
+  }
+
+  return persist(supabase, actorId, "organization", expected, {
+    tree: roots[0],
+    branches,
+  });
 }

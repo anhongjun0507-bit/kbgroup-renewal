@@ -5,6 +5,7 @@ import { CareersWelfare } from "@/components/sections/careers/CareersWelfare";
 import { CareersOpenings } from "@/components/sections/careers/CareersOpenings";
 import { CareersApply } from "@/components/sections/careers/CareersApply";
 import { ContactInvite } from "@/components/sections/common/ContactInvite";
+import { getSetting } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "채용 | (주)케이비개발",
@@ -12,7 +13,9 @@ export const metadata: Metadata = {
     "신뢰를 쌓아가는 케이비개발과 함께 새로운 길을 열어갈 동료를 찾습니다.",
 };
 
-export default function CareersPage() {
+export default async function CareersPage() {
+  const contact = await getSetting("contact");
+
   return (
     <>
       <PageHero
@@ -27,11 +30,12 @@ export default function CareersPage() {
         ]}
       />
       {/* 현재 채용 중인 공고를 최상단으로 (클라 요청 2026-06-08) */}
-      <CareersOpenings />
+      <CareersOpenings contact={contact} />
       <CareersValues />
       <CareersWelfare />
-      <CareersApply />
+      <CareersApply contact={contact} />
       <ContactInvite
+        contact={contact}
         context="채용·사업 관련 일반 문의는 본사 회선으로 직접 연락 주세요"
         ctaLabel="문의 페이지 이동"
       />

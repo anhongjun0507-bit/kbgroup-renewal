@@ -14,12 +14,18 @@ import {
   type StatsValue,
 } from "@/components/admin/SettingsForms";
 import { StatsReconciliation, type ReconRow } from "@/components/admin/StatsReconciliation";
+import { ListEditor } from "@/components/admin/ListEditor";
+import { OrgChartEditor } from "@/components/admin/OrgChartEditor";
+import { LIST_SCHEMAS } from "@/components/admin/settings-schema";
+import type { SettingValue } from "@/lib/content";
 import { requireAdmin } from "@/lib/auth";
 import {
   saveCeoMessage,
   saveCompany,
   saveContact,
   saveCounters,
+  saveListSetting,
+  saveOrganization,
   saveStats,
 } from "./actions";
 
@@ -37,10 +43,26 @@ export const dynamic = "force-dynamic";
  * 낙관적 잠금에 쓸 updated_at 이 그대로 보여야 하기 때문이다 (DAY 3 단지 화면과 동일).
  */
 
-/** 연락처가 반영되는 화면 수. 관리자에게 변경 파급 범위를 알려주는 용도. */
-const CONTACT_CONSUMER_COUNT = 19;
+/**
+ * 연락처가 반영되는 소비처 수. 관리자에게 변경 파급 범위를 알려주는 용도.
+ * DAY 5 에서 미전환 7개(히어로·ContactInvite·로그인·채용 등)를 전부 붙여 실측 17개가 됐다.
+ * (`grep -rln 'contact\.(phone|email|address|...)' app components` 19건 중
+ *  편집기 자신인 actions.ts 와 어디에도 마운트되지 않은 CTA.tsx 를 뺀 수)
+ */
+const CONTACT_CONSUMER_COUNT = 17;
 
 type SettingRow = { key: string; value: unknown; updated_at: string };
+
+/** 페이지 내 바로가기. FormShell 의 id 규약(`setting-<key>`)을 따른다. */
+const TOC = [
+  { id: "setting-company", label: "회사 정보" },
+  { id: "setting-contact", label: "연락처" },
+  { id: "setting-ceoMessage", label: "대표 인사말" },
+  { id: "setting-counters", label: "메인 카운터" },
+  { id: "setting-stats", label: "마케팅 표기값" },
+  ...LIST_SCHEMAS.map((s) => ({ id: `setting-${s.key}`, label: s.title })),
+  { id: "setting-organization", label: "조직도" },
+];
 
 function pick(rows: SettingRow[], key: string): SettingRow | undefined {
   return rows.find((r) => r.key === key);
@@ -88,6 +110,7 @@ export default async function AdminSettingsPage() {
   const ceoRow = pick(rows, "ceoMessage");
   const countersRow = pick(rows, "counters");
   const statsRow = pick(rows, "stats");
+  const orgRow = pick(rows, "organization");
 
   const counters = (countersRow?.value ?? []) as CounterValue[];
   const stats = statsRow?.value as StatsValue | undefined;
@@ -160,9 +183,23 @@ export default async function AdminSettingsPage() {
             사이트 설정
           </h1>
           <p className="mt-3 text-[14px] text-ink-muted">
-            회사 정보 · 연락처 · 대표 인사말 · 메인 카운터 · 마케팅 표기값을 편집합니다. 저장하면
-            사이트에 즉시 반영되고, 직전 값은 변경 이력에 자동 보관됩니다.
+            회사 정보 · 연락처 · 대표 인사말 · 메인 카운터 · 마케팅 표기값과 사업영역 · 인허가 ·
+            인증 · 연혁 · 파트너 · 조직도를 편집합니다. 저장하면 사이트에 즉시 반영되고, 직전 값은
+            변경 이력에 자동 보관됩니다.
           </p>
+
+          {/* 편집 항목이 17개라 페이지가 길다. 바로 이동할 수 있게 목차를 둔다. */}
+          <nav aria-label="설정 항목 바로가기" className="mt-6 flex flex-wrap gap-2">
+            {TOC.map((t) => (
+              <a
+                key={t.id}
+                href={`#${t.id}`}
+                className="rounded-sm border border-line bg-white px-3 py-1.5 text-[13px] text-ink-muted hover:border-navy-700 hover:text-ink-strong"
+              >
+                {t.label}
+              </a>
+            ))}
+          </nav>
         </div>
 
         <div className="space-y-8">
@@ -235,6 +272,31 @@ export default async function AdminSettingsPage() {
             />
           ) : (
             <Missing label="마케팅 표기값(STATS)" settingKey="stats" />
+          )}
+
+          {/* 목록형 11키 — 필드 정의는 settings-schema.ts 한 곳에 있다. */}
+          {LIST_SCHEMAS.map((schema) => {
+            const row = pick(rows, schema.key);
+            if (!row) return <Missing key={schema.key} label={schema.title} settingKey={schema.key} />;
+            return (
+              <ListEditor
+                key={schema.key}
+                schema={schema}
+                action={saveListSetting}
+                value={(row.value ?? []) as Record<string, unknown>[]}
+                updatedAt={row.updated_at}
+              />
+            );
+          })}
+
+          {orgRow ? (
+            <OrgChartEditor
+              action={saveOrganization}
+              value={orgRow.value as SettingValue<"organization">}
+              updatedAt={orgRow.updated_at}
+            />
+          ) : (
+            <Missing label="조직도" settingKey="organization" />
           )}
         </div>
       </Container>

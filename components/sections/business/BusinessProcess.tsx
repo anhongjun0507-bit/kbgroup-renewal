@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container, Heading } from "@/components/ui";
-import { processSteps } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 import { cn } from "@/lib/cn";
 
 /* Phase 4.F.6 — OUR PROCESS
@@ -12,7 +12,11 @@ import { cn } from "@/lib/cn";
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
-export function BusinessProcess() {
+interface Props {
+  processSteps: SettingValue<"processSteps">;
+}
+
+export function BusinessProcess({ processSteps }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
   const [activeIdx, setActiveIdx] = useState(0);
   const active = processSteps[activeIdx];

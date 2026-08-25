@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
-import { businessAreas, type BusinessCategory } from "@/data/site-content";
+import type { BusinessCategory, SettingValue } from "@/lib/content";
 
 /* Phase 4.F.1 — /business 인덱스
    5개 사업 alternating 좌우 배치 (SK 에코플랜트 / Apple Business 스타일)
@@ -33,7 +33,11 @@ const VISUAL_IMAGE: Record<BusinessCategory, string> = {
   other: "/images/banner/IMG_1488.PNG",
 };
 
-export function BusinessIntroAlternating() {
+interface Props {
+  businessAreas: SettingValue<"businessAreas">;
+}
+
+export function BusinessIntroAlternating({ businessAreas }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
 
   const itemVariants: Variants = {

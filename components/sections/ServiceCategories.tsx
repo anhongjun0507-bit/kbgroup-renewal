@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
-import { businessAreas, type BusinessCategory } from "@/data/site-content";
+import type { BusinessCategory, SettingValue } from "@/lib/content";
 
 /* Phase 15 — 사용자 업로드 배너 이미지 4장 매핑 (1·2·3·4 순서).
    public/images/banner/ 안의 IMG_1484~1487을 시설관리/위생청소/경비보안/시행건설에 적용.
@@ -133,7 +133,11 @@ function VisualIcon({ id }: { id: BusinessCategory }) {
   }
 }
 
-export function ServiceCategories() {
+interface Props {
+  businessAreas: SettingValue<"businessAreas">;
+}
+
+export function ServiceCategories({ businessAreas }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
 
   const item: Variants = {

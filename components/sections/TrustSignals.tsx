@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
-import { licenses, partners } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 12 업그레이드 #7 — 신뢰 시그널 강화 섹션
    인허가 골드 뱃지 6종 + 발주처/시공사 로고 strip
@@ -20,9 +20,13 @@ const KEY_LICENSES = [
   { name: "ISO 45001 안전보건", issuer: "한국표준협회", year: "2023", icon: "I" },
 ];
 
-void licenses; // licenses 데이터 직접 사용 안 함 (위 KEY_LICENSES로 핵심만 추출)
+// licenses 데이터는 직접 사용하지 않는다 (위 KEY_LICENSES 로 핵심만 추출).
 
-export function TrustSignals() {
+interface Props {
+  partners: SettingValue<"partners">;
+}
+
+export function TrustSignals({ partners }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
 
   const listVariants: Variants = {

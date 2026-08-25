@@ -2,13 +2,13 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
-import { certifications, licenses, STATS } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 6 F-1 — 3 KPI 대시보드 (navy-700 left-border 4px) */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
-function latestAcquired(): string {
+function latestAcquired(licenses: SettingValue<"licenses">): string {
   const dates = licenses
     .map((l) => l.acquiredAt ?? "")
     .filter(Boolean)
@@ -19,11 +19,16 @@ function latestAcquired(): string {
   return `${year}년`;
 }
 
-function uniqueIssuerCount(): number {
+function uniqueIssuerCount(licenses: SettingValue<"licenses">): number {
   return new Set(licenses.map((l) => l.issuer)).size;
 }
 
-export function LicensesKPI() {
+interface Props {
+  licenses: SettingValue<"licenses">;
+  stats: SettingValue<"stats">;
+}
+
+export function LicensesKPI({ licenses, stats: STATS }: Props) {
   const shouldReduce = useReducedMotion() ?? false;
 
   /* Phase 14-B A-2/A-3 — KPI 값 정본 상수(STATS) 기반 정합화.
@@ -39,7 +44,7 @@ export function LicensesKPI() {
     {
       key: "categories",
       label: "발급 기관 수",
-      value: uniqueIssuerCount(),
+      value: uniqueIssuerCount(licenses),
       unit: "개 기관",
       caption: "ISSUING AUTHORITIES",
     },
@@ -51,8 +56,6 @@ export function LicensesKPI() {
       caption: "CERTIFICATION TYPES",
     },
   ];
-  void licenses;
-  void certifications;
 
   const listVariants: Variants = {
     hidden: {},
@@ -121,7 +124,7 @@ export function LicensesKPI() {
         </motion.ul>
 
         <p className="mt-6 text-[12px] text-ink-faint">
-          ※ 최신 갱신: {latestAcquired()} 기준
+          ※ 최신 갱신: {latestAcquired(licenses)} 기준
         </p>
       </Container>
     </section>

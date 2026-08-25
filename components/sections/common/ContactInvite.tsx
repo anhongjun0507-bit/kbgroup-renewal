@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/ui";
-import { contact } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 14-E E-1 — 페이지 하단 상담 유도 가벼운 CTA.
    기존: 모든 페이지 하단에 동일한 9-필드 ContactForm 반복 노출 → 페이지 스크롤 비용 큼
@@ -8,6 +8,8 @@ import { contact } from "@/data/site-content";
    컨텍스트별 카피는 context prop으로 조정. */
 
 interface Props {
+  /** 연락처 (어댑터 주입). 대표 전화만 사용한다. */
+  contact: SettingValue<"contact">;
   /** 페이지 컨텍스트에 맞는 짧은 안내 (선택). 없으면 기본 카피 */
   context?: string;
   /** 1차 CTA 라벨 (선택). 기본: "상담 문의하기" */
@@ -15,6 +17,7 @@ interface Props {
 }
 
 export function ContactInvite({
+  contact,
   context,
   ctaLabel = "상담 문의하기",
 }: Props) {

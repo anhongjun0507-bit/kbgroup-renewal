@@ -1,16 +1,14 @@
 # PLAN B — 콘텐츠 관리(CMS) 전환 진행 문서
 
 > 이 파일 하나만 읽고 STEP 2를 시작할 수 있도록 작성한다.
-> 최종 갱신: 2026-08-25 (STEP 2 / DAY 4 완료 — §13 참조)
+> 최종 갱신: 2026-08-25 (STEP 2 / DAY 5 완료 — §14 참조)
 > 대상 저장소: `kbgroup-renewal` / Next.js 16.2.6 + React 19.2.4 + Supabase + Vercel
 
 ---
 
 ## 0. 현재 상태 한 줄
 
-STEP 2 / DAY 4 완료. 관리자 사이트 설정 편집 UI(company·contact·ceoMessage·counters·stats) 신설, STATS 이원화 대조표 + 경고 배너(E-7), `counters[1]` 인덱스 → key 조회 교체(E-6), U+2011 왕복 보존 검증 통과(E-10), `/about/*`·`/contact` + contact 서버 소비처 어댑터 전환(22파일). `globals.css` @import 문제는 **죽어 있던 규칙 제거**로 해소 — dev 500 해결, 렌더 결과 무변화. 남은 소비처 30개(타입 전용 5 포함). 다음: DAY 5(섹션 레지스트리 전환 · §4 의 DAY 7).
-
----
+STEP 2 / DAY 5 완료. `site_settings` 잔여 12키(사업영역·인허가·인증·연혁·파트너·협력사·계열사·조직도·핵심가치·차별점·강점·프로세스) 편집 UI 신설 — 스키마 기반 범용 목록 편집기 1개 + 조직도 아웃라인 편집기. 소비처 전환 26파일로 **살아 있는 소비처 잔여 0**(사장 코드 4개 제외), §13-6 contact 미결 7개 전부 해소해 대표 전화 변경이 공개 페이지 14곳에 100% 반영됨을 실측. 회귀: SSR 텍스트 18경로 diff 0줄 · sitemap 191 URL 일치 · 조직도 노드 13 → 13 · 무변경 왕복 11/11. Pretendard 는 계약 범위 밖 별도 안건으로 기록(§14-0). 다음: DAY 8(섹션 표시·숨김/순서 + 페이지 공개·비공개).
 
 ## 1. 계약 범위 — 4개 영역 (견적서 원문)
 
@@ -211,6 +209,7 @@ DAY 1에 Next 16.2.6의 캐시 API를 검증한 뒤 **둘 중 하나로 확정�
 - [x] DAY 4(실제 DAY 3) — 읽기 어댑터 + 파일 폴백 + `CONTENT_SOURCE` 킬스위치 (§12-1)
 - [x] DAY 5(실제 DAY 3) — 관리자 UI: 단지 CRUD + `/cases` 전환 (§12-2, §12-3)
 - [x] DAY 6(실제 DAY 4) — 관리자 UI: 사이트 설정 + `/about/*`·`/contact` 전환 + E-6·E-7·E-10 처리 (§13)
+- [x] DAY 7(실제 DAY 5) — 사업영역·인허가·인증·연혁·파트너·조직도 편집 UI + 소비처 전환 26개(잔여 0, 사장 코드 4개 제외) + contact 소비처 7개 해소 (§14)
 - [ ] DAY 7 — **베이스라인 캡처 → 섹션 레지스트리 전환 → 재캡처 비교**
 - [ ] DAY 8 — 관리자 UI: 섹션 표시·숨김/순서 + 페이지 공개·비공개
 - [ ] DAY 9 — 관리자 UI: 네비게이션 + 변경 이력
@@ -1099,3 +1098,209 @@ SQL 확인          : {"nb":20,"ascii":0}          ← position(chr(8209))=20, p
    순서 변경은 §4 DAY 8(섹션 순서)의 대상이다. 현재는 4개 항목의 값·라벨·표기값만 편집한다.
 5. **`scripts/verify-settings-roundtrip.ts` 는 프로덕션 DB 에 실제 쓰기를 한다.** 검증 후 원복하지만
    `content_revisions` 에는 남지 않는다(액션이 아니라 service_role 직접 쓰기라서). 재실행 안전하다.
+
+---
+
+## 14. DAY 5 실행 결과 (2026-08-25)
+
+### 14-0. Pretendard — 별도 안건 (계약 범위 밖)
+
+**결정: 이번 계약에서는 켜지 않는다.** §13-0 의 A안(죽은 `@import` 제거) 상태를 유지한다.
+
+| 사실 | 실측 |
+|------|------|
+| 배포 CSS 번들의 `pretendard` 문자열 | **0회** — 라이브는 처음부터 Pretendard 를 받은 적이 없다 |
+| `--font-sans` 1순위 선언 | `globals.css` 에 **그대로 남아 있다** |
+| 지금 적용하면 | 전 페이지 텍스트 메트릭이 바뀐다 — **실측 12장 중 8장에서 크기 변화** (`01_home_mobile` 12,526px → 12,356px 등) |
+| 적용하려면 | 회귀 베이스라인 28장 **전부 재수립** 필요 |
+
+이번 계약(PLAN B 350,000원)은 관리자 편집 기능 개발이다. 사이트 폰트 변경은 범위 밖이고,
+회귀 검증 기준선이 흔들리면 DAY 5~10 검증이 전부 무의미해진다.
+**DAY 10 납품 보고에 이 항목을 포함한다.** 클라이언트 안내는 별도로 진행한다.
+
+### 14-1. contact 소비처 7개 — 전부 해소 (§13-6 미결 종결)
+
+| 컴포넌트 | 처리 | 페이지 수정 |
+|----------|------|-------------|
+| `ContactInvite` | `contact` 프롭 추가 | `app/page.tsx`·`business/page.tsx`·`licenses/page.tsx` 를 `async` 로. 이미 async 이던 `/about`·`/about/ceo`·`/about/history`·`/about/location`·`/cases`·`/careers` 는 프롭 1줄 |
+| `Hero` | `contact` 프롭 추가 | `app/page.tsx` |
+| `LoginForm` | `contact` 프롭 추가 | `app/(auth)/login/page.tsx` (이미 async) |
+| `CareersApply` | `contact` 프롭 추가 | `app/careers/page.tsx` |
+| `CareersOpenings` | `contact` 프롭 추가 (원래 async 서버 컴포넌트) | `app/careers/page.tsx` |
+| `BusinessCTA` | `contact` 프롭 추가 | `app/business/[slug]/page.tsx` (businessAreas 전환과 동시) |
+| `CTA` | **손대지 않음** — 어디에도 마운트되지 않은 사장 코드 (지시대로 삭제도 하지 않음) |
+
+- 프롭 타입은 DAY 4 규약(`SettingValue<"contact">`)을 그대로 따랐다. 페이지 구조 변경은 하지 않았다 —
+  `app/page.tsx` 의 히어로 슬라이드·`FadeIn` 래핑은 그대로다(프롭 주입 6줄 + `async` 1줄이 전부).
+
+**대표 전화 변경 실측** — 관리자 폼에서 `062-416-3021` → `062-000-9999` 저장 직후,
+재배포·재빌드 없이 공개 페이지 **14곳 전부**를 HTTP 로 확인했다.
+
+```
+✅ 대표 전화 변경 — 공개 페이지 14곳에 옛 번호(062-416-3021) 잔존 0
+   새 번호(062-000-9999) 노출: 14/14
+✅ 대표 전화 원복
+```
+
+대상 14곳: `/` `/about` `/about/ceo` `/about/history` `/about/location` `/business`
+`/business/facility` `/cases` `/licenses` `/careers` `/contact` `/notices` `/login` `/privacy`.
+§13-6b 에서 옛 번호가 남던 `/about/location` 도 이제 잔존 0이다.
+
+### 14-2. 편집 UI — site_settings 잔여 12키
+
+| 파일 | 내용 |
+|------|------|
+| `components/admin/settings-schema.ts` | 목록형 11키의 **필드 정의 단일 출처**. 폼과 Server Action 이 같은 스키마를 읽는다 |
+| `components/admin/ListEditor.tsx` | 목록형 공용 편집기 (추가·삭제·위/아래 이동·이미지 업로드) |
+| `components/admin/org-tree.ts` | 트리 ↔ 아웃라인 변환 + 노드 카운트 (순수 모듈 — 클라이언트·서버 공용) |
+| `components/admin/OrgChartEditor.tsx` | 조직도 아웃라인 편집기 |
+| `app/admin/content/settings/actions.ts` | `saveListSetting`(11키 공용) · `saveOrganization` · `uploadSettingImage` 추가 |
+| `app/admin/content/settings/page.tsx` | 편집기 12개 렌더 + 항목 바로가기 목차 (총 17개 편집 블록) |
+
+설계 결정 3가지:
+
+1. **11개 키를 폼 하나로 묶지 않고, 폼을 11번 쓰지도 않았다.** 스키마 기반 범용 편집기 1개다.
+   같은 코드를 11번 복사하면 그중 한 곳만 고치는 실수가 곧바로 데이터 유실이 된다.
+   Server Action 도 하나(`saveListSetting`)이고, 폼이 실어 보낸 `settingKey` 는
+   **스키마 화이트리스트에 없으면 거절**한다 — 임의 키로 `site_settings` 를 덮어쓸 수 없다.
+2. **`businessAreas`·`processSteps` 는 값만 수정 가능**(항목 추가·삭제·순서 변경 차단).
+   `businessAreas.id` 는 코드의 `BusinessCategory` 유니온이자 FAQ·비주얼 맵의 키이고,
+   `slug` 는 `/business/[slug]` URL 이다(E-1). `processSteps` 는 `numberLabel`(01~04)이 배열 순서와 짝이라
+   순서만 바꾸면 번호가 어긋난다. 섹션 순서 변경은 DAY 8 의 주제다.
+3. **이미지 업로드는 `licenses.image`·`relatedCompanies.logo` 2곳에 붙였다** (계약 ITEM 01 "로고" 항목).
+   단지 CRUD 와 같은 `site-images` 버킷·같은 ASCII 파일명 규약. 비워두면 기존 이미지를 유지한다.
+
+낙관적 잠금(E-8)·`content_revisions` 스냅샷·`updateTag("content:settings")` 무효화는
+DAY 4 의 `persist()` 를 그대로 재사용했다. `revalidatePath` 는 여전히 쓰지 않는다 (E-12).
+
+### 14-3. 조직도 트리 편집 — 자식 유실 0
+
+트리를 **들여쓰기 목록(아웃라인)** 으로 평탄화해 편집한다. 한 노드의 하위 트리는 곧
+"바로 아래에 이어지는 더 깊은 depth 행들의 연속 구간"이라, 구간을 통째로 옮기고 지우면
+**자식 유실이 원리적으로 일어나지 않는다.** 저장 시 depth 스택으로 트리를 다시 세운다.
+
+3중 방어:
+- **화면** — 노드 총 개수를 상단에 항상 표시하고, 불러올 때와 달라지면 경고 배너를 띄운다.
+  하위가 있는 노드를 지울 때는 "아래 N개 하위 조직도 함께 삭제됩니다" 확인을 받는다.
+- **서버** — 아웃라인 행 수와 변환된 트리의 노드 수가 다르면 **저장하지 않는다.**
+  이름이 빈 노드도 조용히 버리지 않고 오류로 돌려준다(버리면 그 자식들이 다른 부모로 옮겨 붙는다).
+- **검증 스크립트** — `scripts/verify-org-roundtrip.ts`.
+
+```
+조직도 원본 — 본사 11노드 · 지사 2노드 · 합계 13
+✅ 아웃라인 행 수 == 원본 노드 수 — 11 + 2 vs 13
+✅ 트리 → 아웃라인 → 트리 가 원본과 구조·문자열까지 동일
+✅ 하위 추가 — 노드 +1
+✅ 하위 트리 삭제 — "총괄사장"(자식 9) 삭제 후 노드 -10
+✅ 형제 이동 — "사장" ↔ "부동산임대관리" 후 노드 수 불변 · 이름 집합 불변
+✅ 들여쓰기 — "총무부" 하위 트리 이동 후 노드 수 불변
+✅ DB 왕복 후 노드 수 보존 — 13 vs 13 · 원복 확인
+```
+
+**편집 전후 노드 총 개수: 13 → 13** (브라우저 실동작에서도 동일, §14-5).
+
+### 14-4. 소비처 전환 — 26개 파일, 잔여 4개(전부 사장 코드)
+
+**전환 완료 (26)**
+
+| 구분 | 파일 |
+|------|------|
+| 메인 | `app/page.tsx` → `Hero`·`TrustSignals`·`DataCounter`·`ServiceCategories`·`Cases`·`Partners`·`ContactInvite` |
+| `/business` | `app/business/page.tsx` → `BusinessIntroAlternating` |
+| `/business/[slug]` | `app/business/[slug]/page.tsx` → `BusinessOverview`·`BusinessSubServices`·`BusinessProcess`·`BusinessFAQ`·`BusinessRelatedCases`·`BusinessCTA` |
+| `/licenses` | `app/licenses/page.tsx` → `WorkforceStats`·`LicensesKPI`·`LicensesOverview`·`LicensesGrid`·`CertificationsGrid` |
+| `/careers` | `app/careers/page.tsx` → `CareersOpenings`·`CareersApply` |
+| `/login` | `app/(auth)/login/page.tsx` → `LoginForm` |
+| 전역 | `app/layout.tsx` → `Header` (businessAreas), `app/sitemap.ts` |
+
+- **`Header` (E-2)** — `NAV_ITEMS` 모듈 상수를 `buildNavItems(businessAreas)` 팩토리로 바꾸고
+  `app/layout.tsx` 에서 프롭 1줄로 주입했다. `LayoutGroup`·`usePathname`·framer-motion 로직은
+  **한 줄도 건드리지 않았다.** 변경분은 import 1줄 + 프롭 1줄 + 팩토리 감싸기 + 참조 2곳(`NAV_ITEMS` → `navItems`)뿐이다.
+- **`app/sitemap.ts` (E-1)** — `encodeURIComponent(c.name)` → `c.slug`(DB 불변 slug)로 교체했다.
+  프로덕션 sitemap 과 **191개 URL 전부 일치** (아래 검증).
+- **`Cases.tsx` (E-1)** — 메인 단지 카드 링크도 `encodeURIComponent(c.name)` → `c.slug`.
+  저장소 전체에서 `/cases/` URL 을 이름으로 만드는 코드는 이제 **0건**이다.
+- **타입 전용 5개**(`BusinessHero`·`BusinessSubServices`·`BusinessOverview`·`BusinessFAQ`·`BusinessRelatedCases`)도
+  `@/lib/content` 재수출로 옮겨 `grep` 잔여를 0으로 만들었다.
+- `LicensesKPI` 의 모듈 최상단 파생 함수 2개(`latestAcquired`·`uniqueIssuerCount`)는 인자를 받는 함수로 바꿨다.
+
+**잔여 소비처 — 4개. 전부 어디에도 마운트되지 않은 사장 코드다.**
+
+| 파일 | 상태 |
+|------|------|
+| `components/sections/CTA.tsx` | 마운트 0건 (지시대로 삭제하지 않음) |
+| `components/sections/cases/CasesList.tsx` | 마운트 0건 (`CasesGallery` 주석에만 언급) |
+| `components/sections/cases/CasesMap.tsx` | 마운트 0건 |
+| `components/sections/about/CompanyStrengths.tsx` | 마운트 0건 (2026-05 `/about` 에서 제외, 주석만 남음) |
+
+즉 **살아 있는 소비처 기준 잔여 0**, 타입 전용 잔여 0. 사장 코드 정리는 범위 밖이라 보고만 한다.
+
+### 14-5. 검증
+
+**① SSR 가시 텍스트 전문 대조 — 18개 경로 전부 diff 0줄** (`scripts/diff-ssr-text.mjs` 신설)
+
+프로덕션(`kbgroup-renewal.vercel.app`, 파일 기반) ↔ 로컬 프로덕션 빌드(DB 어댑터).
+
+```
+✅ /(164줄) /about(194) /about/ceo(71) /about/history(79) /about/location(74)
+✅ /business(87) /business/facility(109) /business/sanitation(112)
+✅ /business/security(110) /business/construction(110) /business/others(111)
+✅ /cases(223) /licenses(191) /careers(120) /contact(62) /notices(53) /login(47) /privacy(75)
+✅ 전 경로 diff 0줄
+```
+
+**② sitemap 대조** — 프로덕션 191 URL ↔ 로컬 191 URL, **diff 0**. (`/cases/*` 153건 + `/business/*` 5건 포함)
+
+**③ 관리자 UI 실동작** (`scripts/verify-day5-admin.mjs` 신설 — 실제 브라우저 로그인 후 폼 조작)
+
+```
+✅ 편집 섹션 17개 전부 렌더
+✅ 인허가 9건 / 인증 27건 / 연혁 16건 / 조직도 13노드 렌더
+✅ 무변경 왕복 — coreValues(3)·differentiators(5)·companyStrengths(5)·history(16)·
+   partners(8)·collaborators(15)·relatedCompanies(4)·licenses(9)·certifications(27)·
+   businessAreas(5)·processSteps(4) 저장 전후 JSON 완전 일치       ← 11/11
+✅ 대표 전화 변경 — 공개 페이지 14곳 옛 번호 잔존 0 · 새 번호 14/14 · 원복
+✅ 연혁 추가 → DB 17건 → /about/history 즉시 반영 → 삭제 → 16건 원복(원본과 완전 동일)
+✅ 조직도 형제 이동 저장 → 노드 13 유지 · 이름 집합 불변 · /about 렌더 정상 · 원복
+```
+
+**무변경 왕복 11/11 이 이 DAY 의 핵심 증거다.** 범용 편집기의 유일한 치명적 실패 모드는
+"화면에 없는 필드가 저장 때 조용히 사라지는 것"인데, 아무것도 고치지 않고 저장했을 때
+저장 전후 JSON 이 완전히 같다는 것은 11개 키 × 101개 항목의 전 필드가 왕복을 통과했다는 뜻이다.
+
+**④ 어댑터 3모드 재검증** — 위 저장 왕복을 전부 거친 뒤에도 DB 값이 파일 원본과 **불일치 0건**.
+
+```
+[db] total=172 active=153 past=19 → ✅ 파일 원본과 불일치 0건
+[file] … ✅   [broken] … ✅        → ✅ 3모드 전부 통과
+```
+
+**⑤ U+2011 왕복 재검증 — 18/18 통과.** 정적 가드가 새 `uploadSettingImage` 의
+확장자 정리(`.replace(/[^a-z0-9]/g, "")`)를 하이픈 치환으로 오탐해 1건 실패했다.
+문자 클래스 안의 하이픈은 범위 표기이므로, **문자 클래스를 지운 뒤 검사**하도록 가드를 정정했다.
+진짜 하이픈 치환(`.replace(/‑/g, "-")`)은 그대로 걸린다.
+
+**⑥ 빌드·정적 검사**
+
+| 항목 | 결과 |
+|------|------|
+| `tsc --noEmit` | EXIT=0 |
+| `eslint` (변경·신규 44파일) | **신규 error·warning 0건**. 보고된 3 error·1 warning 은 `git stash` 로 사전 존재 확인 (`Header`·`Hero`·`LicensesOverview`·`BusinessRelatedCases`). `LicensesOverview` 의 미사용 import warning 1건은 이번 전환으로 **없어졌다** |
+| `npm run build` | EXIT=0 · **라우트 표 무변화** (`○` 는 `/robots.txt`·`/sitemap.xml` 2개 그대로, 나머지 51개 `ƒ`) |
+| `next start` 실HTTP | 공개 19경로 전부 **200** |
+
+### 14-6. 보고 사항
+
+1. **계열사(`relatedCompanies`)는 6종이 아니라 4종이다.** DB·파일 모두 4건
+   (㈜케이비뷰·㈜금태건설·㈜더케이금융대부·㈜케이위더스). `data/site-content.ts` 주석의
+   "기존 4개 → 6개 확장" 문구가 실제 배열과 어긋나 있다. 데이터 자체는 건드리지 않았다 —
+   6종이 맞다면 관리자 화면에서 2건 추가하면 된다.
+2. **`partners.placeholder` 필드는 편집 UI 에 넣지 않았다.** 타입에는 있으나 소비처가 한 곳도
+   읽지 않고, 현재 8건 어디에도 값이 없다. 넣으면 쓰이지 않는 체크박스가 관리자에게 노출된다.
+3. **`companyStrengths` 는 어느 페이지에도 노출되지 않는다**(2026-05 `/about` 에서 제외).
+   편집은 가능하게 두되, 편집기 상단에 "현재 어느 페이지에도 노출되지 않습니다"를 명시했다.
+4. **무변경 왕복 검증이 `content_revisions` 에 스냅샷 11건 + 편집 검증분 몇 건을 남겼다.**
+   감사 테이블이므로 정상이다.
+5. **`scripts/verify-day5-admin.mjs` 는 프로덕션 DB 에 실제 쓰기를 한다.** 검증 후 전부 원복하며
+   원복 결과를 다시 대조한다. 재실행 안전하다. playwright 는 `PLAYWRIGHT_PATH` 주입 방식 유지
+   (`package.json` 무수정).

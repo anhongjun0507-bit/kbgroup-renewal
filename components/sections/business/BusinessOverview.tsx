@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui";
-import type { BusinessArea, BusinessCategory } from "@/data/site-content";
+import type { BusinessArea, BusinessCategory } from "@/lib/content";
 
 /* Phase 4.F.2 — /business/[slug] 핵심 메트릭 3개 (사업별 더미값 — [[data-site-content]] 정책)
    WHY US 3 reasons + 메트릭 3카드 통합 */

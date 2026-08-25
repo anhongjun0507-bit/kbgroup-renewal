@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/ui";
-import { contact } from "@/data/site-content";
+import type { SettingValue } from "@/lib/content";
 
 /* Phase 15 — Hero 풀스크린 영상+사진 슬라이드 (아모레퍼시픽 톤)
    100svh 풀스크린 / 5장 자동 전환 / crossfade / 좌하단 카피 / 우하단 카운터 / 하단중앙 Scroll 인디케이터 */
@@ -70,7 +70,12 @@ const FADE_EASE = "cubic-bezier(0.45, 0, 0.15, 1)";
 /* 영상 끝 N초 전에 다음 슬라이드 페이드인 시작 (FADE_DURATION 만큼 미리 시작해야 정확히 끝 프레임에서 페이드 완료) */
 const VIDEO_HANDOFF_LEAD = 1.0;
 
-export function Hero() {
+/** 연락처 (어댑터 주입). 대표 전화만 사용한다. */
+interface Props {
+  contact: SettingValue<"contact">;
+}
+
+export function Hero({ contact }: Props) {
   const [active, setActive] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);

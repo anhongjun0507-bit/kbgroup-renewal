@@ -16,10 +16,11 @@ export const metadata: Metadata = {
 /* PLAN B / DAY 3 — 단지 데이터를 lib/content 어댑터로 읽어 하위 클라 컴포넌트에 주입한다.
    (CasesStats·CasesGallery·PastProjects 는 "use client" 라 어댑터를 직접 호출할 수 없다) */
 export default async function CasesPage() {
-  const [complexes, pastComplexes, stats] = await Promise.all([
+  const [complexes, pastComplexes, stats, contact] = await Promise.all([
     getComplexes(),
     getPastComplexes(),
     getSetting("stats"),
+    getSetting("contact"),
   ]);
 
   return (
@@ -45,7 +46,7 @@ export default async function CasesPage() {
       <CasesPhotoGallery />
       <CasesGallery complexes={complexes} pastComplexes={pastComplexes} />
       <PastProjects pastComplexes={pastComplexes} />
-      <ContactInvite context="우리 단지의 운영 상담을 시작해 보세요" />
+      <ContactInvite contact={contact} context="우리 단지의 운영 상담을 시작해 보세요" />
     </>
   );
 }
