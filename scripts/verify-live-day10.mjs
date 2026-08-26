@@ -119,15 +119,25 @@ try {
   const homeHidden = await text("/");
   check("⑦-2 헤더 메뉴에서 「인허가」 제외", !homeHidden.includes(">인허가<"), "");
 
-  const after = await sitemapCount();
-  if (after === before - 1) {
-    check("⑦-3 sitemap 즉시 반영 (191 → 190)", true, `${after} URL`);
-  } else {
-    check("⑦-3 sitemap 즉시 반영", false,
-      `${after} URL — 태그 전파가 Vercel 정적 캐시에 닿지 않음. 최대 1h 뒤 자동 갱신 (docs/DEPLOY.md §3-3)`);
-  }
+  /* 두 방향을 모두 실측한다. 한 방향만 보고 PASS 처리하면 안 된다 —
+     1회차(2026-08-26)에서 sitemap 이 애초에 내려가지 않아 「복귀 PASS」가 무의미했다. */
+  const t1 = Date.now();
+  const dropped = await until(async () => {
+    const n = await sitemapCount();
+    return n === before - 1 ? n : null;
+  }, 90_000);
+  const afterHide = dropped ?? (await sitemapCount());
+  check(
+    `⑦-3 비공개 → sitemap ${before} → ${before - 1} (즉시)`,
+    afterHide === before - 1,
+    afterHide === before - 1
+      ? `${afterHide} URL · ${Math.round((Date.now() - t1) / 1000)}초`
+      : `${afterHide} URL — 태그·경로 무효화가 Vercel 정적 캐시에 닿지 않음 (docs/DEPLOY.md §3-3)`,
+  );
+  const hiddenXml = await text("/sitemap.xml");
+  check("⑦-3b sitemap 에서 /licenses 항목 소멸", !hiddenXml.includes("/licenses<"), "");
 
-  // 원복
+  // 원복 — 반대 방향도 같은 기준으로 실측한다.
   await page.goto(`${BASE}/admin/content/pages`, { waitUntil: "domcontentloaded" });
   await page.locator("li[id^='page-']").filter({ hasText: "인허가" }).first()
     .getByRole("button", { name: "비공개" }).click();
@@ -135,8 +145,24 @@ try {
   const back200 = await until(async () => ((await status("/licenses")) === 200 ? true : null), 60_000);
   check("⑦-4 공개 원복 → /licenses 200", back200 === true);
   restore.licensesHidden = back200 !== true;
-  const backCount = await until(async () => ((await sitemapCount()) === 191 ? true : null), 60_000);
-  check("⑦-5 sitemap 191 복귀", backCount === true, `${await sitemapCount()} URL`);
+
+  const t2 = Date.now();
+  const restored = await until(async () => {
+    const n = await sitemapCount();
+    return n === before ? n : null;
+  }, 90_000);
+  const afterShow = restored ?? (await sitemapCount());
+  check(
+    `⑦-5 공개 원복 → sitemap ${before - 1} → ${before} (즉시)`,
+    afterShow === before && afterHide === before - 1,
+    afterShow === before
+      ? (afterHide === before - 1
+          ? `${afterShow} URL · ${Math.round((Date.now() - t2) / 1000)}초`
+          : `${afterShow} URL — 다만 내려간 적이 없어 이 항목만으로는 판정 불가`)
+      : `${afterShow} URL`,
+  );
+  const shownXml = await text("/sitemap.xml");
+  check("⑦-5b sitemap 에 /licenses 항목 복귀", shownXml.includes("/licenses<"), "");
 
   /* ── ⑤ 편집 → 반영 1건 실측 (팩스 번호 왕복) ───────────────────────── */
   console.log("\n─── ⑤ 편집 → 반영 실측 ───");
