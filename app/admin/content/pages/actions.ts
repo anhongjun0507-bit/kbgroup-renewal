@@ -16,11 +16,16 @@ import { findPublicPage } from "@/lib/pages/registry";
  *
  * 무효화는 두 갈래다.
  *  · `updateTag("content:pages")` — 메뉴(Header/Footer)와 게이트가 보는 데이터 캐시.
- *    라이브에서 페이지 404 와 메뉴 제외가 **1초** 만에 걸리는 것을 실측했다.
- *  · `revalidatePath("/sitemap.xml")` — **정적 라우트 캐시.** 태그 무효화가 여기까지는
- *    전파되지 않는다. 로컬 `next start` 에서는 전파돼서 DAY 8 에 놓쳤고, 2026-08-26
- *    프로덕션 실측에서 드러났다(PROGRESS §21-3). 「로컬에서 됐다」는 프로덕션 검증이 아니다.
+ *    **동작한다.** 라이브에서 페이지 404 와 메뉴 제외가 **1초** 만에 걸리는 것을 실측했다.
+ *  · `revalidatePath("/sitemap.xml")` — 정적 라우트(`/sitemap.xml`, revalidate 1h)를 노린 것.
+ *    **프로덕션에서는 효과가 없었다.** 이 줄을 넣고 재배포한 뒤에도 sitemap 은 191 그대로였다
+ *    (2026-08-26 · `dpl_7tLisAFT1m6rt2AghkMTBov8CbCw` 실측, PROGRESS §22).
+ *    로컬 `next start` 에서는 `updateTag` 만으로도 전파됐다 — §11-5 가 경고한 로컬↔프로덕션 차이다.
+ *    **줄은 남겨 둔다.** 의도가 옳고 부작용이 없으며, Next/Vercel 쪽이 바뀌면 그때 동작한다.
  *    경로 **1개**만 지정한다 — `revalidatePath("/", "layout")` 광역 무효화는 쓰지 않는다(E-12).
+ *
+ * 남은 영향: 페이지를 비공개로 돌려도 sitemap 에는 최대 1시간 그 URL 이 남는다.
+ * 해당 URL 로 들어오면 **404 는 즉시** 걸리므로 실피해는 검색엔진이 잠시 죽은 링크를 보는 정도다.
  *
  * sitemap 에 영향을 주는 Server Action 은 이것 하나뿐이라 다른 액션에는 넣지 않는다.
  */

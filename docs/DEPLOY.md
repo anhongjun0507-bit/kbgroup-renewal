@@ -195,25 +195,32 @@ curl -s https://kbgroup-renewal.vercel.app/sitemap.xml | grep -c "<loc>"
 curl -s https://kbgroup-renewal.vercel.app/sitemap.xml | grep -c "cases/" # → 153
 ```
 
-### 3-3. `updateTag` 즉시 반영 (⑦) — **2026-08-26 판정 완료: sitemap 은 즉시 반영되지 않는다**
+### 3-3. 페이지 공개·비공개 반영 (⑦) — **판정 완료 · 알려진 동작**
 
-> **실측 결과** — 페이지 비공개 시 **404 는 1초 만에**, 헤더·푸터 메뉴 제외도 **즉시** 걸린다.
-> 그러나 **`/sitemap.xml` 은 191 그대로였다.** `updateTag("content:pages")` 가 Vercel 의
-> 정적 라우트 캐시(`revalidate 1h`)까지는 전파되지 않는다. 로컬 `next start` 에서는 전파됐다 —
-> §11-5 가 경고한 로컬↔프로덕션 차이의 실례다.
+> **결론 (2026-08-26 · 두 차례 배포에서 실측)**
 >
-> **실피해는 낮다** — 죽은 링크가 최대 1시간 sitemap 에 남을 뿐, 그 URL 로 들어와도 404 는 즉시 걸린다.
-> 고치려면 `togglePagePublished` 에 `revalidatePath("/sitemap.xml")` 1줄을 더하고 **재배포 후 라이브에서** 재확인한다.
+> | 반영 대상 | 프로덕션 실측 |
+> |---|---|
+> | 방문자에게 **404** | **즉시 (1초)** |
+> | 헤더·푸터 **메뉴에서 제외** | **즉시** |
+> | **`/sitemap.xml` 에서 제외** | **최대 1시간 지연** |
+>
+> `updateTag("content:pages")` 는 앞의 두 가지에 즉시 걸리지만 정적 라우트
+> `/sitemap.xml`(`revalidate 1h`)에는 닿지 않는다. **`revalidatePath("/sitemap.xml")` 를 더해
+> 재배포해도 마찬가지였다**(PROGRESS §22). 로컬 `next start` 에서는 `updateTag` 만으로 전파된다 —
+> 「로컬에서 됐다」가 프로덕션 검증이 아니라는 §11-5 의 실례다.
+>
+> **실피해는 낮다** — 죽은 링크가 최대 1시간 sitemap 에 남을 뿐이고, 그 URL 로 들어와도 404 는 즉시 걸린다.
+> **결함이 아니라 알려진 동작으로 문서화한다.** 광역 무효화(`revalidatePath("/", "layout")`)로
+> 밀어붙이지 않는다 — 전 라우트 재검증은 Hobby 플랜 함수 실행량을 감당할 수 없다(E-12).
 
-아래는 재확인 절차다.
+아래는 재확인 절차다. **③ 에서 sitemap 이 191 그대로인 것은 위 표대로의 정상 동작이다.**
 
 1. `curl -s $BASE/sitemap.xml | grep -c "<loc>"` → **191** 기록
 2. `/admin/content/pages` → 「인허가」 를 **비공개**로 토글
 3. 즉시 (1분 이내) 다시 `curl -s $BASE/sitemap.xml | grep -c "<loc>"`
-   - **190 이면 통과** — 태그 무효화가 Vercel 에서도 사이트맵까지 전파된다.
-   - **191 그대로면** 태그 전파가 Vercel 의 정적 라우트 캐시에는 닿지 않는 것이다.
-     사이트 동작에는 문제가 없다(비공개 페이지는 즉시 404 가 되고 메뉴에서도 빠진다).
-     **최대 1시간 뒤 자동 갱신**된다. 이 경우 보고만 하면 된다.
+   - **191 그대로가 현재의 정상값이다**(위 표). 최대 1시간 뒤 자동 갱신된다.
+   - 190 으로 내려간다면 Next/Vercel 쪽 동작이 개선된 것이다 — PROGRESS §22 를 갱신한다.
 4. `curl -s -o /dev/null -w "%{http_code}" $BASE/licenses` → **404** 확인
 5. `/admin/content/pages` 에서 「인허가」 를 다시 **공개**로 되돌리고,
    `$BASE/licenses` 가 **200**, sitemap 이 **191** 로 복귀하는지 확인
