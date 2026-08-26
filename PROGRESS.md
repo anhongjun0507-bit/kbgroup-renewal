@@ -8,12 +8,13 @@
 
 ## 0. 현재 상태 한 줄
 
-STEP 2 / **DAY 9 + DAY 10 완료 — 프로덕션 배포 직전에서 정지**. ITEM 04(채용 공고 마감 자동 제외 ·
-게시판 카테고리 · 공지 상단 고정)와 `content_revisions` **복구 UI** 를 붙였고, 회귀 전수 검증과
-인수 문서 3종(`docs/DEPLOY.md` · `docs/ADMIN_MANUAL.md` · `docs/DELIVERY.md`)을 냈다.
-회귀: **SSR 가시 텍스트 20경로 diff 0줄** · 스크린샷 28장 **크기 불일치 0** · 라우트 표 56→58(관리자 2개만) ·
-어댑터 3모드 + 킬스위치 전체 렌더 diff 0 · 시드 딥 비교 0건 · slug 172/172 · DAY 9 실동작 **37항목 전부 통과**.
-**배포(`vercel --prod`)는 사용자가 직접 실행한다** — 절차는 `docs/DEPLOY.md`.
+**프로덕션 배포 완료 (2026-08-26 01:48 UTC · `dpl_2JExy4eqHarqjG8ANXjeg5fseisY`).**
+PLAN B 전 작업(ITEM 01~04 + 복구 UI)이 라이브에 올라갔다 — 직전 프로덕션 배포는 2026-07-29 였으므로
+이번이 **PLAN B 최초 배포**다. `kbgroup.kr` · `www.kbgroup.kr` · `kbgroup-renewal.vercel.app` 전부 신규 배포를 가리킨다.
+라이브 검증: **SSR 가시 텍스트 20경로 diff 0줄**(로컬 기준선 대조) · 관리자 탭 11개 · sitemap 191 ·
+단지 153/19 · 채용 3건 · 히어로 8슬라이드 · 편집→반영 왕복 통과.
+**미해결 1건 — `updateTag` 가 Vercel 의 정적 sitemap 캐시까지 전파되지 않는다**(§21-3). 페이지 404·메뉴 제외는
+즉시(1초) 동작하고 sitemap 만 최대 1시간 지연된다. 조치 여부 결정 대기.
 
 ## 1. 계약 범위 — 4개 영역 (견적서 원문)
 
@@ -539,7 +540,12 @@ images: {
 > **읽는 순서: §11 → §7 → 해당 DAY 절.** 이 절이 §12·§13·§14·§15(DAY 실행 결과)보다 먼저다.
 > 여기 적힌 전제를 모르면 "배포됐겠지" 라고 착각한 채 라이브를 검증하는 사고가 난다.
 
-### 11-1. 배포 주체와 시점 — **에이전트는 배포하지 않는다**
+### 11-1. 배포 주체와 시점 — ~~에이전트는 배포하지 않는다~~ **(2026-08-26 해제)**
+
+> **2026-08-26 갱신** — 사용자가 「배포하자」로 직접 지시해 에이전트가 배포를 실행했다(§21).
+> 아래 표는 DAY 5~9 기간의 전제였고 지금은 이력이다. `vercel --prod --yes --token=$VERCEL_TOKEN` 은
+> 정상 동작했다(`--yes` 로 링크 프롬프트 회피, `VERCEL_ORG_ID`/`VERCEL_PROJECT_ID` 주입).
+> 다만 **`vercel whoami --token=...` 은 여전히 무응답**이다 — 토큰 확인은 REST API(`/v2/user`)로 한다.
 
 | 항목 | 확정 |
 |------|------|
@@ -2206,9 +2212,94 @@ DAY 8 `day8-after` ↔ DAY 9 `day9-after`. **28장 전부 크기(높이) 동일 
 6. **메뉴·페이지 신규 생성 없음** · **게시판 추가·삭제 없음** — 둘 다 스키마·계약 문구상 범위 밖.
 7. **낙관적 잠금 미적용 범위** — 채용 공고·게시판 글(§19-6-4).
 
-### 20-4. 남은 일 (사용자 몫)
+### 20-4. 남은 일 → **§21 에서 실행 완료**
 
-1. `docs/DEPLOY.md` §1 배포 전 확인
-2. `npx vercel --prod --token=$VERCEL_TOKEN`
-3. `docs/DEPLOY.md` §3 체크리스트 8항목 — 특히 **§3-3 `updateTag` 즉시 반영**은
-   프로덕션에서 처음 확인하는 항목이다. 결과를 알려주면 §11-5 잔여 항목을 종결한다.
+DAY 10 작성 시점의 「사용자 몫」 목록이었다. 사용자가 「배포하자」로 지시해 §21 에서 전부 실행했다.
+
+---
+
+## 21. 프로덕션 배포 실행 결과 (2026-08-26)
+
+> 사용자 지시 「배포하자」로 §11-1 의 「에이전트는 배포하지 않는다」 전제를 해제하고 실행했다.
+> 절차는 `docs/DEPLOY.md` 그대로.
+
+### 21-1. 배포 전 확인
+
+| 항목 | 결과 |
+|------|------|
+| `.env.local` 4키 | `NEXT_PUBLIC_SUPABASE_URL`·`ANON_KEY`·`SERVICE_ROLE_KEY`·`VERCEL_TOKEN` 전부 설정됨 |
+| Vercel 토큰 | 정상 — 계정 `kbgrouppage@gmail.com` · 프로젝트 `kbgroup-renewal`(`prj_HyNoITAULkq9CHo786lNrCyCnf5m`) |
+| Vercel 프로덕션 환경변수 | `NEXT_PUBLIC_SUPABASE_URL`·`NEXT_PUBLIC_SUPABASE_ANON_KEY` 존재. `CONTENT_SOURCE` **없음(= DB 모드, 정상)** |
+| 마이그레이션 8개 표 | complexes **172** · site_settings **20** · page_sections **63** · nav_items **18** · pages **14** · content_revisions **57** · job_openings **3** · posts **16** — `❌` 0건 |
+| `npm run build` | EXIT **0** · 라우트 **58** · `/sitemap.xml` **`○ Static · 1h`** 유지 |
+
+> **`vercel whoami --token=...` 은 60초 무응답이었다** (§11-1 에 기록된 증상 재현).
+> 토큰 유효성은 REST API `GET /v2/user` 로 확인했다. **배포 명령 자체는 정상 동작했다.**
+
+### 21-2. 배포
+
+```bash
+VERCEL_ORG_ID=team_qQiFcX8SpZdXDEQ7V1Tq9L0t \
+VERCEL_PROJECT_ID=prj_HyNoITAULkq9CHo786lNrCyCnf5m \
+npx vercel --prod --yes --token=$VERCEL_TOKEN
+```
+
+`--yes` 와 ORG/PROJECT ID 주입이 링크 프롬프트를 건너뛰는 핵심이다(미링크 저장소였다).
+
+| 항목 | 값 |
+|------|-----|
+| 배포 ID | `dpl_2JExy4eqHarqjG8ANXjeg5fseisY` |
+| 상태 | **READY** · target **production** |
+| 시각 | 2026-08-26 01:48:30 UTC |
+| 직전 프로덕션 배포 | `dpl_7HQ3PtXhbnjhP9WxphNEiNgj1Ayz` (2026-07-29) — **PLAN B 최초 배포**다 |
+| 별칭 | `kbgroup.kr` · `www.kbgroup.kr` · `kbgroup-renewal.vercel.app` **전부 신규 배포를 가리킴** |
+
+### 21-3. 라이브 검증 (`scripts/verify-live-day10.mjs`)
+
+**SSR 가시 텍스트 20경로 — 라이브 ↔ 로컬 기준선(`day9-after`) diff 0줄.**
+배포 전 라이브는 파일 기반, 배포 후는 DB 기반이다. **소스가 바뀌었는데 렌더가 한 글자도 다르지 않다** —
+어댑터 전환이 화면에 영향을 주지 않았다는 가장 강한 증거다.
+
+| # | 체크리스트 항목 | 결과 |
+|---|------|------|
+| ① | 메인 카운터 200+ 표기 | PASS |
+| ② | 히어로 8슬라이드 | PASS — 라이브 HTML 에 `slide-01~08.png` + `video-01~05.mp4`. DB `heroSlides` **8** |
+| ③ | 관리현황 153 + 19 | PASS |
+| ④ | 관리자 로그인 · 탭 11개 | PASS — 신규 화면 `/admin/content/boards`·`/revisions` 둘 다 200 |
+| ⑤ | 편집 → 반영 1건 | PASS — 팩스 `…3070 → …3079` 반영 확인 후 **원복 확인** |
+| ⑥ | sitemap 191 URL · 활성 단지 153 · 과거 누출 0 | PASS |
+| ⑦ | `updateTag` 즉시 반영 | **부분 실패 — 아래 참조** |
+| ⑧ | 채용 공고 3건 | PASS |
+
+**⑦ 판정 — §11-5 잔여 항목 결론이 났다. 「로컬에서 됐다」는 프로덕션 검증이 아니었다.**
+
+| 하위 항목 | 라이브 결과 | 로컬 결과(§18-4) |
+|---|---|---|
+| 비공개 → `/licenses` **404** | **PASS · 1초** | PASS |
+| 헤더·푸터 메뉴에서 제외 | **PASS** | PASS |
+| sitemap 191 → 190 | **FAIL — 191 그대로** | PASS (즉시 190) |
+| 공개 원복 → 200 | PASS | PASS |
+
+즉 **`updateTag("content:pages")` 는 Vercel 의 정적 라우트 캐시(`/sitemap.xml`, `revalidate 1h`)까지
+전파되지 않는다.** 로컬 `next start` 에서는 전파됐다 — 정확히 §11-5 가 경고한 종류의 차이다.
+
+- **영향** — 페이지를 비공개로 돌린 뒤 최대 1시간 동안 sitemap 에 해당 URL 이 남는다.
+  방문자·검색봇이 그 URL 로 들어와도 **404 는 즉시 걸린다.** 실피해는 「검색엔진이 잠시 죽은 링크를 본다」 수준이다.
+- **원복 확인 주의** — 「⑦-5 sitemap 191 복귀 PASS」는 **의미가 약하다.** 애초에 190 으로 내려간 적이
+  없으므로 191 유지를 확인한 것에 가깝다. 최종 상태가 옳다는 것만 보장한다.
+- **1시간 뒤 자동 갱신은 실측하지 않았다.** 확인하려면 `/licenses` 를 1시간 내려 둬야 해서 하지 않았다.
+
+**조치 후보 (결정 대기)** — `app/admin/content/pages/actions.ts` 의 `togglePagePublished` 에
+`revalidatePath("/sitemap.xml")` 1줄 추가. 광역 무효화가 아니라 경로 1개 지정이라 E-12 원칙에 어긋나지 않는다.
+**단, 효과는 재배포 후 라이브에서만 검증할 수 있다** — 이번 건과 똑같은 이유로 로컬 통과는 근거가 못 된다.
+
+### 21-4. 프로덕션 DB 쓰기 — 전부 원복
+
+라이브 검증이 프로덕션 DB(같은 Supabase 프로젝트)에 실제로 썼다.
+
+| 쓰기 | 원복 |
+|------|------|
+| `/licenses` 비공개 → 공개 | 확인 (`pages` 비공개 잔존 **0건**) |
+| `contact.fax` 끝자리 변경 | 확인 (`062-974-3070` 복귀, DB·`/contact` 양쪽 대조) |
+
+스크립트가 중간에 죽어도 `finally` 에서 DB 직접 원복을 걸어 뒀다.

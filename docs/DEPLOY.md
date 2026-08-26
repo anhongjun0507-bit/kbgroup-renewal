@@ -2,8 +2,9 @@
 
 > 대상: `kbgroup-renewal` (Next.js 16.2.6 · Supabase · Vercel)
 > 이 문서만 보고 순서대로 실행하면 된다. 작성 기준일 2026-08-26 (PLAN B / DAY 10).
-> **배포는 사람이 실행한다.** 이 저장소는 Vercel Git 연동이 아니라 CLI 수동 배포다 —
-> `git push` 로는 어떤 배포도 일어나지 않는다.
+> 이 저장소는 Vercel Git 연동이 아니라 **CLI 수동 배포**다 — `git push` 로는 어떤 배포도 일어나지 않는다.
+>
+> **2026-08-26 최초 배포 완료** (`dpl_2JExy4eqHarqjG8ANXjeg5fseisY`). 실행하며 드러난 사실을 §2·§3-3 에 반영했다.
 
 ---
 
@@ -94,8 +95,8 @@ const sb=createClient(env.NEXT_PUBLIC_SUPABASE_URL,env.SUPABASE_SERVICE_ROLE_KEY
 }})();'
 ```
 
-기대값: `complexes 172행` · `site_settings 19행` · `page_sections`(0 이상) ·
-`nav_items 18행` · `pages 14행` · `content_revisions`(0 이상).
+기대값: `complexes 172행` · `site_settings 20행`(파일 원본 19키 + 게시판 오버레이 1) ·
+`page_sections 63행` · `nav_items 18행` · `pages 14행` · `content_revisions`(0 이상).
 **하나라도 `❌` 가 나오면 배포하지 말고 중단한다.**
 
 ### 1-4. 최종 빌드
@@ -118,19 +119,31 @@ echo "EXIT=$?"
 
 ## 2. 배포 실행
 
+이 저장소에는 `.vercel/` 링크 파일이 없다. **대화형 프롬프트로 멈추지 않도록 ID 를 주입하고 `--yes` 를 붙인다.**
+
 ```bash
 cd /home/dev/kbgroup-renewal
-npx vercel --prod --token=$VERCEL_TOKEN
+export VERCEL_TOKEN=$(grep '^VERCEL_TOKEN=' .env.local | cut -d= -f2-)
+export VERCEL_ORG_ID=team_qQiFcX8SpZdXDEQ7V1Tq9L0t
+export VERCEL_PROJECT_ID=prj_HyNoITAULkq9CHo786lNrCyCnf5m
+npx vercel --prod --yes --token=$VERCEL_TOKEN
 ```
 
-- 첫 실행이면 프로젝트 연결(link)을 물어본다. 기존 `kbgroup-renewal` 프로젝트를 고른다.
-- 4~6분 뒤 배포 URL 이 출력된다. 프로덕션 도메인은 `https://kbgroup-renewal.vercel.app`
-  (커스텀 도메인 `https://kbgroup.kr`).
-
-배포 이력 확인:
+- 4~6분 뒤 `readyState: READY` 와 배포 URL 이 출력된다. 프로덕션 도메인은
+  `https://kbgroup-renewal.vercel.app` (커스텀 도메인 `https://kbgroup.kr` · `www.kbgroup.kr`).
+- **`vercel whoami --token=...` 은 쓰지 마라.** 이 환경에서 무응답으로 멈춘다(60초 타임아웃 실측).
+  토큰 확인이 필요하면 REST API 를 쓴다:
 
 ```bash
-npx vercel ls --token=$VERCEL_TOKEN | head
+curl -s -H "Authorization: Bearer $VERCEL_TOKEN" https://api.vercel.com/v2/user | head -c 200
+```
+
+배포 이력 · 별칭이 신규 배포를 가리키는지 확인:
+
+```bash
+curl -s -H "Authorization: Bearer $VERCEL_TOKEN" \
+  "https://api.vercel.com/v4/aliases?projectId=$VERCEL_PROJECT_ID&limit=10" \
+  | python3 -c "import sys,json; [print(a['alias'],'->',a.get('deploymentId')) for a in json.load(sys.stdin).get('aliases',[])]"
 ```
 
 ---
@@ -182,10 +195,17 @@ curl -s https://kbgroup-renewal.vercel.app/sitemap.xml | grep -c "<loc>"
 curl -s https://kbgroup-renewal.vercel.app/sitemap.xml | grep -c "cases/" # → 153
 ```
 
-### 3-3. `updateTag` 즉시 반영 — **프로덕션에서 처음 확인하는 항목** (⑦)
+### 3-3. `updateTag` 즉시 반영 (⑦) — **2026-08-26 판정 완료: sitemap 은 즉시 반영되지 않는다**
 
-로컬 프로덕션 빌드에서는 통과했지만 **Vercel 에서 같은지 아직 확인되지 않았다**
-(PROGRESS §11-5 · §18-8-7). 배포 후 반드시 이 순서로 실측한다.
+> **실측 결과** — 페이지 비공개 시 **404 는 1초 만에**, 헤더·푸터 메뉴 제외도 **즉시** 걸린다.
+> 그러나 **`/sitemap.xml` 은 191 그대로였다.** `updateTag("content:pages")` 가 Vercel 의
+> 정적 라우트 캐시(`revalidate 1h`)까지는 전파되지 않는다. 로컬 `next start` 에서는 전파됐다 —
+> §11-5 가 경고한 로컬↔프로덕션 차이의 실례다.
+>
+> **실피해는 낮다** — 죽은 링크가 최대 1시간 sitemap 에 남을 뿐, 그 URL 로 들어와도 404 는 즉시 걸린다.
+> 고치려면 `togglePagePublished` 에 `revalidatePath("/sitemap.xml")` 1줄을 더하고 **재배포 후 라이브에서** 재확인한다.
+
+아래는 재확인 절차다.
 
 1. `curl -s $BASE/sitemap.xml | grep -c "<loc>"` → **191** 기록
 2. `/admin/content/pages` → 「인허가」 를 **비공개**로 토글
