@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { PostDetailView } from "@/components/sections/notices/PostDetailView";
 import { getViewer } from "@/lib/auth";
-import { getBoardConfig } from "@/lib/boards";
+import { getBoardConfigWithOverride } from "@/lib/board-categories";
 import { getPost, getAttachments, getAdjacentPosts } from "@/lib/posts";
 
 type Params = { id: string };
@@ -31,7 +31,7 @@ export default async function NewsDetailPage({
   params: Promise<Params>;
 }) {
   const { id } = await params;
-  const config = getBoardConfig("news");
+  const config = await getBoardConfigWithOverride("news");
 
   const post = await getPost("news", id);
   if (!post) notFound();

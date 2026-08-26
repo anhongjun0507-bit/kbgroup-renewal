@@ -12,6 +12,7 @@ export const CONTENT_TAGS = {
   sections: "content:sections",
   nav: "content:nav",
   pages: "content:pages",
+  boards: "content:boards",
 } as const;
 
 export type ContentTag = (typeof CONTENT_TAGS)[keyof typeof CONTENT_TAGS];

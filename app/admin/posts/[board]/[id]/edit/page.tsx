@@ -6,7 +6,8 @@ import { AdminTabs } from "@/components/admin/AdminTabs";
 import { PostForm } from "@/components/admin/PostForm";
 import { AttachmentManager } from "@/components/admin/AttachmentManager";
 import { requireAdmin } from "@/lib/auth";
-import { isBoardType, getBoardConfig } from "@/lib/boards";
+import { isBoardType } from "@/lib/boards";
+import { getBoardConfigWithOverride } from "@/lib/board-categories";
 import { getPost, getAttachments } from "@/lib/posts";
 
 type Params = { board: string; id: string };
@@ -25,7 +26,7 @@ export default async function EditPostPage({
 }) {
   const { board, id } = await params;
   if (!isBoardType(board)) notFound();
-  const config = getBoardConfig(board);
+  const config = await getBoardConfigWithOverride(board);
 
   await requireAdmin(`/admin/posts/${board}/${id}/edit`);
 

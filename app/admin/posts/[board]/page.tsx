@@ -7,11 +7,11 @@ import { ConfirmButton } from "@/components/admin/ConfirmButton";
 import { requireAdmin } from "@/lib/auth";
 import {
   isBoardType,
-  getBoardConfig,
   adminNewPath,
   adminEditPath,
   postDetailPath,
 } from "@/lib/boards";
+import { getBoardConfigWithOverride } from "@/lib/board-categories";
 import { listPosts, getAttachmentsForPosts } from "@/lib/posts";
 import { deletePost, togglePin } from "../actions";
 
@@ -45,7 +45,7 @@ export default async function AdminBoardPage({
 }) {
   const { board } = await params;
   if (!isBoardType(board)) notFound();
-  const config = getBoardConfig(board);
+  const config = await getBoardConfigWithOverride(board);
 
   await requireAdmin(`/admin/posts/${board}`);
 

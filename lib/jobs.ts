@@ -51,3 +51,23 @@ export function deadlineBadge(
 export function formatDate(iso: string): string {
   return iso.replace(/-/g, ".");
 }
+
+/**
+ * 마감일이 지났는가 (PLAN B / DAY 9, ITEM 04).
+ *
+ * `deadlineBadge` 의 "closed" 판정과 같은 기준(마감일 23:59:59 KST 포함)을 쓴다.
+ * 공개 목록에서 자동으로 빼는 조건이라 두 곳의 기준이 갈리면 안 된다.
+ */
+export function isDeadlinePassed(
+  deadline: string | null,
+  now: Date = new Date(),
+): boolean {
+  return deadlineBadge(deadline, now).tone === "closed";
+}
+
+/** 오늘 날짜(KST) `YYYY-MM-DD`. `deadline` 이 date 타입이라 날짜 단위로 비교한다. */
+export function todayKst(now: Date = new Date()): string {
+  return new Date(now.getTime() + 9 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+}

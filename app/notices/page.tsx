@@ -4,7 +4,10 @@ import { PageHero } from "@/components/sections/common/PageHero";
 import { Container } from "@/components/ui";
 import { PostListSection } from "@/components/sections/notices/PostListSection";
 import { getViewer } from "@/lib/auth";
-import { getBoardConfig } from "@/lib/boards";
+import {
+  getBoardConfigWithOverride,
+  getBoardSubtitleOverride,
+} from "@/lib/board-categories";
 import { listPosts } from "@/lib/posts";
 import { UnpublishedNotice } from "@/components/layout/UnpublishedNotice";
 import { requirePublished } from "@/lib/pages/gate";
@@ -27,7 +30,9 @@ export default async function NoticesPage({
   /* 비공개면 404(리다이렉트 아님). 관리자면 미리보기 + 배너 (PLAN B / DAY 8). */
   const { preview } = await requirePublished("/notices");
 
-  const config = getBoardConfig("notice");
+  /* 게시판 이름·설명은 관리자 「게시판 카테고리」 오버레이를 얹어 읽는다 (DAY 9, ITEM 04). */
+  const config = await getBoardConfigWithOverride("notice");
+  const subtitleOverride = await getBoardSubtitleOverride("notice");
   const { page: rawPage, q: rawQ } = await searchParams;
   const q = (rawQ ?? "").trim();
   const page = Math.max(1, Number.parseInt(rawPage ?? "1", 10) || 1);
@@ -41,9 +46,9 @@ export default async function NoticesPage({
       {preview && <UnpublishedNotice path="/notices" />}
       <PageHero
         kicker="NOTICES"
-        title="공지사항"
+        title={config.label}
         italicWord="공지"
-        subtitle="(주)케이비개발의 공지·소식을 확인하세요."
+        subtitle={subtitleOverride ?? "(주)케이비개발의 공지·소식을 확인하세요."}
         bgImage="/images/hero/pages/notices.png"
         breadcrumb={[{ label: "HOME", href: "/" }, { label: "NOTICES" }]}
       />

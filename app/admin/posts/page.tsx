@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Container } from "@/components/ui";
 import { AdminTabs } from "@/components/admin/AdminTabs";
 import { requireAdmin } from "@/lib/auth";
-import { BOARD_ORDER, getBoardConfig, adminBoardPath } from "@/lib/boards";
+import { BOARD_ORDER, BOARD_CONFIGS, adminBoardPath } from "@/lib/boards";
+import { applyOverride, getBoardCategories } from "@/lib/board-categories";
 
 export const metadata: Metadata = {
   title: "관리자 · 소식 관리 | (주)케이비개발",
@@ -16,6 +17,8 @@ export default async function AdminPostsHubPage() {
   const { supabase } = await requireAdmin("/admin/posts");
 
   const types = BOARD_ORDER;
+  /* 관리자 화면에도 「게시판 카테고리」에서 바꾼 이름이 그대로 보여야 한다. */
+  const overrides = await getBoardCategories();
   const counts = await Promise.all(
     types.map((t) =>
       supabase
@@ -48,7 +51,7 @@ export default async function AdminPostsHubPage() {
 
         <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {types.map((t, i) => {
-            const config = getBoardConfig(t);
+            const config = applyOverride(BOARD_CONFIGS[t], overrides[t]);
             return (
               <li key={t}>
                 <Link

@@ -5,7 +5,7 @@ import { AdminTabs } from "@/components/admin/AdminTabs";
 import { ConfirmButton } from "@/components/admin/ConfirmButton";
 import { requireAdmin } from "@/lib/auth";
 import { getAllOpeningsForAdmin } from "@/lib/job-openings";
-import { deadlineBadge, formatDate } from "@/lib/jobs";
+import { deadlineBadge, formatDate, isDeadlinePassed } from "@/lib/jobs";
 import { deleteOpening, togglePublish } from "./actions";
 
 export const metadata: Metadata = {
@@ -19,6 +19,10 @@ export default async function AdminOpeningsPage() {
   await requireAdmin("/admin/openings");
   const openings = await getAllOpeningsForAdmin();
   const now = new Date();
+  /* 게시중 = 노출 ON 이면서 마감일이 지나지 않은 공고. 공개 목록과 판정 기준이 같다. */
+  const isLive = (o: (typeof openings)[number]) =>
+    o.isPublished && !isDeadlinePassed(o.deadline, now);
+  const liveCount = openings.filter(isLive).length;
 
   return (
     <section className="section min-h-[70vh] bg-bg-soft">
@@ -33,11 +37,17 @@ export default async function AdminOpeningsPage() {
             </h1>
             <p className="mt-3 text-[14px] text-ink-muted">
               총 <span className="font-semibold text-ink-strong">{openings.length}</span>
-              건 · 공개{" "}
-              <span className="font-semibold text-accent-deep">
-                {openings.filter((o) => o.isPublished).length}
+              건 · 게시중{" "}
+              <span className="font-semibold text-accent-deep">{liveCount}</span>
+              건 · 마감{" "}
+              <span className="font-semibold text-ink-strong">
+                {openings.length - liveCount}
               </span>
               건
+            </p>
+            <p className="mt-2 text-[13px] leading-[1.7] text-ink-faint">
+              마감일이 지난 공고는 채용 페이지에서 자동으로 빠지고 이 화면에는 그대로
+              남습니다. 「마감 처리」는 마감일과 무관하게 즉시 내리는 버튼입니다.
             </p>
           </div>
           <Link
@@ -64,6 +74,8 @@ export default async function AdminOpeningsPage() {
           <ul className="mt-8 space-y-4">
             {openings.map((o) => {
               const badge = deadlineBadge(o.deadline, now);
+              const expired = isDeadlinePassed(o.deadline, now);
+              const live = isLive(o);
               return (
                 <li
                   key={o.id}
@@ -73,15 +85,21 @@ export default async function AdminOpeningsPage() {
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <span
+                          data-status={live ? "live" : "closed"}
                           className={
                             "inline-flex items-center border px-2.5 py-1 text-[11px] font-bold " +
-                            (o.isPublished
+                            (live
                               ? "border-success/40 bg-success/10 text-success"
                               : "border-line bg-gray-100 text-ink-faint")
                           }
                         >
-                          {o.isPublished ? "공개" : "비공개"}
+                          {live ? "게시중" : "마감"}
                         </span>
+                        {!live && expired && o.isPublished && (
+                          <span className="inline-flex items-center border border-line bg-white px-2.5 py-1 text-[11px] font-bold text-ink-muted">
+                            기한 경과
+                          </span>
+                        )}
                         <span className="inline-flex items-center border border-navy-700 bg-navy-900 px-2.5 py-1 text-[11px] font-bold text-white">
                           {o.type}
                         </span>
@@ -95,6 +113,13 @@ export default async function AdminOpeningsPage() {
                       <p className="mt-1 text-[14px] text-ink-muted">
                         {o.location || "지역 미지정"}
                       </p>
+                      {expired && (
+                        <p className="mt-2 text-[13px] text-ink-faint">
+                          마감일({formatDate(o.deadline!)})이 지나 채용 페이지에서 빠져
+                          있습니다. 다시 노출하려면 「수정」에서 마감일을 바꾸거나 비워
+                          주세요.
+                        </p>
+                      )}
                     </div>
 
                     <div className="flex shrink-0 flex-wrap items-center gap-2">
@@ -110,7 +135,7 @@ export default async function AdminOpeningsPage() {
                           type="submit"
                           className="inline-flex h-9 items-center rounded-sm border border-line px-3 text-[12px] font-semibold text-ink-muted transition-colors hover:border-navy-700 hover:text-navy-700"
                         >
-                          {o.isPublished ? "비공개로" : "공개로"}
+                          {o.isPublished ? "마감 처리" : "다시 게시"}
                         </button>
                       </form>
                       <Link

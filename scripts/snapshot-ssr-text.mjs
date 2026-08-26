@@ -22,7 +22,9 @@ import { visibleLines, pathKey } from "./lib/visible-text.mjs";
 const BASE = process.env.BASE || "http://localhost:3210";
 const OUT_ROOT = path.resolve(process.cwd(), "docs/regression/ssr");
 
-/** DAY 7 전환 대상 11개 + 사업영역 상세 5슬러그 + 대조군 /notices. */
+/** DAY 7 전환 대상 11개 + 사업영역 상세 5슬러그 + /notices.
+ *  DAY 9 에 게시판 3경로와 /careers/openings 를 더했다 — 게시판 카테고리 오버레이와
+ *  채용 공고 마감 필터가 그 경로들의 렌더를 건드리기 때문이다. */
 export const PATHS = [
   "/",
   "/about",
@@ -40,6 +42,10 @@ export const PATHS = [
   "/careers",
   "/contact",
   "/notices",
+  "/notices/gallery",
+  "/notices/news",
+  "/notices/resources",
+  "/careers/openings",
 ];
 
 const [mode, ...rest] = process.argv.slice(2);

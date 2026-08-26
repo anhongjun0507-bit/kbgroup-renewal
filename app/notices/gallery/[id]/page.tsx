@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { PostDetailView } from "@/components/sections/notices/PostDetailView";
 import { getViewer } from "@/lib/auth";
-import { getBoardConfig } from "@/lib/boards";
+import { getBoardConfigWithOverride } from "@/lib/board-categories";
 import { getPost, getAttachments, getAdjacentPosts } from "@/lib/posts";
 
 type Params = { id: string };
@@ -30,7 +30,7 @@ export default async function GalleryDetailPage({
   params: Promise<Params>;
 }) {
   const { id } = await params;
-  const config = getBoardConfig("gallery");
+  const config = await getBoardConfigWithOverride("gallery");
 
   const post = await getPost("gallery", id);
   if (!post) notFound();

@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/supabase/database.types";
-import type { JobOpening } from "@/lib/jobs";
+import { todayKst, type JobOpening } from "@/lib/jobs";
 
 /**
  * 채용 공고 DB 조회 (서버 전용).
@@ -34,13 +34,21 @@ function mapRow(r: Row): JobOpening {
   };
 }
 
-/** 게시된 공고 (요청 단위 캐시 — layout 내비 + careers 섹션 중복 호출 dedup) */
+/**
+ * 게시된 공고 (요청 단위 캐시 — layout 내비 + careers 섹션 중복 호출 dedup).
+ *
+ * PLAN B / DAY 9 — **마감일이 지난 공고는 여기서 자동으로 빠진다.**
+ * 관리자가 따로 내리지 않아도 `/careers`·`/careers/openings` 에서 사라지고,
+ * 관리자 목록(`getAllOpeningsForAdmin`)에는 「마감」 상태로 그대로 남는다.
+ * `deadline` 이 null 이면 상시채용이라 만료 대상이 아니다.
+ */
 export const getPublishedOpenings = cache(async (): Promise<JobOpening[]> => {
   const supabase = await createClient();
   const { data } = await supabase
     .from("job_openings")
     .select("*")
     .eq("is_published", true)
+    .or(`deadline.is.null,deadline.gte.${todayKst()}`)
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
   return (data ?? []).map(mapRow);

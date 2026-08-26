@@ -5,7 +5,7 @@ import {
   type ResourceItem,
 } from "@/components/sections/notices/ResourceListSection";
 import { getViewer } from "@/lib/auth";
-import { getBoardConfig } from "@/lib/boards";
+import { getBoardConfigWithOverride } from "@/lib/board-categories";
 import { listPosts, getAttachmentsForPosts } from "@/lib/posts";
 
 export const metadata: Metadata = {
@@ -22,7 +22,7 @@ export default async function ResourcesPage({
 }: {
   searchParams: Promise<{ page?: string; q?: string }>;
 }) {
-  const config = getBoardConfig("resources");
+  const config = await getBoardConfigWithOverride("resources");
   const { page: rawPage, q: rawQ } = await searchParams;
   const q = (rawQ ?? "").trim();
   const page = Math.max(1, Number.parseInt(rawPage ?? "1", 10) || 1);
@@ -44,9 +44,9 @@ export default async function ResourcesPage({
     <>
       <PageHero
         kicker="RESOURCES"
-        title="자료실"
+        title={config.label}
         italicWord="자료실"
-        subtitle="회사소개서·홍보물 등 자료를 제공해드립니다."
+        subtitle={config.subtitle}
         breadcrumb={[
           { label: "HOME", href: "/" },
           { label: "NOTICES", href: "/notices" },

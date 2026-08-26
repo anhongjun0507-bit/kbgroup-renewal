@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { PostListSection } from "@/components/sections/notices/PostListSection";
 import { getViewer } from "@/lib/auth";
-import { getBoardConfig } from "@/lib/boards";
+import { getBoardConfigWithOverride } from "@/lib/board-categories";
 import { listPosts } from "@/lib/posts";
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default async function NewsPage({
 }: {
   searchParams: Promise<{ page?: string; q?: string }>;
 }) {
-  const config = getBoardConfig("news");
+  const config = await getBoardConfigWithOverride("news");
   const { page: rawPage, q: rawQ } = await searchParams;
   const q = (rawQ ?? "").trim();
   const page = Math.max(1, Number.parseInt(rawPage ?? "1", 10) || 1);
@@ -32,9 +32,9 @@ export default async function NewsPage({
     <>
       <PageHero
         kicker="DISTRICT NEWS"
-        title="단지소식"
+        title={config.label}
         italicWord="단지"
-        subtitle="관리 단지의 운영 소식과 입주민 안내를 전달드립니다."
+        subtitle={config.subtitle}
         breadcrumb={[
           { label: "HOME", href: "/" },
           { label: "NOTICES", href: "/notices" },

@@ -117,6 +117,15 @@ function deepDiff(src: unknown, got: unknown, path = "$"): string[] {
   });
 }
 
+/**
+ * `data/site-content.ts` 에 원본이 없는 오버레이 전용 키 (PLAN B / DAY 9).
+ *
+ * `boardCategories` 는 코드(`lib/boards.ts`)가 원본이고 DB 는 관리자가 바꾼 값만 얹는다.
+ * 시드 대상이 아니므로 "원본에 없는 키" 로 잡히면 안 된다.
+ * 같은 원칙의 `nav_items`·`pages`·`page_sections` 는 아예 다른 테이블이라 이 비교에 안 들어온다.
+ */
+const OVERLAY_ONLY_KEYS = new Set(["boardCategories"]);
+
 /** undefined 를 떨어뜨려 DB(JSONB) 왕복 후 형태와 맞춘다. */
 function jsonNormalize<T>(v: T): unknown {
   return JSON.parse(JSON.stringify(v));
@@ -297,6 +306,7 @@ async function verify(): Promise<Problem[]> {
     problems.push(...deepDiff(jsonNormalize(s.value), byKey.get(s.key), `settings.${s.key}`));
   }
   for (const k of byKey.keys()) {
+    if (OVERLAY_ONLY_KEYS.has(k)) continue;
     if (!settings.some((s) => s.key === k)) problems.push(`원본에 없는 site_settings 키가 DB 에 있음: ${k}`);
   }
 

@@ -5,7 +5,7 @@ import {
   type GalleryItem,
 } from "@/components/sections/notices/GalleryGridSection";
 import { getViewer } from "@/lib/auth";
-import { getBoardConfig } from "@/lib/boards";
+import { getBoardConfigWithOverride } from "@/lib/board-categories";
 import { listPosts, getAttachmentsForPosts } from "@/lib/posts";
 
 export const metadata: Metadata = {
@@ -22,7 +22,7 @@ export default async function GalleryPage({
 }: {
   searchParams: Promise<{ page?: string; q?: string }>;
 }) {
-  const config = getBoardConfig("gallery");
+  const config = await getBoardConfigWithOverride("gallery");
   const { page: rawPage, q: rawQ } = await searchParams;
   const q = (rawQ ?? "").trim();
   const page = Math.max(1, Number.parseInt(rawPage ?? "1", 10) || 1);
@@ -44,9 +44,9 @@ export default async function GalleryPage({
     <>
       <PageHero
         kicker="GALLERY"
-        title="갤러리"
+        title={config.label}
         italicWord="갤러리"
-        subtitle="현장과 행사의 순간을 사진으로 전달드립니다."
+        subtitle={config.subtitle}
         breadcrumb={[
           { label: "HOME", href: "/" },
           { label: "NOTICES", href: "/notices" },

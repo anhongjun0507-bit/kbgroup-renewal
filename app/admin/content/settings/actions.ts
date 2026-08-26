@@ -3,6 +3,7 @@
 import { updateTag } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { CONTENT_TAGS } from "@/lib/content/tags";
+import { settingLabel } from "@/lib/content/labels";
 import { findListSchema } from "@/components/admin/settings-schema";
 import { buildOrgTree, countOrgNodes, type OutlineRow } from "@/components/admin/org-tree";
 
@@ -27,26 +28,6 @@ export type SettingsFormState = {
   error: string | null;
   /** 낙관적 잠금 충돌 — 폼 값을 유지한 채 경고만 띄우기 위해 별도 플래그로 둔다. */
   conflict?: boolean;
-};
-
-const LABELS: Record<string, string> = {
-  company: "회사 기본 정보",
-  contact: "연락처",
-  ceoMessage: "대표 인사말",
-  counters: "메인 카운터",
-  stats: "마케팅 표기값(STATS)",
-  coreValues: "핵심 가치",
-  differentiators: "차별점",
-  companyStrengths: "회사 강점",
-  history: "연혁",
-  partners: "발주처·시공사",
-  collaborators: "협력업체",
-  relatedCompanies: "계열사",
-  licenses: "보유 인허가",
-  certifications: "기술 자격증",
-  businessAreas: "사업영역",
-  processSteps: "서비스 프로세스",
-  organization: "조직도",
 };
 
 /* ── 공통 헬퍼 ─────────────────────────────────────────────────────────── */
@@ -139,7 +120,7 @@ async function persist(
   if (!updated || updated.length === 0) return { ok: null, error: null, conflict: true };
 
   updateTag(CONTENT_TAGS.settings);
-  return { ok: `${LABELS[key] ?? key} 저장 완료`, error: null };
+  return { ok: `${settingLabel(key)} 저장 완료`, error: null };
 }
 
 /** 각 액션의 공통 진입 절차 — 관리자 확인 + updatedAt 존재 확인. */

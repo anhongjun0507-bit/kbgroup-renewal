@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
-/** 관리자 페이지 상단 탭 (지원·문의 / 채용 공고 / 소식 관리 / 회원 관리 / 단지 관리 / 사이트 설정 / 섹션 구성 / 메뉴 구성 / 페이지 공개).
- *  회원 관리 탭에는 승인 대기 인원 배지를 표시한다. */
+/** 관리자 페이지 상단 탭 (지원·문의 / 채용 공고 / 소식 관리 / 게시판 카테고리 / 회원 관리 /
+ *  단지 관리 / 사이트 설정 / 섹션 구성 / 메뉴 구성 / 페이지 공개 / 복구 이력).
+ *  회원 관리 탭에는 승인 대기 인원 배지를 표시한다.
+ *  탭이 11개라 좁은 화면에서는 두 줄로 접힌다(flex-wrap) — 가로 스크롤로 숨기지 않는다. */
 export async function AdminTabs({
   active,
 }: {
@@ -10,12 +12,14 @@ export async function AdminTabs({
     | "applications"
     | "openings"
     | "posts"
+    | "boards"
     | "members"
     | "complexes"
     | "settings"
     | "sections"
     | "nav"
-    | "pages";
+    | "pages"
+    | "revisions";
 }) {
   // 승인 대기 회원 수 — 모든 관리자 페이지에서 한눈에 보이도록 탭 배지로 노출.
   // (admin 세션 기준 RLS로 전체 profiles 카운트 허용. status 컬럼 미적용 시엔 null → 0.)
@@ -35,16 +39,18 @@ export async function AdminTabs({
     { key: "applications", label: "지원·문의", href: "/admin" },
     { key: "openings", label: "채용 공고", href: "/admin/openings" },
     { key: "posts", label: "소식 관리", href: "/admin/posts" },
+    { key: "boards", label: "게시판 카테고리", href: "/admin/content/boards" },
     { key: "members", label: "회원 관리", href: "/admin/members" },
     { key: "complexes", label: "단지 관리", href: "/admin/content/complexes" },
     { key: "settings", label: "사이트 설정", href: "/admin/content/settings" },
     { key: "sections", label: "섹션 구성", href: "/admin/content/sections" },
     { key: "nav", label: "메뉴 구성", href: "/admin/content/nav" },
     { key: "pages", label: "페이지 공개", href: "/admin/content/pages" },
+    { key: "revisions", label: "복구 이력", href: "/admin/content/revisions" },
   ] as const;
 
   return (
-    <nav className="mb-8 flex gap-1 border-b border-line" aria-label="관리자 메뉴">
+    <nav className="mb-8 flex flex-wrap gap-x-1 border-b border-line" aria-label="관리자 메뉴">
       {tabs.map((t) => (
         <Link
           key={t.key}
