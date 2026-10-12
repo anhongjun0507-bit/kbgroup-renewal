@@ -43,3 +43,7 @@ supabase/.temp/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# 로컬 비밀값·빌드·개인 설정 (project-init)
+.env*
+.claude/settings.local.json
+CLAUDE.local.md
