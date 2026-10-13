@@ -1,13 +1,22 @@
 import type { Metadata } from "next";
+import { listCanonical } from "@/lib/boards";
 import Link from "next/link";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { Container } from "@/components/ui";
 import { getViewer } from "@/lib/auth";
 
-export const metadata: Metadata = {
-  title: "자유게시판 | (주)케이비개발",
-  description: "회원 누구나 자유롭게 글을 남길 수 있는 자유게시판입니다.",
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}): Promise<Metadata> {
+  const { page } = await searchParams;
+  return {
+    title: "자유게시판 | (주)케이비개발",
+    description: "회원 누구나 자유롭게 글을 남길 수 있는 자유게시판입니다.",
+    alternates: { canonical: listCanonical("/notices/board", page) },
+  };
+}
 
 export const dynamic = "force-dynamic";
 

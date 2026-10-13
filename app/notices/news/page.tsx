@@ -1,14 +1,23 @@
 import type { Metadata } from "next";
+import { BOARD_CONFIGS, listCanonical } from "@/lib/boards";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { PostListSection } from "@/components/sections/notices/PostListSection";
 import { getViewer } from "@/lib/auth";
 import { getBoardConfigWithOverride } from "@/lib/board-categories";
 import { listPosts } from "@/lib/posts";
 
-export const metadata: Metadata = {
-  title: "단지소식 | (주)케이비개발",
-  description: "관리 단지의 운영 소식과 입주민 안내.",
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}): Promise<Metadata> {
+  const { page } = await searchParams;
+  return {
+    title: "단지소식 | (주)케이비개발",
+    description: "관리 단지의 운영 소식과 입주민 안내.",
+    alternates: { canonical: listCanonical(BOARD_CONFIGS.news.listPath, page) },
+  };
+}
 
 export const dynamic = "force-dynamic";
 

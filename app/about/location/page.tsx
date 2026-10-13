@@ -8,6 +8,7 @@ import { locationSections } from "./sections";
 export const metadata: Metadata = {
   title: "오시는 길 | (주)케이비개발",
   description: "본사 위치와 교통 안내. 전남광주특별시 광산구 월계로 223-22.",
+  alternates: { canonical: "/about/location" },
 };
 
 export default async function LocationPage() {

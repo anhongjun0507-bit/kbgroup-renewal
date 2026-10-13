@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BOARD_CONFIGS, listCanonical } from "@/lib/boards";
 import Link from "next/link";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { Container } from "@/components/ui";
@@ -12,11 +13,19 @@ import { listPosts } from "@/lib/posts";
 import { UnpublishedNotice } from "@/components/layout/UnpublishedNotice";
 import { requirePublished } from "@/lib/pages/gate";
 
-export const metadata: Metadata = {
-  title: "공지사항 | (주)케이비개발",
-  description:
-    "(주)케이비개발의 공지·안내 소식을 확인하세요.",
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}): Promise<Metadata> {
+  const { page } = await searchParams;
+  return {
+    title: "공지사항 | (주)케이비개발",
+    description:
+      "(주)케이비개발의 공지·안내 소식을 확인하세요.",
+    alternates: { canonical: listCanonical(BOARD_CONFIGS.notice.listPath, page) },
+  };
+}
 
 export const dynamic = "force-dynamic";
 

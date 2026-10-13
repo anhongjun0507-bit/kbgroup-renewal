@@ -18,13 +18,14 @@ const jetbrainsMono = JetBrains_Mono({
 /* Phase 10 P2-06/07/08 — OG·favicon·브랜드 명칭 표준 메타
    brand: KB GROUP / legal: (주)케이비개발 / 영문 legal: KB DEVELOPMENT CO., LTD. */
 /* SITE_URL은 lib/site.ts에서 단일 관리 (sitemap·robots와 공유). */
-const SITE_TITLE = "KB GROUP | (주)케이비개발";
+/* 메인 제목 — 네이버 서치어드바이저 진단 반영(2026-10-13). og:title·twitter:title 도 같은 값. */
+const HOME_TITLE = "케이비개발 | 종합주택관리·시설관리 전문기업·위생청소·경비보안";
 const SITE_DESC =
   "신뢰받는 종합 시설관리 파트너 — 시설관리·위생청소·경비보안·시행건설 B2B 전문 서비스. 전남광주특별시 광산구 월계로 223-22.";
 
 export const metadata: Metadata = {
   title: {
-    default: SITE_TITLE + " — 시설관리·위생청소·경비보안·시행건설",
+    default: HOME_TITLE,
     template: "%s | KB GROUP",
   },
   description: SITE_DESC,
@@ -53,7 +54,7 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     url: SITE_URL,
     siteName: "KB GROUP",
-    title: SITE_TITLE,
+    title: HOME_TITLE,
     description: SITE_DESC,
     images: [
       {
@@ -66,21 +67,11 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: SITE_TITLE,
+    title: HOME_TITLE,
     description: SITE_DESC,
     images: ["/images/company/p04_05.jpeg"],
   },
-  icons: {
-    /* Phase 14 P2-06 — favicon 사이즈 명시 + apple-touch-icon 180×180 슬롯. 자산은 kb-mark.png 단일 (정사각형) 활용. */
-    icon: [
-      { url: "/images/company/kb-mark.png", type: "image/png", sizes: "any" },
-      { url: "/favicon.ico", sizes: "32x32" },
-    ],
-    apple: [
-      { url: "/images/company/kb-mark.png", sizes: "180x180" },
-    ],
-    shortcut: ["/favicon.ico"],
-  },
+  /* 파비콘은 파일 컨벤션(app/favicon.ico · icon.png · apple-icon.png)만 쓴다 — icons 수동 설정과 겹치면 link 태그가 중복된다. */
   robots: {
     index: true,
     follow: true,

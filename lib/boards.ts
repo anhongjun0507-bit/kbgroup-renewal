@@ -178,6 +178,12 @@ export function postDetailPath(type: BoardType, id: string): string {
   return `${BOARD_CONFIGS[type].listPath}/${id}`;
 }
 
+/** 목록 페이지 canonical. 2페이지부터는 페이지마다 자기 주소를 가리킨다(검색어 q 는 뺀다). */
+export function listCanonical(listPath: string, rawPage: string | undefined): string {
+  const page = Math.max(1, Number.parseInt(rawPage ?? "1", 10) || 1);
+  return page > 1 ? `${listPath}?page=${page}` : listPath;
+}
+
 /** 관리자 경로 헬퍼 */
 export const adminBoardPath = (type: BoardType) => `/admin/posts/${type}`;
 export const adminNewPath = (type: BoardType) => `/admin/posts/${type}/new`;

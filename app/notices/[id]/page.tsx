@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { postDetailPath } from "@/lib/boards";
 import { notFound } from "next/navigation";
 import { PageHero } from "@/components/sections/common/PageHero";
 import { PostDetailView } from "@/components/sections/notices/PostDetailView";
@@ -22,6 +23,7 @@ export async function generateMetadata({
       ? `${post.title} | 공지사항 | (주)케이비개발`
       : "공지사항 | (주)케이비개발",
     description: post?.content?.slice(0, 120) ?? undefined,
+    alternates: post ? { canonical: postDetailPath("notice", post.id) } : undefined,
   };
 }
 

@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "인허가 · 기술 자격 | (주)케이비개발",
   description:
     "11종의 보유 인허가와 27종의 기술 인증서. 1,575명의 자격증 보유 전문 인력이 함께합니다.",
+  alternates: { canonical: "/licenses" },
 };
 
 export default async function LicensesPage() {

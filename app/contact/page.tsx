@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "상담 문의 | (주)케이비개발",
   description:
     "단지 규모·관리 범위·운영 형태에 맞춰 견적을 산정합니다. 영업일 기준 평균 4시간 안에 회신드립니다.",
+  alternates: { canonical: "/contact" },
 };
 
 export default async function ContactPage() {

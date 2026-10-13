@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   title: "채용 공고 | (주)케이비개발",
   description:
     "(주)케이비개발에서 현재 진행 중인 채용 공고입니다. 관심 직무를 확인하고 지원해 주세요.",
+  alternates: { canonical: "/careers/openings" },
 };
 
 export const dynamic = "force-dynamic";

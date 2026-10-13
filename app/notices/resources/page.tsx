@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BOARD_CONFIGS, listCanonical } from "@/lib/boards";
 import { PageHero } from "@/components/sections/common/PageHero";
 import {
   ResourceListSection,
@@ -8,10 +9,18 @@ import { getViewer } from "@/lib/auth";
 import { getBoardConfigWithOverride } from "@/lib/board-categories";
 import { listPosts, getAttachmentsForPosts } from "@/lib/posts";
 
-export const metadata: Metadata = {
-  title: "자료실 | (주)케이비개발",
-  description: "회사소개서·홍보물 등 자료를 제공해드립니다.",
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}): Promise<Metadata> {
+  const { page } = await searchParams;
+  return {
+    title: "자료실 | (주)케이비개발",
+    description: "회사소개서·홍보물 등 자료를 제공해드립니다.",
+    alternates: { canonical: listCanonical(BOARD_CONFIGS.resources.listPath, page) },
+  };
+}
 
 export const dynamic = "force-dynamic";
 

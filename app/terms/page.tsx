@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   description:
     "(주)케이비개발 홈페이지 이용에 관한 회사·이용자의 권리·의무·책임 사항을 안내합니다.",
   robots: { index: true, follow: true },
+  alternates: { canonical: "/terms" },
 };
 
 /* Phase 14 P1-10 — 이용약관 페이지 신설.

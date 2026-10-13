@@ -25,6 +25,7 @@ export async function generateMetadata({
     description:
       job.summary ??
       `${job.location} ${job.title} ${job.type} — (주)케이비개발 채용 공고`,
+    alternates: { canonical: `/careers/openings/${job.id}` },
   };
 }
 

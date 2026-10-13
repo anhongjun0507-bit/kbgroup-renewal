@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BOARD_CONFIGS, listCanonical } from "@/lib/boards";
 import { PageHero } from "@/components/sections/common/PageHero";
 import {
   GalleryGridSection,
@@ -8,10 +9,18 @@ import { getViewer } from "@/lib/auth";
 import { getBoardConfigWithOverride } from "@/lib/board-categories";
 import { listPosts, getAttachmentsForPosts } from "@/lib/posts";
 
-export const metadata: Metadata = {
-  title: "갤러리 | (주)케이비개발",
-  description: "현장과 행사의 순간을 사진으로 전달드립니다.",
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}): Promise<Metadata> {
+  const { page } = await searchParams;
+  return {
+    title: "갤러리 | (주)케이비개발",
+    description: "현장과 행사의 순간을 사진으로 전달드립니다.",
+    alternates: { canonical: listCanonical(BOARD_CONFIGS.gallery.listPath, page) },
+  };
+}
 
 export const dynamic = "force-dynamic";
 

@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   description:
     "(주)케이비개발의 개인정보 수집·이용·보관·파기 정책 안내. 정보주체의 권리와 처리 항목·기간을 명시합니다.",
   robots: { index: true, follow: true },
+  alternates: { canonical: "/privacy" },
 };
 
 /* Phase 14 P1-10 — 개인정보처리방침 페이지 신설.

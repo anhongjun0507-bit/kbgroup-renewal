@@ -39,6 +39,7 @@ export async function generateMetadata({
   return {
     title: `${complex.name} | 관리현황 | (주)케이비개발`,
     description: `${complex.region} ${complex.name} 단지 관리 현황`,
+    alternates: { canonical: `/cases/${complex.slug}` },
   };
 }
 

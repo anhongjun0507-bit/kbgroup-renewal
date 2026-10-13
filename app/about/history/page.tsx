@@ -8,6 +8,7 @@ import { historySections } from "./sections";
 export const metadata: Metadata = {
   title: "연혁 | (주)케이비개발",
   description: "2013년 설립 이래 케이비개발이 쌓아온 신뢰의 기록.",
+  alternates: { canonical: "/about/history" },
 };
 
 export default async function HistoryPage() {

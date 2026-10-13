@@ -27,6 +27,7 @@ export async function generateMetadata({
   return {
     title: `${area.name} | (주)케이비개발`,
     description: area.summary,
+    alternates: { canonical: `/business/${area.slug}` },
   };
 }
 
