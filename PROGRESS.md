@@ -6,6 +6,14 @@
 
 ---
 
+## NOW (2026-10-13 · 운영 수정 4건 — 네이버 서치어드바이저 진단)
+
+- 배포 `dpl_3BEkCZd1wLhmkRtWYKXu3EZLhpww`(커밋 da5227d) — 파비콘 B안(산형 3개·흰 타일, 파일 컨벤션만) · 메인 title/og/twitter 새 값 · 공개 페이지 전부 canonical(목록 ?page=N 별).
+- 검증: tsc·eslint 0 · build EXIT=0 · 라우트 58→60(/icon.png·/apple-icon.png) · SSR 20경로 diff = `/` title 1줄 · code-review medium 8건 중 3건 반영. 근거 `docs/regression/favicon-2026-10-13/`, `docs/favicon/`.
+- 결정 대기: www.kbgroup.kr DNS 없음(NXDOMAIN) · kbgroup-renewal.vercel.app 200 서빙(canonical 은 kbgroup.kr) 리다이렉트 여부 · 서브페이지 og:url/og:title 상속 · title 접미사 중복.
+
+---
+
 ## 0. 현재 상태 한 줄
 
 **프로덕션 배포 완료 · 최종 배포 `dpl_7tLisAFT1m6rt2AghkMTBov8CbCw` (2026-08-26).**
