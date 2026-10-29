@@ -61,7 +61,8 @@ export default async function BoardPage({
   let query = supabase
     .from("posts")
     .select(
-      "id, post_number, title, author_name, created_at, view_count, is_pinned",
+      // 댓글 수는 같은 요청에 임베디드 카운트로 함께 받는다(글마다 따로 세지 않는다).
+      "id, post_number, title, author_name, created_at, view_count, is_pinned, post_comments(count)",
       { count: "exact" },
     )
     .eq("board_type", "free");
@@ -190,6 +191,11 @@ export default async function BoardPage({
                         <span className="truncate font-display text-[16px] font-bold tracking-tight text-ink-strong transition-colors group-hover:text-accent-deep md:text-[15px] md:font-semibold">
                           {p.title}
                         </span>
+                        {(p.post_comments?.[0]?.count ?? 0) > 0 && (
+                          <span className="-ml-1 shrink-0 font-mono-num text-[14px] text-ink-muted md:text-[13px]">
+                            ({p.post_comments[0].count})
+                          </span>
+                        )}
                       </span>
                       {/* 모바일 메타 */}
                       <span className="mt-1.5 flex items-center gap-2 text-[12px] text-ink-faint md:hidden">

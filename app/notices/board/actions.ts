@@ -173,6 +173,7 @@ export async function addComment(
   if (error) return { ok: false, error: "댓글 등록에 실패했습니다." };
 
   revalidatePath(`/notices/board/${postId}`);
+  revalidatePath("/notices/board"); // 목록의 댓글 수
   return { ok: true };
 }
 
@@ -190,5 +191,6 @@ export async function deleteComment(
 
   await supabase.from("post_comments").delete().eq("id", commentId);
   revalidatePath(`/notices/board/${postId}`);
+  revalidatePath("/notices/board"); // 목록의 댓글 수
   return { ok: true };
 }
