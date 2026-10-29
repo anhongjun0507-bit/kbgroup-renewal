@@ -1,0 +1,7 @@
+# 목록 조회 쿼리 로그 (next start + fetch 로거, /notices/board 1회 요청)
+## before
+[SBQ] GET /rest/v1/posts?select=id,post_number,title,author_name,created_at,view_count,is_pinned&board_type=eq.free&order=is_pinned.desc,created_at.desc&offset=0&limit=15
+## after
+[SBQ] GET /rest/v1/posts?select=id,post_number,title,author_name,created_at,view_count,is_pinned,post_comments(count)&board_type=eq.free&order=is_pinned.desc,created_at.desc&offset=0&limit=15
+
+# 라우트 표: before 60 / after 60 · diff 없음 (build EXIT=0 둘 다)

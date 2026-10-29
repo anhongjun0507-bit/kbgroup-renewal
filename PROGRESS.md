@@ -6,7 +6,14 @@
 
 ---
 
-## NOW (2026-10-13 · 운영 수정 4건 — 네이버 서치어드바이저 진단)
+## NOW (2026-10-29 · 자유게시판 목록 댓글 수)
+
+- 배포 `dpl_5UMLGVbbQ2rF3MfsnX6Ed5jQE4iw`(커밋 2cffa1a, production READY, kbgroup.kr 별칭) — `/notices/board` 제목 옆 " (N)"(0개는 숨김). 목록 쿼리에 `post_comments(count)` 임베디드(요청 1건 그대로), 댓글 작성·삭제 액션에 `revalidatePath("/notices/board")`. 명세 `docs/specs/board-comment-count.md`.
+- 검증: tsc·eslint 0 · build EXIT=0 · 라우트 60→60 · 다른 게시판 4경로 SSR diff 0(로컬·라이브) · 라이브 왕복 2→3→4→3→2 PASS 10/10, 테스트 댓글·계정 0건 정리. 근거 `docs/regression/board-comment-count-2026-10-29/`.
+- 명세와 다른 점: 숨김·삭제 컬럼 없음(하드 삭제) · 목록이 force-dynamic 이라 캐시 태그가 없어 updateTag 대신 경로 무효화 · 답글도 수에 포함(상세 「댓글 N」과 같은 기준).
+- 결정 대기: deleteComment 가 RLS 로 0행 삭제돼도 ok 반환(기존 동작) · 검증으로 1번 글 조회수 +8.
+
+## 이전 (2026-10-13 · 운영 수정 4건 — 네이버 서치어드바이저 진단)
 
 - 배포 `dpl_3BEkCZd1wLhmkRtWYKXu3EZLhpww`(커밋 da5227d) — 파비콘 B안(산형 3개·흰 타일, 파일 컨벤션만) · 메인 title/og/twitter 새 값 · 공개 페이지 전부 canonical(목록 ?page=N 별).
 - 검증: tsc·eslint 0 · build EXIT=0 · 라우트 58→60(/icon.png·/apple-icon.png) · SSR 20경로 diff = `/` title 1줄 · code-review medium 8건 중 3건 반영. 근거 `docs/regression/favicon-2026-10-13/`, `docs/favicon/`.
