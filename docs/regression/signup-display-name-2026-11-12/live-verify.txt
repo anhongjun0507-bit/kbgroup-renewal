@@ -1,0 +1,13 @@
+PASS desktop-1440 라벨/placeholder/안내/required · {"label":"이름(단지명)","ph":"예) 홍길동(OO아파트)","hint":"이름(단지명) 형식으로 입력해야 관리자 승인이 진행됩니다.","required":true}
+PASS mobile-390 라벨/placeholder/안내/required · {"label":"이름(단지명)","ph":"예) 홍길동(OO아파트)","hint":"이름(단지명) 형식으로 입력해야 관리자 승인이 진행됩니다.","required":true}
+PASS client block empty · url=/signup
+PASS client block spaces · url=/signup
+PASS server block (browser, required/pattern removed) · status=200 uiAlerts=["이름(단지명)을 입력해 주세요."]
+PASS server action direct POST displayName="   " · status=200 response contains "이름(단지명)을 입력해 주세요."=true
+PASS server action direct POST displayName="" · status=200 response contains "이름(단지명)을 입력해 주세요."=true
+PASS blocked email not registered · profiles rows=0
+DB row: {"email":"zz-verify-ok-1794457483815@example.com","display_name":"zz검증(테스트아파트)","status":"pending"}
+PASS signup success + trimmed value · input="  zz검증(테스트아파트)  " stored="zz검증(테스트아파트)"
+PASS admin members list shows display_name · url=/admin/members
+cleanup: deleted 1, remaining zz-verify- profiles = 0
+TOTAL PASS=10 FAIL=0

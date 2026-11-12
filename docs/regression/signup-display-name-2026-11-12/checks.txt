@@ -1,0 +1,5 @@
+# 2026-11-12 checks (commit 9ca42d0)
+tsc EXIT=0
+eslint(changed dirs) EXIT=0
+build: heavy-run npm run build → EXIT=0 (background task output), log=build.log, routes=60
+SSR diff: BASE_A=live (pre-deploy, dpl_5UMLGV… old code) vs BASE_B=local prod build (new code) → 21 paths diff=0 = before/after comparison

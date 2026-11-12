@@ -1,0 +1,147 @@
+<claude-code-hint v="1" type="plugin" value="vercel@claude-plugins-official" />
+Vercel CLI 59.11.7 (Node.js 22.23.1)
+Retrieving project…
+Deploying kbgrouppage-9152s-projects/kbgroup-renewal
+Uploading [--------------------] (0.0B/341.9KB)
+Uploading [=====---------------] (92.1KB/341.9KB)
+Uploading [==========----------] (179.6KB/341.9KB)
+Uploading [===============-----] (259.6KB/341.9KB)
+Uploading [====================] (341.9KB/341.9KB)
+  Inspect         https://vercel.com/kbgrouppage-9152s-projects/kbgroup-renewal/EVYh9e4izXUVqHfwoYzDyWYky4Fr
+  Production      https://kbgroup-renewal-be66pe262-kbgrouppage-9152s-projects.vercel.app
+Building…
+Building…
+Running build in Washington, D.C., USA (East) – iad1
+Build machine configuration: 2 cores, 8 GB
+Retrieving list of deployment files...
+Downloading 477 deployment files...
+Restored build cache from previous deployment (5UMLGVbbQ2rF3MfsnX6Ed5jQE4iw)
+Running "vercel build"
+Vercel CLI 65.14.0
+Installing dependencies...
+npm warn Unknown env config "cache-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+up to date in 789ms
+147 packages are looking for funding
+run `npm fund` for details
+npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:
+npm warn install-scripts   sharp@0.34.5 (install: node install/check.js || npm run build)
+npm warn install-scripts   unrs-resolver@1.11.1 (postinstall: napi-postinstall unrs-resolver 1.11.1 check)
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+Detected Next.js version: 16.2.6
+Running "npm run build"
+npm warn Unknown env config "cache-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+> kbgroup-renewal@0.1.0 build
+> next build
+Applying modifyConfig from Vercel
+▲ Next.js 16.2.6 (Turbopack)
+- Experiments (use with caution):
+· serverActions
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+Creating an optimized production build ...
+✓ Compiled successfully in 12.0s
+Running TypeScript ...
+Finished TypeScript in 8.8s ...
+Collecting page data using 1 worker ...
+Generating static pages using 1 worker (0/185) ...
+Generating static pages using 1 worker (46/185)
+Generating static pages using 1 worker (92/185)
+Generating static pages using 1 worker (138/185)
+✓ Generating static pages using 1 worker (185/185) in 4.1s
+Finalizing page optimization ...
+Running onBuildComplete from Vercel
+Route (app)                             Revalidate  Expire
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /about
+├ ƒ /about/ceo
+├ ƒ /about/history
+├ ƒ /about/location
+├ ƒ /admin
+├ ƒ /admin/content/boards
+├ ƒ /admin/content/complexes
+├ ƒ /admin/content/complexes/[id]/edit
+├ ƒ /admin/content/complexes/new
+├ ƒ /admin/content/nav
+├ ƒ /admin/content/pages
+├ ƒ /admin/content/revisions
+├ ƒ /admin/content/sections
+├ ƒ /admin/content/settings
+├ ƒ /admin/members
+├ ƒ /admin/openings
+├ ƒ /admin/openings/[id]/edit
+├ ƒ /admin/openings/new
+├ ƒ /admin/posts
+├ ƒ /admin/posts/[board]
+├ ƒ /admin/posts/[board]/[id]/edit
+├ ƒ /admin/posts/[board]/new
+├ ƒ /api/contact
+├ ƒ /api/keep-alive
+├ ○ /apple-icon.png
+├ ƒ /auth/callback
+├ ƒ /auth/logout
+├ ƒ /business
+├ ƒ /business/[slug]
+├ ƒ /careers
+├ ƒ /careers/openings
+├ ƒ /careers/openings/[id]
+├ ƒ /cases
+├ ƒ /cases/[slug]
+├ ƒ /contact
+├ ƒ /forgot-password
+├ ○ /icon.png
+├ ƒ /licenses
+├ ƒ /login
+├ ƒ /mypage
+├ ƒ /notices
+├ ƒ /notices/[id]
+├ ƒ /notices/board
+├ ƒ /notices/board/[id]
+├ ƒ /notices/board/[id]/edit
+├ ƒ /notices/board/new
+├ ƒ /notices/gallery
+├ ƒ /notices/gallery/[id]
+├ ƒ /notices/news
+├ ƒ /notices/news/[id]
+├ ƒ /notices/resources
+├ ƒ /notices/resources/[id]
+├ ƒ /privacy
+├ ○ /robots.txt
+├ ƒ /signup
+├ ƒ /signup/pending
+├ ○ /sitemap.xml                                1h      1y
+└ ƒ /terms
+ƒ Proxy (Middleware)
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+Build Completed in /vercel/output [31s]
+Deploying outputs...
+[2K[1A[2K[G  Production      https://kbgroup-renewal-be66pe262-kbgrouppage-9152s-projects.vercel.app
+Completing…
+▲ Aliased         https://kbgroup.kr
+{
+  "status": "ok",
+  "deployment": {
+    "id": "dpl_EVYh9e4izXUVqHfwoYzDyWYky4Fr",
+    "url": "https://kbgroup-renewal-be66pe262-kbgrouppage-9152s-projects.vercel.app",
+    "inspectorUrl": "https://vercel.com/kbgrouppage-9152s-projects/kbgroup-renewal/EVYh9e4izXUVqHfwoYzDyWYky4Fr",
+    "readyState": "READY",
+    "target": "production",
+    "deploymentApiUrl": "https://api.vercel.com/v13/deployments/dpl_EVYh9e4izXUVqHfwoYzDyWYky4Fr"
+  },
+  "message": "Deployment kbgroup-renewal-be66pe262-kbgrouppage-9152s-projects.vercel.app ready.",
+  "next": [
+    {
+      "command": "vercel curl https://kbgroup-renewal-be66pe262-kbgrouppage-9152s-projects.vercel.app",
+      "when": "Verify deployment, including when Deployment Protection is enabled"
+    },
+    {
+      "command": "vercel inspect kbgroup-renewal-be66pe262-kbgrouppage-9152s-projects.vercel.app",
+      "when": "Inspect deployment"
+    },
+    {
+      "command": "vercel deploy --prod",
+      "when": "Promote to production"
+    }
+  ]
+}

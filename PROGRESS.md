@@ -6,7 +6,14 @@
 
 ---
 
-## NOW (2026-10-29 · 자유게시판 목록 댓글 수)
+## NOW (2026-11-12 · 회원가입 이름(단지명) 필수화)
+
+- 배포 `dpl_EVYh9e4izXUVqHfwoYzDyWYky4Fr`(커밋 9ca42d0, production READY, kbgroup.kr·www 별칭) — 회원가입 「표시 이름 (선택)」→「이름(단지명)」 필수(required+pattern, 서버 액션 trim·빈값 차단·50자), placeholder·안내 문구, 마이페이지 이름 변경도 같은 검증. DB 제약·기존 데이터 무변경. 명세 `docs/specs/signup-display-name-required.md`.
+- 검증: tsc·eslint 0 · build EXIT=0 · 라우트 60→60 · 비가입 21경로 SSR diff 0 · 로컬·라이브 각 10/10 PASS(클라 차단·서버 차단·서버 액션 직접 POST·trim 저장·관리자 목록 노출), 테스트 계정 0건 정리. review-opus 정확성 지적 0(a11y 포커스·role=alert 반영). 근거 `docs/regression/signup-display-name-2026-11-12/`.
+- 명세와 다른 점: 빈 값 기존 회원 0/25(트리거가 이메일 앞부분으로 채움 · 이메일 앞부분 그대로 5명) · 최대 길이 30 대신 기존 50 · 관리자 목록은 원래 노출돼 변경 없음 · 가입 폼의 기존 필수 필드에 시각 표시가 없어 required 속성만.
+- 결정됨(11-12 사용자): anon 키로 profiles 직접 수정해 이름을 비우는 경로는 현 상태 유지(DB 규칙 추가 안 함). 관리자 캡처는 임시 관리자 생성이 role 트리거로 막혀 inspect-admin 매직링크 세션 사용.
+
+## 이전 (2026-10-29 · 자유게시판 목록 댓글 수)
 
 - 배포 `dpl_5UMLGVbbQ2rF3MfsnX6Ed5jQE4iw`(커밋 2cffa1a, production READY, kbgroup.kr 별칭) — `/notices/board` 제목 옆 " (N)"(0개는 숨김). 목록 쿼리에 `post_comments(count)` 임베디드(요청 1건 그대로), 댓글 작성·삭제 액션에 `revalidatePath("/notices/board")`. 명세 `docs/specs/board-comment-count.md`.
 - 검증: tsc·eslint 0 · build EXIT=0 · 라우트 60→60 · 다른 게시판 4경로 SSR diff 0(로컬·라이브) · 라이브 왕복 2→3→4→3→2 PASS 10/10, 테스트 댓글·계정 0건 정리. 근거 `docs/regression/board-comment-count-2026-10-29/`.
