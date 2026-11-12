@@ -11,8 +11,11 @@ export async function updateDisplayName(
 ): Promise<FormState> {
   const displayName = String(formData.get("displayName") ?? "").trim();
 
+  if (!displayName) {
+    return { status: "error", message: "이름(단지명)을 입력해 주세요." };
+  }
   if (displayName.length > 50) {
-    return { status: "error", message: "표시 이름은 50자 이하여야 합니다." };
+    return { status: "error", message: "이름(단지명)은 50자 이하여야 합니다." };
   }
 
   const supabase = await createClient();
@@ -24,7 +27,7 @@ export async function updateDisplayName(
 
   const { error } = await supabase
     .from("profiles")
-    .update({ display_name: displayName || null })
+    .update({ display_name: displayName })
     .eq("id", user.id);
 
   if (error) {
@@ -32,7 +35,7 @@ export async function updateDisplayName(
   }
 
   revalidatePath("/mypage");
-  return { status: "success", message: "표시 이름을 변경했습니다." };
+  return { status: "success", message: "이름(단지명)을 변경했습니다." };
 }
 
 export async function updatePassword(

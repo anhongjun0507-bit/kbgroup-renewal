@@ -1,0 +1,23 @@
+✅ /  A=164줄  B=164줄  diff=0
+✅ /about  A=194줄  B=194줄  diff=0
+✅ /about/ceo  A=71줄  B=71줄  diff=0
+✅ /about/history  A=79줄  B=79줄  diff=0
+✅ /about/location  A=74줄  B=74줄  diff=0
+✅ /business  A=87줄  B=87줄  diff=0
+✅ /careers  A=120줄  B=120줄  diff=0
+✅ /careers/openings  A=65줄  B=65줄  diff=0
+✅ /cases  A=223줄  B=223줄  diff=0
+✅ /contact  A=62줄  B=62줄  diff=0
+✅ /forgot-password  A=55줄  B=55줄  diff=0
+✅ /licenses  A=191줄  B=191줄  diff=0
+✅ /login  A=47줄  B=47줄  diff=0
+✅ /notices  A=53줄  B=53줄  diff=0
+✅ /notices/board  A=56줄  B=56줄  diff=0
+✅ /notices/board/new  A=47줄  B=47줄  diff=0
+✅ /notices/gallery  A=54줄  B=54줄  diff=0
+✅ /notices/news  A=48줄  B=48줄  diff=0
+✅ /notices/resources  A=55줄  B=55줄  diff=0
+✅ /privacy  A=75줄  B=75줄  diff=0
+✅ /terms  A=71줄  B=71줄  diff=0
+
+✅ 전 경로 diff 0줄

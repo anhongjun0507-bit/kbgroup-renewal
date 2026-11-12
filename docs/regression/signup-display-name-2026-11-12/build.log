@@ -1,0 +1,91 @@
+heavy-run: 기다린다 — 먼저 온 heavy-run 이 기다리는 중 (heavy-run --status 로 확인)
+
+> kbgroup-renewal@0.1.0 build
+> next build
+
+▲ Next.js 16.2.6 (Turbopack)
+- Environments: .env.local
+- Experiments (use with caution):
+  · serverActions
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 24.7s
+  Running TypeScript ...
+  Finished TypeScript in 24.0s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/185) ...
+  Generating static pages using 7 workers (46/185) 
+  Generating static pages using 7 workers (92/185) 
+  Generating static pages using 7 workers (138/185) 
+✓ Generating static pages using 7 workers (185/185) in 1842ms
+  Finalizing page optimization ...
+
+Route (app)                             Revalidate  Expire
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /about
+├ ƒ /about/ceo
+├ ƒ /about/history
+├ ƒ /about/location
+├ ƒ /admin
+├ ƒ /admin/content/boards
+├ ƒ /admin/content/complexes
+├ ƒ /admin/content/complexes/[id]/edit
+├ ƒ /admin/content/complexes/new
+├ ƒ /admin/content/nav
+├ ƒ /admin/content/pages
+├ ƒ /admin/content/revisions
+├ ƒ /admin/content/sections
+├ ƒ /admin/content/settings
+├ ƒ /admin/members
+├ ƒ /admin/openings
+├ ƒ /admin/openings/[id]/edit
+├ ƒ /admin/openings/new
+├ ƒ /admin/posts
+├ ƒ /admin/posts/[board]
+├ ƒ /admin/posts/[board]/[id]/edit
+├ ƒ /admin/posts/[board]/new
+├ ƒ /api/contact
+├ ƒ /api/keep-alive
+├ ○ /apple-icon.png
+├ ƒ /auth/callback
+├ ƒ /auth/logout
+├ ƒ /business
+├ ƒ /business/[slug]
+├ ƒ /careers
+├ ƒ /careers/openings
+├ ƒ /careers/openings/[id]
+├ ƒ /cases
+├ ƒ /cases/[slug]
+├ ƒ /contact
+├ ƒ /forgot-password
+├ ○ /icon.png
+├ ƒ /licenses
+├ ƒ /login
+├ ƒ /mypage
+├ ƒ /notices
+├ ƒ /notices/[id]
+├ ƒ /notices/board
+├ ƒ /notices/board/[id]
+├ ƒ /notices/board/[id]/edit
+├ ƒ /notices/board/new
+├ ƒ /notices/gallery
+├ ƒ /notices/gallery/[id]
+├ ƒ /notices/news
+├ ƒ /notices/news/[id]
+├ ƒ /notices/resources
+├ ƒ /notices/resources/[id]
+├ ƒ /privacy
+├ ○ /robots.txt
+├ ƒ /signup
+├ ƒ /signup/pending
+├ ○ /sitemap.xml                                1h      1y
+└ ƒ /terms
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

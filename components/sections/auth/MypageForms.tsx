@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import {
   updateDisplayName,
   updatePassword,
@@ -29,28 +29,48 @@ function DisplayNameSection({ current }: { current: string | null }) {
     updateDisplayName,
     INITIAL_FORM_STATE,
   );
+  const [nameError, setNameError] = useState<string | null>(null);
 
   return (
     <section className="space-y-4">
       <h2 className="text-[15px] font-semibold text-ink-strong">
-        표시 이름
+        <label htmlFor="displayName">이름(단지명)</label>
       </h2>
       <form action={formAction} className="space-y-4">
         <input
+          id="displayName"
           name="displayName"
           type="text"
           defaultValue={current ?? ""}
+          required
           maxLength={50}
-          placeholder="표시할 이름"
+          pattern=".*\S.*"
+          placeholder="예) 홍길동(OO아파트)"
+          aria-describedby="displayName-hint"
+          onInvalid={(e) => {
+            e.preventDefault();
+            e.currentTarget.focus();
+            setNameError("이름(단지명)을 입력해 주세요.");
+          }}
+          onInput={() => setNameError(null)}
           className="w-full border-0 border-b border-line bg-transparent py-2 text-base text-ink transition-colors focus:border-primary"
         />
-        <FormMessage state={state} />
+        <p id="displayName-hint" className="text-xs text-ink-soft">
+          이름(단지명) 형식으로 입력해야 관리자 승인이 진행됩니다.
+        </p>
+        {nameError ? (
+          <p role="alert" className="text-xs text-red-700">
+            {nameError}
+          </p>
+        ) : (
+          <FormMessage state={state} />
+        )}
         <button
           type="submit"
           disabled={isPending}
           className="border border-primary px-6 py-2.5 text-sm font-medium text-primary transition-all duration-300 hover:bg-primary hover:text-white disabled:opacity-50"
         >
-          {isPending ? "저장 중..." : "표시 이름 변경"}
+          {isPending ? "저장 중..." : "이름(단지명) 변경"}
         </button>
       </form>
     </section>

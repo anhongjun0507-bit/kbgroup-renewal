@@ -38,7 +38,7 @@ export default async function MypagePage() {
         kicker="MY PAGE · 마이페이지"
         title="회원 정보"
         italicWord="회원"
-        subtitle="기본 정보 확인과 표시 이름·비밀번호 변경을 할 수 있습니다."
+        subtitle="기본 정보 확인과 이름(단지명)·비밀번호 변경을 할 수 있습니다."
         breadcrumb={[
           { label: "HOME", href: "/" },
           { label: "MY PAGE" },

@@ -1,17 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { Container } from "@/components/ui";
 import { signupAction, type SignupState } from "@/app/(auth)/signup/actions";
 
 const INITIAL_STATE: SignupState = { error: null, fieldErrors: {} };
+const DISPLAY_NAME_REQUIRED = "이름(단지명)을 입력해 주세요.";
 
 export function SignupForm() {
   const [state, formAction, isPending] = useActionState(
     signupAction,
     INITIAL_STATE,
   );
+  const [nameError, setNameError] = useState<string | null>(null);
 
   return (
     <section className="bg-cream pb-32">
@@ -57,10 +59,21 @@ export function SignupForm() {
 
           <Field
             name="displayName"
-            label="표시 이름 (선택)"
+            label="이름(단지명)"
             type="text"
+            required
+            maxLength={50}
+            pattern=".*\S.*"
+            placeholder="예) 홍길동(OO아파트)"
             autoComplete="nickname"
-            error={state.fieldErrors?.displayName}
+            hint="이름(단지명) 형식으로 입력해야 관리자 승인이 진행됩니다."
+            onInvalid={(e) => {
+              e.preventDefault();
+              e.currentTarget.focus();
+              setNameError(DISPLAY_NAME_REQUIRED);
+            }}
+            onInput={() => setNameError(null)}
+            error={nameError ?? state.fieldErrors?.displayName}
           />
 
           <p className="border-l-2 border-line bg-beige/40 px-4 py-3 text-[13px] leading-relaxed text-ink-soft">
@@ -97,11 +110,17 @@ interface FieldProps {
   type: string;
   required?: boolean;
   minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  placeholder?: string;
   autoComplete?: string;
+  hint?: string;
+  onInvalid?: React.FormEventHandler<HTMLInputElement>;
+  onInput?: React.FormEventHandler<HTMLInputElement>;
   error?: string;
 }
 
-function Field({ name, label, error, ...input }: FieldProps) {
+function Field({ name, label, hint, error, ...input }: FieldProps) {
   return (
     <div>
       <label
@@ -115,10 +134,16 @@ function Field({ name, label, error, ...input }: FieldProps) {
         id={name}
         name={name}
         {...input}
+        aria-describedby={hint ? `${name}-hint` : undefined}
         className="mt-2 w-full border-0 border-b border-line bg-transparent py-2 text-base text-ink transition-colors focus:border-primary"
       />
+      {hint && (
+        <p id={`${name}-hint`} className="mt-2 text-xs text-ink-soft">
+          {hint}
+        </p>
+      )}
       {error && (
-        <p className="mt-2 text-xs text-red-700">{error}</p>
+        <p role="alert" className="mt-2 text-xs text-red-700">{error}</p>
       )}
     </div>
   );

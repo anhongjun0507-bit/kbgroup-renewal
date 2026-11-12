@@ -31,6 +31,9 @@ export async function signupAction(
     fieldErrors.password = "비밀번호는 8자 이상이어야 합니다.";
   if (password !== passwordConfirm)
     fieldErrors.passwordConfirm = "비밀번호가 일치하지 않습니다.";
+  if (!displayName) fieldErrors.displayName = "이름(단지명)을 입력해 주세요.";
+  else if (displayName.length > 50)
+    fieldErrors.displayName = "이름(단지명)은 50자 이하여야 합니다.";
 
   if (Object.keys(fieldErrors).length > 0) {
     return { error: null, fieldErrors };
@@ -44,7 +47,7 @@ export async function signupAction(
     password,
     options: {
       emailRedirectTo: `${origin}/auth/callback?next=/mypage`,
-      data: displayName ? { display_name: displayName } : undefined,
+      data: { display_name: displayName },
     },
   });
 
